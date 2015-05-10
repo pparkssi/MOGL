@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <meta name="viewport"
           content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
-    <title>MoGL Test Suite - TotalTest.js</title>
+    <title>MoGL Test Suite - TotalTest</title>
     <style>
         html{
             background: #222;
@@ -25,11 +25,14 @@
             color: #eee;
             font-size:11px;
         }
+        a{
+            color: #fff;
+        }
     </style>
 </head>
 <body>
 <script>
-    var list = ['drawTriangle.html','World.html', 'Scene.html', 'Group.html', 'Mesh.html', 'Geometry.html', 'Material.html', 'MoGL.html']
+    var list = ['parseShader.html','World.html', 'Scene.html', 'Group.html', 'Mesh.html', 'Geometry.html', 'Material.html', 'MoGL.html']
     var BODY = document.body
     for (var i = 0, len = list.length; i < len; i++) {
         var container = document.createElement('div')
@@ -37,9 +40,8 @@
         var iframe = document.createElement('iframe')
 
         container.style.display = 'inline-block'
-        title.innerHTML = list[i]
+        title.innerHTML =  "<a href='"+list[i]+"'>"+list[i]+"</a>"
         iframe.src = list[i]
-        iframe.resultTarget = title
 
         container.appendChild(title)
         container.appendChild(iframe)

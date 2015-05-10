@@ -16,7 +16,7 @@ var Camera = (function () {
         this._count = 0
     }
     fn = Camera.prototype,
-    fn.setBackgroundColor = function setBackgroundColor(){
+    fn.setBackgroundColor = function setBackgroundColor(){ MoGL.isAlive(this);
         var t0 = arguments[0], t1, ta
         if (arguments.length == 1) {
             if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7)
@@ -42,7 +42,7 @@ var Camera = (function () {
         }
         return this
     }
-    fn.render = function render(scene){
+    fn.render = function render(scene){ MoGL.isAlive(this);
         // 먼가 차일드를 루프돌면 되것군..
         //console.log('카메라렌더',arguments[1],arguments[2], '실제 Scene : ',scene)
         var gl = scene._gl
@@ -59,7 +59,6 @@ var Camera = (function () {
                 tProgram = scene._PROGRAMs['base']
                 gl.useProgram(tProgram)
                 gl.bindBuffer(gl.ARRAY_BUFFER, tVBO),
-                    gl.enableVertexAttribArray(tProgram.aVertexPosition);
                 gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0);
                 gl.uniform3fv(tProgram.uRotate,[tItem.rotateX,tItem.rotateY,tItem.rotateZ])
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO)
