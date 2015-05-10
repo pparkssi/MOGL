@@ -12,8 +12,7 @@ var Camera = (function () {
         this._r = 0,
         this._g = 0,
         this._b = 0,
-        this._a = 1,
-        this._count = 0
+        this._a = 1
     }
     fn = Camera.prototype,
     fn.setBackgroundColor = function setBackgroundColor(){ MoGL.isAlive(this);
@@ -45,6 +44,7 @@ var Camera = (function () {
     fn.render = function render(scene){ MoGL.isAlive(this);
         // 먼가 차일드를 루프돌면 되것군..
         //console.log('카메라렌더',arguments[1],arguments[2], '실제 Scene : ',scene)
+
         var gl = scene._gl
         var children = scene._children
         gl.clearColor(this._r,this._g,this._b,this._a)
@@ -53,8 +53,8 @@ var Camera = (function () {
         for(var k in children){
             tItem = children[k]
             if(!tItem._isCamera){
-                tVBO = scene._VBOs[tItem._geometry]
-                tIBO = scene._IBOs[tItem._geometry]
+                tVBO = scene._VBOs[tItem._geometry._name]
+                tIBO = scene._IBOs[tItem._geometry._name]
                 tMaterial = tItem._material
                 tProgram = scene._PROGRAMs['base']
                 gl.useProgram(tProgram)
@@ -63,6 +63,7 @@ var Camera = (function () {
                 gl.uniform3fv(tProgram.uRotate,[tItem.rotateX,tItem.rotateY,tItem.rotateZ])
                 gl.uniform3fv(tProgram.uPosition,[tItem.x,tItem.y,tItem.z])
                 gl.uniform3fv(tProgram.uScale,[tItem.scaleX,tItem.scaleY,tItem.scaleZ])
+                gl.uniform3fv(tProgram.uColor,[tMaterial._r,tMaterial._g,tMaterial._b])
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO)
                 gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
             }

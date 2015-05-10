@@ -19,7 +19,6 @@ var Material = (function () {
                     this._r = parseInt(t1[1], 16) / 255,
                     this._g = parseInt(t1[2], 16) / 255,
                     this._b = parseInt(t1[3], 16) / 255
-
                 } else {
                     t1 = hex_s.exec(t0),
                     this._r = parseInt(t1[1] + t1[1], 16) / 255,
@@ -30,9 +29,9 @@ var Material = (function () {
             }
         } else {
             this._r = arguments[0],
-                this._g = arguments[1],
-                this._b = arguments[2],
-                this._a = arguments[3] ? arguments[3] : 1
+            this._g = arguments[1],
+            this._b = arguments[2],
+            this._a = arguments[3] ? arguments[3] : 1
         }
     },
     fn = Material.prototype,
