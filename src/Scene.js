@@ -8,11 +8,12 @@ var Scene = (function () {
         this._update=0
         // for JS
         this._children = {},
-            this._textures = {},
-            this._materials = {},
-            this._geometrys = {},
-            this._vertexShaders = {},
-            this._fragmentShaders = {}
+        this._cameras={}
+        this._textures = {},
+        this._materials = {},
+        this._geometrys = {},
+        this._vertexShaders = {},
+        this._fragmentShaders = {}
         // for GPU
         this._gl = null
         this._VBOs = {}
@@ -147,6 +148,12 @@ var Scene = (function () {
         console.log('this._VBOs :',this._VBOs)
         console.log('this._IBOs :',this._IBOs)
         console.log('this._PROGRAMs :',this._PROGRAMs)
+        console.log('this._geometrys :',this._geometrys)
+        console.log('this._materials :',this._materials)
+        console.log('this._textures :',this._textures)
+        console.log('this._vertexShaders :',this._vertexShaders)
+        console.log('this._fragmentShaders :',this._fragmentShaders)
+
         console.log('////////////////////////////////////////////')
         this._update = 0
     },
@@ -169,7 +176,8 @@ var Scene = (function () {
         for (k in checks)
             if (typeof checks[k] == 'string')
                 if (!this._textures[checks[k]]) MoGL.error('Scene', 'addChild', 4)
-        this._children[id] = mesh
+        if(mesh instanceof Camera) this._cameras[id] = mesh
+        else this._children[id] = mesh
         this._update=1
         return this
     },
@@ -208,10 +216,10 @@ var Scene = (function () {
             if(target instanceof ImageData) return 0
             if(target['substring'] && target.substring(0,10)=='data:image' && target.indexOf('base64')>-1) return 0// base64문자열 - urlData형식으로 지정된 base64문자열
             // TODO 블랍은 어카지 -__;;;;;;;;;;;;;;;;;;;;;;;;실제 이미지를 포함하고 있는 Blob객체.
-
             return 1
         }
         this._textures[id] = image
+        this._textures[id].resizeType = arguments[2]
         return this
     },
     fn.addFragmentShader = function addFragmentShader(id, shaderStr) { MoGL.isAlive(this);
@@ -232,6 +240,7 @@ var Scene = (function () {
     // Get
     fn.getChild = function getChild(id) { MoGL.isAlive(this);
         var t = this._children[id];
+        t = t ? t : this._cameras[id]
         return t ? t : null
     },
     fn.getGeometry = function getGeometry(id) { MoGL.isAlive(this);
@@ -243,6 +252,7 @@ var Scene = (function () {
         return t ? t : null
     },
     fn.getTexture = function getTexture(id) { MoGL.isAlive(this);
+        //TODO image엘리먼트 - id에 해당되는 image엘리먼트. src는 dataURL로 되어있음.
         var t = this._textures[id]
         return t ? t : null
     },
