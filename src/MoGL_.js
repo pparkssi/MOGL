@@ -50,7 +50,7 @@ var MoGL = (function(){
         var cls, oldProto, newProto, key;
 
         //부모검사
-        if( !( parent instanceof MoGL ) ) MoGL.error( 'MoGL', 'ext', 0 );
+        if( parent !== MoGL && !( 'uuid' in parent ) ) MoGL.error( 'MoGL', 'ext', 0 );
 
         //생성자클래스
         cls = function(){
