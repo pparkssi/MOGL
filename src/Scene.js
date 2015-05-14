@@ -152,8 +152,9 @@ var Scene = (function () {
         texture = gl.createTexture(),
         //TODO 일단 이미지만
         texture.img = new Image()
-        console.log(image)
+        console.log(typeof image,image)
         if (image instanceof ImageData) texture.img.src = image.data
+        else if(image instanceof HTMLCanvasElement) texture.img.src = image.toDataURL()
         else if (image instanceof HTMLImageElement) texture.img.src = image.src
         else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) texture.img.src = image //base64문자열 - urlData형식으로 지정된 base64문자열
         else if (typeof image == 'string') texture.img.src = image
@@ -168,9 +169,9 @@ var Scene = (function () {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
             gl.generateMipmap(gl.TEXTURE_2D)
             gl.bindTexture(gl.TEXTURE_2D, null)
-            texture.data = image
             texture.loaded=1
         }
+        texture.data = image
         self._glTEXTUREs[id] = texture
         return texture
     }
