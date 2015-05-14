@@ -24,15 +24,6 @@
 
 <script>
     // 모글에 전역적인 루프 시스템이 있것고..
-    var renders = []
-    var LOOP = {}
-    setInterval(function () {
-        for (var i = 0; i < renders.length; i++) renders[i].render()
-        for (var k in LOOP) {
-            LOOP[k]()
-        }
-    }, 16)
-
 
     var w = new World('firstTest');
     w.addScene('s0', new Scene());
@@ -88,7 +79,7 @@
 
     console.log(w.getScene('s0')._children)
     console.log(w.getScene('s0')._cameras)
-    LOOP['test '] = function () {
+    w.LOOP['test '] = function () {
         w.getScene('s0').getChild('rect').rotateZ += 0.01
         w.getScene('s0').getChild('rect').setScale(0.1, 0.1, 0.1)
         w.getScene('s0').getChild('tri').rotateX += 0.01
@@ -116,7 +107,6 @@
         w.getScene('s0').getChild('camera1')._b = Math.random()
     }
 
-    renders.push(w)
 </script>
 </body>
 </html>
