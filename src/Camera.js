@@ -204,7 +204,7 @@ var Camera = (function () {
     },
     fn.setFog = function setFog(color,near,far){MoGL.isAlive(this);
         var t0 = color,t1,result
-        if (t0.charAt(0) == '#') {
+        if (t0 !=false && t0.charAt(0) == '#') {
             result= {}
             if (t1 = hex.exec(t0)) {
                 result.r = parseInt(t1[1], 16) / 255,

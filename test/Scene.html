@@ -243,8 +243,8 @@ void main(void) {
             function (){
                 // 텍스쳐 추가
                 scene1.addTexture('addTextureTest1',testTexture_IMG)
-                return scene1.getTexture('addTextureTest1').img.img.src
-            },testTexture_IMG.src,
+                return scene1.getTexture('addTextureTest1').img.data
+            },testTexture_IMG.data,
             function (){
                 // 중복 ID 추가
                 testResult = 1
@@ -275,8 +275,8 @@ void main(void) {
             function (){
                 // 이미지 형식체크 - urlData(base64)
                 scene1.addTexture('testTexture_dataURL',testTexture_dataURL)
-                return scene1.getTexture('testTexture_dataURL').img.img.src
-            },testTexture_dataURL
+                return scene1.getTexture('testTexture_dataURL').img.data
+            },testTexture_dataURL.data
 //            function (){
 //                // 이미지 형식체크 - canvas element
 //                scene1.addTexture('testTexture_canvas',testTexture_canvas)
