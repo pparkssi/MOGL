@@ -16,3 +16,4 @@ var Filter = {
     sepia: 'sepia',
     shadow: 'shadow'
 }
+Object.freeze(Filter);
