@@ -159,7 +159,6 @@ var Scene = (function () {
         else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) texture.img.src = image //base64문자열 - urlData형식으로 지정된 base64문자열
         else if (typeof image == 'string') texture.img.src = image
         //TODO 비디오 처리
-        //TODO 캔버스 처리
 
         texture.img.onload = function () {
             gl.bindTexture(gl.TEXTURE_2D, texture),
@@ -181,17 +180,18 @@ var Scene = (function () {
         this._glVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0,0.0,0.0]), 3)
         //for GPU
         for (var k in this._children) {
-            var mesh = this._children[k]
+            var mesh = this._children[k], name, geo = mesh._geometry;
             if (!this._glVBOs[mesh._geometry] && mesh._geometry) {
-                this._glVBOs[mesh._geometry._name] = makeVBO(this, mesh._geometry._name, mesh._geometry._position, 3),
-                this._glUVBOs[mesh._geometry._name] = makeUVBO(this, mesh._geometry._name, mesh._geometry._uv, 2),
-                this._glIBOs[mesh._geometry._name] = makeIBO(this, mesh._geometry._name, mesh._geometry._index, 1)
+                name = geo._name,
+                this._glVBOs[name] = makeVBO(this, name, geo._position, 3),
+                this._glUVBOs[name] = makeUVBO(this, name, geo._uv, 2),
+                this._glIBOs[name] = makeIBO(this, name, geo._index, 1)
             }
         }
-        for (k in this._cameras){
+        for (k in this._cameras) {
             var camera = this._cameras[k]
             camera._cvs = this._cvs
-            if(!camera._renderArea) camera.setRenderArea(0,0,this._cvs.width,this._cvs.height)
+            if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
         }
         var checks = this._vertexShaders;
         for (k in checks) makeProgram(this, k)
@@ -308,7 +308,6 @@ var Scene = (function () {
         return t ? t : null
     },
     fn.getTexture = function getTexture(id) { MoGL.isAlive(this);
-        //TODO image엘리먼트 - id에 해당되는 image엘리먼트. src는 dataURL로 되어있음.
         var t = this._textures[id]
         return t ? t : null
     },
