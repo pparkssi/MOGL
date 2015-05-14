@@ -7,6 +7,7 @@ var Camera = (function () {
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
     Camera = function Camera() {
         this._cvs=null
+        this._renderArea = null,
         this._geometry = new Geometry([], [])
         this._material = new Material()
         this._r = 0,
@@ -16,14 +17,13 @@ var Camera = (function () {
         this._fov = 55,
         this._near = 0.1,
         this._far = 100000,
-        this._renderArea = null,
         this._visible=1,
         this._filters ={},
         this._fog = null,
         this._antialias = false
-        this._pixelMatrix = Matrix()
+        this._pixelMatrix = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
     }
-    fn = Camera.prototype
+    fn = Camera.prototype,
     fn.getBackgroundColor = function getBackgroundColor(){MoGL.isAlive(this);
         return a4[0] = this._r, a4[1] = this._g, a4[2] = this._b, a4[3] = this._a, a4
     },
@@ -42,16 +42,7 @@ var Camera = (function () {
         return this._fov
     },
     fn.getProjectionMatrix = function getProjectionMatrix(){MoGL.isAlive(this);
-        //TODO 크기를 반영해야함..
-        //TODO 이렇다는건...카메라 렌더시에 _renderArea를 알고있다는 가정인가?
-        var aspectRatio = this._renderArea[2]/this._renderArea[3],yScale = 1.0 / Math.tan(this._fov * Math.PI / 180 / 2.0),xScale = yScale / aspectRatio;
-        this._pixelMatrix = [
-            xScale, 0, 0, 0,
-            0, -yScale, 0, 0,
-            0, 0, this._far / (this._far - this._near), 1,
-            0, 0, (this._near * this._far) / (this._near - this._far), 1
-        ]
-        return this._pixelMatrix
+        return this.setPerspective(), this._pixelMatrix
     },
     fn.getRenderArea = function getRenderArea(){MoGL.isAlive(this);
         return this._renderArea
@@ -89,14 +80,13 @@ var Camera = (function () {
         return this
     },
     fn.setClipPlane = function setClipPlane(near,far){MoGL.isAlive(this);
-        this._near = near,this._far = far
+        this._near = near, this._far = far
         return this
     },
     fn.setFilter = function setFilter(filter/*,needIe*/){MoGL.isAlive(this);
         var result
-        if(arguments[1]){
-            result = arguments[1]
-        }else{
+        if(arguments[1]) result = arguments[1]
+        else {
             switch (filter) {
                 case Filter.anaglyph :
                     result = {
@@ -135,11 +125,11 @@ var Camera = (function () {
                     result = {
                         blurX: 4.0,
                         blurY: 4.0,
-                        quality : 1
+                        quality: 1
                     }
                     break
                 case Filter.colorMatrix :
-                    result =  {}
+                    result = {}
                     break
                 case Filter.convolution :
                     result = {
@@ -155,7 +145,7 @@ var Camera = (function () {
                     }
                     break
                 case Filter.displacementMap :
-                    result =  {
+                    result = {
                         mapTextureID: null,
                         mapPoint: null,
                         componentX: 0,
@@ -168,7 +158,7 @@ var Camera = (function () {
                     }
                     break
                 case Filter.fxaa :
-                    result =  {}
+                    result = {}
                     break
                 case Filter.glow :
                     result = {
@@ -183,13 +173,13 @@ var Camera = (function () {
                     }
                     break
                 case Filter.invert :
-                    result =  {}
+                    result = {}
                     break
                 case Filter.mono :
-                    result =  {}
+                    result = {}
                     break
                 case Filter.sepia :
-                    result =  {}
+                    result = {}
                     break
                 case Filter.shadow :
                     result = {
@@ -213,7 +203,7 @@ var Camera = (function () {
     },
     fn.setFog = function setFog(color,near,far){MoGL.isAlive(this);
         var t0 = color,t1,result
-        if (t0.charAt(0) == '#') {
+        if (t0 !=false && t0.charAt(0) == '#') {
             result= {}
             if (t1 = hex.exec(t0)) {
                 result.r = parseInt(t1[1], 16) / 255,
@@ -226,41 +216,70 @@ var Camera = (function () {
                 result.g = parseInt(t1[2] + t1[2], 16) / 255,
                 result.b = parseInt(t1[3] + t1[3], 16) / 255
             }
-            result.a =1
-            result.near = near
-            result.far = far
+            result.a =1,
+            result.near = near,
+            result.far = far,
             this._fog = result
-        }else if(!color){
-            this._fog = null
-        }
+        } else if (!t0) this._fog = null
         return this
     },
     fn.setFOV = function setFOV(){MoGL.isAlive(this);
-        if (arguments.length == 1)this._fov = arguments[0]
+        if (arguments.length == 1) this._fov = arguments[0]
         else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * (Math.PI / 180) / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
         return this
     },
     fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
-        //TODO
+        this._pixelMatrix = [
+            2 / this._cvs.clientWidth, 0, 0, 0,
+            0, 2 / this._cvs.clientHeight, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 1
+        ]
         return this
     },
     fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
-        //TODO
+        //TODO 크기를 반영해야함..
+        //TODO 이렇다는건...카메라 렌더시에 _renderArea를 알고있다는 가정인가?
+        var aspectRatio = this._renderArea[2]/this._renderArea[3],yScale = 1.0 / Math.tan(this._fov * Math.PI / 180 / 2.0),xScale = yScale / aspectRatio;
+        this._pixelMatrix = [
+            xScale, 0, 0, 0,
+            0, yScale, 0, 0,
+            0, 0, this._far / (this._far - this._near), 1,
+            0, 0, (this._near * this._far) / (this._near - this._far), 1
+        ]
         return this
     },
-    fn.setProjectionMatrix = function setProjectionMatrix(){MoGL.isAlive(this);
-        //TODO
+    fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);
+        if (matrix instanceof Matrix) {
+            this._pixelMatrix = [
+                matrix.m11, matrix.m12, matrix.m13, matrix.m14,
+                matrix.m21, matrix.m22, matrix.m23, matrix.m24,
+                matrix.m31, matrix.m32, matrix.m33, matrix.m34,
+                matrix.m41, matrix.m42, matrix.m43, matrix.m44
+            ]
+        } else {
+            this._pixelMatrix = [
+                matrix[0], matrix[1], matrix[2], matrix[3],
+                matrix[4], matrix[5], matrix[6], matrix[7],
+                matrix[8], matrix[9], matrix[10], matrix[11],
+                matrix[12], matrix[13], matrix[14], matrix[15]
+            ]
+        }
+
+        var m22 = -this._pixelMatrix.m22;
+        var m32 = -this._pixelMatrix.m32;
+        this._near = (2.0 * m32) / (2.0 * m22 - 2.0);
+        this._far = ((m22 - 1.0) * this._near) / (m22 + 1.0);
         return this
     },
     fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);
-        var tw = this._cvs.clientWidth
-        var th = this._cvs.clientHeight
-        console.log(typeof x =='string' ? tw * x.replace('%', '') : x)
+        var tw = this._cvs.clientWidth, th = this._cvs.clientHeight;
+        console.log(typeof x == 'string' ? tw * x.replace('%', '') : x)
         this._renderArea = [
-            typeof x =='string' ? tw * x.replace('%', '')*0.01 : x,
-            typeof y =='string' ? th * y.replace('%', '')*0.01 : y,
-            typeof w =='string' ? tw * w.replace('%', '')*0.01 : w,
-            typeof h =='string' ? th * h.replace('%', '')*0.01 : h,
+            typeof x == 'string' ? tw * x.replace('%', '') * 0.01 : x,
+            typeof y == 'string' ? th * y.replace('%', '') * 0.01 : y,
+            typeof w == 'string' ? tw * w.replace('%', '') * 0.01 : w,
+            typeof h == 'string' ? th * h.replace('%', '') * 0.01 : h,
         ]
         return this
     },
@@ -269,7 +288,7 @@ var Camera = (function () {
         return this
     },
     fn.setVisible = function setVisible(value){MoGL.isAlive(this);
-        this._visible=value
+        this._visible = value
         return this
     },
     fn.removeFilter = function removeFilter(filter){MoGL.isAlive(this);

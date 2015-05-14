@@ -14,37 +14,18 @@
     var renders = []
     var LOOP = {}
     setInterval(function () {
-        for (var i = 0; i < renders.length; i++) renders[i]._render()
+        for (var i = 0; i < renders.length; i++) renders[i].render()
         for (var k in LOOP) {
             LOOP[k]()
         }
     }, 16)
 
 
-    var baseVertexShader = {
-        attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
-        uniforms: ['mat4 uPixelMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
-        varyings: ['vec2 vUV'],
-        function: [VertexShader.baseFunction],
-        main: ['' +
-        'gl_Position = uPixelMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-        'vUV = aUV;'
-        ]
-    }
-    var baseFragmentShader = {
-        precision: 'mediump float',
-        uniforms: ['sampler2D uSampler'],
-        varyings: ['vec2 vUV'],
-        function: [],
-        main: ['gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))']
-    }
-
 
     var w = new World('firstTest');
     w.addScene('s0', new Scene());
 
-    w.getScene('s0').addVertexShader('bitmap', baseVertexShader);
-    w.getScene('s0').addFragmentShader('bitmap', baseFragmentShader);
+
     w.getScene('s0').addGeometry('rect', new Geometry([
         1.0, 1.0, 0.0, 0.0, 0.0,
         -1.0, 1.0, 0.0, 1.0, 0.0,

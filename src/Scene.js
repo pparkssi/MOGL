@@ -22,6 +22,46 @@ var Scene = (function () {
         this._glIBOs = {},
         this._glPROGRAMs = {},
         this._glTEXTUREs ={}
+
+        var baseVertexShader = {
+            attributes: ['vec3 aVertexPosition'],
+            uniforms: ['mat4 uPixelMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec3 uColor'],
+            varyings: ['vec3 vColor'],
+            function: [VertexShader.baseFunction],
+            main: ['' +
+            'gl_Position = uPixelMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+            'vColor = uColor ;']
+        }
+        var baseFragmentShader = {
+            precision: 'mediump float',
+            uniforms: [],
+            varyings: ['vec3 vColor'],
+            function: [],
+            main: ['gl_FragColor =  vec4(vColor, 1.0)']
+        }
+
+        var bitmapVertexShader = {
+            attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
+            uniforms: ['mat4 uPixelMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+            varyings: ['vec2 vUV'],
+            function: [VertexShader.baseFunction],
+            main: ['' +
+            'gl_Position = uPixelMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+            'vUV = aUV;'
+            ]
+        }
+        var bitmapFragmentShader = {
+            precision: 'mediump float',
+            uniforms: ['sampler2D uSampler'],
+            varyings: ['vec2 vUV'],
+            function: [],
+            main: ['gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))']
+        }
+        this.addVertexShader('base', baseVertexShader);
+        this.addFragmentShader('base', baseFragmentShader);
+
+        this.addVertexShader('bitmap', bitmapVertexShader);
+        this.addFragmentShader('bitmap', bitmapFragmentShader);
     }
     /////////////////////////////////////////////////////////////////
     var makeVBO = function makeVBO(self, name, data, stride) {
@@ -152,8 +192,14 @@ var Scene = (function () {
         texture = gl.createTexture(),
         //TODO 일단 이미지만
         texture.img = new Image()
-        if (typeof image == 'string') texture.img.src = image
+        console.log(typeof image,image)
+        if (image instanceof ImageData) texture.img.src = image.data
+        else if(image instanceof HTMLCanvasElement) texture.img.src = image.toDataURL()
         else if (image instanceof HTMLImageElement) texture.img.src = image.src
+        else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) texture.img.src = image //base64문자열 - urlData형식으로 지정된 base64문자열
+        else if (typeof image == 'string') texture.img.src = image
+        //TODO 비디오 처리
+
         texture.img.onload = function () {
             gl.bindTexture(gl.TEXTURE_2D, texture),
             //TODO 다변화 대응해야됨
@@ -164,6 +210,7 @@ var Scene = (function () {
             gl.bindTexture(gl.TEXTURE_2D, null)
             texture.loaded=1
         }
+        texture.data = image
         self._glTEXTUREs[id] = texture
         return texture
     }
@@ -173,17 +220,19 @@ var Scene = (function () {
         this._glVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0,0.0,0.0]), 3)
         //for GPU
         for (var k in this._children) {
-            var mesh = this._children[k]
+            var mesh = this._children[k], name, geo = mesh._geometry;
             if (!this._glVBOs[mesh._geometry] && mesh._geometry) {
-                this._glVBOs[mesh._geometry._name] = makeVBO(this, mesh._geometry._name, mesh._geometry._position, 3),
-                this._glUVBOs[mesh._geometry._name] = makeUVBO(this, mesh._geometry._name, mesh._geometry._uv, 2),
-                this._glIBOs[mesh._geometry._name] = makeIBO(this, mesh._geometry._name, mesh._geometry._index, 1)
+                name = geo._name,
+                this._glVBOs[name] = makeVBO(this, name, geo._position, 3),
+                this._glUVBOs[name] = makeUVBO(this, name, geo._uv, 2),
+                this._glIBOs[name] = makeIBO(this, name, geo._index, 1)
             }
         }
-        for (k in this._cameras){
+        for (k in this._cameras) {
             var camera = this._cameras[k]
             camera._cvs = this._cvs
-            if(!camera._renderArea) camera.setRenderArea(0,0,this._cvs.width,this._cvs.height)
+            if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
+            camera.getProjectionMatrix()
         }
         var checks = this._vertexShaders;
         for (k in checks) makeProgram(this, k)
@@ -262,9 +311,11 @@ var Scene = (function () {
         }
         if(this._textures[id]) this._textures[id].img=makeTexture(this,id,image)
         else{
-            this._textures[id] = {
-                count: 0, last: 0, img: makeTexture(this,id, image), resizeType: arguments[2] || null
-            }
+            this._textures[id] = { count: 0, last: 0, img: null, resizeType: arguments[2] || null }
+            this._textures[id].img=makeTexture(this,id,image)
+            console.log(this._textures)
+            console.log(id, image)
+
         }
         return this
     },
@@ -298,7 +349,6 @@ var Scene = (function () {
         return t ? t : null
     },
     fn.getTexture = function getTexture(id) { MoGL.isAlive(this);
-        //TODO image엘리먼트 - id에 해당되는 image엘리먼트. src는 dataURL로 되어있음.
         var t = this._textures[id]
         return t ? t : null
     },
