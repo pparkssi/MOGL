@@ -22,6 +22,46 @@ var Scene = (function () {
         this._glIBOs = {},
         this._glPROGRAMs = {},
         this._glTEXTUREs ={}
+
+        var baseVertexShader = {
+            attributes: ['vec3 aVertexPosition'],
+            uniforms: ['mat4 uPixelMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec3 uColor'],
+            varyings: ['vec3 vColor'],
+            function: [VertexShader.baseFunction],
+            main: ['' +
+            'gl_Position = uPixelMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+            'vColor = uColor ;']
+        }
+        var baseFragmentShader = {
+            precision: 'mediump float',
+            uniforms: [],
+            varyings: ['vec3 vColor'],
+            function: [],
+            main: ['gl_FragColor =  vec4(vColor, 1.0)']
+        }
+
+        var bitmapVertexShader = {
+            attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
+            uniforms: ['mat4 uPixelMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+            varyings: ['vec2 vUV'],
+            function: [VertexShader.baseFunction],
+            main: ['' +
+            'gl_Position = uPixelMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+            'vUV = aUV;'
+            ]
+        }
+        var bitmapFragmentShader = {
+            precision: 'mediump float',
+            uniforms: ['sampler2D uSampler'],
+            varyings: ['vec2 vUV'],
+            function: [],
+            main: ['gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))']
+        }
+        this.addVertexShader('base', baseVertexShader);
+        this.addFragmentShader('base', baseFragmentShader);
+
+        this.addVertexShader('bitmap', bitmapVertexShader);
+        this.addFragmentShader('bitmap', bitmapFragmentShader);
     }
     /////////////////////////////////////////////////////////////////
     var makeVBO = function makeVBO(self, name, data, stride) {

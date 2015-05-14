@@ -16,7 +16,7 @@ var World = (function () {
         console.log(this._gl ? id + ' : MoGL 초기화 성공!' : console.log(id + ' : MoGL 초기화 실패!!'))
     },
     fn = World.prototype,
-    fn._render = function _render() { MoGL.isAlive(this);
+    fn.render = function render() { MoGL.isAlive(this);
         var i, k, len, tList = this._renderList
         var scene,camera,gl,children;
         var tItem, tMaterial, tProgram, tVBO, tUVBO, tIBO;
