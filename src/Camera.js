@@ -243,7 +243,7 @@ var Camera = (function () {
         var aspectRatio = this._renderArea[2]/this._renderArea[3],yScale = 1.0 / Math.tan(this._fov * Math.PI / 180 / 2.0),xScale = yScale / aspectRatio;
         this._pixelMatrix = [
             xScale, 0, 0, 0,
-            0, -yScale, 0, 0,
+            0, yScale, 0, 0,
             0, 0, this._far / (this._far - this._near), 1,
             0, 0, (this._near * this._far) / (this._near - this._far), 1
         ]

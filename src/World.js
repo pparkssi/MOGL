@@ -10,12 +10,23 @@ var World = (function () {
     World = function World(id) {
         this._cvs = document.getElementById(id);
         this._renderList = [],
-        this._sceneList = {}
+        this._sceneList = {},
+        this.LOOP={}
         var keys = 'webgl,experimental-webgl,webkit-3d,moz-webgl'.split(','), i = keys.length
         while (i--) if (this._gl = this._cvs.getContext(keys[i])) break
         console.log(this._gl ? id + ' : MoGL 초기화 성공!' : console.log(id + ' : MoGL 초기화 실패!!'))
+        this._autoRender()
     },
     fn = World.prototype,
+    fn._autoRender = function _autoRender(){MoGL.isAlive(this);
+        //이거 정리해야됨
+        setInterval(function (self) {
+            self.render()
+            for (var k in self.LOOP) {
+                self.LOOP[k]()
+            }
+        }, 16, this)
+    },
     fn.render = function render() { MoGL.isAlive(this);
         var i, k, len, tList = this._renderList
         var scene,camera,gl,children;
