@@ -28,39 +28,44 @@
 <body>
 <canvas id="firstWorld" width="600" height="400"></canvas>
 <script>
-    var renders = []
-    var LOOP = {}
-    setInterval(function () {
-        for (var i = 0; i < renders.length; i++) renders[i].render()
-        for (var k in LOOP) {
-            LOOP[k]()
-        }
-    }, 16)
 
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     // 월드 생성
-    var world = World('firstWorld')
+    var world = new World('firstWorld')
     // 씬 생성
-    var scene = world.addScene('firstScene', Scene()).getScene('firstScene')
-    scene.addChild('testCamera', Camera())
-    console.log(scene)
-    console.log(scene.getChild('testCamera'))
+    var scene = new Scene()
+    world.addScene('firstScene', scene)
+    // 카메라 생성
+    var camera = new Camera()
+    scene.addChild('testCamera', camera)
     // 렌더 추가
     world.addRender('firstScene', 'testCamera')
+    console.log(scene)
+    console.log(scene.getChild('testCamera'))
     console.log(world)
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
 
     // 씬에 지오메트리, 재질, 매쉬 등록
-    scene.addGeometry('triangle', new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]))
-    scene.addMaterial('white', new Material('#ffffff'))
-    scene.addChild('mesh1', new Mesh('triangle', 'white'))
+    var geometry = new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2])
+    var material = new Material('#ffffff')
 
-    scene.getChild('mesh1').scaleX = scene.getChild('mesh1').scaleY = scene.getChild('mesh1').scaleZ = 100
-    scene.getChild('mesh1').z = 1000
+    scene.addGeometry('triangle', geometry)
+    scene.addMaterial('white', material)
 
+    var mesh = new Mesh('triangle', 'white')
+    scene.addChild('mesh1', mesh)
+
+    mesh.scaleX = mesh.scaleY = mesh.scaleZ = 100
+    mesh.z = 1000
+
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
     // 렌더 루프 추가
-    renders.push(world)
-    LOOP['test'] = function () {
-        scene.getChild('mesh1').rotateX += 0.1
-        scene.getChild('mesh1').rotateY += 0.1
+    world.LOOP['test'] = function () {
+        mesh.rotateX += 0.1
+        mesh.rotateY += 0.1
         scene.getChild('mesh1').rotateZ += 0.1
     }
 </script>

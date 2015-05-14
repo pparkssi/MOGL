@@ -28,28 +28,24 @@
 <body>
 <canvas id="firstWorld" width="600" height="400"></canvas>
 <script>
-    var renders = []
-    var LOOP = {}
-    setInterval(function () {
-        for (var i = 0; i < renders.length; i++) renders[i].render()
-        for (var k in LOOP) {
-            LOOP[k]()
-        }
-    }, 16)
 
-    // 월드 생성
-    var world = World('firstWorld')
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+    var world = new World('firstWorld')
     // 씬 생성
-    var scene = world.addScene('firstScene', Scene()).getScene('firstScene')
-    scene.addChild('testCamera', Camera())
-    console.log(scene)
-    console.log(scene.getChild('testCamera'))
+    var scene = new Scene()
+    world.addScene('firstScene', scene)
+    // 카메라 생성
+    var camera = new Camera()
+    scene.addChild('testCamera', camera)
     // 렌더 추가
     world.addRender('firstScene', 'testCamera')
-    console.log(world)
+    
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
 
     // 씬에 지오메트리, 재질, 매쉬 등록
-    scene.addGeometry('rect', new Geometry([
+    scene.addGeometry('cube', new Geometry([
                         // Front face
                         -1.0, -1.0, 1.0, 0.0, 0.0,
                         1.0, -1.0, 1.0, 1.0, 0.0,
@@ -100,17 +96,19 @@
     scene.addTexture('texture1', '../src/ohno.png')
     scene.getMaterial('bitmapMat').addTexture('texture1')
 
-    scene.addChild('mesh1', new Mesh('rect', 'bitmapMat'))
+    scene.addChild('cubeMesh', new Mesh('cube', 'bitmapMat'))
 
-    scene.getChild('mesh1').scaleX = scene.getChild('mesh1').scaleY = scene.getChild('mesh1').scaleZ = 100
-    scene.getChild('mesh1').z = 1000
+    var cubeMesh = scene.getChild('cubeMesh')
+
+    cubeMesh.scaleX = cubeMesh.scaleY = cubeMesh.scaleZ = 100
+    cubeMesh.z = 1000
 
     // 렌더 루프 추가
-    renders.push(world)
-    LOOP['test'] = function () {
-        scene.getChild('mesh1').rotateX += 0.01
-        scene.getChild('mesh1').rotateY += 0.01
-        scene.getChild('mesh1').rotateZ += 0.01
+
+    world.LOOP['test'] = function () {
+        cubeMesh.rotateX += 0.01
+        cubeMesh.rotateY += 0.01
+        cubeMesh.rotateZ += 0.01
     }
 </script>
 <div>GitHub - <a href="https://github.com/projectBS/MoGL">https://github.com/projectBS/MoGL</a></div>
