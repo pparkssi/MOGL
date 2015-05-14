@@ -21,7 +21,7 @@ var Camera = (function () {
         this._filters ={},
         this._fog = null,
         this._antialias = false
-        this._pixelMatrix = Matrix()
+        this._pixelMatrix = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
     }
     fn = Camera.prototype,
     fn.getBackgroundColor = function getBackgroundColor(){MoGL.isAlive(this);

@@ -20,3 +20,4 @@ var VertexShader = {
     '   return m3*m2*m1;\n' +
     '}\n'
 }
+Object.freeze(VertexShader);

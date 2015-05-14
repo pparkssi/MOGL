@@ -7,3 +7,4 @@ var Texture = {
     crop: 'crop', //'crop' - 이미지를 2의 n에 맡게 좌상단을 기준으로 잘라냄.
     addSpace: 'addSpace' //'addSpace' - 이미지를 2의 n에 맡게 여백을 늘림.
 }
+Object.freeze(Texture);
