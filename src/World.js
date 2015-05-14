@@ -21,7 +21,7 @@ var World = (function () {
     fn._autoRender = function _autoRender(){MoGL.isAlive(this);
         //이거 정리해야됨
         setInterval(function (self) {
-            self.render()
+            self.isAlive ? self.render() :0
             for (var k in self.LOOP) {
                 self.LOOP[k]()
             }
