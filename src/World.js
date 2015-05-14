@@ -9,13 +9,13 @@ var World = (function () {
     var World, fn;
     World = function World(id) {
         this._cvs = document.getElementById(id);
+        this._renderList = [],
+        this._sceneList = {}
         var keys = 'webgl,experimental-webgl,webkit-3d,moz-webgl'.split(','), i = keys.length
         while (i--) if (this._gl = this._cvs.getContext(keys[i])) break
         console.log(this._gl ? id + ' : MoGL 초기화 성공!' : console.log(id + ' : MoGL 초기화 실패!!'))
     },
     fn = World.prototype,
-    fn._renderList = [],
-    fn._sceneList = {},
     fn._render = function _render() { MoGL.isAlive(this);
         var i, k, len, tList = this._renderList
         var scene,camera,gl,children;
@@ -78,7 +78,7 @@ var World = (function () {
         }
     },
     fn.addRender = function addRender(sceneID, cameraID, index) { MoGL.isAlive(this);
-        var uuid = sceneID + '_' + cameraID, tScene = fn._sceneList[sceneID], tList = this._renderList;
+        var uuid = sceneID + '_' + cameraID, tScene = this._sceneList[sceneID], tList = this._renderList;
         for (var i = 0, len = tList.length; i < len; i++) if (tList[i].uuid == uuid) MoGL.error('World', 'addRender', 0)
         if(!tScene) MoGL.error('World','addRender',1)
         if(tScene) if(!tScene.getChild(cameraID)) MoGL.error('World','addRender',2)
