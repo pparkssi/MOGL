@@ -8,10 +8,9 @@
  */
 var Mesh = (function () {
     var Mesh, fn, f3 = new Float32Array(3);
-    var SQRT = Math.sqrt, ATAN2 = Math.atan2, ASIN = Math.asin, COS = Math.cos, PIH = Math.PI * 0.5,PERPI=180 / Math.PI
+    var SQRT = Math.sqrt, ATAN2 = Math.atan2, ASIN = Math.asin, COS = Math.cos, PIH = Math.PI * 0.5, PERPI = 180 / Math.PI
     Mesh = function Mesh(geometry, material) {
         // TODO 어디까지 허용할건가..
-        //console.log(geometry,material)
         if( geometry && !(typeof geometry =='string' || geometry instanceof Geometry  ) ) MoGL.error('Mesh','contructor',0)
         if( material && !(typeof material =='string' || material instanceof Material  ) ) MoGL.error('Mesh','contructor',1)
         this._geometry = geometry,
@@ -39,7 +38,7 @@ var Mesh = (function () {
         return this._matrix =position.multiply(rotate).multiply(scale)
     },
     fn.getParent = function getParent() { MoGL.isAlive(this);
-        return this._scene ? this._scene : null
+        return this._parent ? this._parent : null
     },
     fn.getPosition = function getPosition() { MoGL.isAlive(this);
         return f3[0] = this.x, f3[1] = this.y, f3[2] = this.z, f3

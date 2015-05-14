@@ -7,6 +7,7 @@ var Camera = (function () {
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
     Camera = function Camera() {
         this._cvs=null
+        this._renderArea = null,
         this._geometry = new Geometry([], [])
         this._material = new Material()
         this._r = 0,
@@ -16,14 +17,13 @@ var Camera = (function () {
         this._fov = 55,
         this._near = 0.1,
         this._far = 100000,
-        this._renderArea = null,
         this._visible=1,
         this._filters ={},
         this._fog = null,
         this._antialias = false
         this._pixelMatrix = Matrix()
     }
-    fn = Camera.prototype
+    fn = Camera.prototype,
     fn.getBackgroundColor = function getBackgroundColor(){MoGL.isAlive(this);
         return a4[0] = this._r, a4[1] = this._g, a4[2] = this._b, a4[3] = this._a, a4
     },
@@ -42,8 +42,7 @@ var Camera = (function () {
         return this._fov
     },
     fn.getProjectionMatrix = function getProjectionMatrix(){MoGL.isAlive(this);
-        this.setPerspective()
-        return this._pixelMatrix
+        return this.setPerspective(), this._pixelMatrix
     },
     fn.getRenderArea = function getRenderArea(){MoGL.isAlive(this);
         return this._renderArea
@@ -81,7 +80,7 @@ var Camera = (function () {
         return this
     },
     fn.setClipPlane = function setClipPlane(near,far){MoGL.isAlive(this);
-        this._near = near,this._far = far
+        this._near = near, this._far = far
         return this
     },
     fn.setFilter = function setFilter(filter/*,needIe*/){MoGL.isAlive(this);
@@ -217,17 +216,15 @@ var Camera = (function () {
                 result.g = parseInt(t1[2] + t1[2], 16) / 255,
                 result.b = parseInt(t1[3] + t1[3], 16) / 255
             }
-            result.a =1
-            result.near = near
-            result.far = far
+            result.a =1,
+            result.near = near,
+            result.far = far,
             this._fog = result
-        }else if(!color){
-            this._fog = null
-        }
+        } else if (!t0) this._fog = null
         return this
     },
     fn.setFOV = function setFOV(){MoGL.isAlive(this);
-        if (arguments.length == 1)this._fov = arguments[0]
+        if (arguments.length == 1) this._fov = arguments[0]
         else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * (Math.PI / 180) / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
         return this
     },
@@ -276,14 +273,13 @@ var Camera = (function () {
         return this
     },
     fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);
-        var tw = this._cvs.clientWidth
-        var th = this._cvs.clientHeight
-        console.log(typeof x =='string' ? tw * x.replace('%', '') : x)
+        var tw = this._cvs.clientWidth, th = this._cvs.clientHeight;
+        console.log(typeof x == 'string' ? tw * x.replace('%', '') : x)
         this._renderArea = [
-            typeof x =='string' ? tw * x.replace('%', '')*0.01 : x,
-            typeof y =='string' ? th * y.replace('%', '')*0.01 : y,
-            typeof w =='string' ? tw * w.replace('%', '')*0.01 : w,
-            typeof h =='string' ? th * h.replace('%', '')*0.01 : h,
+            typeof x == 'string' ? tw * x.replace('%', '') * 0.01 : x,
+            typeof y == 'string' ? th * y.replace('%', '') * 0.01 : y,
+            typeof w == 'string' ? tw * w.replace('%', '') * 0.01 : w,
+            typeof h == 'string' ? th * h.replace('%', '') * 0.01 : h,
         ]
         return this
     },
@@ -292,7 +288,7 @@ var Camera = (function () {
         return this
     },
     fn.setVisible = function setVisible(value){MoGL.isAlive(this);
-        this._visible=value
+        this._visible = value
         return this
     },
     fn.removeFilter = function removeFilter(filter){MoGL.isAlive(this);
