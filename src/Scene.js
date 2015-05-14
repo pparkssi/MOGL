@@ -152,8 +152,14 @@ var Scene = (function () {
         texture = gl.createTexture(),
         //TODO 일단 이미지만
         texture.img = new Image()
-        if (typeof image == 'string') texture.img.src = image
+        console.log(image)
+        if (image instanceof ImageData) texture.img.src = image.data
         else if (image instanceof HTMLImageElement) texture.img.src = image.src
+        else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) texture.img.src = image //base64문자열 - urlData형식으로 지정된 base64문자열
+        else if (typeof image == 'string') texture.img.src = image
+        //TODO 비디오 처리
+        //TODO 캔버스 처리
+
         texture.img.onload = function () {
             gl.bindTexture(gl.TEXTURE_2D, texture),
             //TODO 다변화 대응해야됨
@@ -162,6 +168,7 @@ var Scene = (function () {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
             gl.generateMipmap(gl.TEXTURE_2D)
             gl.bindTexture(gl.TEXTURE_2D, null)
+            texture.data = image
             texture.loaded=1
         }
         self._glTEXTUREs[id] = texture
@@ -262,9 +269,11 @@ var Scene = (function () {
         }
         if(this._textures[id]) this._textures[id].img=makeTexture(this,id,image)
         else{
-            this._textures[id] = {
-                count: 0, last: 0, img: makeTexture(this,id, image), resizeType: arguments[2] || null
-            }
+            this._textures[id] = { count: 0, last: 0, img: null, resizeType: arguments[2] || null }
+            this._textures[id].img=makeTexture(this,id,image)
+            console.log(this._textures)
+            console.log(id, image)
+
         }
         return this
     },

@@ -28,8 +28,9 @@ var Geometry = (function () {
         this._position = [],
         this._normal = [],
         this._uv = [],
+        this._color = [],
+        this._volume=null,
         this._name = null
-        this._color = []
         ///////////////////////////////
         //TODO 노말,UV,컬러없을떄 판별
         if (arguments[2]) {
@@ -62,7 +63,7 @@ var Geometry = (function () {
         return this._triangleCount
     },
     fn.getVolume = function getVolume() { MoGL.isAlive(this);
-        if (!('_volume' in this)) {
+        if (!this._volume) {
             var minX = 0, minY = 0, minZ = 0, maxX = 0, maxY = 0, maxZ = 0
             var t0, t1, t2, t = this._position,i= t.length
             while(i--){
