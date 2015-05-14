@@ -38,10 +38,11 @@ child.prototype.printC = function(){
 child = MoGL.ext( child, parent );
 
 var instance1 = new child( 1, 2, 3 );
+
 bsTest( 'new',
 	function(){
 		return instance1.uuid;
-	}, 2,
+	}, 10,
 	function(){
 		return instance1.isAlive;
 	}, true,
@@ -55,12 +56,13 @@ bsTest( 'new',
 		return instance1.printC();
 	}, 3
 );
-
+console.log( instance1.constructor, instance1.constructor === child, instance1.constructor === parent);
 var instance2 = child( 4, 5, 6 );
+
 bsTest( 'factory',
 	function(){
 		return instance2.uuid;
-	}, 3,
+	}, 11,
 	function(){
 		return instance2.isAlive;
 	}, true,
