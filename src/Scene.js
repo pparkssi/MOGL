@@ -232,6 +232,7 @@ var Scene = (function () {
             var camera = this._cameras[k]
             camera._cvs = this._cvs
             if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
+            camera.getProjectionMatrix()
         }
         var checks = this._vertexShaders;
         for (k in checks) makeProgram(this, k)

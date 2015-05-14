@@ -32,7 +32,10 @@ var World = (function () {
                 //TODO 뷰포트가 아닌....이게...프레임에 어떻게 그릴껀지로 가야함..
                 gl.viewport(camera._renderArea[0],camera._renderArea[1]==0 ? 0 :camera._renderArea[3]-camera._renderArea[1],camera._renderArea[2],camera._renderArea[3])
                 gl.clearColor(camera._r, camera._g, camera._b, camera._a)
+                gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS)
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+                //gl.enable(gl.BLEND)
+                //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
                 for(k in scene._glPROGRAMs){
                     tProgram = scene._glPROGRAMs[k]
                     gl.useProgram(tProgram)
@@ -89,6 +92,7 @@ var World = (function () {
             scene: tScene,
             camera: tScene.getChild(cameraID)
         }
+        tScene._update=1
         if (index) tList[index] = temp
         else tList.push(temp)
         return this
