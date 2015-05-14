@@ -103,7 +103,8 @@ var MoGL = (function(){
 		//기존 child의 프로토타입속성을 복사
 		oldProto = child.prototype;
 		for( key in oldProto ) if( oldProto.hasOwnProperty(key) ) newProto[key] = oldProto[key];
-		
+		//정적 속성을 복사
+		for( key in child ) if( child.hasOwnProperty(key) ) cls[key] = child[key];
 		//새롭게 프로토타입을 정의함
 		cls.prototype = newProto;
 		Object.freeze(cls),
