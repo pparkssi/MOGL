@@ -94,7 +94,8 @@ var World = (function () {
          tVBO = scene._glVBOs['rect'],
          tUVBO = scene._glUVBOs['rect'],
          tIBO = scene._glIBOs['rect'],
-         tProgram = scene._glPROGRAMs['bitmap'],
+         tProgram = scene._glPROGRAMs['bitmap']
+        if (!tVBO) return
          gl.useProgram(tProgram),
          gl.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
              2 / this._cvs.clientWidth, 0, 0, 0,
