@@ -146,11 +146,38 @@
             var mesh = new Mesh('geometry', 'material');
             mesh.scaleX = mesh.scaleY = mesh.scaleZ = 0.3;
             scene.addChild('monkey', mesh);
-            setInterval(function () {
-                world.render();
-                mesh.rotateY+=0.01
-            }, 1000 / 60)
 
+            ( function render(){
+                var now = Date.now();
+                var currentFPS = 1000 / ( now - previousDate );
+
+                previousDate = now;
+
+                divCurrentFPS.textContent = currentFPS.toFixed( 2 );
+
+                if( lastFPSValues.length < 60 ) {
+                    lastFPSValues.push( currentFPS );
+                } else {
+                    lastFPSValues.shift();
+                    lastFPSValues.push( currentFPS );
+
+                    var i = 0;
+                    var l = lastFPSValues.length;
+                    var t = 0;
+
+                    for( ; i < l; i++ ) {
+                        t += lastFPSValues[i];
+                    }
+
+                    divAverageFPS.textContent = ( t / l ).toFixed( 2 );
+                }
+
+                mesh.rotateY -= 0.01;
+
+                world.render();
+
+                requestAnimationFrame( render );
+            } )();
         }
     })(this);
 </script>
