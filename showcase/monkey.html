@@ -59,8 +59,7 @@
 
         var divCurrentFPS = document.getElementById( 'currentFPS' );
         var divAverageFPS = document.getElementById( 'averageFPS' );
-        var previousDate = Date.now();
-        var lastFPSValues = [];
+        var prevTime = 0;
 
         canvas.width = 512;
         canvas.height = 512;
@@ -155,37 +154,23 @@
             mesh.scaleX = mesh.scaleY = mesh.scaleZ = 0.3;
             scene.addChild('monkey', mesh);
 
-            ( function render(){
-                var now = Date.now();
-                var currentFPS = 1000 / ( now - previousDate );
+            var sum = 0, count = 1;
 
-                previousDate = now;
+            function render( currTime ) {
+                var currentFPS = 1000 / ( currTime - prevTime );
+                prevTime = currTime;
 
                 divCurrentFPS.textContent = currentFPS.toFixed( 2 );
-
-                if( lastFPSValues.length < 60 ) {
-                    lastFPSValues.push( currentFPS );
-                } else {
-                    lastFPSValues.shift();
-                    lastFPSValues.push( currentFPS );
-
-                    var i = 0;
-                    var l = lastFPSValues.length;
-                    var t = 0;
-
-                    for( ; i < l; i++ ) {
-                        t += lastFPSValues[i];
-                    }
-
-                    divAverageFPS.textContent = ( t / l ).toFixed( 2 );
-                }
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
 
                 mesh.rotateY -= 0.01;
 
                 world.render();
 
                 requestAnimationFrame( render );
-            } )();
+            }
+
+            requestAnimationFrame( render );
         }
     })(this);
 </script>
