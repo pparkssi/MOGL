@@ -7,3 +7,5 @@ var Vertex = {
     normalX: 'nx', normalY: 'ny', normalZ: 'nz',
     u: 'u', v: 'v'
 }
+Object.freeze(Vertex);
+

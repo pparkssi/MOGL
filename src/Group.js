@@ -11,18 +11,17 @@
 var Group = (function () {
     var Group, fn;
     Group = function Group() {
-        this._children = {}
+        this._children = {},
         this._scene = null
     },
     fn = Group.prototype,
-    fn.addChild = function addChild(id, mesh) {
-        var k,checks
-        if(this._children[id]) MoGL.error('Group','addChild',0)
-        if(!(mesh instanceof Mesh )) MoGL.error('Group','addChild',1)
+    fn.addChild = function addChild(id, mesh) { MoGL.isAlive(this);
+        var k, checks
+        if (this._children[id]) MoGL.error('Group', 'addChild', 0)
+        if (!(mesh instanceof Mesh )) MoGL.error('Group', 'addChild', 1)
         mesh._scene = this,
         mesh.setGeometry(mesh._geometry),
         mesh.setMaterial(mesh._material),
-
         checks = mesh._geometry._vertexShaders;
         for (k in checks)
             if (typeof checks[k] == 'string')
@@ -38,11 +37,11 @@ var Group = (function () {
         this._children[id] = mesh
         return this
     },
-    fn.getChild = function getChild(id) {
+    fn.getChild = function getChild(id) { MoGL.isAlive(this);
         var t = this._children[id];
         return t ? t : null
     },
-    fn.removeChild = function removeChild(id) {
+    fn.removeChild = function removeChild(id) { MoGL.isAlive(this);
         return this._children[id] ? (delete this._children[id], true) : false
     }
     return MoGL.ext(Group, Mesh);
