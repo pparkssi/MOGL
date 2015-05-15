@@ -1,6 +1,5 @@
 # Material
 * parent : [MoGL](MoGL.md)
-* children : [Cartoon](Cartoon.md), [Flat](Flat.md), [Gouraud](Gouraud.md), [Phong](Phong.md) 
 * [Constructor](#constructor)
 
 **method**
@@ -8,6 +7,9 @@
 * [addTexture](#addtexture-textureidstring-indexint-blendmodestring-)
 * [getRefCount](#getrefcount)
 * [removeTexture](#removetexture-textureidstring-)
+* [setBackgroundColor](#)
+* [setShading](#)
+* [setLambert](#)
 
 [top](#)
 ## Constructor
@@ -44,7 +46,7 @@ var mat5 = Material('#ff00000.8');
 ```
 
 [top](#)
-## addTexture( textureId:string[, index:int, blendMode:string] )
+## addTexture( type:string, textureId:string[, index:int, blendMode:string] )
 
 **description**
 
@@ -55,9 +57,15 @@ var mat5 = Material('#ff00000.8');
 
 **param**
 
-1. textureId:string - 최종 포함될 [Scene](Scene.md)에 등록된 texture의 id.
-2. ?index:int - 중첩되는 이미지의 경우 순번을 정의함. 생략하거나 null 이면 마지막 인덱스 + 1.
-3. ?blendMode:string - 중첩되는 이미지의 경우 아래의 이미지와 합성되는 속성을 정의함. 첫번째 텍스쳐는 적용되지 않고 기본값은 'alpha' 이고 다음과 같은 값이 올 수 있음.
+1. type:string - 해당 텍스쳐가 어떠한 타입에 포함될 것인가를 결정함. 다음의 값이 올 수 있음.
+    * [Texture.diffuse](Texture.md#diffuse) or 'diffuse' - 디퓨즈 맵으로 등록함.
+    * [Texture.specular](Texture.md#specular) or 'specular' - 스페큘러 맵으로 등록함.
+    * [Texture.diffuseWrap](Texture.md#diffusewrap) or 'diffuseWrap' - 디퓨즈랩 맵으로 등록함.
+    * [Texture.normal](Texture.md#normal) or 'normal' - 노말 맵으로 등록함.
+    * [Texture.specularNormal](Texture.md#specularNormal) or 'diffuse' - 스페큘러노말 맵으로 등록함.
+2. textureId:string - 최종 포함될 [Scene](Scene.md)에 등록된 texture의 id.
+3. ?index:int - 중첩되는 이미지의 경우 순번을 정의함. 생략하거나 null 이면 마지막 인덱스 + 1.
+4. ?blendMode:string - 중첩되는 이미지의 경우 아래의 이미지와 합성되는 속성을 정의함. 첫번째 텍스쳐는 적용되지 않고 기본값은 'alpha' 이고 다음과 같은 값이 올 수 있음.
     * [BlendMode.add](BlendMode.md#add) or 'add' -  전면색을 배경색에 더하고 올림값 0xFF를 적용.
     * [BlendMode.alpha](BlendMode.md#alpha) or 'alpha' - 전면색의 알파값에 따라 배경색을 덮어가는 가장 일반적인 중첩.
     * [BlendMode.darken](BlendMode.md#darken) or 'darken' - 전면색과 배경색 중 보다 어두운 색상(값이 작은 색상)을 선택.
@@ -169,6 +177,31 @@ this - 메서드체이닝을 위해 자신을 반환함.
 ```javascript
 var mat1 = new Material('#f00').addTexture('temp');
 mat.removeTexture('temp');
+```
+[top](#)
+## setBackgroundColor( color:string )
+└ setBackgroundColor( r:number, g:bumber, b:number, a:number )
+
+**description**
+
+배경색을 변경함.
+
+**param**
+
+1. color:string - 재질의 기본적인 색상. 생략하면 색상 없음. 다음과 같은 형태가 올 수 있음.
+    * '#FFF' - 3자리 16진수의 경우 자동으로 RRGGBB로 해석되고 알파는 1이 됨.
+    * '#FFFFFF' - 6자리 16진수의 경우 알파는 1이 됨.
+    * '#FFFFFF0.7' - 6자리 16진수 이후 오는 숫자는 알파로 해석되며 0~1사이의 소수가 올 수 있음.
+2. r, g, b, a : 각각 0~1 사이의 소수를 받으며 각각 대응함.
+
+**sample**
+
+```javascript
+var mat = new Material()
+mat.setBackgroundColor('#f00');
+mat.setBackgroundColor('#ff0000');
+mat.setBackgroundColor('#ff00000.8');
+mat.setBackgroundColor( 0xff/0xff, 0xaf/0xff, 0x45/0xff, 0.5 );
 ```
 
 [top](#)
