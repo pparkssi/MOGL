@@ -44,6 +44,7 @@ var World = (function () {
                     tProgram = scene._glPROGRAMs[k]
                     gl.useProgram(tProgram)
                     gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera.getProjectionMatrix())
+                    gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.getMatrix().toString().substring(9,camera.getMatrix().toString().length-1).split(','))
                 }
                 tItem = tMaterial = tProgram = tVBO = tIBO = null
                 for (k in children) {
@@ -109,14 +110,16 @@ var World = (function () {
          for (i = 0, len = tList.length; i < len; i++) {
              scene = tList[i].scene,
              camera = scene.getChild(tList[i].cameraID)
-             tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer
-             gl.uniform3fv(tProgram.uPosition, [tFrameBuffer.x+tFrameBuffer.width/2,tFrameBuffer.y+tFrameBuffer.height/2,0]),
-             gl.uniform3fv(tProgram.uScale, [tFrameBuffer.width/2,tFrameBuffer.height/2,1]),
-             gl.activeTexture(gl.TEXTURE0)
-             gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture),
-             gl.uniform1i(tProgram.uSampler, 0);
-             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
-             gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
+             if(camera._visible){
+                 tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer
+                 gl.uniform3fv(tProgram.uPosition, [tFrameBuffer.x+tFrameBuffer.width/2,tFrameBuffer.y+tFrameBuffer.height/2,0]),
+                 gl.uniform3fv(tProgram.uScale, [tFrameBuffer.width/2,tFrameBuffer.height/2,1]),
+                 gl.activeTexture(gl.TEXTURE0),
+                 gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture),
+                 gl.uniform1i(tProgram.uSampler, 0),
+                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
+                 gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
+             }
          }
     },
     fn.addRender = function addRender(sceneID, cameraID, index) { MoGL.isAlive(this);
