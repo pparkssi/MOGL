@@ -54,9 +54,13 @@
         var scene = new Scene();
         var canvas = document.getElementById('canvas');
 
+        var divCurrentFPS = document.getElementById( 'currentFPS' );
+        var divAverageFPS = document.getElementById( 'averageFPS' );
+        var previousDate = Date.now();
+        var lastFPSValues = [];
 
-        canvas.width =1024
-        canvas.height = 1024
+        canvas.width = 1024;
+        canvas.height = 1024;
 
         world.addScene('scene', scene);
 
