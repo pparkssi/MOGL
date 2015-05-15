@@ -21,7 +21,8 @@ var Scene = (function () {
         this._glUVBOs = {},
         this._glIBOs = {},
         this._glPROGRAMs = {},
-        this._glTEXTUREs ={}
+        this._glTEXTUREs ={},
+        this._glFREAMBUFFERs ={}
 
         var baseVertexShader = {
             attributes: ['vec3 aVertexPosition'],
@@ -59,7 +60,6 @@ var Scene = (function () {
         }
         this.addVertexShader('base', baseVertexShader);
         this.addFragmentShader('base', baseFragmentShader);
-
         this.addVertexShader('bitmap', bitmapVertexShader);
         this.addFragmentShader('bitmap', bitmapFragmentShader);
     }
@@ -214,6 +214,37 @@ var Scene = (function () {
         self._glTEXTUREs[id] = texture
         return texture
     }
+
+    var makeFrameBuffer = function makeFrameBuffer(self, camera){
+        //TODO 프레임 버퍼 크기가 2n승이 아닐떄 처리
+        var gl =self._gl
+        var framebuffer = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        framebuffer.x = camera._renderArea[0];
+        framebuffer.y = camera._renderArea[1];
+        framebuffer.width = camera._renderArea[2];
+        framebuffer.height = camera._renderArea[3]
+
+        var texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture),
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR),
+        //gl.generateMipmap(gl.TEXTURE_2D),
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height,0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+        var renderbuffer = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer),
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, framebuffer.width, framebuffer.height),
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture,0),
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer),
+        gl.bindTexture(gl.TEXTURE_2D, null),
+        gl.bindRenderbuffer(gl.RENDERBUFFER, null),
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        self._glFREAMBUFFERs[camera.uuid] = {
+            frameBuffer : framebuffer,
+            texture : texture
+        }
+    }
 /////////////////////////////////////////////////////////////////
     fn = Scene.prototype,
     fn.update = function update() { MoGL.isAlive(this);
@@ -233,6 +264,11 @@ var Scene = (function () {
             camera._cvs = this._cvs
             if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
             camera.getProjectionMatrix()
+
+            if(camera._updateRenderArea){
+                makeFrameBuffer(this,camera)
+                camera._updateRenderArea = 0
+            }
         }
         var checks = this._vertexShaders;
         for (k in checks) makeProgram(this, k)
@@ -246,6 +282,7 @@ var Scene = (function () {
         console.log('this._textures :',this._textures),
         console.log('this._vertexShaders :',this._vertexShaders),
         console.log('this._fragmentShaders :',this._fragmentShaders),
+        console.log('this._glFREAMBUFFERs :',this._glFREAMBUFFERs),
         console.log('////////////////////////////////////////////'),
         this._update = 0
     },

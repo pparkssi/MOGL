@@ -20,7 +20,7 @@
     <link rel="stylesheet" type="text/css" href="css.css"/>
 </head>
 <body>
-<canvas id="firstTest" width="600" height="400"></canvas>
+<canvas id="firstTest" width="512" height="512"></canvas>
 
 <script>
     // 모글에 전역적인 루프 시스템이 있것고..
@@ -70,16 +70,30 @@
 
     w.getScene('s0').addChild('rect', new Mesh('rect', new Material('#333')));
     w.getScene('s0').addChild('camera1', new Camera());
+    w.getScene('s0').addChild('camera2', new Camera());
+    w.getScene('s0').addChild('camera3', new Camera());
     w.getScene('s0')._update = 1
     //    w.getScene('s0').addChild('camera2', new Camera());
     w.addRender('s0', 'camera1');
+    w.addRender('s0', 'camera2');
+    w.addRender('s0', 'camera3');
     //    w.addRender('s0', 'camera2');
     //
-
-
     console.log(w.getScene('s0')._children)
     console.log(w.getScene('s0')._cameras)
     console.log(w)
+
+
+    w.getScene('s0').getChild('camera2').setRenderArea(512-128-10,10,128,128)
+    w.getScene('s0').getChild('camera3').setRenderArea(10,10,128,128)
+    setInterval(function () {
+        w.render();
+    }, 1000 / 60)
+
+    w.getScene('s0').getChild('camera1').setBackgroundColor('#ffffff')
+    w.getScene('s0').getChild('camera2').setBackgroundColor('#55dd33')
+    w.getScene('s0').getChild('camera3').setBackgroundColor('#aaee33')
+
     w.LOOP['test '] = function () {
         w.getScene('s0').getChild('rect').rotateZ += 0.01
         w.getScene('s0').getChild('rect').setScale(0.1, 0.1, 0.1)
@@ -102,11 +116,8 @@
             a.rotateZ += 0.03
         }
 
-        w.getScene('s0').getChild('camera1').setBackgroundColor('#ffdddf')
-        w.getScene('s0').getChild('camera1')._r = Math.random()
-        w.getScene('s0').getChild('camera1')._g = Math.random()
-        w.getScene('s0').getChild('camera1')._b = Math.random()
     }
+
 
 </script>
 </body>
