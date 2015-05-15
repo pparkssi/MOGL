@@ -251,24 +251,23 @@ var Camera = (function () {
         return this
     },
     fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);
-        if (matrix instanceof Matrix) {
-            this._pixelMatrix = [
-                matrix.m11, matrix.m12, matrix.m13, matrix.m14,
-                matrix.m21, matrix.m22, matrix.m23, matrix.m24,
-                matrix.m31, matrix.m32, matrix.m33, matrix.m34,
-                matrix.m41, matrix.m42, matrix.m43, matrix.m44
-            ]
-        } else {
-            this._pixelMatrix = [
-                matrix[0], matrix[1], matrix[2], matrix[3],
-                matrix[4], matrix[5], matrix[6], matrix[7],
-                matrix[8], matrix[9], matrix[10], matrix[11],
-                matrix[12], matrix[13], matrix[14], matrix[15]
-            ]
-        }
+        //if (matrix instanceof Matrix) {
+        //    this._pixelMatrix = [
+        //        matrix.m11, matrix.m12, matrix.m13, matrix.m14,
+        //        matrix.m21, matrix.m22, matrix.m23, matrix.m24,
+        //        matrix.m31, matrix.m32, matrix.m33, matrix.m34,
+        //        matrix.m41, matrix.m42, matrix.m43, matrix.m44
+        //    ]
+        //} else {
+        //    this._pixelMatrix = [
+        //        matrix[0], matrix[1], matrix[2], matrix[3],
+        //        matrix[4], matrix[5], matrix[6], matrix[7],
+        //        matrix[8], matrix[9], matrix[10], matrix[11],
+        //        matrix[12], matrix[13], matrix[14], matrix[15]
+        //    ]
+        //}
 
        //TODO _near,_far,_fov가 뽑아지나..
-
         return this
     },
     fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);

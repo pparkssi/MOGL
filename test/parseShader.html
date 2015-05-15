@@ -44,6 +44,7 @@
     bitmapMaterial.addTexture('bitmapTextureTest')
     w.getScene('s0').addMaterial('bitmapMaterial', bitmapMaterial)
 
+    var list=  []
     for (var i = 0; i < 100; i++) {
         w.getScene('s0').addChild('tri' + i, new Mesh('tri', new Material(Math.random(), Math.random(), Math.random())));
         var a = w.getScene('s0').getChild('tri' + i)
@@ -54,6 +55,7 @@
         a.rotateY = Math.random()
         a.rotateZ = Math.random()
         a.setScale(Math.random() / 4, Math.random() / 4, 1)
+        list.push(a)
 
     }
     for (var i = 0; i < 100; i++) {
@@ -66,9 +68,10 @@
         a.rotateY = Math.random()
         a.rotateZ = Math.random()
         a.setScale(Math.random() / 4, Math.random() / 4, 1)
+        list.push(a)
     }
 
-    w.getScene('s0').addChild('rect', new Mesh('rect', new Material('#333')));
+    w.getScene('s0').addChild('rect', new Mesh('rect', 'bitmapMaterial'));
     w.getScene('s0').addChild('camera1', new Camera());
     w.getScene('s0').addChild('camera2', new Camera());
     w.getScene('s0').addChild('camera3', new Camera());
@@ -79,6 +82,7 @@
     w.addRender('s0', 'camera3');
     //    w.addRender('s0', 'camera2');
     //
+
     console.log(w.getScene('s0')._children)
     console.log(w.getScene('s0')._cameras)
     console.log(w)
@@ -90,10 +94,24 @@
         w.render();
     }, 1000 / 60)
 
-    w.getScene('s0').getChild('camera1').setBackgroundColor('#ffffff')
+
+
+    w.getScene('s0').getChild('camera1').setBackgroundColor('#333333')
     w.getScene('s0').getChild('camera2').setBackgroundColor('#55dd33')
     w.getScene('s0').getChild('camera3').setBackgroundColor('#aaee33')
+//    w.getScene('s0').getChild('camera3').setVisible(false)
 
+
+    var c2 = w.getScene('s0').getChild('camera2')
+    console.log(c2)
+    c2.rotateX=10
+    c2.rotateY=20
+    c2.z = 1
+
+
+
+    var t=0
+    var t2=0
     w.LOOP['test '] = function () {
         w.getScene('s0').getChild('rect').rotateZ += 0.01
         w.getScene('s0').getChild('rect').setScale(0.1, 0.1, 0.1)
@@ -103,19 +121,18 @@
         w.getScene('s0').getChild('tri').scaleX = w.getScene('s0').getChild('tri').scaleY = w.getScene('s0').getChild('tri').scaleZ = Math.sin(w.getScene('s0').getChild('tri').rotateZ) / 2 + 0.5
         w.getScene('s0').getChild('tri').x = Math.sin(w.getScene('s0').getChild('tri').rotateZ) / 2
         w.getScene('s0').getChild('tri').y = Math.cos(w.getScene('s0').getChild('tri').rotateZ) / 2
+        t+=0.01
+        t2+=1
+        var c1 = w.getScene('s0').getChild('camera1')
+        c1.z = Math.cos(t)
+        c1.rotateZ = t2
 
-        for (var i = 0; i < 100; i++) {
-            var a = w.getScene('s0').getChild('tri' + i)
-            a.rotateX += 0.01
-            a.rotateY += 0.02
-            a.rotateZ += 0.03
-
-            var a = w.getScene('s0').getChild('rect' + i)
+        for (var i = 0; i < list.length; i++) {
+            var a = list[i]
             a.rotateX += 0.01
             a.rotateY += 0.02
             a.rotateZ += 0.03
         }
-
     }
 
 
