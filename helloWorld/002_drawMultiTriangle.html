@@ -56,6 +56,9 @@
     scene.getChild('mesh2').x = 100
     scene.getChild('mesh2').z = 500
 
+    setInterval(function () {
+        world.render();
+    }, 1000 / 60)
     // 렌더 루프 추가
     world.LOOP['test'] = function () {
         scene.getChild('mesh1').rotateX += 0.1

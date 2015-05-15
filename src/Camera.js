@@ -266,10 +266,8 @@ var Camera = (function () {
             ]
         }
 
-        var m22 = -this._pixelMatrix.m22;
-        var m32 = -this._pixelMatrix.m32;
-        this._near = (2.0 * m32) / (2.0 * m22 - 2.0);
-        this._far = ((m22 - 1.0) * this._near) / (m22 + 1.0);
+       //TODO _near,_far,_fov가 뽑아지나..
+
         return this
     },
     fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);

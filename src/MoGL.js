@@ -1,5 +1,5 @@
 var MoGL = (function(){
-	var isProtoChain, isFactory, isSuperChain, 
+	var isFactory, isSuperChain, 
 		uuidProp, isAliveProp, idProp, 
 		uuid, counter, totalCount, 
 		MoGL, fn;
@@ -7,7 +7,6 @@ var MoGL = (function(){
 	//내부용 상수
 	isFactory = {factory:1},//팩토리 함수용 식별상수
 	isSuperChain = {superChain:1},//생성자체인용 상수
-	isProtoChain = {isProtoChain:1},//프로토타입상속체인을 위한 상수
 	
 	//인스턴스 카운트 시스템
 	uuid = 0,//모든 인스턴스는 고유한 uuid를 갖게 됨.
@@ -20,7 +19,6 @@ var MoGL = (function(){
 	idProp = {value:null, writable:true},
 	
 	MoGL = function MoGL(){
-		if( arguments[0] === isProtoChain ) return;
 		uuidProp.value = uuid++;
 		Object.defineProperty( this, 'uuid', uuidProp ),
 		Object.defineProperty( this, 'isAlive', isAliveProp ),
@@ -77,9 +75,8 @@ var MoGL = (function(){
 		//생성자클래스
 		cls = function(){
 			var arg, arg0 = arguments[0];
-			if( arg0 === isProtoChain ) return;
 			if( arg0 === isSuperChain ){
-				parent.apply( this, arguments[1] );
+				parent.apply( this, arguments[1] ),
 				child.apply( this, arguments[1] );
 			}else if( this instanceof cls ){
 				if( arg0 === isFactory ){
@@ -87,9 +84,9 @@ var MoGL = (function(){
 				}else{
 					arg = arguments;
 				}
-				parent.call( this, isSuperChain, arg );
-				child.apply( this, arg );
-				Object.seal(this);
+				parent.call( this, isSuperChain, arg ),
+				child.apply( this, arg ),
+				Object.seal(this),
 				counter[cls.uuid]++;
 				return this;
 			}else{
@@ -102,11 +99,12 @@ var MoGL = (function(){
 		if( !( cls.uuid in counter ) ) counter[cls.uuid] = 0;
 		
 		//parent와 프로토타입체인생성
-		newProto = new parent(isProtoChain);
+		newProto = Object.create(parent.prototype);
 		//기존 child의 프로토타입속성을 복사
 		oldProto = child.prototype;
 		for( key in oldProto ) if( oldProto.hasOwnProperty(key) ) newProto[key] = oldProto[key];
-		
+		//정적 속성을 복사
+		for( key in child ) if( child.hasOwnProperty(key) ) cls[key] = child[key];
 		//새롭게 프로토타입을 정의함
 		cls.prototype = newProto;
 		Object.freeze(cls),
