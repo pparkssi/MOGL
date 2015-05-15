@@ -59,8 +59,8 @@
         var previousDate = Date.now();
         var lastFPSValues = [];
 
-        canvas.width = 1024;
-        canvas.height = 1024;
+        canvas.width = 512;
+        canvas.height = 512;
 
         world.addScene('scene', scene);
 
@@ -68,6 +68,8 @@
         scene.addMaterial('material', new Material());
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
         scene.getMaterial('material').addTexture('texture');
+
+        ////
         world.getScene('scene').addGeometry('rect', new Geometry([
             1.0, 1.0, 0.0, 0.0, 0.0,
             -1.0, 1.0, 0.0, 1.0, 0.0,
@@ -76,6 +78,7 @@
         ], [0, 1, 2, 1, 2, 3], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
 
         world.addRender('scene', 'camera');
+
         for (var i = 0; i < 1; i++) {
             world.getScene('scene').addChild('rect' + i, new Mesh('rect', 'material'));
             var a = world.getScene('scene').getChild('rect' + i)
@@ -85,8 +88,10 @@
             a.rotateX = Math.random()
             a.rotateY = Math.random()
             a.rotateZ = Math.random()
-            a.setScale(Math.random() / 4, Math.random() / 4, 1)
+            a.setScale( 0, 0, 0 );
         }
+        ////
+
         var xmlhttp = new XMLHttpRequest();
 
         xmlhttp.open('GET', 'monkey/monkey.babylon', true);
