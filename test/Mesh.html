@@ -13,6 +13,7 @@
 </head>
 <body>
 <img src="../src/ohno.png">
+
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
@@ -267,6 +268,19 @@
                 return testMesh.getGeometry() instanceof Geometry
             }, true
     )
+
+
+    console.log(mesh1.x, mesh1.y, mesh1.z)
+    console.log(mesh1.rotateX, mesh1.rotateY, mesh1.rotateZ)
+    console.log(mesh1.scaleX, mesh1.scaleY, mesh1.scaleZ)
+    console.log(mesh1.getMatrix())
+
+    mesh1.setMatrix(mesh1.getMatrix())
+    console.log(mesh1.x, mesh1.y, mesh1.z)
+    console.log(mesh1.rotateX, mesh1.rotateY, mesh1.rotateZ)
+    console.log(mesh1.scaleX, mesh1.scaleY, mesh1.scaleZ)
+    console.log(mesh1.getMatrix())
+
     mesh1.destroy()
     mesh2.destroy()
     mesh3.destroy()

@@ -267,6 +267,7 @@ var Camera = (function () {
         }
 
        //TODO _near,_far,_fov가 뽑아지나..
+
         return this
     },
     fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);
