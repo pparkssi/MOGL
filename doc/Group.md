@@ -34,7 +34,7 @@ var group2 = Group();
 ```
 
 [top](#)
-## addChild( id:string, mesh:[Mesh](Mesh.md) )
+## addChild( mesh:[Mesh](Mesh.md) )
 
 **description**
 
@@ -43,12 +43,11 @@ var group2 = Group();
  
 **param**
 
-1. id:string - removeChild 등에서 사용할 id.
-2. mesh:[Mesh](Mesh.md) - [Mesh](Mesh.md) 및 그 서브클래스([Camera](Camera.md), [Light](Light.md) 등)
+1. mesh:[Mesh](Mesh.md) - [Mesh](Mesh.md) 및 그 서브클래스([Camera](Camera.md), [Light](Light.md) 등)
 
 **exception**
 
-* 'Group.addChild:0' - 이미 존재하는 id.
+* 'Group.addChild:0' - 이미 존재하는 uuid.
 * 'Group.addChild:1' - [Mesh](Mesh.md)가 아닌 객체.
 * 'Group.addChild:2' - [Mesh](Mesh.md)안의 [Geometry](Geometry.md)에 지정된 vertex shader의 id가 존재하지 않음.
 * 'Group.addChild:3' - [Mesh](Mesh.md)안의 [Material](Material.md)에 지정된 fragment shader의 id가 존재하지 않음.
@@ -62,20 +61,21 @@ this - 메서드체이닝을 위해 자신을 반환함.
 
 ```javascript
 var group = Group();
-group.addChild( 'frontView', new Camera() );
-group.addChild( 'centerLight', new OmniLight() );
-group.addChild( 'building', new Mesh() );
+group.addChild( new Camera() );
+group.addChild( new OmniLight() );
+var mesh = new Mesh();
+group.addChild( mesh );
 
 try{
-    //중복된 id등록 시도
-    group.addChild( 'building', new Mesh() );
+    //중복된 uuid등록 시도
+    group.addChild( mesh );
 }catch(e){
     console.log(e); //Group.addChild:0
 }
 
 try{
     //mesh가 아닌 객체 등록 시도
-    group.addChild( 'building2', {} );
+    group.addChild( {} );
 }catch(e){
     console.log(e); //Group.addChild:1
 }
@@ -91,7 +91,7 @@ id에 해당되는 [Mesh](Mesh.md)를 얻음.
 
 **param**
 
-1. id:string - 등록시 사용한 id.
+1. id:string - 등록된 자식 중 해당 id를 갖고 있는 자식을 반환함.
 
 **return**
 
@@ -101,13 +101,18 @@ id에 해당되는 [Mesh](Mesh.md)를 얻음.
 
 ```javascript
 var group = world.getScene('lobby').getChild('group1');
-group.addChild( 'frontView', new Camera() );
+
+//id를 정의한 카메라를 등록함
+group.addChild( new Camera().setId('frontView') );
+
+//해당 id로 조회
 var camera = group.getChild('frontView');
 ```
 
 
 [top](#)
 ## removeChild( id:string )
+└ removeChild( mesh:[Mesh](Mesh.md) )
 
 **description**
 
@@ -115,11 +120,12 @@ var camera = group.getChild('frontView');
 
 **param**
 
-1. id:string - addChild에서 사용한 id.
+1. id:string - 삭제할 [Mesh](Mesh.md)의 id.
+2. mesh:[Mesh](Mesh.md) - 삭제할 [Mesh](Mesh.md)객체
 
 **return**
 
-boolean - 해당 객체가 존재하고 삭제하는데 성공하면 true, 그 외에는 false.
+this - 메서드 체이닝을 위해 자신을 반환.
 
 **sample**
 
