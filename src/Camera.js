@@ -8,6 +8,7 @@ var Camera = (function () {
     Camera = function Camera() {
         this._cvs=null
         this._renderArea = null,
+        this._updateRenderArea = 1,
         this._geometry = new Geometry([], [])
         this._material = new Material()
         this._r = 0,
@@ -231,7 +232,7 @@ var Camera = (function () {
     fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
         this._pixelMatrix = [
             2 / this._cvs.clientWidth, 0, 0, 0,
-            0, 2 / this._cvs.clientHeight, 0, 0,
+            0, -2 / this._cvs.clientHeight, 0, 0,
             0, 0, 0, 0,
             0, 0, 0, 1
         ]
@@ -271,6 +272,7 @@ var Camera = (function () {
         return this
     },
     fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);
+        this._updateRenderArea = 1
         var tw = this._cvs.clientWidth, th = this._cvs.clientHeight;
         console.log(typeof x == 'string' ? tw * x.replace('%', '') : x)
         this._renderArea = [

@@ -20,7 +20,7 @@ var World = (function () {
      fn.render = function render() { MoGL.isAlive(this);
         var i, k, len, tList = this._renderList
         var scene,camera,gl,children;
-        var tItem, tMaterial, tProgram, tVBO, tUVBO, tIBO;
+        var tItem, tMaterial, tProgram, tVBO, tUVBO, tIBO,tFrameBuffer;
         for (k in this.LOOP)  this.LOOP[k]()
         for (i = 0, len = tList.length; i < len; i++) {
             //console.log(tList[i],'렌더')
@@ -29,10 +29,12 @@ var World = (function () {
             scene = tList[i].scene,
             camera = scene.getChild(tList[i].cameraID)
             if(camera._visible){
-                gl = scene._gl,
+                gl = scene._gl
+                tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer
+                gl.bindFramebuffer( gl.FRAMEBUFFER,tFrameBuffer);
                 children = scene._children,
                 //TODO 뷰포트가 아닌....이게...프레임에 어떻게 그릴껀지로 가야함..
-                gl.viewport(camera._renderArea[0],camera._renderArea[1]==0 ? 0 :camera._renderArea[3]-camera._renderArea[1],camera._renderArea[2],camera._renderArea[3])
+                gl.viewport(0,0, tFrameBuffer.width, tFrameBuffer.height);
                 gl.clearColor(camera._r, camera._g, camera._b, camera._a)
                 gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS)
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -79,8 +81,43 @@ var World = (function () {
                         }
                     }
                 }
+                gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
+                gl.bindTexture(gl.TEXTURE_2D, null);
+                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
             }
         }
+         gl.viewport(0, 0, this._cvs.clientWidth, this._cvs.clientWidth);
+         gl.clearColor(0, 0, 0, 1)
+         gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL)
+         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+         tVBO = scene._glVBOs['rect'],
+         tUVBO = scene._glUVBOs['rect'],
+         tIBO = scene._glIBOs['rect'],
+         tProgram = scene._glPROGRAMs['bitmap'],
+         gl.useProgram(tProgram),
+         gl.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
+             2 / this._cvs.clientWidth, 0, 0, 0,
+             0, -2 / this._cvs.clientHeight, 0, 0,
+             0, 0, 0, 0,
+             -1, 1, 0, 1
+         ])
+         gl.bindBuffer(gl.ARRAY_BUFFER, tVBO),
+         gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0),
+         gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO),
+         gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0),
+         gl.uniform3fv(tProgram.uRotate, [0,0,0])
+         for (i = 0, len = tList.length; i < len; i++) {
+             scene = tList[i].scene,
+             camera = scene.getChild(tList[i].cameraID)
+             tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer
+             gl.uniform3fv(tProgram.uPosition, [tFrameBuffer.x+tFrameBuffer.width/2,tFrameBuffer.y+tFrameBuffer.height/2,0]),
+             gl.uniform3fv(tProgram.uScale, [tFrameBuffer.width/2,tFrameBuffer.height/2,1]),
+             gl.activeTexture(gl.TEXTURE0)
+             gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture),
+             gl.uniform1i(tProgram.uSampler, 0);
+             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
+             gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
+         }
     },
     fn.addRender = function addRender(sceneID, cameraID, index) { MoGL.isAlive(this);
         var uuid = sceneID + '_' + cameraID, tScene = this._sceneList[sceneID], tList = this._renderList;
