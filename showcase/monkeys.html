@@ -71,28 +71,8 @@
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
         scene.getMaterial('material').addTexture('texture');
 
-        ////
-        world.getScene('scene').addGeometry('rect', new Geometry([
-            1.0, 1.0, 0.0, 0.0, 0.0,
-            -1.0, 1.0, 0.0, 1.0, 0.0,
-            1.0, -1.0, 0.0, 0.0, 1.0,
-            -1.0, -1.0, 0.0, 1.0, 1.0
-        ], [0, 1, 2, 1, 2, 3], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
 
         world.addRender('scene', 'camera');
-
-        for (var i = 0; i < 1; i++) {
-            world.getScene('scene').addChild('rect' + i, new Mesh('rect', 'material'));
-            var a = world.getScene('scene').getChild('rect' + i)
-            a.x = Math.random() * 2 - 1
-            a.y = Math.random() * 2 - 1
-            a.z = Math.random() * 2 + 1
-            a.rotateX = Math.random()
-            a.rotateY = Math.random()
-            a.rotateZ = Math.random()
-            a.setScale( 0, 0, 0 );
-        }
-        ////
 
         var xmlhttp = new XMLHttpRequest();
 

@@ -241,13 +241,15 @@ var Camera = (function () {
     fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
         //TODO 크기를 반영해야함..
         //TODO 이렇다는건...카메라 렌더시에 _renderArea를 알고있다는 가정인가?
-        var aspectRatio = this._renderArea[2]/this._renderArea[3],yScale = 1.0 / Math.tan(this._fov * Math.PI / 180 / 2.0),xScale = yScale / aspectRatio;
+        var aspectRatio = this._renderArea[2]/this._renderArea[3],yScale = 1.0 / Math.tan((this._fov * Math.PI / 180) / 2.0),xScale = yScale / aspectRatio;
         this._pixelMatrix = [
             xScale, 0, 0, 0,
             0, yScale, 0, 0,
             0, 0, this._far / (this._far - this._near), 1,
             0, 0, (this._near * this._far) / (this._near - this._far), 1
         ]
+
+
         return this
     },
     fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);

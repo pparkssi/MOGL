@@ -33,8 +33,8 @@ var Mesh = (function () {
         //TODO 매트릭스 먼가 이상함
         this._matrix = new Matrix()
         this._matrix = this._matrix.translate(this.x,this.y,this.z)
-        this._matrix = this._matrix.scale(this.scaleX,this.scaleY,this.scaleZ)
         this._matrix = this._matrix.rotate(this.rotateX,this.rotateY,this.rotateZ)
+        this._matrix = this._matrix.scale(this.scaleX,this.scaleY,this.scaleZ)
         return this._matrix
     },
     fn.getParent = function getParent() { MoGL.isAlive(this);
