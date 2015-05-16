@@ -16,7 +16,7 @@ var Camera = (function () {
         this._b = 0,
         this._a = 1,
         this._fov = 55,
-        this._near = 0.01,
+        this._near = 0.1,
         this._far = 100000,
         this._visible=1,
         this._filters ={},
@@ -241,7 +241,7 @@ var Camera = (function () {
     },
     fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
         Matrix.identity(this._pixelMatrix)
-        Matrix.perspective(this._pixelMatrix, this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far)
+        Matrix.perspective(this._pixelMatrix, this._fov*Math.PI/180, this._renderArea[2]/this._renderArea[3], this._near, this._far)
         return this
     },
     fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);

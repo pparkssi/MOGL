@@ -257,12 +257,17 @@ var Scene = (function () {
         //for GPU
         for (var k in this._children) {
             var mesh = this._children[k], _key, geo = mesh._geometry;
-            if (!this._glVBOs[mesh._geometry] && mesh._geometry) {
-                _key = geo._key,
-                this._glVBOs[_key] = makeVBO(this, _key, geo._position, 3),
-                this._glUVBOs[_key] = makeUVBO(this, _key, geo._uv, 2),
-                this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1)
+            if (geo) {
+                console.log('!!!!!!!!!!!!!!!!!!',geo._key)
+                if(!this._geometrys[geo._key]) this.addGeometry(geo._key,geo)
+                if(!this._glVBOs[geo]){
+                    _key = geo._key,
+                    this._glVBOs[_key] = makeVBO(this, _key, geo._position, 3),
+                    this._glUVBOs[_key] = makeUVBO(this, _key, geo._uv, 2),
+                    this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1)
+                }
             }
+
         }
         if (!this._glVBOs['rect']) {
             this.addGeometry('rect', new Geometry([
@@ -279,9 +284,8 @@ var Scene = (function () {
             var camera = this._cameras[k]
             camera._cvs = this._cvs
             if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.clientWidth, this._cvs.clientHeight)
-            camera.getProjectionMatrix()
-
             if(camera._updateRenderArea){
+                camera.getProjectionMatrix()
                 makeFrameBuffer(this,camera)
                 camera._updateRenderArea = 0
             }
