@@ -10,6 +10,7 @@ var World = (function () {
     World = function World(id) {
         if(!id) MoGL.error('World','contructor',0)
         this._cvs = document.getElementById(id);
+        if(!this._cvs) MoGL.error('World','contructor',1)
         this._renderList = [],
         this._sceneList = {},
         this.LOOP={}
