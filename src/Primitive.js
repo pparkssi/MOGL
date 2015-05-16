@@ -26,10 +26,18 @@ var Primitive = {
         return result
     },
     plane: function plane(/*splitX:int, splitY:int*/) {
-        // TODO 내장된 Geometry. 하나의 평면.
-        // TODO ?splitX:int, splitY:int - 각 면당 분할할 수. 생략시 1로 지정됨.
-        // TODO scene.addChild( 'pl', new Mesh( Primitive.plane(5,5), new Material() );
-        var result
+        //TODO 이걸 계산해서 넘겨야 되는군
+        var result = new Geometry(
+            [
+                1.0, 1.0, 0.0, 0.0, 0.0,
+                -1.0, 1.0, 0.0, 1.0, 0.0,
+                1.0, -1.0, 0.0, 0.0, 1.0,
+                -1.0, -1.0, 0.0, 1.0, 1.0
+            ],
+            [0, 1, 2, 1, 2, 3],
+            [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]
+        )
+        result._key = 'plane_' + ( arguments[0] || 1) + '_' + (arguments[1] || 1)
         return result
     },
     point: function point(/*width:number*/) {

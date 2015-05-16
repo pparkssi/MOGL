@@ -279,9 +279,8 @@ var Scene = (function () {
             var camera = this._cameras[k]
             camera._cvs = this._cvs
             if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.clientWidth, this._cvs.clientHeight)
-            camera.getProjectionMatrix()
-
             if(camera._updateRenderArea){
+                camera.getProjectionMatrix()
                 makeFrameBuffer(this,camera)
                 camera._updateRenderArea = 0
             }
