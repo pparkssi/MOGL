@@ -60,7 +60,7 @@ var Mesh = (function () {
         if (this._scene) {
             if (this._geometry = typeof geometry == 'string') this._geometry=this._scene._geometrys[geometry]
             else this._geometry = geometry
-            this._geometry._key = geometry
+            this._geometry._key =   this._geometry._key || geometry
         }
         else this._geometry = geometry
         return this
@@ -70,7 +70,7 @@ var Mesh = (function () {
         if (this._scene) {
             if (this._material = typeof material == 'string') this._material= this._scene._materials[material]
             else this._material = material
-            this._material._key = material
+            this._material._key = this._material._key || material
         }
         else this._material = material
         return this
