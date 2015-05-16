@@ -264,10 +264,21 @@ var Scene = (function () {
                 this._glIBOs[name] = makeIBO(this, name, geo._index, 1)
             }
         }
+        if (!this._glVBOs['rect']) {
+            this.addGeometry('rect', new Geometry([
+                1.0, 1.0, 0.0, 0.0, 0.0,
+                -1.0, 1.0, 0.0, 1.0, 0.0,
+                1.0, -1.0, 0.0, 0.0, 1.0,
+                -1.0, -1.0, 0.0, 1.0, 1.0
+            ], [0, 1, 2, 1, 2, 3], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])),
+            this._glVBOs['rect'] = makeVBO(this, 'rect', [1.0, 1.0, 0.0,-1.0, 1.0, 0.0,1.0, -1.0, 0.0,-1.0, -1.0, 0.0], 3),
+            this._glUVBOs['rect'] = makeUVBO(this, 'rect', [0.0, 0.0,1.0, 0.0,0.0, 1.0,1.0, 1.0], 2),
+            this._glIBOs['rect'] = makeIBO(this, 'rect', [0, 1, 2, 1, 2, 3], 1)
+        }
         for (k in this._cameras) {
             var camera = this._cameras[k]
             camera._cvs = this._cvs
-            if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
+            if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.clientWidth, this._cvs.clientHeight)
             camera.getProjectionMatrix()
 
             if(camera._updateRenderArea){
@@ -277,6 +288,7 @@ var Scene = (function () {
         }
         var checks = this._vertexShaders;
         for (k in checks) makeProgram(this, k)
+
         console.log('////////////////////////////////////////////'),
         console.log('Scene 업데이트'),
         console.log('this._glVBOs :',this._glVBOs),
