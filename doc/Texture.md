@@ -11,7 +11,7 @@
 * [Texture.diffuseWrap](#texturediffuseWrap)
 * [Texture.normal](#texturenormal)
 * [Texture.specularNormal](#texturespecularNormal)
-* 
+
 [top](#)
 ## Texture.zoomOut
 
