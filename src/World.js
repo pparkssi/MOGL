@@ -89,7 +89,7 @@ var World = (function () {
                 gl.bindFramebuffer(gl.FRAMEBUFFER, null);
             }
         }
-         gl.viewport(0, 0, this._cvs.clientWidth, this._cvs.clientWidth);
+         gl.viewport(0, 0, this._cvs.clientWidth, this._cvs.clientHeight);
          gl.clearColor(0, 0, 0, 1)
          gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL)
          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -98,12 +98,14 @@ var World = (function () {
          tIBO = scene._glIBOs['rect'],
          tProgram = scene._glPROGRAMs['bitmap']
         if (!tVBO) return
-         gl.useProgram(tProgram),
+         gl.useProgram(tProgram)
+
          gl.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
              2 / this._cvs.clientWidth, 0, 0, 0,
              0, -2 / this._cvs.clientHeight, 0, 0,
              0, 0, 0, 0,
              -1, 1, 0, 1
+
          ])
          gl.bindBuffer(gl.ARRAY_BUFFER, tVBO),
          gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0),
@@ -116,8 +118,8 @@ var World = (function () {
              camera = scene.getChild(tList[i].cameraID)
              if(camera._visible){
                  tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer
-                 f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2, f3[2] = 0
-                 gl.uniform3fv(tProgram.uPosition, f3),
+                 f3[0] = tFrameBuffer.x +tFrameBuffer.width/2, f3[1] = tFrameBuffer.y+tFrameBuffer.height/2 , f3[2] = 0
+                 gl.uniform3fv(tProgram.uPosition,f3),
                  f3[0] = tFrameBuffer.width / 2, f3[1] = tFrameBuffer.height / 2, f3[2] = 1
                  gl.uniform3fv(tProgram.uScale, f3),
                  gl.activeTexture(gl.TEXTURE0),

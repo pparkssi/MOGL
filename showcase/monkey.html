@@ -128,10 +128,11 @@
             }
 
             scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
-            scene.getChild('camera').z = -1
+
             var mesh = new Mesh('geometry', 'material');
-            mesh.scaleX = mesh.scaleY = mesh.scaleZ = 0.3;
+            mesh.z =-5
             scene.addChild('monkey', mesh);
+
 
             var sum = 0, count = 1;
 
