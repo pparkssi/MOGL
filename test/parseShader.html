@@ -20,13 +20,14 @@
     <link rel="stylesheet" type="text/css" href="css.css"/>
 </head>
 <body>
-<canvas id="firstTest" width="512" height="512"></canvas>
+<canvas id="firstTest" width="512" height="1024"></canvas>
 
 <script>
     // 모글에 전역적인 루프 시스템이 있것고..
 
     var w = new World('firstTest');
     w.addScene('s0', new Scene());
+
 
     w.getScene('s0').addGeometry('tri', new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]));
     w.getScene('s0').addGeometry('rect', new Geometry([
