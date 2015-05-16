@@ -26,7 +26,7 @@
     <script src="../src/World.js"></script>
 </head>
 <body>
-<canvas id="firstWorld" width="600" height="400"></canvas>
+<canvas id="firstWorld" width="512" height="512"></canvas>
 <script>
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
@@ -49,12 +49,12 @@
     scene.addChild('mesh1', new Mesh('triangle', 'white'))
     scene.addChild('mesh2', new Mesh('triangle', new Material(0.3, 0.2, 0.1, 1)))
 
-    scene.getChild('mesh1').scaleX = scene.getChild('mesh1').scaleY = scene.getChild('mesh1').scaleZ = 100
-    scene.getChild('mesh1').z = 1000
 
-    scene.getChild('mesh2').scaleX = scene.getChild('mesh2').scaleY = scene.getChild('mesh2').scaleZ = 50
-    scene.getChild('mesh2').x = 100
-    scene.getChild('mesh2').z = 500
+    scene.getChild('mesh1').z = -5
+
+
+    scene.getChild('mesh2').x = 5
+    scene.getChild('mesh2').z = -10
 
     setInterval(function () {
         world.render();
