@@ -14,7 +14,7 @@ var World = (function () {
         this._renderList = [],
         this._sceneList = {},
         this.LOOP={}
-        var keys = 'webgl,experimental-webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length
+        var keys = 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length
         while (i--) if (this._gl = this._cvs.getContext(keys[i],{antialias: 1})) break
         console.log(this._gl ? id + ' : MoGL 초기화 성공!' : console.log(id + ' : MoGL 초기화 실패!!'))
      },
@@ -39,8 +39,8 @@ var World = (function () {
                 //TODO 뷰포트가 아닌....이게...프레임에 어떻게 그릴껀지로 가야함..
                 gl.viewport(0,0, tFrameBuffer.width, tFrameBuffer.height);
                 gl.clearColor(camera._r, camera._g, camera._b, camera._a)
-                gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS)
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+                gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS)
                 //gl.enable(gl.BLEND)
                 //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
                 for(k in scene._glPROGRAMs){
@@ -93,7 +93,10 @@ var World = (function () {
         }
          gl.viewport(0, 0, this._cvs.clientWidth, this._cvs.clientHeight);
          gl.clearColor(0, 0, 0, 1)
-         gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL)
+         //gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL)
+         gl.disable(gl.DEPTH_TEST)
+         gl.enable(gl.BLEND)
+         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
          tVBO = scene._glVBOs['rect'],
          tUVBO = scene._glUVBOs['rect'],
