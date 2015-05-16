@@ -16,6 +16,7 @@
 <img src="../src/ohno.png"/>
 <canvas id="canvasTest" height="10"></canvas>
 <canvas id="canvasTest2" height="10"></canvas>
+<canvas id="canvasTest3" height="10"></canvas>
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
@@ -127,6 +128,71 @@
             function () {
                 return world2.isAlive;
             }, false
+    );
+
+
+    bsTest( 'scene',
+            function(){
+                var test = '';
+
+                var scene = new Scene();
+                scene.addChild( 'cam1', new Camera() );
+
+                var world = new World('canvasTest3');
+                world.addScene( 'scene', scene );
+                try{
+                    world.addScene( 'scene', scene );
+                }catch(e){
+                    test = e.toString();
+                }
+
+                return test;
+            }, 'Error: World.addScene:0',
+            function(){
+                var test = '', Class = function(){};
+
+                var instance = new Class();
+
+                var world = new World('canvasTest3');
+                try{
+                    world.addScene(instance);
+                }catch(e){
+                    test = e.toString();
+                }
+
+                return test;
+            }, 'Error: World.addScene:1',
+            function(){
+                var world = new World('canvasTest3');
+                var testScene = new Scene();
+                world.addScene( 'testScene', testScene );
+                return world.getScene( 'testScene').uuid === testScene.uuid;
+            }, true,
+            function(){
+                var world = new World( 'canvasTest3' );
+                return world.getScene();
+            }, null,
+            function(){
+                var world = new World( 'canvasTest3' );
+                return world.getScene( 'test' );
+            }, null,
+            function(){
+                var world = new World( 'canvasTest3' );
+                var testScene = new Scene();
+                world.addScene( 'testScene', testScene );
+                world.removeScene( 'testScene' );
+                return testScene == world.getScene( 'testScene' )
+            }, false,
+            function(){
+                var world = new World( 'canvasTest3'), test = '';
+                try{
+                    world.removeScene( 'testScene' );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: World.removeScene:0'
+
     );
 </script>
 </body>
