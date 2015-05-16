@@ -3,7 +3,7 @@
  * description
  */
 var Camera = (function () {
-    var Camera, fn,a4=[];
+    var Camera, fn,a4=[],PERPI=Math.PI / 180;
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
     Camera = function Camera() {
         this._cvs=null
@@ -16,13 +16,13 @@ var Camera = (function () {
         this._b = 0,
         this._a = 1,
         this._fov = 55,
-        this._near = 0.1,
+        this._near = 0.01,
         this._far = 100000,
         this._visible=1,
         this._filters ={},
         this._fog = null,
         this._antialias = false
-        this._pixelMatrix = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+        this._pixelMatrix = Matrix.create()
     }
     fn = Camera.prototype,
     fn.getBackgroundColor = function getBackgroundColor(){MoGL.isAlive(this);
@@ -226,48 +226,23 @@ var Camera = (function () {
     },
     fn.setFOV = function setFOV(){MoGL.isAlive(this);
         if (arguments.length == 1) this._fov = arguments[0]
-        else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * (Math.PI / 180) / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
+        else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
         return this
     },
     fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
-        this._pixelMatrix = [
-            2 / this._cvs.clientWidth, 0, 0, 0,
-            0, -2 / this._cvs.clientHeight, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 1
-        ]
+        Matrix.identity(this._pixelMatrix)
+        this._pixelMatrix[0] =  2 / this._cvs.clientWidth
+        this._pixelMatrix[5] =  2 / this._cvs.clientHeight
+        this._pixelMatrix[15] =  1
         return this
     },
     fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
-        //TODO 크기를 반영해야함..
-        //TODO 이렇다는건...카메라 렌더시에 _renderArea를 알고있다는 가정인가?
-        var aspectRatio = this._renderArea[2]/this._renderArea[3],yScale = 1.0 / Math.tan(this._fov * Math.PI / 180 / 2.0),xScale = yScale / aspectRatio;
-        this._pixelMatrix = [
-            xScale, 0, 0, 0,
-            0, yScale, 0, 0,
-            0, 0, this._far / (this._far - this._near), 1,
-            0, 0, (this._near * this._far) / (this._near - this._far), 1
-        ]
+        Matrix.identity(this._pixelMatrix)
+        Matrix.perspective(this._pixelMatrix, this._fov*PERPI, this._renderArea[2]/this._renderArea[3], this._near, this._far)
         return this
     },
     fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);
-        //if (matrix instanceof Matrix) {
-        //    this._pixelMatrix = [
-        //        matrix.m11, matrix.m12, matrix.m13, matrix.m14,
-        //        matrix.m21, matrix.m22, matrix.m23, matrix.m24,
-        //        matrix.m31, matrix.m32, matrix.m33, matrix.m34,
-        //        matrix.m41, matrix.m42, matrix.m43, matrix.m44
-        //    ]
-        //} else {
-        //    this._pixelMatrix = [
-        //        matrix[0], matrix[1], matrix[2], matrix[3],
-        //        matrix[4], matrix[5], matrix[6], matrix[7],
-        //        matrix[8], matrix[9], matrix[10], matrix[11],
-        //        matrix[12], matrix[13], matrix[14], matrix[15]
-        //    ]
-        //}
-
-       //TODO _near,_far,_fov가 뽑아지나..
+        //TODO 이거 없애버림...
         return this
     },
     fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);

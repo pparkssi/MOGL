@@ -15,7 +15,7 @@ var Material = (function () {
         this._a = 1,
         this._count = 0,
         this._scene = null,
-        this._name = null
+        this._key = null
         if (arguments.length == 1) {
             if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7)
             if (t0.charAt(0) == '#') {
