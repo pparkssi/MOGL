@@ -8,6 +8,7 @@
 var World = (function () {
     var World, fn, rectMatrix = Matrix.create(), f3=new Float32Array(3);
     World = function World(id) {
+        if(!id) MoGL.error('World','contructor',0)
         this._cvs = document.getElementById(id);
         this._renderList = [],
         this._sceneList = {},
