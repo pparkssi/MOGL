@@ -8,9 +8,9 @@
 var World = (function () {
     var World, fn, rectMatrix = Matrix.create(), f3=new Float32Array(3);
     World = function World(id) {
-        if(!id) MoGL.error('World','contructor',0)
+        if(!id) MoGL.error('World','constructor',0)
         this._cvs = document.getElementById(id);
-        if(!this._cvs) MoGL.error('World','contructor',1)
+        if(!this._cvs) MoGL.error('World','constructor',1)
         this._renderList = [],
         this._sceneList = {},
         this.LOOP={}
