@@ -22,6 +22,11 @@ World는 MoGL의 기본 시작객체로 내부에 다수의 [Scene](Scene.md)을
 또한 World의 인스턴스는 rendering함수 그 자체이기도 함.
 * 메서드체이닝을 위해 대부분의 함수는 자신을 반환함.
 
+**exception**
+
+* 'World.constructor:0' - 캔버스 아이디가 없을때
+* 'World.constructor:1' - 존재하지않는 Dom id일때
+
 **param**
 
 1. id:string : canvasID
