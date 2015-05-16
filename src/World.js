@@ -164,7 +164,7 @@ var World = (function () {
         return this
     },
     fn.removeScene = function removeScene(sceneID) { MoGL.isAlive(this);
-        this._sceneList[sceneID] ? 0 : MoGL.error('World', 'addScene', 0),
+        this._sceneList[sceneID] ? 0 : MoGL.error('World', 'removeScene', 0),
             this._sceneList[sceneID]._gl = this._gl,
             delete this._sceneList[sceneID]
         return this
