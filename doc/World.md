@@ -69,7 +69,7 @@ var lobby = Scene();
 lobby.addChild( 'cam1', new Camera() );
 
 // Scene 등록 및 렌더대상 등록
-var world = World();
+var world = World('canvasID');
 world.addScene( 'lobby', lobby );
 world.addRender( 'lobby', 'cam1' );
 ```
@@ -98,7 +98,7 @@ this - 메서드체이닝을 위해 자신을 반환함.
 **sample**
 
 ```javascript
-var world = new World();
+var world = new World('canvasID');
 world.addScene( 'lobby', new Scene() );
 world.addScene( 'room', Scene() );
 ```
@@ -121,7 +121,7 @@ sceneId에 해당되는 [Scene](Scene.md)을 얻음.
 **sample**
 
 ```javascript
-var world = new World();
+var world = new World('canvasID');
 world.addScene( 'lobby', new Scene() );
 var lobby = world.getScene( 'lobby' );
 ```
@@ -155,7 +155,7 @@ var lobby = new Scene();
 lobby.addChild( 'cam1', new Camera() );
 
 // Scene 등록 및 렌더대상 등록
-var world = new World();
+var world = new World('canvasID');
 world.addScene( 'lobby', lobby );
 world.addRender( 'lobby', 'cam1' );
 
@@ -191,7 +191,7 @@ var lobby = new Scene();
 lobby.addChild( 'cam1', Camera() );
 
 // Scene 등록 및 렌더대상 등록
-var world = new World();
+var world = new World('canvasID');
 world.addScene( 'lobby', lobby );
 world.addRender( 'lobby', 'cam1' );
 
