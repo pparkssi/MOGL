@@ -13,7 +13,7 @@ var World = (function () {
         this._sceneList = {},
         this.LOOP={}
         var keys = 'webgl,experimental-webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length
-        while (i--) if (this._gl = this._cvs.getContext(keys[i])) break
+        while (i--) if (this._gl = this._cvs.getContext(keys[i],{antialias: 1})) break
         console.log(this._gl ? id + ' : MoGL 초기화 성공!' : console.log(id + ' : MoGL 초기화 실패!!'))
      },
     fn = World.prototype,
@@ -21,7 +21,7 @@ var World = (function () {
         var i, k, len, tList = this._renderList
         var scene,camera,gl,children;
         var tItem, tMaterial, tProgram, tVBO, tUVBO, tIBO,tFrameBuffer;
-        var pVBO, pUVBO, pIBO
+        var pVBO, pUVBO, pIBO,pNormal
         for (k in this.LOOP)  this.LOOP[k]()
         for (i = 0, len = tList.length; i < len; i++) {
             //console.log(tList[i],'렌더')
@@ -76,16 +76,16 @@ var World = (function () {
                         gl.activeTexture(gl.TEXTURE0);
                         var textureObj = scene._glTEXTUREs[tMaterial._textures.__indexList[0].id]
                         if(textureObj.loaded){
-                            gl.bindTexture(gl.TEXTURE_2D, textureObj);
+                            textureObj!=pNormal ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
                             gl.uniform1i(tProgram.uSampler, 0);
-                            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
+                            tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0,
                             gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                         }
                     }
-                    pVBO = tVBO, pUVBO = tUVBO, pIBO = tIBO
+                    pVBO = tVBO, pUVBO = tUVBO, pIBO = tIBO,pNormal = textureObj
                 }
-                gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
-                gl.bindTexture(gl.TEXTURE_2D, null);
+                //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
+                //gl.bindTexture(gl.TEXTURE_2D, null);
                 gl.bindFramebuffer(gl.FRAMEBUFFER, null);
             }
         }
