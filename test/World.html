@@ -50,7 +50,27 @@
             }, true,
             function () {
                 return world2.isAlive;
-            }, true
+            }, true,
+            function(){
+                var test = '';
+                try{
+                    new World();
+                }catch(e){
+                    test = e.toString();
+                }
+
+                return test
+            }, 'Error: World.contructor:0',
+            function(){
+                var test = '';
+                try{
+                    new World( 'empty' );
+                }catch(e){
+                    test = e.toString();
+                }
+
+                return test
+            }, 'Error: World.contructor:1'
     );
     bsTest('add/get/remove ',
             function () {
