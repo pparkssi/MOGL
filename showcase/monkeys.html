@@ -136,13 +136,13 @@
 
             for( i = 0; i < 500; i++ ) {
                 mesh = new Mesh( 'geometry', 'material' );
-                mesh.x = Math.random() * 2 - 1;
-                mesh.y = Math.random() * 2 - 1;
-                mesh.z = Math.random() * 2 + 1;
+                mesh.x = Math.random() * 100-50;
+                mesh.y = Math.random() * 100-50
+                mesh.z = Math.random() * 100-50
                 mesh.rotateX = Math.random() * PI2;
                 mesh.rotateY = Math.random() * PI2;
                 mesh.rotateZ = Math.random() * PI2;
-                mesh.setScale( 0.2, 0.2, 0.2 );
+
 
                 scene.addChild( 'monkey' + i, mesh );
                 meshes.push( mesh );
@@ -169,7 +169,7 @@
                 }
 
                 world.render();
-
+                scene.getChild('camera').rotateY+=0.01
                 requestAnimationFrame( render );
             }
 

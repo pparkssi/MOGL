@@ -6,7 +6,7 @@
  * 메서드체이닝을 위해 대부분의 함수는 자신을 반환함.
  */
 var World = (function () {
-    var World, fn;
+    var World, fn, rectMatrix = Matrix.create(), f3=new Float32Array(3);
     World = function World(id) {
         this._cvs = document.getElementById(id);
         this._renderList = [],
@@ -43,8 +43,8 @@ var World = (function () {
                 for(k in scene._glPROGRAMs){
                     tProgram = scene._glPROGRAMs[k]
                     gl.useProgram(tProgram)
-                    gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera.getProjectionMatrix())
-                    gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.getMatrix().toString().substring(9,camera.getMatrix().toString().length-1).split(','))
+                    gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera._pixelMatrix)
+                    gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.getMatrix())
                 }
                 tItem = tMaterial = tProgram = tVBO = tIBO = null
                 for (k in children) {
@@ -108,13 +108,16 @@ var World = (function () {
          gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO),
          gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0),
          gl.uniform3fv(tProgram.uRotate, [0,0,0])
+         gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,rectMatrix)
          for (i = 0, len = tList.length; i < len; i++) {
              scene = tList[i].scene,
              camera = scene.getChild(tList[i].cameraID)
              if(camera._visible){
                  tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer
-                 gl.uniform3fv(tProgram.uPosition, [tFrameBuffer.x+tFrameBuffer.width/2,tFrameBuffer.y+tFrameBuffer.height/2,0]),
-                 gl.uniform3fv(tProgram.uScale, [tFrameBuffer.width/2,tFrameBuffer.height/2,1]),
+                 f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2, f3[2] = 0
+                 gl.uniform3fv(tProgram.uPosition, f3),
+                 f3[0] = tFrameBuffer.width / 2, f3[1] = tFrameBuffer.height / 2, f3[2] = 1
+                 gl.uniform3fv(tProgram.uScale, f3),
                  gl.activeTexture(gl.TEXTURE0),
                  gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture),
                  gl.uniform1i(tProgram.uSampler, 0),

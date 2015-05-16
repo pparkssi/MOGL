@@ -1,6 +1,778 @@
-var Matrix = (function(){
-	//if( window['WebkitCSSMatrix'] ) return window['WebkitCSSMatrix'];
-	//if( window['MSCSSMatrix'] ) return window['MSCSSMatrix'];
-	var CSSMatrix=function(h){if(!h||h==="none"){for(var g=0;g<16;g++){this["m"+((g/4|0)+1)+(g%4+1)]=g%4==(g/4|0)?1:0}return this}return this.setMatrixValue(h)};CSSMatrix.prototype={constructor:CSSMatrix,PID180:Math.PI/180,get a(){return this.m11},get b(){return this.m21},get c(){return this.m12},get d(){return this.m22},get e(){return this.m13},get f(){return this.m23},set a(g){this.m11=g},set b(g){this.m21=g},set c(g){this.m12=g},set d(g){this.m22=g},set e(g){this.m13=g},set f(g){this.m23=g},inverse:function(){var g=this.__clone__();g.m11=g.m23*g.m34*g.m42-g.m24*g.m33*g.m42+g.m24*g.m32*g.m43-g.m22*g.m34*g.m43-g.m23*g.m32*g.m44+g.m22*g.m33*g.m44;g.m12=g.m14*g.m33*g.m42-g.m13*g.m34*g.m42-g.m14*g.m32*g.m43+g.m12*g.m34*g.m43+g.m13*g.m32*g.m44-g.m12*g.m33*g.m44;g.m13=g.m13*g.m24*g.m42-g.m14*g.m23*g.m42+g.m14*g.m22*g.m43-g.m12*g.m24*g.m43-g.m13*g.m22*g.m44+g.m12*g.m23*g.m44;g.m14=g.m14*g.m23*g.m32-g.m13*g.m24*g.m32-g.m14*g.m22*g.m33+g.m12*g.m24*g.m33+g.m13*g.m22*g.m34-g.m12*g.m23*g.m34;g.m21=g.m24*g.m33*g.m41-g.m23*g.m34*g.m41-g.m24*g.m31*g.m43+g.m21*g.m34*g.m43+g.m23*g.m31*g.m44-g.m21*g.m33*g.m44;g.m22=g.m13*g.m34*g.m41-g.m14*g.m33*g.m41+g.m14*g.m31*g.m43-g.m11*g.m34*g.m43-g.m13*g.m31*g.m44+g.m11*g.m33*g.m44;g.m23=g.m14*g.m23*g.m41-g.m13*g.m24*g.m41-g.m14*g.m21*g.m43+g.m11*g.m24*g.m43+g.m13*g.m21*g.m44-g.m11*g.m23*g.m44;g.m24=g.m13*g.m24*g.m31-g.m14*g.m23*g.m31+g.m14*g.m21*g.m33-g.m11*g.m24*g.m33-g.m13*g.m21*g.m34+g.m11*g.m23*g.m34;g.m31=g.m22*g.m34*g.m41-g.m24*g.m32*g.m41+g.m24*g.m31*g.m42-g.m21*g.m34*g.m42-g.m22*g.m31*g.m44+g.m21*g.m32*g.m44;g.m32=g.m14*g.m32*g.m41-g.m12*g.m34*g.m41-g.m14*g.m31*g.m42+g.m11*g.m34*g.m42+g.m12*g.m31*g.m44-g.m11*g.m32*g.m44;g.m33=g.m12*g.m24*g.m41-g.m14*g.m22*g.m41+g.m14*g.m21*g.m42-g.m11*g.m24*g.m42-g.m12*g.m21*g.m44+g.m11*g.m22*g.m44;g.m34=g.m14*g.m22*g.m31-g.m12*g.m24*g.m31-g.m14*g.m21*g.m32+g.m11*g.m24*g.m32+g.m12*g.m21*g.m34-g.m11*g.m22*g.m34;g.m41=g.m23*g.m32*g.m41-g.m22*g.m33*g.m41-g.m23*g.m31*g.m42+g.m21*g.m33*g.m42+g.m22*g.m31*g.m43-g.m21*g.m32*g.m43;g.m42=g.m12*g.m33*g.m41-g.m13*g.m32*g.m41+g.m13*g.m31*g.m42-g.m11*g.m33*g.m42-g.m12*g.m31*g.m43+g.m11*g.m32*g.m43;g.m43=g.m13*g.m22*g.m41-g.m12*g.m23*g.m41-g.m13*g.m21*g.m42+g.m11*g.m23*g.m42+g.m12*g.m21*g.m43-g.m11*g.m22*g.m43;g.m44=g.m12*g.m23*g.m31-g.m13*g.m22*g.m31+g.m13*g.m21*g.m32-g.m11*g.m23*g.m32-g.m12*g.m21*g.m33+g.m11*g.m22*g.m33;return g.scale(1/g.__determinant__())},multiply:function(g){return this.__multiplyMatrices__(this.__clone__(),g)},__multiplyMatrices__:function(g,h){h.m11=h.m11*g.m11+h.m12*g.m21+h.m13*g.m31+h.m14*g.m41;h.m12=h.m11*g.m12+h.m12*g.m22+h.m13*g.m32+h.m14*g.m42;h.m13=h.m11*g.m13+h.m12*g.m23+h.m13*g.m33+h.m14*g.m43;h.m14=h.m11*g.m14+h.m12*g.m24+h.m13*g.m34+h.m14*g.m44;h.m21=h.m21*g.m11+h.m22*g.m21+h.m23*g.m31+h.m24*g.m41;h.m22=h.m21*g.m12+h.m22*g.m22+h.m23*g.m32+h.m24*g.m42;h.m23=h.m21*g.m13+h.m22*g.m23+h.m23*g.m33+h.m24*g.m43;h.m24=h.m21*g.m14+h.m22*g.m24+h.m23*g.m34+h.m24*g.m44;h.m31=h.m31*g.m11+h.m32*g.m21+h.m33*g.m31+h.m34*g.m41;h.m32=h.m31*g.m12+h.m32*g.m22+h.m33*g.m32+h.m34*g.m42;h.m33=h.m31*g.m13+h.m32*g.m23+h.m33*g.m33+h.m34*g.m43;h.m34=h.m31*g.m14+h.m32*g.m24+h.m33*g.m34+h.m34*g.m44;h.m41=h.m41*g.m11+h.m42*g.m21+h.m43*g.m31+h.m44*g.m41;h.m42=h.m41*g.m12+h.m42*g.m22+h.m43*g.m32+h.m44*g.m42;h.m43=h.m41*g.m13+h.m42*g.m23+h.m43*g.m33+h.m44*g.m43;h.m44=h.m41*g.m14+h.m42*g.m24+h.m43*g.m34+h.m44*g.m44;return h},multiplyLeft:function(g){return this.__multiplyMatrices__(g,this.__clone__())},rotate:function(i,h,g){if(i&&!(h&&g)){return this.__rotateX__(i)}else{if(h&&!(i&&g)){return this.__rotateY__(h)}else{if(g&&!(i&&h)){return this.__rotateZ__(g)}}}h=h||i;g=g||g;return this.__rotateX__(i).__rotateY__(h).__rotateZ__(g)},__rotateX__:function(i){var j=Math.cos(-i*Math.PI/180),h=Math.sin(-i*Math.PI/180),g=this.__clone__();g.m12=j*this.m12+h*this.m13;g.m22=j*this.m22+h*this.m23;g.m32=j*this.m32+h*this.m33;g.m42=j*this.m42+h*this.m43;g.m13=j*this.m13-h*this.m12;g.m23=j*this.m23-h*this.m22;g.m33=j*this.m33-h*this.m32;g.m43=j*this.m43-h*this.m42;return g},__rotateY__:function(i){var j=Math.cos(-i*this.PID180),h=Math.sin(-i*this.PID180),g=this.__clone__();g.m11=j*this.m11-h*this.m13;g.m21=j*this.m21-h*this.m23;g.m31=j*this.m31-h*this.m33;g.m41=j*this.m41-h*this.m43;g.m13=j*this.m13+h*this.m11;g.m23=j*this.m23+h*this.m21;g.m33=j*this.m33+h*this.m31;g.m43=j*this.m43+h*this.m41;return g},__rotateZ__:function(i){var j=Math.cos(-i*this.PID180),h=Math.sin(-i*this.PID180),g=this.__clone__();g.m11=j*this.m11+h*this.m12;g.m21=j*this.m21+h*this.m22;g.m31=j*this.m31+h*this.m32;g.m41=j*this.m41+h*this.m42;g.m12=j*this.m12-h*this.m11;g.m22=j*this.m22-h*this.m21;g.m32=j*this.m32-h*this.m31;g.m42=j*this.m42-h*this.m41;return g},rotateAxisAngle:function(g,m,k,j){m=m||g;k=k||m;if(g===1&&m===0&&k===0){return this.__rotateX__(j)}else{if(g===0&&m===1&&k===0){return this.__rotateY__(j)}else{if(g===0&&m===0&&k===1){return this.__rotateZ__(j)}}}var i=new CSSMatrix(),l=Math.cos(j)*this.PID180,h=Math.sin(j)*this.PID180;i.m11=l+g*g*(1-l);i.m12=g*m*(1-l)-k*h;i.m13=g*k*(1-l)+m*h;i.m21=m*g*(1-l)+k*h;i.m22=l+m*m*(1-l);i.m23=m*k*(1-l)-g*h;i.m31=k*g*(1-l)-m*h;i.m32=k*m*(1-l)+g*h;i.m33=l+k*k*(1-l);return this.__clone__().multiply(i)},scale:function(j,i,g){i=i||j;g=g||1;var h=this.__clone__();h.m11*=j;h.m21*=i;h.m31*=g;h.m12*=j;h.m22*=i;h.m32*=g;h.m13*=j;h.m23*=i;h.m33*=g;h.m13*=j;h.m24*=i;h.m34*=g;return h},setMatrixValue:function(j){var g=j.match(/[+-]?\d*[.]?\d+(?=,|\))/g);for(var h=0;h<16;h++){this["m"+((h/4|0)+1)+(h%4+1)]=Number(g[h])}return this},skewX:function(h){h*=this.PID180;var g=this.__clone__();g.m21=Math.tan(h);return g},skewY:function(h){h*=this.PID180;var g=this.__clone__();g.m12=Math.tan(h);return g},toString:function(){var h=this.m11.toFixed(6);for(var g=1;g<16;g++){h+=","+(this["m"+((g/4|0)+1)+(g%4+1)]).toFixed(6)}return"matrix3d("+h+")"},translate:function(h,j,i){var g=this.__clone__(),i=i||0;g.m41=g.m11*h+g.m21*j+g.m31*i+g.m41;g.m42=g.m12*h+g.m22*j+g.m32*i+g.m42;g.m43=g.m13*h+g.m14*j+g.m33*i+g.m43;g.m44=g.m14*h+g.m24*j+g.m34*i+g.m44;return g},__determinant__:function(){return(this.m41*(+this.m14*this.m23*this.m32-this.m13*this.m24*this.m32-this.m14*this.m22*this.m33+this.m12*this.m24*this.m33+this.m13*this.m22*this.m34-this.m12*this.m23*this.m34)+this.m42*(+this.m11*this.m23*this.m34-this.m11*this.m24*this.m33+this.m14*this.m21*this.m33-this.m13*this.m21*this.m34+this.m13*this.m24*this.m31-this.m14*this.m23*this.m31)+this.m43*(+this.m11*this.m24*this.m32-this.m11*this.m22*this.m34-this.m14*this.m21*this.m32+this.m12*this.m21*this.m34+this.m14*this.m22*this.m31-this.m12*this.m24*this.m31)+this.m44*(-this.m13*this.m22*this.m31-this.m11*this.m23*this.m32+this.m11*this.m22*this.m33+this.m13*this.m21*this.m32-this.m12*this.m21*this.m33+this.m12*this.m23*this.m31))},__clone__:function(){var h=new CSSMatrix();for(var g=0;g<16;g++){h["m"+((g/4|0)+1)+(g%4+1)]=this["m"+((g/4|0)+1)+(g%4+1)]}return h}};
-    return CSSMatrix;
+var Matrix = (function () {
+	/* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
+
+	 Permission is hereby granted, free of charge, to any person obtaining a copy
+	 of this software and associated documentation files (the "Software"), to deal
+	 in the Software without restriction, including without limitation the rights
+	 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 copies of the Software, and to permit persons to whom the Software is
+	 furnished to do so, subject to the following conditions:
+
+	 The above copyright notice and this permission notice shall be included in
+	 all copies or substantial portions of the Software.
+
+	 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	 THE SOFTWARE. */
+
+	/**
+	 * @class 4x4 Matrix
+	 * @name Matrix
+	 */
+	var Matrix = {};
+
+	/**
+	 * Creates a new identity Matrix
+	 *
+	 * @returns {Matrix} a new 4x4 matrix
+	 */
+	Matrix.create = function () {
+		var out = new Float32Array(16);
+		out[0] = 1;
+		out[1] = 0;
+		out[2] = 0;
+		out[3] = 0;
+		out[4] = 0;
+		out[5] = 1;
+		out[6] = 0;
+		out[7] = 0;
+		out[8] = 0;
+		out[9] = 0;
+		out[10] = 1;
+		out[11] = 0;
+		out[12] = 0;
+		out[13] = 0;
+		out[14] = 0;
+		out[15] = 1;
+		return out;
+	};
+
+	/**
+	 * Creates a new Matrix initialized with values from an existing matrix
+	 *
+	 * @param {Matrix} a matrix to clone
+	 * @returns {Matrix} a new 4x4 matrix
+	 */
+	Matrix.clone = function (a) {
+		var out = new Float32Array(16);
+		out[0] = a[0];
+		out[1] = a[1];
+		out[2] = a[2];
+		out[3] = a[3];
+		out[4] = a[4];
+		out[5] = a[5];
+		out[6] = a[6];
+		out[7] = a[7];
+		out[8] = a[8];
+		out[9] = a[9];
+		out[10] = a[10];
+		out[11] = a[11];
+		out[12] = a[12];
+		out[13] = a[13];
+		out[14] = a[14];
+		out[15] = a[15];
+		return out;
+	};
+
+	/**
+	 * Copy the values from one Matrix to another
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @param {Matrix} a the source matrix
+	 * @returns {Matrix} out
+	 */
+	Matrix.copy = function (out, a) {
+		out[0] = a[0];
+		out[1] = a[1];
+		out[2] = a[2];
+		out[3] = a[3];
+		out[4] = a[4];
+		out[5] = a[5];
+		out[6] = a[6];
+		out[7] = a[7];
+		out[8] = a[8];
+		out[9] = a[9];
+		out[10] = a[10];
+		out[11] = a[11];
+		out[12] = a[12];
+		out[13] = a[13];
+		out[14] = a[14];
+		out[15] = a[15];
+		return out;
+	};
+
+	/**
+	 * Set a Matrix to the identity matrix
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @returns {Matrix} out
+	 */
+	Matrix.identity = function (out) {
+		out[0] = 1;
+		out[1] = 0;
+		out[2] = 0;
+		out[3] = 0;
+		out[4] = 0;
+		out[5] = 1;
+		out[6] = 0;
+		out[7] = 0;
+		out[8] = 0;
+		out[9] = 0;
+		out[10] = 1;
+		out[11] = 0;
+		out[12] = 0;
+		out[13] = 0;
+		out[14] = 0;
+		out[15] = 1;
+		return out;
+	};
+
+	/**
+	 * Inverts a Matrix
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @param {Matrix} a the source matrix
+	 * @returns {Matrix} out
+	 */
+	Matrix.invert = function (out, a) {
+		var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+			a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+			a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+			a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15],
+
+			b00 = a00 * a11 - a01 * a10,
+			b01 = a00 * a12 - a02 * a10,
+			b02 = a00 * a13 - a03 * a10,
+			b03 = a01 * a12 - a02 * a11,
+			b04 = a01 * a13 - a03 * a11,
+			b05 = a02 * a13 - a03 * a12,
+			b06 = a20 * a31 - a21 * a30,
+			b07 = a20 * a32 - a22 * a30,
+			b08 = a20 * a33 - a23 * a30,
+			b09 = a21 * a32 - a22 * a31,
+			b10 = a21 * a33 - a23 * a31,
+			b11 = a22 * a33 - a23 * a32,
+
+		// Calculate the determinant
+			det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+
+		if (!det) {
+			return null;
+		}
+		det = 1.0 / det;
+
+		out[0] = (a11 * b11 - a12 * b10 + a13 * b09) * det;
+		out[1] = (a02 * b10 - a01 * b11 - a03 * b09) * det;
+		out[2] = (a31 * b05 - a32 * b04 + a33 * b03) * det;
+		out[3] = (a22 * b04 - a21 * b05 - a23 * b03) * det;
+		out[4] = (a12 * b08 - a10 * b11 - a13 * b07) * det;
+		out[5] = (a00 * b11 - a02 * b08 + a03 * b07) * det;
+		out[6] = (a32 * b02 - a30 * b05 - a33 * b01) * det;
+		out[7] = (a20 * b05 - a22 * b02 + a23 * b01) * det;
+		out[8] = (a10 * b10 - a11 * b08 + a13 * b06) * det;
+		out[9] = (a01 * b08 - a00 * b10 - a03 * b06) * det;
+		out[10] = (a30 * b04 - a31 * b02 + a33 * b00) * det;
+		out[11] = (a21 * b02 - a20 * b04 - a23 * b00) * det;
+		out[12] = (a11 * b07 - a10 * b09 - a12 * b06) * det;
+		out[13] = (a00 * b09 - a01 * b07 + a02 * b06) * det;
+		out[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
+		out[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
+
+		return out;
+	};
+
+
+	/**
+	 * Multiplies two Matrix's
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @param {Matrix} a the first operand
+	 * @param {Matrix} b the second operand
+	 * @returns {Matrix} out
+	 */
+	Matrix.multiply = function (out, a, b) {
+		var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+			a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+			a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+			a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+
+		// Cache only the current line of the second matrix
+		var b0 = b[0], b1 = b[1], b2 = b[2], b3 = b[3];
+		out[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+		out[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+		out[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+		out[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+
+		b0 = b[4];
+		b1 = b[5];
+		b2 = b[6];
+		b3 = b[7];
+		out[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+		out[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+		out[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+		out[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+
+		b0 = b[8];
+		b1 = b[9];
+		b2 = b[10];
+		b3 = b[11];
+		out[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+		out[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+		out[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+		out[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+
+		b0 = b[12];
+		b1 = b[13];
+		b2 = b[14];
+		b3 = b[15];
+		out[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+		out[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+		out[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+		out[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+		return out;
+	};
+
+	/**
+	 * Alias for {@link Matrix.multiply}
+	 * @function
+	 */
+	Matrix.mul = Matrix.multiply;
+
+	/**
+	 * Translate a Matrix by the given vector
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @param {Matrix} a the matrix to translate
+	 * @param {vec3} v vector to translate by
+	 * @returns {Matrix} out
+	 */
+	Matrix.translate = function (out, a, v) {
+		var x = v[0], y = v[1], z = v[2],
+			a00, a01, a02, a03,
+			a10, a11, a12, a13,
+			a20, a21, a22, a23;
+
+		if (a === out) {
+			out[12] = a[0] * x + a[4] * y + a[8] * z + a[12];
+			out[13] = a[1] * x + a[5] * y + a[9] * z + a[13];
+			out[14] = a[2] * x + a[6] * y + a[10] * z + a[14];
+			out[15] = a[3] * x + a[7] * y + a[11] * z + a[15];
+		} else {
+			a00 = a[0];
+			a01 = a[1];
+			a02 = a[2];
+			a03 = a[3];
+			a10 = a[4];
+			a11 = a[5];
+			a12 = a[6];
+			a13 = a[7];
+			a20 = a[8];
+			a21 = a[9];
+			a22 = a[10];
+			a23 = a[11];
+
+			out[0] = a00;
+			out[1] = a01;
+			out[2] = a02;
+			out[3] = a03;
+			out[4] = a10;
+			out[5] = a11;
+			out[6] = a12;
+			out[7] = a13;
+			out[8] = a20;
+			out[9] = a21;
+			out[10] = a22;
+			out[11] = a23;
+
+			out[12] = a00 * x + a10 * y + a20 * z + a[12];
+			out[13] = a01 * x + a11 * y + a21 * z + a[13];
+			out[14] = a02 * x + a12 * y + a22 * z + a[14];
+			out[15] = a03 * x + a13 * y + a23 * z + a[15];
+		}
+
+		return out;
+	};
+
+	/**
+	 * Scales the Matrix by the dimensions in the given vec3
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @param {Matrix} a the matrix to scale
+	 * @param {vec3} v the vec3 to scale the matrix by
+	 * @returns {Matrix} out
+	 **/
+	Matrix.scale = function (out, a, v) {
+		var x = v[0], y = v[1], z = v[2];
+
+		out[0] = a[0] * x;
+		out[1] = a[1] * x;
+		out[2] = a[2] * x;
+		out[3] = a[3] * x;
+		out[4] = a[4] * y;
+		out[5] = a[5] * y;
+		out[6] = a[6] * y;
+		out[7] = a[7] * y;
+		out[8] = a[8] * z;
+		out[9] = a[9] * z;
+		out[10] = a[10] * z;
+		out[11] = a[11] * z;
+		out[12] = a[12];
+		out[13] = a[13];
+		out[14] = a[14];
+		out[15] = a[15];
+		return out;
+	};
+
+	/**
+	 * Rotates a Matrix by the given angle around the given axis
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @param {Matrix} a the matrix to rotate
+	 * @param {Number} rad the angle to rotate the matrix by
+	 * @param {vec3} axis the axis to rotate around
+	 * @returns {Matrix} out
+	 */
+	Matrix.rotate = function (out, a, rad, axis) {
+		var x = axis[0], y = axis[1], z = axis[2],
+			len = Math.sqrt(x * x + y * y + z * z),
+			s, c, t,
+			a00, a01, a02, a03,
+			a10, a11, a12, a13,
+			a20, a21, a22, a23,
+			b00, b01, b02,
+			b10, b11, b12,
+			b20, b21, b22;
+
+		if (Math.abs(len) < GLMAT_EPSILON) { return null; }
+
+		len = 1 / len;
+		x *= len;
+		y *= len;
+		z *= len;
+
+		s = Math.sin(rad);
+		c = Math.cos(rad);
+		t = 1 - c;
+
+		a00 = a[0];
+		a01 = a[1];
+		a02 = a[2];
+		a03 = a[3];
+		a10 = a[4];
+		a11 = a[5];
+		a12 = a[6];
+		a13 = a[7];
+		a20 = a[8];
+		a21 = a[9];
+		a22 = a[10];
+		a23 = a[11];
+
+		// Construct the elements of the rotation matrix
+		b00 = x * x * t + c;
+		b01 = y * x * t + z * s;
+		b02 = z * x * t - y * s;
+		b10 = x * y * t - z * s;
+		b11 = y * y * t + c;
+		b12 = z * y * t + x * s;
+		b20 = x * z * t + y * s;
+		b21 = y * z * t - x * s;
+		b22 = z * z * t + c;
+
+		// Perform rotation-specific matrix multiplication
+		out[0] = a00 * b00 + a10 * b01 + a20 * b02;
+		out[1] = a01 * b00 + a11 * b01 + a21 * b02;
+		out[2] = a02 * b00 + a12 * b01 + a22 * b02;
+		out[3] = a03 * b00 + a13 * b01 + a23 * b02;
+		out[4] = a00 * b10 + a10 * b11 + a20 * b12;
+		out[5] = a01 * b10 + a11 * b11 + a21 * b12;
+		out[6] = a02 * b10 + a12 * b11 + a22 * b12;
+		out[7] = a03 * b10 + a13 * b11 + a23 * b12;
+		out[8] = a00 * b20 + a10 * b21 + a20 * b22;
+		out[9] = a01 * b20 + a11 * b21 + a21 * b22;
+		out[10] = a02 * b20 + a12 * b21 + a22 * b22;
+		out[11] = a03 * b20 + a13 * b21 + a23 * b22;
+
+		if (a !== out) { // If the source and destination differ, copy the unchanged last row
+			out[12] = a[12];
+			out[13] = a[13];
+			out[14] = a[14];
+			out[15] = a[15];
+		}
+		return out;
+	};
+
+	/**
+	 * Rotates a matrix by the given angle around the X axis
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @param {Matrix} a the matrix to rotate
+	 * @param {Number} rad the angle to rotate the matrix by
+	 * @returns {Matrix} out
+	 */
+	Matrix.rotateX = function (out, a, rad) {
+		var s = Math.sin(rad),
+			c = Math.cos(rad),
+			a10 = a[4],
+			a11 = a[5],
+			a12 = a[6],
+			a13 = a[7],
+			a20 = a[8],
+			a21 = a[9],
+			a22 = a[10],
+			a23 = a[11];
+
+		if (a !== out) { // If the source and destination differ, copy the unchanged rows
+			out[0] = a[0];
+			out[1] = a[1];
+			out[2] = a[2];
+			out[3] = a[3];
+			out[12] = a[12];
+			out[13] = a[13];
+			out[14] = a[14];
+			out[15] = a[15];
+		}
+
+		// Perform axis-specific matrix multiplication
+		out[4] = a10 * c + a20 * s;
+		out[5] = a11 * c + a21 * s;
+		out[6] = a12 * c + a22 * s;
+		out[7] = a13 * c + a23 * s;
+		out[8] = a20 * c - a10 * s;
+		out[9] = a21 * c - a11 * s;
+		out[10] = a22 * c - a12 * s;
+		out[11] = a23 * c - a13 * s;
+		return out;
+	};
+
+	/**
+	 * Rotates a matrix by the given angle around the Y axis
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @param {Matrix} a the matrix to rotate
+	 * @param {Number} rad the angle to rotate the matrix by
+	 * @returns {Matrix} out
+	 */
+	Matrix.rotateY = function (out, a, rad) {
+		var s = Math.sin(rad),
+			c = Math.cos(rad),
+			a00 = a[0],
+			a01 = a[1],
+			a02 = a[2],
+			a03 = a[3],
+			a20 = a[8],
+			a21 = a[9],
+			a22 = a[10],
+			a23 = a[11];
+
+		if (a !== out) { // If the source and destination differ, copy the unchanged rows
+			out[4] = a[4];
+			out[5] = a[5];
+			out[6] = a[6];
+			out[7] = a[7];
+			out[12] = a[12];
+			out[13] = a[13];
+			out[14] = a[14];
+			out[15] = a[15];
+		}
+
+		// Perform axis-specific matrix multiplication
+		out[0] = a00 * c - a20 * s;
+		out[1] = a01 * c - a21 * s;
+		out[2] = a02 * c - a22 * s;
+		out[3] = a03 * c - a23 * s;
+		out[8] = a00 * s + a20 * c;
+		out[9] = a01 * s + a21 * c;
+		out[10] = a02 * s + a22 * c;
+		out[11] = a03 * s + a23 * c;
+		return out;
+	};
+
+	/**
+	 * Rotates a matrix by the given angle around the Z axis
+	 *
+	 * @param {Matrix} out the receiving matrix
+	 * @param {Matrix} a the matrix to rotate
+	 * @param {Number} rad the angle to rotate the matrix by
+	 * @returns {Matrix} out
+	 */
+	Matrix.rotateZ = function (out, a, rad) {
+		var s = Math.sin(rad),
+			c = Math.cos(rad),
+			a00 = a[0],
+			a01 = a[1],
+			a02 = a[2],
+			a03 = a[3],
+			a10 = a[4],
+			a11 = a[5],
+			a12 = a[6],
+			a13 = a[7];
+
+		if (a !== out) { // If the source and destination differ, copy the unchanged last row
+			out[8] = a[8];
+			out[9] = a[9];
+			out[10] = a[10];
+			out[11] = a[11];
+			out[12] = a[12];
+			out[13] = a[13];
+			out[14] = a[14];
+			out[15] = a[15];
+		}
+
+		// Perform axis-specific matrix multiplication
+		out[0] = a00 * c + a10 * s;
+		out[1] = a01 * c + a11 * s;
+		out[2] = a02 * c + a12 * s;
+		out[3] = a03 * c + a13 * s;
+		out[4] = a10 * c - a00 * s;
+		out[5] = a11 * c - a01 * s;
+		out[6] = a12 * c - a02 * s;
+		out[7] = a13 * c - a03 * s;
+		return out;
+	};
+
+
+	/**
+	 * Generates a frustum matrix with the given bounds
+	 *
+	 * @param {Matrix} out Matrix frustum matrix will be written into
+	 * @param {Number} left Left bound of the frustum
+	 * @param {Number} right Right bound of the frustum
+	 * @param {Number} bottom Bottom bound of the frustum
+	 * @param {Number} top Top bound of the frustum
+	 * @param {Number} near Near bound of the frustum
+	 * @param {Number} far Far bound of the frustum
+	 * @returns {Matrix} out
+	 */
+	Matrix.frustum = function (out, left, right, bottom, top, near, far) {
+		var rl = 1 / (right - left),
+			tb = 1 / (top - bottom),
+			nf = 1 / (near - far);
+		out[0] = (near * 2) * rl;
+		out[1] = 0;
+		out[2] = 0;
+		out[3] = 0;
+		out[4] = 0;
+		out[5] = (near * 2) * tb;
+		out[6] = 0;
+		out[7] = 0;
+		out[8] = (right + left) * rl;
+		out[9] = (top + bottom) * tb;
+		out[10] = (far + near) * nf;
+		out[11] = -1;
+		out[12] = 0;
+		out[13] = 0;
+		out[14] = (far * near * 2) * nf;
+		out[15] = 0;
+		return out;
+	};
+
+	/**
+	 * Generates a perspective projection matrix with the given bounds
+	 *
+	 * @param {Matrix} out Matrix frustum matrix will be written into
+	 * @param {number} fovy Vertical field of view in radians
+	 * @param {number} aspect Aspect ratio. typically viewport width/height
+	 * @param {number} near Near bound of the frustum
+	 * @param {number} far Far bound of the frustum
+	 * @returns {Matrix} out
+	 */
+	Matrix.perspective = function (out, fovy, aspect, near, far) {
+		var f = 1.0 / Math.tan(fovy / 2),
+			nf = 1 / (near - far);
+		out[0] = f / aspect;
+		out[1] = 0;
+		out[2] = 0;
+		out[3] = 0;
+		out[4] = 0;
+		out[5] = f;
+		out[6] = 0;
+		out[7] = 0;
+		out[8] = 0;
+		out[9] = 0;
+		out[10] = (far + near) * nf;
+		out[11] = -1;
+		out[12] = 0;
+		out[13] = 0;
+		out[14] = (2 * far * near) * nf;
+		out[15] = 0;
+		return out;
+	};
+
+	/**
+	 * Generates a perspective projection matrix with the given field of view.
+	 * This is primarily useful for generating projection matrices to be used
+	 * with the still experiemental WebVR API.
+	 *
+	 * @param {Matrix} out Matrix frustum matrix will be written into
+	 * @param {number} fov Object containing the following values: upDegrees, downDegrees, leftDegrees, rightDegrees
+	 * @param {number} near Near bound of the frustum
+	 * @param {number} far Far bound of the frustum
+	 * @returns {Matrix} out
+	 */
+	Matrix.perspectiveFromFieldOfView = function (out, fov, near, far) {
+		var upTan = Math.tan(fov.upDegrees * Math.PI / 180.0),
+			downTan = Math.tan(fov.downDegrees * Math.PI / 180.0),
+			leftTan = Math.tan(fov.leftDegrees * Math.PI / 180.0),
+			rightTan = Math.tan(fov.rightDegrees * Math.PI / 180.0),
+			xScale = 2.0 / (leftTan + rightTan),
+			yScale = 2.0 / (upTan + downTan);
+
+		out[0] = xScale;
+		out[1] = 0.0;
+		out[2] = 0.0;
+		out[3] = 0.0;
+		out[4] = 0.0;
+		out[5] = yScale;
+		out[6] = 0.0;
+		out[7] = 0.0;
+		out[8] = -((leftTan - rightTan) * xScale * 0.5);
+		out[9] = ((upTan - downTan) * yScale * 0.5);
+		out[10] = far / (near - far);
+		out[11] = -1.0;
+		out[12] = 0.0;
+		out[13] = 0.0;
+		out[14] = (far * near) / (near - far);
+		out[15] = 0.0;
+		return out;
+	}
+
+	/**
+	 * Generates a orthogonal projection matrix with the given bounds
+	 *
+	 * @param {Matrix} out Matrix frustum matrix will be written into
+	 * @param {number} left Left bound of the frustum
+	 * @param {number} right Right bound of the frustum
+	 * @param {number} bottom Bottom bound of the frustum
+	 * @param {number} top Top bound of the frustum
+	 * @param {number} near Near bound of the frustum
+	 * @param {number} far Far bound of the frustum
+	 * @returns {Matrix} out
+	 */
+	Matrix.ortho = function (out, left, right, bottom, top, near, far) {
+		var lr = 1 / (left - right),
+			bt = 1 / (bottom - top),
+			nf = 1 / (near - far);
+		out[0] = -2 * lr;
+		out[1] = 0;
+		out[2] = 0;
+		out[3] = 0;
+		out[4] = 0;
+		out[5] = -2 * bt;
+		out[6] = 0;
+		out[7] = 0;
+		out[8] = 0;
+		out[9] = 0;
+		out[10] = 2 * nf;
+		out[11] = 0;
+		out[12] = (left + right) * lr;
+		out[13] = (top + bottom) * bt;
+		out[14] = (far + near) * nf;
+		out[15] = 1;
+		return out;
+	};
+
+	/**
+	 * Generates a look-at matrix with the given eye position, focal point, and up axis
+	 *
+	 * @param {Matrix} out Matrix frustum matrix will be written into
+	 * @param {vec3} eye Position of the viewer
+	 * @param {vec3} center Point the viewer is looking at
+	 * @param {vec3} up vec3 pointing up
+	 * @returns {Matrix} out
+	 */
+	Matrix.lookAt = function (out, eye, center, up) {
+		var x0, x1, x2, y0, y1, y2, z0, z1, z2, len,
+			eyex = eye[0],
+			eyey = eye[1],
+			eyez = eye[2],
+			upx = up[0],
+			upy = up[1],
+			upz = up[2],
+			centerx = center[0],
+			centery = center[1],
+			centerz = center[2];
+
+		if (Math.abs(eyex - centerx) < GLMAT_EPSILON &&
+			Math.abs(eyey - centery) < GLMAT_EPSILON &&
+			Math.abs(eyez - centerz) < GLMAT_EPSILON) {
+			return Matrix.identity(out);
+		}
+
+		z0 = eyex - centerx;
+		z1 = eyey - centery;
+		z2 = eyez - centerz;
+
+		len = 1 / Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+		z0 *= len;
+		z1 *= len;
+		z2 *= len;
+
+		x0 = upy * z2 - upz * z1;
+		x1 = upz * z0 - upx * z2;
+		x2 = upx * z1 - upy * z0;
+		len = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+		if (!len) {
+			x0 = 0;
+			x1 = 0;
+			x2 = 0;
+		} else {
+			len = 1 / len;
+			x0 *= len;
+			x1 *= len;
+			x2 *= len;
+		}
+
+		y0 = z1 * x2 - z2 * x1;
+		y1 = z2 * x0 - z0 * x2;
+		y2 = z0 * x1 - z1 * x0;
+
+		len = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+		if (!len) {
+			y0 = 0;
+			y1 = 0;
+			y2 = 0;
+		} else {
+			len = 1 / len;
+			y0 *= len;
+			y1 *= len;
+			y2 *= len;
+		}
+
+		out[0] = x0;
+		out[1] = y0;
+		out[2] = z0;
+		out[3] = 0;
+		out[4] = x1;
+		out[5] = y1;
+		out[6] = z1;
+		out[7] = 0;
+		out[8] = x2;
+		out[9] = y2;
+		out[10] = z2;
+		out[11] = 0;
+		out[12] = -(x0 * eyex + x1 * eyey + x2 * eyez);
+		out[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
+		out[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
+		out[15] = 1;
+
+		return out;
+	};
+
+	/**
+	 * Returns a string representation of a Matrix
+	 *
+	 * @param {Matrix} mat matrix to represent as a string
+	 * @returns {String} string representation of the matrix
+	 */
+	Matrix.str = function (a) {
+		return 'Matrix(' + a[0] + ', ' + a[1] + ', ' + a[2] + ', ' + a[3] + ', ' +
+			a[4] + ', ' + a[5] + ', ' + a[6] + ', ' + a[7] + ', ' +
+			a[8] + ', ' + a[9] + ', ' + a[10] + ', ' + a[11] + ', ' +
+			a[12] + ', ' + a[13] + ', ' + a[14] + ', ' + a[15] + ')';
+	};
+	return Matrix;
 })();
