@@ -3,7 +3,7 @@
  * description
  */
 var Camera = (function () {
-    var Camera, fn,a4=[];
+    var Camera, fn,a4=[],PERPI=Math.PI / 180;
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
     Camera = function Camera() {
         this._cvs=null
@@ -16,7 +16,7 @@ var Camera = (function () {
         this._b = 0,
         this._a = 1,
         this._fov = 55,
-        this._near = 0.1,
+        this._near = 0.01,
         this._far = 100000,
         this._visible=1,
         this._filters ={},
@@ -226,7 +226,7 @@ var Camera = (function () {
     },
     fn.setFOV = function setFOV(){MoGL.isAlive(this);
         if (arguments.length == 1) this._fov = arguments[0]
-        else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * (Math.PI / 180) / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
+        else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
         return this
     },
     fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
@@ -239,7 +239,7 @@ var Camera = (function () {
         return this
     },
     fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
-        Matrix.perspective(this._pixelMatrix, this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far)
+        Matrix.perspective(this._pixelMatrix, this._fov*PERPI, this._renderArea[2]/this._renderArea[3], this._near, this._far)
         return this
     },
     fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);
