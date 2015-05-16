@@ -11,9 +11,9 @@ var Geometry = (function () {
         var i, len, t, t2,
             isFloat32 = vertex instanceof Float32Array,
             isUint16 = index instanceof Uint16Array
-        //isUint32 = Object.prototype.toString.call(index) == '[object Uint32Array]'
+        console.log(index)
         if (!(Array.isArray(vertex) || isFloat32 )) MoGL.error('Geometry', 'constructor', 0)
-        if (!(Array.isArray(index) || isUint16 || isUint32 )) MoGL.error('Geometry', 'constructor', 1)
+        if (!(Array.isArray(index) || isUint16  )) MoGL.error('Geometry', 'constructor', 1)
         if (info) {
             i = info.length
             if(vertex.length % i) MoGL.error('Geometry', 'constructor', 2)
