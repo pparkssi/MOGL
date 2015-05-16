@@ -214,6 +214,114 @@
             }, 'Error: World.removeScene:0'
 
     );
+
+    bsTest( 'render',
+            function(){
+                var world = World('canvasTest3'), lobby = Scene(), test = '';
+                lobby.addChild( 'cam1', new Camera() );
+
+                world.addScene( 'lobby', lobby );
+                world.addRender( 'lobby', 'cam1' );
+
+                try{
+                    world.addRender( 'lobby', 'cam1' );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: World.addRender:0',
+            function(){
+                var world = World( 'canvasTest3'), test = '';
+
+                try{
+                    world.addRender( '', 'cam' );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: World.addRender:1',
+            function(){
+                var world = World( 'canvasTest3'), test = '';
+                world.addScene( 'lobby', Scene().addChild( 'cam', Camera() ) );
+                try{
+                    world.addRender( 'lobby', '' );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: World.addRender:2',
+            function(){
+                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
+
+                lobby.addChild( 'cam1', cam );
+                world.addScene( 'lobby', lobby );
+                lobby.destroy();
+                try{
+                    world.addRender( 'lobby', 'cam1' );
+                }catch(e){
+                    test = e.toString();
+                }
+
+                return test;
+            }, 'Error: Destroyed Object:[object Object]',
+            function(){
+                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
+
+                lobby.addChild( 'cam1', cam );
+                world.addScene( 'lobby', lobby );
+                cam.destroy();
+                try{
+                    world.addRender( 'lobby', 'cam1' );
+                }catch(e){
+                    test = e.toString();
+                }
+
+                return test;
+            }, 'Error: Destroyed Object:[object Object]',
+            function(){
+                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
+
+                lobby.addChild( 'cam1', cam );
+                world.addScene( 'lobby', lobby );
+                world.addRender( 'lobby', 'cam1' );
+                try{
+                    world.removeRender();
+                }catch(e){
+                    test = e.toString();
+                }
+
+                return test;
+            }, 'Error: ',
+            function(){
+                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
+
+                lobby.addChild( 'cam1', cam );
+                world.addScene( 'lobby', lobby );
+                world.addRender( 'lobby', 'cam1' );
+                try{
+                    world.removeRender( '', 'cam1' );
+                }catch(e){
+                    test = e.toString();
+                }
+
+                return test;
+            }, 'Error: World.removeRender:0',
+            function(){
+                var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
+
+                lobby.addChild( 'cam1', cam );
+                world.addScene( 'lobby', lobby );
+                world.addRender( 'lobby', 'cam1' );
+                try{
+                    world.removeRender( 'lobby', '' );
+                }catch(e){
+                    test = e.toString();
+                }
+
+                return test;
+            }, 'Error: World.removeRender:1'
+
+    );
 </script>
 </body>
 </html>
