@@ -20,7 +20,7 @@
     <link rel="stylesheet" type="text/css" href="css.css"/>
 </head>
 <body>
-<canvas id="firstTest" width="512" height="512"></canvas>
+<canvas id="firstTest" width="512" height="1024"></canvas>
 
 <script>
     // 모글에 전역적인 루프 시스템이 있것고..
@@ -48,26 +48,26 @@
     for (var i = 0; i < 100; i++) {
         w.getScene('s0').addChild('tri' + i, new Mesh('tri', new Material(Math.random(), Math.random(), Math.random())));
         var a = w.getScene('s0').getChild('tri' + i)
-        a.x = Math.random()*2 - 1
-        a.y = Math.random()*2 - 1
-        a.z = Math.random()*2+1
+        a.x = Math.random()*50 - 25
+        a.y = Math.random()*50 - 25
+        a.z = Math.random()*50 - 25
         a.rotateX = Math.random()
         a.rotateY = Math.random()
         a.rotateZ = Math.random()
-        a.setScale(Math.random() / 4, Math.random() / 4, 1)
+
         list.push(a)
 
     }
     for (var i = 0; i < 100; i++) {
         w.getScene('s0').addChild('rect' + i, new Mesh('rect', 'bitmapMaterial'));
         var a = w.getScene('s0').getChild('rect' + i)
-        a.x = Math.random()*2 - 1
-        a.y = Math.random()*2 - 1
-        a.z = Math.random()*2+1
+        a.x = Math.random()*50 - 25
+        a.y = Math.random()*50 - 25
+        a.z = Math.random()*50 - 25
         a.rotateX = Math.random()
         a.rotateY = Math.random()
         a.rotateZ = Math.random()
-        a.setScale(Math.random() / 4, Math.random() / 4, 1)
+
         list.push(a)
     }
 
@@ -122,10 +122,11 @@
         w.getScene('s0').getChild('tri').x = Math.sin(w.getScene('s0').getChild('tri').rotateZ) / 2
         w.getScene('s0').getChild('tri').y = Math.cos(w.getScene('s0').getChild('tri').rotateZ) / 2
         t+=0.01
-        t2+=1
+        t2+=0.02
         var c1 = w.getScene('s0').getChild('camera1')
         c1.z = Math.cos(t)
         c1.rotateZ = t2
+        c1.rotateY = t2
 
         for (var i = 0; i < list.length; i++) {
             var a = list[i]

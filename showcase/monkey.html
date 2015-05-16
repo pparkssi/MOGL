@@ -10,8 +10,6 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport"
-          content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
     <style>
         body {
             background-color: #000;
@@ -61,8 +59,8 @@
         var divAverageFPS = document.getElementById( 'averageFPS' );
         var prevTime = 0;
 
-        canvas.width = 512;
-        canvas.height = 512;
+        canvas.width = W.innerWidth;
+        canvas.height = W.innerHeight;
 
         world.addScene('scene', scene);
 
@@ -132,8 +130,9 @@
             scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
 
             var mesh = new Mesh('geometry', 'material');
-            mesh.scaleX = mesh.scaleY = mesh.scaleZ = 0.3;
+            mesh.z =-5
             scene.addChild('monkey', mesh);
+
 
             var sum = 0, count = 1;
 

@@ -10,8 +10,6 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport"
-          content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
     <style>
         body {
             background-color: #000;
@@ -57,12 +55,12 @@
         var scene = new Scene();
         var canvas = document.getElementById('canvas');
 
-        var divCurrentFPS = document.getElementById( 'currentFPS' );
-        var divAverageFPS = document.getElementById( 'averageFPS' );
+        var divCurrentFPS = document.getElementById('currentFPS');
+        var divAverageFPS = document.getElementById('averageFPS');
         var prevTime = 0;
 
-        canvas.width = 1024;
-        canvas.height = 1024;
+        canvas.width = W.innerWidth;
+        canvas.height = W.innerHeight;
 
         world.addScene('scene', scene);
 
@@ -134,46 +132,45 @@
             var mesh;
             var PI2 = Math.PI * 2;
 
-            for( i = 0; i < 500; i++ ) {
-                mesh = new Mesh( 'geometry', 'material' );
-                mesh.x = Math.random() * 2 - 1;
-                mesh.y = Math.random() * 2 - 1;
-                mesh.z = Math.random() * 2 + 1;
+            for (i = 0; i < 500; i++) {
+                mesh = new Mesh('geometry', 'material');
+                mesh.x = Math.random() * 50 - 25;
+                mesh.y = Math.random() * 50 - 25;
+                mesh.z = -Math.random() * 200
                 mesh.rotateX = Math.random() * PI2;
                 mesh.rotateY = Math.random() * PI2;
                 mesh.rotateZ = Math.random() * PI2;
-                mesh.setScale( 0.2, 0.2, 0.2 );
 
-                scene.addChild( 'monkey' + i, mesh );
-                meshes.push( mesh );
+                scene.addChild('monkey' + i, mesh);
+                meshes.push(mesh);
             }
 
             var sum = 0, count = 1;
 
-            function render( currTime ) {
+            function render(currTime) {
                 var currentFPS = 1000 / ( currTime - prevTime );
                 prevTime = currTime;
 
-                divCurrentFPS.textContent = currentFPS.toFixed( 2 );
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
+                divCurrentFPS.textContent = currentFPS.toFixed(2);
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed(2);
 
                 var i = 0;
                 var j = meshes.length;
                 var mesh;
 
-                for( ; i < j; i++ ) {
+                for (; i < j; i++) {
                     mesh = meshes[i];
-                    mesh.rotateX += 0.01;
-                    mesh.rotateY += 0.01;
-                    mesh.rotateZ += 0.01;
+                    mesh.rotateX += 0.05;
+                    mesh.rotateY += 0.05;
+                    mesh.rotateZ += 0.05;
                 }
 
                 world.render();
 
-                requestAnimationFrame( render );
+                requestAnimationFrame(render);
             }
 
-            requestAnimationFrame( render );
+            requestAnimationFrame(render);
         }
     })(this);
 </script>

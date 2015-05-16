@@ -229,13 +229,11 @@ var Scene = (function () {
 
         var texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture),
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height,0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
-        gl.generateMipmap(gl.TEXTURE_2D);
-
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+// make it work even if not a power of 2
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
         var renderbuffer = gl.createRenderbuffer();
         gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer),
@@ -256,13 +254,18 @@ var Scene = (function () {
         this._glVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0,0.0,0.0]), 3)
         //for GPU
         for (var k in this._children) {
-            var mesh = this._children[k], name, geo = mesh._geometry;
-            if (!this._glVBOs[mesh._geometry] && mesh._geometry) {
-                name = geo._name,
-                this._glVBOs[name] = makeVBO(this, name, geo._position, 3),
-                this._glUVBOs[name] = makeUVBO(this, name, geo._uv, 2),
-                this._glIBOs[name] = makeIBO(this, name, geo._index, 1)
+            var mesh = this._children[k], _key, geo = mesh._geometry;
+            if (geo) {
+                console.log('!!!!!!!!!!!!!!!!!!',geo._key)
+                if(!this._geometrys[geo._key]) this.addGeometry(geo._key,geo)
+                if(!this._glVBOs[geo]){
+                    _key = geo._key,
+                    this._glVBOs[_key] = makeVBO(this, _key, geo._position, 3),
+                    this._glUVBOs[_key] = makeUVBO(this, _key, geo._uv, 2),
+                    this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1)
+                }
             }
+
         }
         if (!this._glVBOs['rect']) {
             this.addGeometry('rect', new Geometry([
@@ -279,9 +282,8 @@ var Scene = (function () {
             var camera = this._cameras[k]
             camera._cvs = this._cvs
             if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.clientWidth, this._cvs.clientHeight)
-            camera.getProjectionMatrix()
-
             if(camera._updateRenderArea){
+                camera.getProjectionMatrix()
                 makeFrameBuffer(this,camera)
                 camera._updateRenderArea = 0
             }
