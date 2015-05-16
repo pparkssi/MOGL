@@ -8,9 +8,9 @@
 * [Texture.addSpace](#textureaddspace)
 * [Texture.diffuse](#texturediffuse)
 * [Texture.specular](#texturespecular)
-* [Texture.diffuseWrap](#texturediffuseWrap)
+* [Texture.diffuseWrap](#texturediffusewrap)
 * [Texture.normal](#texturenormal)
-* [Texture.specularNormal](#texturespecularNormal)
+* [Texture.specularNormal](#texturespecularnormal)
 
 [top](#)
 ## Texture.zoomOut
