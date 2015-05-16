@@ -256,12 +256,12 @@ var Scene = (function () {
         this._glVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0,0.0,0.0]), 3)
         //for GPU
         for (var k in this._children) {
-            var mesh = this._children[k], name, geo = mesh._geometry;
+            var mesh = this._children[k], _key, geo = mesh._geometry;
             if (!this._glVBOs[mesh._geometry] && mesh._geometry) {
-                name = geo._name,
-                this._glVBOs[name] = makeVBO(this, name, geo._position, 3),
-                this._glUVBOs[name] = makeUVBO(this, name, geo._uv, 2),
-                this._glIBOs[name] = makeIBO(this, name, geo._index, 1)
+                _key = geo._key,
+                this._glVBOs[_key] = makeVBO(this, _key, geo._position, 3),
+                this._glUVBOs[_key] = makeUVBO(this, _key, geo._uv, 2),
+                this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1)
             }
         }
         if (!this._glVBOs['rect']) {

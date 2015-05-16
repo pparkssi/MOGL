@@ -50,9 +50,9 @@ var World = (function () {
                 tItem = tMaterial = tProgram = tVBO = tIBO = null
                 for (k in children) {
                     tItem = children[k],
-                    tVBO = scene._glVBOs[tItem._geometry._name],
-                    tUVBO = scene._glUVBOs[tItem._geometry._name],
-                    tIBO = scene._glIBOs[tItem._geometry._name],
+                    tVBO = scene._glVBOs[tItem._geometry._key],
+                    tUVBO = scene._glUVBOs[tItem._geometry._key],
+                    tIBO = scene._glIBOs[tItem._geometry._key],
                     tMaterial = tItem._material,
                     tProgram = tMaterial._textures.__indexList.length>0 ?scene._glPROGRAMs['bitmap'] :scene._glPROGRAMs['base'], // TODO 이놈은 어디서 결정하지?
                     gl.useProgram(tProgram)

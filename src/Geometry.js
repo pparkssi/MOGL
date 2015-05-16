@@ -30,7 +30,7 @@ var Geometry = (function () {
         this._uv = [],
         this._color = [],
         this._volume=null,
-        this._name = null
+        this._key = null
         ///////////////////////////////
         //TODO 노말,UV,컬러없을떄 판별
         if (arguments[2]) {

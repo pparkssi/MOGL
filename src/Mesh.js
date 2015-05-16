@@ -32,11 +32,13 @@ var Mesh = (function () {
     fn.getMatrix = function getMatrix() { MoGL.isAlive(this);
         //TODO 매트릭스 먼가 이상함
         Matrix.identity(this._matrix)
-        Matrix.translate(this._matrix,this._matrix,[this.x,this.y,this.z])
+        f3[0] = this.x,f3[1] = this.y,f3[2] = this.y
+        Matrix.translate(this._matrix,this._matrix,f3)
         Matrix.rotateX(this._matrix,this._matrix,this.rotateX)
         Matrix.rotateY(this._matrix,this._matrix,this.rotateY)
         Matrix.rotateZ(this._matrix,this._matrix,this.rotateZ)
-        Matrix.scale(this._matrix,this._matrix,[this.scaleX,this.scaleY,this.scaleZ])
+        f3[0] = this.scaleX,f3[1] = this.scaleY,f3[2] = this.scaleZ
+        Matrix.scale(this._matrix,this._matrix,f3)
         return this._matrix
     },
     fn.getParent = function getParent() { MoGL.isAlive(this);
@@ -58,7 +60,7 @@ var Mesh = (function () {
         if (this._scene) {
             if (this._geometry = typeof geometry == 'string') this._geometry=this._scene._geometrys[geometry]
             else this._geometry = geometry
-            this._geometry._name = geometry
+            this._geometry._key = geometry
         }
         else this._geometry = geometry
         return this
@@ -68,7 +70,7 @@ var Mesh = (function () {
         if (this._scene) {
             if (this._material = typeof material == 'string') this._material= this._scene._materials[material]
             else this._material = material
-            this._material._name = material
+            this._material._key = material
         }
         else this._material = material
         return this

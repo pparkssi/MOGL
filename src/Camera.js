@@ -230,15 +230,14 @@ var Camera = (function () {
         return this
     },
     fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
-        this._pixelMatrix = [
-            2 / this._cvs.clientWidth, 0, 0, 0,
-            0, -2 / this._cvs.clientHeight, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 1
-        ]
+        Matrix.identity(this._pixelMatrix)
+        this._pixelMatrix[0] =  2 / this._cvs.clientWidth
+        this._pixelMatrix[5] =  2 / this._cvs.clientHeight
+        this._pixelMatrix[15] =  1
         return this
     },
     fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
+        Matrix.identity(this._pixelMatrix)
         Matrix.perspective(this._pixelMatrix, this._fov*PERPI, this._renderArea[2]/this._renderArea[3], this._near, this._far)
         return this
     },
