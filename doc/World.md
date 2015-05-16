@@ -13,7 +13,7 @@
 ## Constructor
 
 ```javascript
-World()
+World('canvasID')
 ```
 
 **description**
@@ -24,18 +24,18 @@ World는 MoGL의 기본 시작객체로 내부에 다수의 [Scene](Scene.md)을
 
 **param**
 
-없음.
+1. id:string : canvasID
 
 **sample**
 
 ```javascript
-var world = new World();
+var world = new World('canvasID1');
 
 //애니메이션 루프에 인스턴스를 넣는다.
 requestAnimationFrame( world );
 
 //팩토리함수로도 작동
-var world2 = World();
+var world2 = World('canvasID2');
 ```
 
 [top](#)
