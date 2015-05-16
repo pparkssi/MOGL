@@ -21,6 +21,7 @@ var World = (function () {
         var i, k, len, tList = this._renderList
         var scene,camera,gl,children;
         var tItem, tMaterial, tProgram, tVBO, tUVBO, tIBO,tFrameBuffer;
+        var pVBO, pUVBO, pIBO
         for (k in this.LOOP)  this.LOOP[k]()
         for (i = 0, len = tList.length; i < len; i++) {
             //console.log(tList[i],'렌더')
@@ -56,8 +57,8 @@ var World = (function () {
                     tProgram = tMaterial._textures.__indexList.length>0 ?scene._glPROGRAMs['bitmap'] :scene._glPROGRAMs['base'], // TODO 이놈은 어디서 결정하지?
                     gl.useProgram(tProgram)
                     if(tProgram==scene._glPROGRAMs['base']){
-                        gl.bindBuffer(gl.ARRAY_BUFFER, tVBO),
-                        gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0),
+                        tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
+                        tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                         gl.uniform3fv(tProgram.uRotate, [tItem.rotateX, tItem.rotateY, tItem.rotateZ]),
                         gl.uniform3fv(tProgram.uPosition, [tItem.x, tItem.y, tItem.z]),
                         gl.uniform3fv(tProgram.uScale, [tItem.scaleX, tItem.scaleY, tItem.scaleZ]),
@@ -65,10 +66,10 @@ var World = (function () {
                         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
                         gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                     }else if(tProgram==scene._glPROGRAMs['bitmap']){
-                        gl.bindBuffer(gl.ARRAY_BUFFER, tVBO),
-                        gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0),
-                        gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO),
-                        gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0),
+                        tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
+                        tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                        tUVBO!=pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
+                        tUVBO!=pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                         gl.uniform3fv(tProgram.uRotate, [tItem.rotateX, tItem.rotateY, tItem.rotateZ]),
                         gl.uniform3fv(tProgram.uPosition, [tItem.x, tItem.y, tItem.z]),
                         gl.uniform3fv(tProgram.uScale, [tItem.scaleX, tItem.scaleY, tItem.scaleZ]),
@@ -81,6 +82,7 @@ var World = (function () {
                             gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                         }
                     }
+                    pVBO = tVBO, pUVBO = tUVBO, pIBO = tIBO
                 }
                 gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                 gl.bindTexture(gl.TEXTURE_2D, null);
