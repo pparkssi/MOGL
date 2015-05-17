@@ -5,7 +5,7 @@
 **field**
 
 **method**
-없음
+없음 
 
 **static**
 * [Matrix.create](#create)
