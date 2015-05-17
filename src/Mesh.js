@@ -76,14 +76,26 @@ var Mesh = (function () {
         return this
     },
 
-    fn.setPosition = function setPosition() { MoGL.isAlive(this);
-        return this.x = arguments[0], this.y = arguments[1], this.z = arguments[2], this
-    },
-    fn.setRotate = function setRotate() { MoGL.isAlive(this);
-        return this.rotateX = arguments[0], this.rotateY = arguments[1], this.rotateZ = arguments[2], this
-    },
-    fn.setScale = function setScale() { MoGL.isAlive(this);
-        return this.scaleX = arguments[0], this.scaleY = arguments[1], this.scaleZ = arguments[2], this
-    }
+        fn.setPosition = function setPosition() { MoGL.isAlive(this);
+            var len = arguments.length, arg0 = arguments[0];
+            if(len == 1 && arg0 instanceof Array) this.x = arg0[0], this.y = arg0[1], this.z = arg0[2];
+            else if(len > 2) this.x = arguments[0], this.y = arguments[1], this.z = arguments[2];
+            else MoGL.error('Mesh', 'setPosition', 0);
+            return this;
+        },
+        fn.setRotate = function setRotate() { MoGL.isAlive(this);
+            var len = arguments.length, arg0 = arguments[0];
+            if(len == 1 && arg0 instanceof Array) this.rotateX = arg0[0], this.rotateY = arg0[1], this.rotateZ = arg0[2];
+            else if(len > 2) this.rotateX = arguments[0], this.rotateY = arguments[1], this.rotateZ = arguments[2];
+            else MoGL.error('Mesh', 'setRotate', 0);
+            return this;
+        },
+        fn.setScale = function setScale() { MoGL.isAlive(this);
+            var len = arguments.length, arg0 = arguments[0];
+            if(len == 1 && arg0 instanceof Array) this.scaleX = arg0[0], this.scaleY = arg0[1], this.scaleZ = arg0[2];
+            else if(len > 2) this.scaleX = arguments[0], this.scaleY = arguments[1], this.scaleZ = arguments[2];
+            else MoGL.error('Mesh', 'setScale', 0);
+            return this;
+        }
     return MoGL.ext(Mesh, MoGL);
 })();

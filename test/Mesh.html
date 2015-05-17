@@ -179,12 +179,37 @@
     )
     bsTest('position',
             function () {
-                // Position
+                // Position - return type
                 temp = mesh1.getPosition()
                 return temp instanceof Float32Array
             }, true,
+            function(){
+                // Position - no param
+                var test = '';
+                try{
+                    mesh1.setPosition()
+                }catch(e){
+                    test = e.toString();
+                }
+                return test
+            }, 'Error: Mesh.setPosition:0',
+            function(){
+                // Position - 1 param - X
+                var test = '';
+                try{
+                    mesh1.setPosition(10)
+                }catch(e){
+                    test = e.toString();
+                }
+                return test
+            }, 'Error: Mesh.setPosition:0',
             function () {
-                // Position
+                // Position - 1 array param [x, y, z]
+                mesh1.setPosition([10, 20, 30])
+                return mesh1.x == 10 && mesh1.y == 20 && mesh1.z == 30;
+            }, true,
+            function () {
+                // Position - x, y, z
                 mesh1.setPosition(10, 20, 30)
                 return mesh1.x == 10 && mesh1.y == 20 && mesh1.z == 30;
             }, true,
@@ -202,12 +227,37 @@
     )
     bsTest('rotation',
             function () {
-                // rotation
+                // rotation - return type
                 temp = mesh1.getRotate()
                 return temp instanceof Float32Array
             }, true,
+            function(){
+                // rotation - no param
+                var test = '';
+                try{
+                    mesh1.setRotate(10)
+                }catch(e){
+                    test = e.toString();
+                }
+                return test
+            }, 'Error: Mesh.setRotate:0',
+            function(){
+                // rotation - 1 param - rotateX
+                var test = '';
+                try{
+                    mesh1.setRotate(10)
+                }catch(e){
+                    test = e.toString();
+                }
+                return test
+            }, 'Error: Mesh.setRotate:0',
             function () {
-                // rotation
+                // rotation - 1 array param [rotateX, rotateY, rotateZ]
+                mesh1.setRotate([10, 20, 30])
+                return mesh1.rotateX == 10 && mesh1.rotateY == 20 && mesh1.rotateZ == 30;
+            }, true,
+            function () {
+                // rotation - rotateX, rotateY, rotateZ
                 mesh1.setRotate(10, 20, 30)
                 return mesh1.rotateX == 10 && mesh1.rotateY == 20 && mesh1.rotateZ == 30;
             }, true,
@@ -225,12 +275,37 @@
     )
     bsTest('scale',
             function () {
-                // scale
+                // scale - return type
                 temp = mesh1.getScale()
                 return temp instanceof Float32Array
             }, true,
+            function(){
+                // rotation - no param
+                var test = '';
+                try{
+                    mesh1.setScale(10)
+                }catch(e){
+                    test = e.toString();
+                }
+                return test
+            }, 'Error: Mesh.setScale:0',
+            function(){
+                // rotation - 1 param - scaleX
+                var test = '';
+                try{
+                    mesh1.setScale(10)
+                }catch(e){
+                    test = e.toString();
+                }
+                return test
+            }, 'Error: Mesh.setScale:0',
             function () {
-                // scale
+                // scale - 1 array param [scaleX, scaleY, scaleZ]
+                mesh1.setScale([10, 20, 30])
+                return mesh1.scaleX == 10 && mesh1.scaleY == 20 && mesh1.scaleZ == 30;
+            }, true,
+            function () {
+                // scale - scaleX, scaleY, scaleZ
                 mesh1.setScale(10, 20, 30)
                 return mesh1.scaleX == 10 && mesh1.scaleY == 20 && mesh1.scaleZ == 30;
             }, true,
