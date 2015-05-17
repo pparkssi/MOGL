@@ -4,14 +4,14 @@
 
 **method**
 
-* [addTexture](#addtexture-textureidstring-indexint-blendmodestring-)
+* [addTexture](#addtexture-typestring-textureidstring-indexint-blendmodestring-)
 * [getRefCount](#getrefcount)
 * [removeTexture](#removetexture-textureidstring-)
-* [setBackgroundColor](#)
-* [setEdge](#)
-* [setLambert](#)
-* [setShading](#)
-* [setWireFrame](#)
+* [setBackgroundColor](#setbackgroundcolor-colorstring-)
+* [setEdge](#setedge-pixelint-color-)
+* [setLambert](#setlambert-ratenumber-)
+* [setShading](#setshading-typefunction-)
+* [setWireFrame](#setwireframe-isvisibleboolean-color-)
 
 [top](#)
 ## Constructor
