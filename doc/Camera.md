@@ -23,7 +23,6 @@
 * [setFOV](#setfov-fovnumber-)
 * [setOthogonal](#setothogonal)
 * [setPerspective](#setperspective)
-* [setProjectionMatrix](#setprojectionmatrix-matrixmatrix-)
 * [setRenderArea](#setrenderarea-left-top-width-height-)
 * [setVisible](#setvisible-isvisibleboolean-)
 * [removeFilter](#removefilter-filterstring-)
@@ -500,26 +499,7 @@ var cam = Camera().setPerspective();
 ```
 
 [top](#)
-## setProjectionMatrix( matrix:[Matrix](Matrix.md) )
 
-**description**
-
-투영에 대한 행렬을 직접 정의함.
-
-**param**
-1. matrix:[Matrix](Matrix.md) - 투영을 처리할 행렬
-
-**return**
-
-this - 메서드체이닝을 위해 자신을 반환.
-
-**sample**
-
-```javascript
-var cam = Camera().setProjectionMatrix( Matrix() );
-```
-
-[top](#)
 ## setRenderArea( left:*, top:*, width:*, height:* )
 
 **description**

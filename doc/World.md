@@ -13,7 +13,7 @@
 ## Constructor
 
 ```javascript
-World()
+World('canvasID')
 ```
 
 **description**
@@ -22,20 +22,25 @@ World는 MoGL의 기본 시작객체로 내부에 다수의 [Scene](Scene.md)을
 또한 World의 인스턴스는 rendering함수 그 자체이기도 함.
 * 메서드체이닝을 위해 대부분의 함수는 자신을 반환함.
 
+**exception**
+
+* 'World.constructor:0' - 캔버스 아이디가 없을때
+* 'World.constructor:1' - 존재하지않는 Dom id일때
+
 **param**
 
-없음.
+1. id:string : canvasID
 
 **sample**
 
 ```javascript
-var world = new World();
+var world = new World('canvasID1');
 
 //애니메이션 루프에 인스턴스를 넣는다.
 requestAnimationFrame( world );
 
 //팩토리함수로도 작동
-var world2 = World();
+var world2 = World('canvasID2');
 ```
 
 [top](#)
@@ -69,7 +74,7 @@ var lobby = Scene();
 lobby.addChild( 'cam1', new Camera() );
 
 // Scene 등록 및 렌더대상 등록
-var world = World();
+var world = World('canvasID');
 world.addScene( 'lobby', lobby );
 world.addRender( 'lobby', 'cam1' );
 ```
@@ -98,7 +103,7 @@ this - 메서드체이닝을 위해 자신을 반환함.
 **sample**
 
 ```javascript
-var world = new World();
+var world = new World('canvasID');
 world.addScene( 'lobby', new Scene() );
 world.addScene( 'room', Scene() );
 ```
@@ -121,7 +126,7 @@ sceneId에 해당되는 [Scene](Scene.md)을 얻음.
 **sample**
 
 ```javascript
-var world = new World();
+var world = new World('canvasID');
 world.addScene( 'lobby', new Scene() );
 var lobby = world.getScene( 'lobby' );
 ```
@@ -142,7 +147,9 @@ var lobby = world.getScene( 'lobby' );
 
 * 'World.removeRender:0' - id에 해당되는 [Scene](Scene.md)이 존재하지 않음.
 * 'World.removeRender:1' - id에 해당되는 [Camera](Camera.md)가 [Scene](Scene.md) 내에 존재하지 않음.
-
+* 'World.removeRender:2' - id에 해당되는 [Scene](Scene.md)가 렌더리스트에 존재하지 않음.
+* 'World.removeRender:3' - id에 해당되는 [Camera](Camera.md)가 렌더리스트에 존재하지 않음.
+* 
 **return**
 
 this - 메서드체이닝을 위해 자신을 반환함.
@@ -155,7 +162,7 @@ var lobby = new Scene();
 lobby.addChild( 'cam1', new Camera() );
 
 // Scene 등록 및 렌더대상 등록
-var world = new World();
+var world = new World('canvasID');
 world.addScene( 'lobby', lobby );
 world.addRender( 'lobby', 'cam1' );
 
@@ -191,7 +198,7 @@ var lobby = new Scene();
 lobby.addChild( 'cam1', Camera() );
 
 // Scene 등록 및 렌더대상 등록
-var world = new World();
+var world = new World('canvasID');
 world.addScene( 'lobby', lobby );
 world.addRender( 'lobby', 'cam1' );
 

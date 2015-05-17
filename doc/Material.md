@@ -102,23 +102,23 @@ var mat = lobby.addMaterial( 'floor', new Material()).getMaterial('floor');
 
 try{
     //이미 Scene에 등록된 Material이므로 메서드 호출시점에 평가
-    mat.addTexture('floor1');  //floor1가 존재하지 않으므로 에러발생
+    mat.addTexture(Texture.diffuse,'floor1');  //floor1가 존재하지 않으므로 에러발생
 }catch(e){
     console.log( e ); // 'Material.addTexture:0'
-    mat.addTexture('floor'); //floor는 존재하므로 문제없음.
+    mat.addTexture(Texture.diffuse,'floor'); //floor는 존재하므로 문제없음.
 }
 //다중 texture 등록
-mat.addTexture('scratch', null, BlendMode.multiply );
+mat.addTexture(Texture.diffuse,'scratch', null, BlendMode.multiply );
 
 try{
     //이미 등록된 textureId를 다시 등록하려고 하면 에러발생.
-    mat.addTexture('floor');
+    mat.addTexture(Texture.diffuse,'floor');
 }catch(e){
     console.log(e); //'Material.addTexture:1'
 }
 
 //미등록된 Material이므로 무조건 통과됨.
-var mat1 = new Material('#f00').addTexture('temp');
+var mat1 = new Material('#f00').addTexture(Texture.diffuse,'temp');
 ```
 
 [top](#)
@@ -141,7 +141,7 @@ int - 자신을 참조하고 있는 카운트
 **sample**
 
 ```javascript
-var mat = new Material('#f00').addTexture('temp');
+var mat = new Material('#f00').addTexture(Texture.diffuse,'temp');
 mat.getRefCount() == 0 //생성시점에 0
 
 var mesh1 = new Mesh( 'cube', mat );
@@ -175,7 +175,7 @@ this - 메서드체이닝을 위해 자신을 반환함.
 **sample**
 
 ```javascript
-var mat1 = new Material('#f00').addTexture('temp');
+var mat1 = new Material('#f00').addTexture(Texture.diffuse,'temp');
 mat.removeTexture('temp');
 ```
 [top](#)

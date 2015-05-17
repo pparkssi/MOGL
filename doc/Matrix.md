@@ -3,275 +3,133 @@
 * [Constructor](#constructor)
 
 **field**
-* [a,b,c,d,e,f](#abcdef)
-* [m11..m14,m21..m24,m31..m34,m41..m44](#m11m14m21m24m31m34m41m44)
 
 **method**
-* [inverse](#inverse)
-* [multiply](#multiply-matrixmatrix-)
-* [multiplyLeft](#multiplyleft-matrixmatrix-)
-* [rotate](#rotate-xdegree-ydegree-zdegree-)
-* [rotateAxisAngle](#rotateaxisangle-xnumber-ynumber-znumber-angledegree-)
-* [scale](#scale-xnumber-ynumber-znumber-)
-* [setMatrixValue](#setmatrixvalue-transformstring-)
-* [skew](#skew-xdegree-ydegree-zdegree-)
-* [skewX](#skewx-angledegree-)
-* [skewY](#skewy-angledegree-)
-* [translate](#translate-xnumber-ynumber-znumber-)
+없음
 
 **static**
-* [Matrix.identity](#matrixidentity-matrixmatrix-)
+* [Matrix.create](#create)
+* [Matrix.clone](#clone)
+* [Matrix.copy](#copy)
+* [Matrix.copy](#identity)
+* [Matrix.invert](#invert)
+* [Matrix.multiply](#multiply)
 
 [top][#]
 ## Constructor
-```javascript
-Matrix()
-```
 
 **description**
+행렬연산을 cpu측에서 수행하기 위한 헬퍼객체. 
+glMatrix (http://glmatrix.net/) 의 mat4 구현체중 일부를 사용함
 
-행렬연산을 cpu측에서 수행하기 위한 헬퍼객체. WebkitCSSMatrix 또는 MSCSSMatrix 등의 네이티브객체를 찾으면 그 객체가 Matrix로 제공되며 없는 경우는 폴리필 객체가 동일한 인터페이스로 제공됨. 기타 이 구현체에서 지원되지 않는 normal등의 연산은 static으로 제공. Matrix의 폴리필 구현체는 [jonbrennecke/CSSMatrix](https://github.com/jonbrennecke/CSSMatrix) 를 이용하고 있음(MIT License)
+**param**
+없음.
 
-* [MSDN MSCSSMatrix](https://msdn.microsoft.com/en-us/library/windows/apps/hh453593.aspx)
-* [W3C specification for 3D Transformations](http://www.w3.org/TR/css3-3d-transforms/#cssmatrix-interface)
-* [jonbrennecke/CSSMatrix](https://github.com/jonbrennecke/CSSMatrix)
- 
+[top](#)
+## create()
+
+**description**
+Float32Array 형식의 Mat44를 생성함
+
 **param**
 없음.
 
 **sample**
-
 ```javascript
-var matrix = new Matrix();
+var mat4 = Matrix.create()
 ```
 
 [top](#)
-## a,b,c,d,e,f
+## clone(base:Array or Float32Array)
 
 **description**
-
-각각 다음에 대응하는 별명임. a = m11, b = m21, c = m12, d = m22, e = m13, f = m23
-
-**sample**
-```javascript
-var matrix = new Matrix();
-matrix.a == matrix.m11
-```
-
-[top](#)
-## m11..m14,m21..m24,m31..m34,m41..m44
-
-**description**
-
-4x4 행렬에서 m - 행번호 - 열번호 구조로 이름이 붙어있어 아래와 같은 형태에 부합함.
-```
-m11 m12 m13 m14
-m21 m22 m23 m24
-m31 m32 m33 m34
-m41 m42 m43 m44
-```
-
-**sample**
-```javascript
-var matrix = new Matrix();
-matrix.a == matrix.m11
-```
-
-[top](#)
-## inverse()
-
-**description**
-
-역행렬을 반환함.
+Mat44 복제
 
 **param**
-
-없음.
-
-**return**
-
-Matrix - 역행렬이 적용된 새 행렬을 반환함. 원본 행렬에는 변화 없음.
+1. base : Matrix.create()로 생성된 배열 또는 matrix 형식의 Array or Float32Array
 
 **sample**
-
 ```javascript
-var matrix1 = new Matrix();
-var matrix2 = matrix1.inverse();
+var mat4 = Matrix.create()
+var cloneMat4 = Matrix.clone(mat4)
 ```
 
 [top](#)
-## multiply( matrix:Matrix )
+## copy(out,base)
 
 **description**
-
-인자로 받은 행렬과 곱한 결과를 반환함.
+out 매트릭스의 값을 base의 값으로 복사
 
 **param**
-
-1. matrix:Matrix - 곱하고자 하는 행렬.
-
-**return**
-
-Matrix - 행렬곱이 적용된 새 행렬을 반환함. 원본 행렬에는 변화 없음.
+1. out : 복제될 대상
+2. base : 복제 소스
 
 **sample**
-
 ```javascript
-var matrix1 = new Matrix();
-var matrix2 = matrix1.multiply( new Matrix() );
+var mat1 = Matrix.create()
+var mat2 = Matrix.create()
+Matrix.clone(mat1,mat2) // mat2의 값이 mat1으로 복사된다.
 ```
 
 [top](#)
-## multiplyLeft( matrix:Matrix )
+
+## identity(target)
 
 **description**
-
-인자로 받은 행렬을 기준으로 원본을 곱한 결과를 반환함.
+target의 매트릭스 값을 초기화 
 
 **param**
-
-1. matrix:Matrix - 곱하고자 하는 행렬.
-
-**return**
-
-Matrix - 행렬곱이 적용된 새 행렬을 반환함. 원본 행렬에는 변화 없음.
+1. target : 초기화 대상 매트릭스
 
 **sample**
-
 ```javascript
-var matrix1 = new Matrix();
-var matrix2 = matrix1.multiplyLeft( new Matrix() );
+var mat1 = Matrix.create()
+mat1.identity()
+// [
+//  1,0,0,0,
+//  0,1,0,0,
+//  0,0,1,0,
+//  0,0,0,1
+// ]
 ```
 
 [top](#)
-## rotate( x:degree, y:degree, z:degree )
+## invert(out,base)
 
 **description**
-
-각도값으로 받은 x,y,z에 따라 행렬을 회전시킨 결과를 새로운 행렬로 반환함.
+target의 매트릭스 값을 반전시킨다.
 
 **param**
-
-1. x:degree - x축회전값.
-2. y:degree - y축회전값.
-3. z:degree - z축회전값.
-
-**return**
-
-Matrix - 회전이 적용된 새 행렬을 반환함. 원본 행렬에는 변화 없음.
+1. out : 반전된 매트릭스를 반영
+2. base : 반전할 매트릭스 ( base값은 변동없음)
 
 **sample**
-
 ```javascript
-var matrix1 = new Matrix();
-var matrix2 = matrix1.rotate( 30, 20, 10 );
+var mat44 = Matrix.create()
+var invertMat44 = Matrix.create()
+mat1.invert(invertMat44,mat44)
+
 ```
 
 [top](#)
-## rotateAxisAngle( x:number, y:number, z:number, angle:degree )
+## multiply(out,sourceMatrix1,sourceMatrix2)
 
 **description**
-
-벡터 x,y,z로 정의된 가상의 축을 기준으로 angle만큼 회전시킨 회전시킨 결과를 새로운 행렬로 반환함.
+sourceMatrix1과 sourceMatrix2의 행렬을 곱한값을 out으로 반영
 
 **param**
-
-1. x:number - 가상축의 x벡터.
-2. y:number - 가상축의 y벡터.
-3. z:number - 가상축의 z벡터.
-4. angle:degree - 회전할 각도.
-
-**return**
-
-Matrix - 회전이 적용된 새 행렬을 반환함. 원본 행렬에는 변화 없음.
+1. out : 행렬곱셉을 적용할 대상
+2. sourceMatrix1 : 매트릭스1 ( 곱셈후 본인은 변동없음 )
+3. sourceMatrix1 : 매트릭스2 ( 곱셈후 본인은 변동없음 )
 
 **sample**
-
 ```javascript
-var matrix1 = new Matrix();
-var matrix2 = matrix1.rotateAxisAngle( 30, 20, 10, 50 );
+var out = Matrix.create()
+var sourceMatrix1 = Matrix.create()
+var sourceMatrix2 = Matrix.create()
+mat1.invert(out, sourceMatrix1, sourceMatrix2)
+
 ```
 
 [top](#)
-## scale( x:number, y:number, z:number )
 
-**description**
-
-x,y,z축 방향으로 행렬을 확장시킴
-
-**param**
-
-1. x:number - x의 확장값.
-2. y:number - y의 확장값.
-3. z:number - z의 확장값.
-
-**return**
-
-Matrix - 회전이 적용된 새 행렬을 반환함. 원본 행렬에는 변화 없음.
-
-**sample**
-
-```javascript
-var matrix1 = new Matrix();
-var matrix2 = matrix1.scale( 1, 1, 2 );
-```
-
-[top](#)
-## setMatrixValue( transform:string )
-
-**description**
-
-CSS의 transform에 사용되는 문자열을 통해 현재 행렬의 값을 조정함.
-
-**param**
-
-1. transform:string - CSS의 transform항목에 사용되는 값
-
-**return**
-
-boolean - 정상적으로 반영되면 true가 반환됨.
-
-**sample**
-
-```javascript
-var matrix1 = new Matrix();
-matrix1.setMatrixValue( 'translateX(3px) rotate(50dgree)' );
-```
-
-[top](#)
-## skew( x:degree, y:degree, z:degree )
-
-**description**
-
-기울임
-
-
-[top](#)
-## skewX( angle:degree )
-
-**description**
-
-X축으로 기울임
-
-[top](#)
-## skewY( angle:degree )
-
-**description**
-
-Y축으로 기울임
-
-
-[top](#)
-## translate( x:number, y:number, z:number )
-
-**description**
-
-x, y, z 방향으로 평행이동 시킴
-
-
-[top](#)
-## Matrix.identity( matrix:Matrix )
-
-**description**
-
-주어진 행렬을 초기화함.
