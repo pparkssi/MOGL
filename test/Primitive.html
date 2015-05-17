@@ -14,6 +14,7 @@
 </head>
 <body>
 <img src="../src/ohno.png"/>
+
 <div> // TODO 헉!! 노말도 계산해서 넘겨야되!!!</div>
 <canvas id="canvasTest" height="256" width="512"></canvas>
 <div id="stage"></div>
@@ -36,15 +37,20 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
+    document.getElementById('canvasTest').width = window.innerWidth;
+    document.getElementById('canvasTest').height = window.innerHeight;
+
     var world = new World('canvasTest')
     var scene = new Scene()
+
+
     world.addScene('scene', scene)
     scene.addChild('camera', new Camera())
     scene.addTexture('texture', '../src/ohno.png')
     world.addRender('scene', 'camera')
 
     var material = new Material()
-    material.addTexture('texture')
+    material.addTexture(Texture.diffuse,'texture')
     var mesh1 = new Mesh(Primitive.sphere(), material)
     mesh1.z = -2
     mesh1.x = -1.5

@@ -20,7 +20,7 @@
     <link rel="stylesheet" type="text/css" href="css.css"/>
 </head>
 <body>
-<canvas id="firstTest" width="512" height="1024"></canvas>
+<canvas id="firstTest" width="1024" height="1024"></canvas>
 
 <script>
     // 모글에 전역적인 루프 시스템이 있것고..
@@ -41,7 +41,7 @@
 
     var bitmapMaterial = new Material(Math.random(), Math.random(), Math.random())
     w.getScene('s0').addTexture('bitmapTextureTest', '../src/ohno.png')
-    bitmapMaterial.addTexture('bitmapTextureTest')
+    bitmapMaterial.addTexture(Texture.diffuse,'bitmapTextureTest')
     w.getScene('s0').addMaterial('bitmapMaterial', bitmapMaterial)
 
     var list=  []

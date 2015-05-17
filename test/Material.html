@@ -86,20 +86,20 @@
     );
     var world = new World('canvas')
     var lobby = new Scene();
-    world.addScene('lobby',lobby)
+    world.addScene('lobby', lobby)
     // 텍스쳐용 이미지 등록
     lobby.addTexture('floorTexture', document.getElementById('img0'));
     lobby.addTexture('scratchTexture', document.getElementById('img1'));
     // Material 생성 및 Scene에 등록
     var sceneAddedMaterial = lobby.addMaterial('floor', new Material()).getMaterial('floor');
     var testResult
-    var beforeMaterial = new Material('#f00').addTexture('temp');
+    var beforeMaterial = new Material('#f00').addTexture(Texture.diffuse, 'temp');
     bsTest('texture',
             function () {
                 testResult = 1
                 try {
                     //이미 Scene에 등록된 Material이므로 메서드 호출시점에 평가
-                    sceneAddedMaterial.addTexture('floor1Texture');  //floor1가 존재하지 않으므로 에러발생
+                    sceneAddedMaterial.addTexture(Texture.diffuse, 'floor1Texture');  //floor1가 존재하지 않으므로 에러발생
                 } catch (e) {
                     testResult = 0
                     console.log(e); // 'Material.addTexture:0'
@@ -109,19 +109,19 @@
             function () {
                 // 이미 Scene에 등록된 Material이므로 메서드 호출시점에 평가
                 // 등록후 씬의 Texture와 일치하는지 확인
-                sceneAddedMaterial.addTexture('floorTexture');
+                sceneAddedMaterial.addTexture(Texture.diffuse, 'floorTexture');
                 return sceneAddedMaterial._scene._textures['floorTexture']
             }, lobby.getTexture('floorTexture'),
             function () {
                 //다중 texture 등록
-                sceneAddedMaterial.addTexture('scratchTexture', null, BlendMode.multiply);
+                sceneAddedMaterial.addTexture(Texture.diffuse, 'scratchTexture', null, BlendMode.multiply);
                 return sceneAddedMaterial._scene._textures['scratchTexture']
             }, lobby.getTexture('scratchTexture'),
             function () {
                 testResult = 1
                 try {
                     //이미 등록된 textureId를 다시 등록하려고 하면 에러발생.
-                    sceneAddedMaterial.addTexture('floorTexture');
+                    sceneAddedMaterial.addTexture(Texture.diffuse, 'floorTexture');
                 } catch (e) {
                     testResult = 0
                     console.log(e); //'Material.addTexture:1'
@@ -129,7 +129,7 @@
                 return testResult
             }, 0,
             function () {
-                return beforeMaterial._textures['temp'] == 'temp' && lobby.getTexture('temp') == null
+                return beforeMaterial._textures['temp'].id == 'temp' && lobby.getTexture('temp') == null
             }, true,
             function () {
                 try {
@@ -142,12 +142,14 @@
                 return testResult
             }, 0,
             function () {
-                beforeMaterial.removeTexture('floorTexture')
-                return beforeMaterial._textures['floorTexture'] == undefined && lobby.getTexture('floorTexture') != null
+
+                sceneAddedMaterial.removeTexture('floorTexture')
+                return sceneAddedMaterial._textures['floorTexture'] == undefined && lobby.getTexture('floorTexture') != null
+                return true
             }, true
     );
     var lobby2 = Scene()
-    world.addScene('lobby2',lobby2)
+    world.addScene('lobby2', lobby2)
     lobby2.addTexture('countTexture', document.getElementById('img0'));
     lobby2.addGeometry('cube', new Geometry([], []))
     var matCount
@@ -155,7 +157,7 @@
     bsTest('getRefCount',
             function () {
                 //생성시점에 0
-                matCount = new Material('#f00').addTexture('countTexture');
+                matCount = new Material('#f00').addTexture(Texture.diffuse, 'countTexture');
                 return matCount.getRefCount()
             }, 0,
             function () {
@@ -185,57 +187,46 @@
 
     var indexTestMaterial = new Material('#fff')
 
-    indexTestMaterial.addTexture('wantError')
     lobby.addTexture('indexTexture1', document.getElementById('img1'));
     lobby.addTexture('indexTexture2', document.getElementById('img1'));
     lobby.addTexture('indexTexture3', document.getElementById('img1'));
 
-    bsTest('textureIndexTest-beforAdd',
-            function () {
-                testResult = 1
-                try {
-                    lobby.addMaterial('indexTestMaterial', indexTestMaterial)
-                } catch (e) {
-                    console.log(e)
-                    testResult = 0
-                }
-                return testResult
-            }, 0
-    )
-    indexTestMaterial.removeTexture('wantError')
+
     bsTest('textureIndexTest',
             function () {
-                indexTestMaterial.addTexture('indexTexture1', null, BlendMode.add)
-                console.log('test', indexTestMaterial._textures.__indexList[0], lobby.getTexture('indexTexture1'))
-                return lobby.getTexture(indexTestMaterial._textures.__indexList[0].id) == lobby.getTexture('indexTexture1')
-            }, true,
+                indexTestMaterial.addTexture(Texture.diffuse, 'indexTexture1', null, BlendMode.add)
+                return indexTestMaterial._diffuse.__indexList[0].id
+            }, 'indexTexture1',
             function () {
-                return indexTestMaterial._textures.__indexList[0].blendMode
+                return indexTestMaterial._diffuse.__indexList[0].blendMode
             }, BlendMode.add,
             function () {
-                indexTestMaterial.addTexture('indexTexture2', null, BlendMode.screen)
-                return lobby.getTexture(indexTestMaterial._textures.__indexList[1].id) == lobby.getTexture('indexTexture2')
-            }, true,
+                indexTestMaterial.addTexture(Texture.diffuse, 'indexTexture2', null, BlendMode.screen)
+                return indexTestMaterial._diffuse.__indexList[1].id
+            }, 'indexTexture2',
             function () {
-                return indexTestMaterial._textures.__indexList[1].blendMode
+                return indexTestMaterial._diffuse.__indexList[1].blendMode
             }, BlendMode.screen,
             function () {
-                indexTestMaterial.addTexture('indexTexture3', 1, BlendMode.darken)
-                return indexTestMaterial._textures.__indexList[1].blendMode
-            }, BlendMode.darken,
+                indexTestMaterial.addTexture(Texture.diffuse, 'indexTexture3', 1, BlendMode.darken)
+                return indexTestMaterial._diffuse.__indexList[1].id
+            }, 'indexTexture3',
+            function () {
+                return indexTestMaterial._diffuse.__indexList[2].id
+            }, 'indexTexture2',
             function () {
                 indexTestMaterial.removeTexture('indexTexture3')
-                return indexTestMaterial._textures.__indexList.length
+                return indexTestMaterial._diffuse.__indexList.length
             }, 2,
             function () {
                 testResult = 1
                 try {
-                    indexTestMaterial.addTexture('indexTexture4')
+                    indexTestMaterial.addTexture(Texture.diffuse, 'indexTexture4')
                 } catch (e) {
                     console.log(e)
                     testResult = 0
                 }
-                return indexTestMaterial._textures.__indexList.length
+                return indexTestMaterial._diffuse.__indexList.length
             }, 3
     )
     console.log(indexTestMaterial)

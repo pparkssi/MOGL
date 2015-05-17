@@ -22,7 +22,7 @@ var World = (function () {
      fn.render = function render() { MoGL.isAlive(this);
         var i, k, len, tList = this._renderList
         var scene,camera,gl,children;
-        var tItem, tMaterial, tProgram, tVBO, tUVBO, tIBO,tFrameBuffer;
+        var tItem, tMaterial, tProgram, tVBO, tUVBO, tIBO,tFrameBuffer,tDiffuseList;
         var pVBO, pUVBO, pIBO,pNormal
         for (k in this.LOOP)  this.LOOP[k]()
         for (i = 0, len = tList.length; i < len; i++) {
@@ -56,7 +56,8 @@ var World = (function () {
                     tUVBO = scene._glUVBOs[tItem._geometry._key],
                     tIBO = scene._glIBOs[tItem._geometry._key],
                     tMaterial = tItem._material,
-                    tProgram = tMaterial._textures.__indexList.length>0 ?scene._glPROGRAMs['bitmap'] :scene._glPROGRAMs['base'], // TODO 이놈은 어디서 결정하지?
+                    tDiffuseList = tMaterial._diffuse
+                    tProgram = tDiffuseList.__indexList.length>0 ?scene._glPROGRAMs['bitmap'] :scene._glPROGRAMs['base'], // TODO 이놈은 어디서 결정하지?
                     gl.useProgram(tProgram)
                     if(tProgram==scene._glPROGRAMs['base']){
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
@@ -76,7 +77,7 @@ var World = (function () {
                         gl.uniform3fv(tProgram.uPosition, [tItem.x, tItem.y, tItem.z]),
                         gl.uniform3fv(tProgram.uScale, [tItem.scaleX, tItem.scaleY, tItem.scaleZ]),
                         gl.activeTexture(gl.TEXTURE0);
-                        var textureObj = scene._glTEXTUREs[tMaterial._textures.__indexList[0].id]
+                        var textureObj = scene._glTEXTUREs[tDiffuseList.__indexList[0].id]
                         if(textureObj.loaded){
                             textureObj!=pNormal ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
                             gl.uniform1i(tProgram.uSampler, 0);
@@ -138,8 +139,12 @@ var World = (function () {
     fn.addRender = function addRender(sceneID, cameraID, index) { MoGL.isAlive(this);
         var uuid = sceneID + '_' + cameraID, tScene = this._sceneList[sceneID], tList = this._renderList;
         for (var i = 0, len = tList.length; i < len; i++) if (tList[i].uuid == uuid) MoGL.error('World', 'addRender', 0)
-        if(!tScene) MoGL.error('World','addRender',1)
-        if(tScene) if(!tScene.getChild(cameraID)) MoGL.error('World','addRender',2)
+        if (!tScene) MoGL.error('World', 'addRender', 1)
+        else if (!tScene.isAlive) MoGL.error('World', 'addRender', 1)
+        if (tScene) {
+            if (!tScene.getChild(cameraID)) MoGL.error('World', 'addRender', 2)
+            else if (!tScene.getChild(cameraID).isAlive) MoGL.error('World', 'addRender', 2)
+        }
         var temp = {
             uuid: uuid,
             sceneID: sceneID,
@@ -163,9 +168,16 @@ var World = (function () {
     },
     fn.removeRender = function removeRender(sceneID, cameraID) { MoGL.isAlive(this);
         var tList = this._renderList, i, len
+        var sTest=0,cTest=0
+        if (!this._sceneList[sceneID])  MoGL.error('World', 'removeRender', 0)
+        if (!this._sceneList[sceneID]._cameras[cameraID]) console.log('2222222222222222222222222'), MoGL.error('World', 'removeRender', 1)
         for (i = 0, len = tList.length; i < len; i++){
-            if (tList[i] && tList[i].uuid == sceneID + '_' + cameraID) tList.splice(i, 1)
+            if(tList[i].uuid.indexOf(sceneID)>-1) sTest =1
+            if(tList[i].uuid.indexOf(cameraID)>-1) cTest =1
         }
+        if (!sTest)  MoGL.error('World', 'removeRender', 2)
+        if (!cTest)  MoGL.error('World', 'removeRender', 3)
+        for (i = 0, len = tList.length; i < len; i++) if (tList[i] && tList[i].uuid == sceneID + '_' + cameraID) tList.splice(i, 1)
         return this
     },
     fn.removeScene = function removeScene(sceneID) { MoGL.isAlive(this);
