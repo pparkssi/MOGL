@@ -3,6 +3,8 @@
 * [Constructor](#constructor)
 
 **field**
+* [a,b,c,d,e,f](#abcdef)
+* [m11..m14,m21..m24,m31..m34,m41..m44](#m11m14m21m24m31m34m41m44)
 
 **method**
 * [inverse](#inverse)
@@ -33,7 +35,7 @@ Matrix()
 * [MSDN MSCSSMatrix](https://msdn.microsoft.com/en-us/library/windows/apps/hh453593.aspx)
 * [W3C specification for 3D Transformations](http://www.w3.org/TR/css3-3d-transforms/#cssmatrix-interface)
 * [jonbrennecke/CSSMatrix](https://github.com/jonbrennecke/CSSMatrix)
-
+ 
 **param**
 없음.
 
