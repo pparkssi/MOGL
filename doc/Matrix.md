@@ -14,6 +14,15 @@
 * [Matrix.copy](#identity)
 * [Matrix.invert](#invert)
 * [Matrix.multiply](#multiply)
+* [Matrix.translate](#translate)
+* [Matrix.scale](#scale)
+* [Matrix.rotate](#rotate)
+* [Matrix.rotateX](#rotateX)
+* [Matrix.rotateY](#rotateY)
+* [Matrix.rotateZ](#rotateZ)
+* [Matrix.perspective](#perspective)
+* [Matrix.lookAt](#lookAt)
+* [Matrix.str](#str)
 
 [top][#]
 ## Constructor
@@ -180,3 +189,80 @@ Matrix.scale(out,out,[10,20,30])
 ```
 
 [top](#)
+## rotateX(out,matrix,radian:number)
+
+**description**
+x축 방향으로 행렬을 회전 시킨 행렬을 반환
+
+**param**
+
+1. out : 결과값을 반영할 매트릭스.
+2. matrix : 회전시킬 매트릭스 솟스.
+3. radian : 회전각
+
+**sample**
+```javascript
+var out = Matrix.create()
+Matrix.rotateX(out,out,10*Math.PI/180)
+```
+
+[top](#)
+
+## rotateY(out,matrix,radian:number)
+
+**description**
+y축 방향으로 행렬을 회전 시킨 행렬을 반환
+
+**param**
+
+1. out : 결과값을 반영할 매트릭스.
+2. matrix : 회전시킬 매트릭스 솟스.
+3. radian : 회전각
+
+**sample**
+```javascript
+var out = Matrix.create()
+Matrix.rotateY(out,out,10*Math.PI/180)
+```
+
+[top](#)
+## rotateZ(out,matrix,radian:number)
+
+**description**
+Z축 방향으로 행렬을 회전 시킨 행렬을 반환
+
+**param**
+
+1. out : 결과값을 반영할 매트릭스.
+2. matrix : 회전시킬 매트릭스 솟스.
+3. radian : 회전각
+
+**sample**
+```javascript
+var out = Matrix.create()
+Matrix.rotateZ(out,out,10*Math.PI/180)
+```
+
+[top](#)
+## perspective(out,fovy:number,aspect,near,far)
+
+**description**
+퍼스펙티브 행렬을 반환
+
+**param**
+
+1. out : 결과값을 반영할 매트릭스.
+2. fovy : Vertical field of view : radians
+3. aspect : width/height
+4. near : 절단면의 최소z (0<값)
+5. far : 절단면의 최대z
+
+**sample**
+```javascript
+var out = Matrix.create()
+Matrix.perspective(out, 55*Math.PI/180, 1024/768, 0.1, 1000)
+      
+```
+
+[top](#)
+
