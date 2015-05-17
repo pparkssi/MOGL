@@ -252,7 +252,6 @@
             }, 'Error: World.addRender:2',
             function(){
                 var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
-
                 lobby.addChild( 'cam1', cam );
                 world.addScene( 'lobby', lobby );
                 lobby.destroy();
@@ -273,14 +272,13 @@
                 try{
                     world.addRender( 'lobby', 'cam1' );
                 }catch(e){
-                    test = e.toString();
+                    test= e.toString();
                 }
 
                 return test;
-            }, 'Error: Destroyed Object:[object Object]',
+            }, 'Error: World.addRender:2',
             function(){
                 var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
-
                 lobby.addChild( 'cam1', cam );
                 world.addScene( 'lobby', lobby );
                 world.addRender( 'lobby', 'cam1' );
@@ -289,21 +287,19 @@
                 }catch(e){
                     test = e.toString();
                 }
-
                 return test;
-            }, 'Error: ',
+            }, 'Error: World.removeRender:0',
             function(){
                 var world = World('canvasTest3'), lobby = Scene(), test = '', cam = Camera();
-
                 lobby.addChild( 'cam1', cam );
                 world.addScene( 'lobby', lobby );
                 world.addRender( 'lobby', 'cam1' );
                 try{
                     world.removeRender( '', 'cam1' );
                 }catch(e){
+                    console.log(e)
                     test = e.toString();
                 }
-
                 return test;
             }, 'Error: World.removeRender:0',
             function(){
