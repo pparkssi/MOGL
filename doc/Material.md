@@ -8,8 +8,10 @@
 * [getRefCount](#getrefcount)
 * [removeTexture](#removetexture-textureidstring-)
 * [setBackgroundColor](#)
-* [setShading](#)
+* [setEdge](#)
 * [setLambert](#)
+* [setShading](#)
+* [setWireFrame](#)
 
 [top](#)
 ## Constructor
@@ -59,12 +61,12 @@ var mat5 = Material('#ff00000.8');
 
 1. type:string - 해당 텍스쳐가 어떠한 타입에 포함될 것인가를 결정함. 다음의 값이 올 수 있음.
     * [Texture.diffuse](Texture.md#diffuse) or 'diffuse' - 디퓨즈 맵으로 등록함.
-    * [Texture.specular](Texture.md#specular) or 'specular' - 스페큘러 맵으로 등록함.
-    * [Texture.diffuseWrap](Texture.md#diffusewrap) or 'diffuseWrap' - 디퓨즈랩 맵으로 등록함.
+    * [Texture.diffuseWrap](Texture.md#diffusewrap) or 'diffuseWrap' - 디퓨즈랩 맵으로 등록함. 디퓨즈랩이란 광원에 의해 명암이 표현될때 특정 램버트 값 이후의 어두운 부분에 적용될 맵임.
     * [Texture.normal](Texture.md#normal) or 'normal' - 노말 맵으로 등록함.
+    * [Texture.specular](Texture.md#specular) or 'specular' - 스페큘러 맵으로 등록함.
     * [Texture.specularNormal](Texture.md#specularNormal) or 'diffuse' - 스페큘러노말 맵으로 등록함.
 2. textureId:string - 최종 포함될 [Scene](Scene.md)에 등록된 texture의 id.
-3. ?index:int - 중첩되는 이미지의 경우 순번을 정의함. 생략하거나 null 이면 마지막 인덱스 + 1.
+3. ?index:int - 중첩되는 이미지의 경우 순번을 정의함. 생략하거나 null 이면 마지막 인덱스 + 1. 각 인덱스는 맵의 타입별로 관리됨.
 4. ?blendMode:string - 중첩되는 이미지의 경우 아래의 이미지와 합성되는 속성을 정의함. 첫번째 텍스쳐는 적용되지 않고 기본값은 'alpha' 이고 다음과 같은 값이 올 수 있음.
     * [BlendMode.add](BlendMode.md#add) or 'add' -  전면색을 배경색에 더하고 올림값 0xFF를 적용.
     * [BlendMode.alpha](BlendMode.md#alpha) or 'alpha' - 전면색의 알파값에 따라 배경색을 덮어가는 가장 일반적인 중첩.
@@ -178,6 +180,7 @@ this - 메서드체이닝을 위해 자신을 반환함.
 var mat1 = new Material('#f00').addTexture(Texture.diffuse,'temp');
 mat.removeTexture('temp');
 ```
+
 [top](#)
 ## setBackgroundColor( color:string )
 └ setBackgroundColor( r:number, g:bumber, b:number, a:number )
@@ -205,3 +208,87 @@ mat.setBackgroundColor( 0xff/0xff, 0xaf/0xff, 0x45/0xff, 0.5 );
 ```
 
 [top](#)
+## setEdge( pixel:int[, color:*] )
+
+**description**
+
+외곽선에 대한 타입을 지정함. 기본값은 0으로 자연스러운 외곽선을 만듬.
+만약 특정 픽셀의 두께를 원하는 경우 픽셀값을 지정하고 옵션으로 색상도 정의할 수 있음. 색상의 기본값은 검정색임.
+
+**param**
+
+1. pixel:int - 기본값은 0. 외곽선의 픽셀두께를 정의함.
+2. ?color:* - setBackgroundColor와 마찬가지 형식의 컬러. 기본값은 검정.
+
+**sample**
+
+```javascript
+var mat = new Material()
+mat.setEdge( 1, '#f00' );
+```
+
+[top](#)
+## setLambert( rate:number )
+
+**description**
+
+원래 계산되는 명암비율을 1로 봤을 때 level을 적용하여 rate를 곱해줌.
+* 0.5를 넣으면 기존보다 덜 어둡게 되는 효과가 발생하고
+* 1.5를 넣으면 보다 어둡게 되는 효과가 발생함.
+* diffuseWrap 등의 맵과 효과적으로 매칭하여 입체적인 명암을 만들 수 있음.
+
+**param**
+
+1. rate:number - 원래 계산된 램버트명암에 곱해질 값. 기본값은 1.
+
+**sample**
+
+```javascript
+var mat = new Material();
+mat.setLambert( 0.5 );
+```
+
+[top](#)
+## setShading( type:function )
+
+**description**
+
+재질에 적용될 빛에 대한 명암처리방식을 선택한다. 기본값은 빛에 반응하지 않는 상태인 [Shading.none](Shading.md#none)임.
+
+**param**
+
+1. type:function - 빛이 반영되는 타입. 이를 처리하는 함수를 인자로 받음.
+    * [Shading.none](Shading.md#none) - 기본값으로 빛에 반응하지 않음.
+    * [Shading.gouraud](Shading.md#none) - 고우라우드쉐이딩을 적용함.
+    * [Shading.phong](Shading.md#none) - 퐁쉐이딩을 적용함.
+    * [Shading.blinn](Shading.md#none) - 블린퐁쉐이딩을 적용함.
+    * [Shading.flat](Shading.md#none) - 플랫쉐이딩을 적용함.
+    * [Shading.toon](Shading.md#none) - 카툰쉐이딩을 적용함.
+
+**sample**
+
+```javascript
+var mat = new Material();
+mat.setShading( Shading.phong );
+```
+
+[top](#)
+## setWireFrame( isVisible:boolean[, color:*] )
+
+**description**
+
+와이어프레임을 보일지 말지 결정함. 기본값은 false.
+색상은 생략시 랜덤으로 적용됨.
+
+**param**
+
+1. isVisible:boolean - 와이어프레임표시여부.
+2. ?color:* - setBackgroundColor와 마찬가지 형식의 컬러값.
+
+**sample**
+
+```javascript
+var mat = new Material()
+mat.setWireFrame( true );
+```
+
