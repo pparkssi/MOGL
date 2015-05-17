@@ -147,7 +147,9 @@ var lobby = world.getScene( 'lobby' );
 
 * 'World.removeRender:0' - id에 해당되는 [Scene](Scene.md)이 존재하지 않음.
 * 'World.removeRender:1' - id에 해당되는 [Camera](Camera.md)가 [Scene](Scene.md) 내에 존재하지 않음.
-
+* 'World.removeRender:2' - id에 해당되는 [Scene](Scene.md)가 렌더리스트에 존재하지 않음.
+* 'World.removeRender:3' - id에 해당되는 [Camera](Camera.md)가 렌더리스트에 존재하지 않음.
+* 
 **return**
 
 this - 메서드체이닝을 위해 자신을 반환함.
