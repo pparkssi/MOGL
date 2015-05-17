@@ -131,20 +131,20 @@
             scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
 
             var meshes = [];
-            var mesh;
+            var monkey;
             var PI2 = Math.PI * 2;
 
             for (i = 0; i < 500; i++) {
-                mesh = new Mesh('geometry', 'material');
-                mesh.x = Math.random() * 50 - 25;
-                mesh.y = Math.random() * 50 - 25;
-                mesh.z = -Math.random() * 200
-                mesh.rotateX = Math.random() * PI2;
-                mesh.rotateY = Math.random() * PI2;
-                mesh.rotateZ = Math.random() * PI2;
+                monkey = new Mesh('geometry', 'material');
+                monkey.x = Math.random() * 50 - 25;
+                monkey.y = Math.random() * 50 - 25;
+                monkey.z = -Math.random() * 200;
+                monkey.rotateX = Math.random() * PI2;
+                monkey.rotateY = Math.random() * PI2;
+                monkey.rotateZ = Math.random() * PI2;
 
-                scene.addChild('monkey' + i, mesh);
-                meshes.push(mesh);
+                scene.addChild('monkey' + i, monkey);
+                meshes.push(monkey);
             }
 
             var sum = 0, count = 1;
