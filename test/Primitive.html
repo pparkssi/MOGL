@@ -36,8 +36,14 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
+    document.getElementById('canvasTest').width = window.innerWidth;
+    document.getElementById('canvasTest').height = window.innerHeight;
+
     var world = new World('canvasTest')
     var scene = new Scene()
+
+
+
     world.addScene('scene', scene)
     scene.addChild('camera', new Camera())
     scene.addTexture('texture', '../src/ohno.png')
