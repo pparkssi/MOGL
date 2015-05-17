@@ -233,9 +233,9 @@ var Camera = (function () {
         Matrix.identity(this._pixelMatrix)
         this._pixelMatrix=[
             2 / this._cvs.clientWidth, 0, 0, 0,
-            0, 2 / this._cvs.clientHeight, 0, 0,
+            0, -2 / this._cvs.clientHeight, 0, 0,
             0, 0, 0, 0,
-            -1, -1, 0, 1
+            -1, 1, 0, 1
         ]
         return this
     },

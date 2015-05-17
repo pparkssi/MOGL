@@ -26,7 +26,7 @@
     <script src="../src/World.js"></script>
 </head>
 <body>
-<canvas id="firstWorld" width="512" height="512"></canvas>
+<canvas id="firstWorld" width="600" height="512"></canvas>
 <script>
 
     ////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@
     scene.addTexture('texture1', '../src/ohno.png')
 
     // 씬에 등록된 재질에 텍스쳐를 적용!
-    scene.getMaterial('bitmapMat').addTexture('texture1')
+    scene.getMaterial('bitmapMat').addTexture(Texture.diffuse,'texture1')
 
     // 메쉬 생성!
     scene.addChild('mesh1', new Mesh('rect', 'bitmapMat'))
