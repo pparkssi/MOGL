@@ -41,7 +41,7 @@
 
     var bitmapMaterial = new Material(Math.random(), Math.random(), Math.random())
     w.getScene('s0').addTexture('bitmapTextureTest', '../src/ohno.png')
-    bitmapMaterial.addTexture('bitmapTextureTest')
+    bitmapMaterial.addTexture(Texture.diffuse,'bitmapTextureTest')
     w.getScene('s0').addMaterial('bitmapMaterial', bitmapMaterial)
 
     var list=  []

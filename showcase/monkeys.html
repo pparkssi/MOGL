@@ -69,7 +69,7 @@
         scene.addChild('camera', new Camera());
         scene.addMaterial('material', new Material());
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
-        scene.getMaterial('material').addTexture('texture');
+        scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
 
 
         world.addRender('scene', 'camera');

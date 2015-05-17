@@ -6,9 +6,12 @@ var Material = (function () {
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
     Material = function Material() {
         var t0 = arguments[0], t1, ta
-        this._textures = {
-            __indexList :[]
-        },
+        this._textures = {},
+        this._diffuse = {__indexList: []},
+        this._specular = {__indexList: []},
+        this._diffuseWrap = {__indexList: []},
+        this._normal = {__indexList: []},
+        this._specularNormal = {__indexList: []},
         this._r = 1,
         this._g = 1,
         this._b = 1,
@@ -39,27 +42,29 @@ var Material = (function () {
         }
     },
     fn = Material.prototype,
-    fn.addTexture = function addTexture(textureID/*,index,blendMode*/) {
-        //TODO 와 이거어렵네..
-        //TODO index 구현
-        //TODO blnedMode 구현 구현
+    fn.addTexture = function addTexture(type,textureID/*,index,blendMode*/) {
         var t = this._scene
         if (t && !t._textures[textureID]) MoGL.error('Material', 'addTexture', 0)
         if (this._textures[textureID]) MoGL.error('Material', 'addTexture', 1)
-        this._textures[textureID] = textureID
+        this._textures[textureID] = {id : textureID, type :type }
         var result
-        if (arguments[1]) result=this._textures.__indexList.splice(arguments[1], 0,{id: textureID,blendMode : arguments[2]})
-        else result=this._textures.__indexList.push({id: textureID,blendMode : arguments[2]})
+        console.log('type :','_'+type)
+        console.log('확인',this['_'+type])
+        //배열화
+        if (arguments[2]) result=this['_'+type].__indexList.splice(arguments[2], 0,{id: textureID,blendMode : arguments[3]})
+        else result=this['_'+type].__indexList.push({id: textureID,blendMode : arguments[3]})
         return this
     },
     fn.getRefCount = function getRefCount(){
         return this._count
     },
     fn.removeTexture = function removeTexture(textureID){
-        var i = this._textures.__indexList.length
+        var type = this._textures[textureID].type
+        var typeList = this['_'+type].__indexList
+        var i = typeList.length
         while(i--){
-            if(this._textures.__indexList[i].id == textureID){
-                this._textures.__indexList.splice(i, 1)
+            if(typeList[i].id == textureID){
+                typeList.splice(i, 1)
                 break
             }
         }

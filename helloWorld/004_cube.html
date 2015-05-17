@@ -94,7 +94,7 @@
     scene.addMaterial('bitmapMat', new Material())
 
     scene.addTexture('texture1', '../src/ohno.png')
-    scene.getMaterial('bitmapMat').addTexture('texture1')
+    scene.getMaterial('bitmapMat').addTexture(Texture.diffuse,'texture1')
 
     scene.addChild('cubeMesh', new Mesh('cube', 'bitmapMat'))
 
