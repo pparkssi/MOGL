@@ -31,7 +31,8 @@ var Scene = (function () {
             function: [VertexShader.baseFunction],
             main: ['' +
             'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-            'vColor = uColor ;']
+            'vColor = uColor ;'
+            ]
         }
         var baseFragmentShader = {
             precision: 'mediump float',
@@ -58,9 +59,9 @@ var Scene = (function () {
             function: [],
             main: ['gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))']
         }
-        this.addVertexShader('base', baseVertexShader);
-        this.addFragmentShader('base', baseFragmentShader);
-        this.addVertexShader('bitmap', bitmapVertexShader);
+        this.addVertexShader('base', baseVertexShader),
+        this.addFragmentShader('base', baseFragmentShader),
+        this.addVertexShader('bitmap', bitmapVertexShader),
         this.addFragmentShader('bitmap', bitmapFragmentShader);
     }
     /////////////////////////////////////////////////////////////////
@@ -204,7 +205,7 @@ var Scene = (function () {
             gl.bindTexture(gl.TEXTURE_2D, texture),
             //TODO 다변화 대응해야됨
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+            //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
@@ -219,13 +220,10 @@ var Scene = (function () {
 
     var makeFrameBuffer = function makeFrameBuffer(self, camera){
         //TODO 프레임 버퍼 크기가 2n승이 아닐떄 처리
-        var gl =self._gl
-        var framebuffer = gl.createFramebuffer();
-        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-        framebuffer.x = camera._renderArea[0];
-        framebuffer.y = camera._renderArea[1];
-        framebuffer.width = camera._renderArea[2];
-        framebuffer.height = camera._renderArea[3]
+        var gl =self._gl,framebuffer = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer),
+        framebuffer.x = camera._renderArea[0], framebuffer.y = camera._renderArea[1],
+        framebuffer.width = camera._renderArea[2], framebuffer.height = camera._renderArea[3]
 
         var texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture),
@@ -251,12 +249,12 @@ var Scene = (function () {
 /////////////////////////////////////////////////////////////////
     fn = Scene.prototype,
     fn.update = function update() { MoGL.isAlive(this);
+        var k
         this._glVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0,0.0,0.0]), 3)
         //for GPU
-        for (var k in this._children) {
+        for (k in this._children) {
             var mesh = this._children[k], _key, geo = mesh._geometry;
             if (geo) {
-                console.log('!!!!!!!!!!!!!!!!!!',geo._key)
                 if(!this._geometrys[geo._key]) this.addGeometry(geo._key,geo)
                 if(!this._glVBOs[geo]){
                     _key = geo._key,
@@ -265,7 +263,6 @@ var Scene = (function () {
                     this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1)
                 }
             }
-
         }
         if (!this._glVBOs['rect']) {
             this.addGeometry('rect', new Geometry([
@@ -279,18 +276,17 @@ var Scene = (function () {
             this._glIBOs['rect'] = makeIBO(this, 'rect', [0, 1, 2, 1, 2, 3], 1)
         }
         for (k in this._cameras) {
-            var camera = this._cameras[k]
+            var camera = this._cameras[k];
             camera._cvs = this._cvs
             if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.clientWidth, this._cvs.clientHeight)
             if(camera._updateRenderArea){
-                camera.getProjectionMatrix()
-                makeFrameBuffer(this,camera)
+                camera.getProjectionMatrix(),
+                makeFrameBuffer(this,camera),
                 camera._updateRenderArea = 0
             }
         }
         var checks = this._vertexShaders;
         for (k in checks) makeProgram(this, k)
-
         console.log('////////////////////////////////////////////'),
         console.log('Scene 업데이트'),
         console.log('this._glVBOs :',this._glVBOs),
@@ -371,7 +367,6 @@ var Scene = (function () {
             this._textures[id].img=makeTexture(this,id,image)
             console.log(this._textures)
             console.log(id, image)
-
         }
         return this
     },

@@ -57,7 +57,7 @@ var World = (function () {
                     tIBO = scene._glIBOs[tItem._geometry._key],
                     tMaterial = tItem._material,
                     tDiffuseList = tMaterial._diffuse
-                    tProgram = tDiffuseList.__indexList.length>0 ?scene._glPROGRAMs['bitmap'] :scene._glPROGRAMs['base'], // TODO 이놈은 어디서 결정하지?
+                    tProgram = tDiffuseList.__indexList.length>0 ?scene._glPROGRAMs['bitmap'] :scene._glPROGRAMs['base'] // TODO 이놈은 어디서 결정하지?
                     gl.useProgram(tProgram)
                     if(tProgram==scene._glPROGRAMs['base']){
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
@@ -65,9 +65,7 @@ var World = (function () {
                         gl.uniform3fv(tProgram.uRotate, [tItem.rotateX, tItem.rotateY, tItem.rotateZ]),
                         gl.uniform3fv(tProgram.uPosition, [tItem.x, tItem.y, tItem.z]),
                         gl.uniform3fv(tProgram.uScale, [tItem.scaleX, tItem.scaleY, tItem.scaleZ]),
-                        gl.uniform3fv(tProgram.uColor, [tMaterial._r, tMaterial._g, tMaterial._b]),
-                        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
-                        gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
+                        gl.uniform3fv(tProgram.uColor, [tMaterial._r, tMaterial._g, tMaterial._b])
                     }else if(tProgram==scene._glPROGRAMs['bitmap']){
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
@@ -81,10 +79,22 @@ var World = (function () {
                         if(textureObj.loaded){
                             textureObj!=pNormal ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
                             gl.uniform1i(tProgram.uSampler, 0);
-                            tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0,
-                            gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                         }
                     }
+                    if(tMaterial._wireFrame) {
+                        tProgram=scene._glPROGRAMs['base']
+                        gl.useProgram(tProgram)
+                        tIBO !=pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0
+                        tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
+                        tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                        gl.uniform3fv(tProgram.uRotate, [tItem.rotateX, tItem.rotateY, tItem.rotateZ]),
+                        gl.uniform3fv(tProgram.uPosition, [tItem.x, tItem.y, tItem.z]),
+                        gl.uniform3fv(tProgram.uScale, [tItem.scaleX, tItem.scaleY, tItem.scaleZ]),
+                        gl.uniform3fv(tProgram.uColor, [tMaterial._rw, tMaterial._gw, tMaterial._bw])
+                        gl.drawElements(gl.LINES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
+                    }
+                    else gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
+
                     pVBO = tVBO, pUVBO = tUVBO, pIBO = tIBO,pNormal = textureObj
                 }
                 //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
