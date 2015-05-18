@@ -30,6 +30,7 @@
     <script src="../src/BlendMode.js"></script>
     <script src="../src/Filter.js"></script>
     <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
     <script src="../src/Matrix.js"></script>
     <script src="../src/Geometry.js"></script>
@@ -67,9 +68,12 @@
         scene.addChild('camera', new Camera());
         scene.addMaterial('material', new Material());
         scene.addMaterial('material2', new Material());
+        scene.addMaterial('material3', new Material());
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
         scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
         scene.getMaterial('material2').addTexture(Texture.diffuse,'texture');
+        scene.getMaterial('material3').addTexture(Texture.diffuse,'texture');
+
 
 
         world.addRender('scene', 'camera');
@@ -133,16 +137,21 @@
 
             var mesh = new Mesh('geometry', 'material');
             mesh.z =-5
-            mesh.x = -2
+            mesh.x = -3
             scene.addChild('monkey', mesh);
             mesh.getMaterial().setWireFrame(1)
 
             var mesh2 = new Mesh('geometry', 'material2');
             mesh2.z =-5
-            mesh2.x = 2
+
             scene.addChild('monkey2', mesh2);
 
 
+            var mesh3 = new Mesh('geometry', 'material3');
+            mesh3.z =-5
+            mesh3.x = 3
+            scene.addChild('monkey3', mesh3);
+            mesh3.getMaterial().setShading(Shading.gouraud)
 
             var sum = 0, count = 1;
 
@@ -155,6 +164,7 @@
 
                 mesh.rotateY -= 0.01;
                 mesh2.rotateY -= 0.01;
+                mesh3.rotateY -= 0.01;
 
                 world.render();
 
