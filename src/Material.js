@@ -6,7 +6,7 @@ var Material = (function () {
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
     Material = function Material() {
         this._textures = {},
-        this._shading = {type: 'none'},
+        this._shading = {type: 'none',lambert :1},
         this._diffuse = {__indexList: []},
         this._specular = {__indexList: []},
         this._diffuseWrap = {__indexList: []},
@@ -95,6 +95,9 @@ var Material = (function () {
     },
     fn.setShading = function setShading(type){
         type.apply(this)
+    },
+    fn.setLambert = function setShading(rate){
+        this._shading.lambert=rate
     }
     return MoGL.ext(Material, MoGL);
 })();

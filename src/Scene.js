@@ -63,14 +63,14 @@ var Scene = (function () {
         }
         var bitmapVertexShaderGouraud = {
             attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
-            varyings: ['vec2 vUV','vec4 vShadow'],
+            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+            varyings: ['vec2 vUV','vec4 vLight'],
             function: [VertexShader.baseFunction],
             main: ['' +
             'mat4 mvp = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
             'vec3 light = normalize (mvp * vec4 (uDLite, 0.0 )). xyz;\n' + // 라이트 방향을 결정하고...
-            'float lambert = clamp (dot (aVertexNormal, light), 0.1 , 1.0 );\n' + // 라이트 세기를 보냄
-            'vShadow = vec4 ( vec3 (lambert), 1.0 );\n' +
+            'float lambert = clamp (dot (aVertexNormal, light)*uLambert, 0.1 , 1.0 );\n' + // 라이트 세기를 보냄
+            'vLight = vec4 ( vec3 (lambert), 1.0 );\n' +
             'gl_Position = mvp*vec4(aVertexPosition, 1.0);\n' +
             'vUV = aUV;'
             ]
@@ -78,10 +78,37 @@ var Scene = (function () {
         var bitmapFragmentShaderGouraud = {
             precision: 'mediump float',
             uniforms: ['sampler2D uSampler'],
-            varyings: ['vec2 vUV','vec4 vShadow'],
+            varyings: ['vec2 vUV','vec4 vLight'],
             function: [],
             main: ['' +
-            'gl_FragColor =  (vShadow*texture2D(uSampler, vec2(vUV.s, vUV.t)));\n' +
+            'gl_FragColor =  (vLight*texture2D(uSampler, vec2(vUV.s, vUV.t)));\n' +
+            'gl_FragColor.a = 1.0;'
+            ]
+        }
+        var bitmapVertexShaderPhong = {
+            attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
+            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+            varyings: ['vec2 vUV','vec3 vNormal','vec4 vPosition','float vLambert'],
+            function: [VertexShader.baseFunction],
+            main: ['' +
+            'mat4 mvp = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+            'gl_Position = mvp*vec4(aVertexPosition, 1.0);\n' +
+            'vUV = aUV;\n' +
+            'vNormal = aVertexNormal;\n' +
+            'vPosition = gl_Position;' +
+            'vLambert = uLambert;'
+            ]
+        }
+        var bitmapFragmentShaderPhong = {
+            precision: 'mediump float',
+            uniforms: ['sampler2D uSampler', 'vec3 uDLite'],
+            varyings: ['vec2 vUV','vec3 vNormal','vec4 vPosition','float vLambert'],
+            function: [],
+            main: ['' +
+            'vec3 normal = normalize(vNormal);\n'+
+            'vec3 lightDir = normalize(uDLite - vPosition.xyz);\n'+
+            'float diffuse = max(dot(normal,lightDir),0.0);\n'+
+            'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*diffuse*vLambert;\n' +
             'gl_FragColor.a = 1.0;'
             ]
         }
@@ -90,7 +117,9 @@ var Scene = (function () {
         this.addVertexShader('bitmap', bitmapVertexShader),
         this.addFragmentShader('bitmap', bitmapFragmentShader);
         this.addVertexShader('bitmapGouraud', bitmapVertexShaderGouraud),
-        this.addFragmentShader('bitmapGouraud', bitmapFragmentShaderGouraud);
+        this.addFragmentShader('bitmapGouraud', bitmapFragmentShaderGouraud),
+        this.addVertexShader('bitmapPhong', bitmapVertexShaderPhong),
+        this.addFragmentShader('bitmapPhong', bitmapFragmentShaderPhong);
     }
     /////////////////////////////////////////////////////////////////
     var makeVBO = function makeVBO(self, name, data, stride) {
