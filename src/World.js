@@ -81,10 +81,10 @@ var World = (function () {
                             gl.uniform1i(tProgram.uSampler, 0);
                         }
                     }
+                    tIBO !=pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0
                     if(tMaterial._wireFrame) {
                         tProgram=scene._glPROGRAMs['base']
                         gl.useProgram(tProgram)
-                        tIBO !=pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                         gl.uniform3fv(tProgram.uRotate, [tItem.rotateX, tItem.rotateY, tItem.rotateZ]),
