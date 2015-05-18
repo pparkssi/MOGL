@@ -13,13 +13,10 @@
 
 </head>
 <body>
-<img src="../src/ohno.png"/>
-
-<div> // TODO 헉!! 노말도 계산해서 넘겨야되!!!</div>
-<canvas id="canvasTest" height="256" width="512"></canvas>
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
+
 <script src="../src/MoGL.js"></script>
 <script src="../src/BlendMode.js"></script>
 <script src="../src/Filter.js"></script>
@@ -37,50 +34,101 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-    document.getElementById('canvasTest').width = window.innerWidth;
-    document.getElementById('canvasTest').height = window.innerHeight;
-//
-    var world = new World('canvasTest')
-    var scene = new Scene()
+console.log('########## RPOLYGON TEST START ##########');
+var rPolygon;
+bsTest('rpolygon',
+            function () {
+                // 삼각형이면 vs.length == 3
+                rPolygon = Primitive.rpolygon(3, 1);
+                return rPolygon.getVertexCount();
+            }, 3,
+            function () {
+                // 삼각형이면 is.length == 1
+                rPolygon = Primitive.rpolygon(3, 1);
+                return rPolygon.getTriangleCount();
+            }, 1,
+            function () {
+                // 사각형이면 vs.length == 4
+                rPolygon = Primitive.rpolygon(4, 1);
+                return rPolygon.getVertexCount();
+            }, 4,
+            function () {
+                // 사각형이면 is.length == 2
+                rPolygon = Primitive.rpolygon(4, 1);
+                return rPolygon.getTriangleCount();
+            }, 2
+);
+console.log('########## RPOLYGON TEST START ##########');
+</script>
+<hr/>
+<canvas id='rpolygon_Triangle' width=300 height=300></canvas>
+<script>
+var world = new World('rpolygon_Triangle'),
+    scene = new Scene(),
+    camera = new Camera(),
+    whiteMaterial = new Material('#ffffff'),
+    whiteTriangle = new Geometry([-1,0,0,  1,0,0,  0,1,0], [0, 1, 2]),
+    mesh = new Mesh(whiteTriangle, whiteMaterial);
+// var mesh1 = new Mesh(Primitive.rpolygon(3, 1), whiteMaterial);
 
-
-    world.addScene('scene', scene)
-    scene.addChild('camera', new Camera())
-    scene.addTexture('texture', '../src/ohno.png')
-    world.addRender('scene', 'camera')
-
-    var material = new Material()
-    material.addTexture(Texture.diffuse, 'texture')
-    var mesh1 = new Mesh(Primitive.plane(2,2), new Material('#fff'))
-    mesh1.z = -5
-    mesh1.x = 0
-    scene.addChild('mesh1', mesh1)
-
-//    var mesh2 = new Mesh(Primitive.sphere(12), material)
-//    mesh2.z = -2
-////    scene.addChild('mesh2', mesh2)
-//
-//    var mesh3 = new Mesh(Primitive.sphere(32), material)
-//    mesh3.z = -2
-//    mesh3.x = 1.5
-//    scene.addChild('mesh3', mesh3)
-
-    setInterval(function () {
-        mesh1.rotateX += 0.01
-        mesh1.rotateY += 0.01
-        mesh1.rotateZ += 0.01
-//        mesh2.rotateX += 0.01
-//        mesh2.rotateY += 0.01
-//        mesh2.rotateZ += 0.01
-//        mesh3.rotateX += 0.01
-//        mesh3.rotateY += 0.01
-//        mesh3.rotateZ += 0.01
-        world.render();
-    }, 1000 / 60)
-
-    console.log('$$$$$$$$$$$$$$')
-    console.log(Primitive.plane())
+world.addScene('scene', scene);
+scene.addChild('camera', camera);
+world.addRender('scene', 'camera');
+scene.addChild('whiteTriangle', mesh);
+world.render();
 
 </script>
+<hr/>
+<!--
+<img src="../src/ohno.png"/>
+<div> // TODO 헉!! 노말도 계산해서 넘겨야되!!!</div>
+<canvas id="canvasTest" height="256" width="512"></canvas>
+<script>
+//     document.getElementById('canvasTest').width = window.innerWidth;
+//     document.getElementById('canvasTest').height = window.innerHeight;
+// //
+//     var world = new World('canvasTest')
+//     var scene = new Scene()
+
+
+//     world.addScene('scene', scene)
+//     scene.addChild('camera', new Camera())
+//     scene.addTexture('texture', '../src/ohno.png')
+//     world.addRender('scene', 'camera')
+
+//     var material = new Material()
+//     material.addTexture(Texture.diffuse, 'texture')
+//     var mesh1 = new Mesh(Primitive.plane(2,2), new Material('#fff'))
+//     mesh1.z = -5
+//     mesh1.x = 0
+//     scene.addChild('mesh1', mesh1)
+
+// //    var mesh2 = new Mesh(Primitive.sphere(12), material)
+// //    mesh2.z = -2
+// ////    scene.addChild('mesh2', mesh2)
+// //
+// //    var mesh3 = new Mesh(Primitive.sphere(32), material)
+// //    mesh3.z = -2
+// //    mesh3.x = 1.5
+// //    scene.addChild('mesh3', mesh3)
+
+//     setInterval(function () {
+//         mesh1.rotateX += 0.01
+//         mesh1.rotateY += 0.01
+//         mesh1.rotateZ += 0.01
+// //        mesh2.rotateX += 0.01
+// //        mesh2.rotateY += 0.01
+// //        mesh2.rotateZ += 0.01
+// //        mesh3.rotateX += 0.01
+// //        mesh3.rotateY += 0.01
+// //        mesh3.rotateZ += 0.01
+//         world.render();
+//     }, 1000 / 60)
+
+//     console.log('$$$$$$$$$$$$$$')
+//     console.log(Primitive.plane())
+
+</script>
+-->
 </body>
 </html>

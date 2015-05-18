@@ -3,7 +3,7 @@
  */
 // TODO 기본으로 버텍스좌표, 노말좌표 정도까지는 알아야되는겐가?
 var Primitive = (function () {
-	var mS = Math.sin, mC = Math.cos, PI = Math.PI, mSqt = Math.sqrt
+	var mS = Math.sin, mC = Math.cos, PI = Math.PI, RADIAN = PI/180, mSqt = Math.sqrt
 	return {
 		cube: function cube(/*splitX:int, splitY:int, splitZ:int*/) {
 			// TODO 내장된 Geometry. 각 정육면체 구조를 생성함.
@@ -77,6 +77,27 @@ var Primitive = (function () {
 			// TODO scene.addChild( 'box', new Mesh( Primitive.skybox( 5, 5, 5 ), new Material() );
 			var result
 			return result
-		}
+		},
+        rpolygon: function rpolygon(n, radius) {
+            if (n < 3) MoGL.error('Primitive', 'rpolygon', 0);
+            var i, vertCoords = 3, angle = 2 * PI / n,
+                vs = [0.0, radius, 0.0], is = [],
+                result;
+
+            for (i = 0 ; i < n - 1 ; i = i / vertCoords + 1) {
+                vs.push(
+                    vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
+                    vs[--i] * mS(angle) + vs[++i] * mC(angle),
+                    vs[--i + 2]
+                );
+                if (i > 0) {
+                    is.push(0, i, i + 1); // 최상단 최초 꼭지점 기준
+                    // is.push(n, i / vertCoords, i / vertCoords + 1); 중심점을 기준으로
+                }
+            }
+            result = new Geometry(vs, is);
+            result._key = 'rpolygon_' + (arguments[0] || 1)
+            return result;
+        }
 	}
 })()
