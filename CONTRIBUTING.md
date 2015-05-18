@@ -4,7 +4,7 @@
 1. `GitHub` 계정이 있어야 합니다.
 1. GitHub에서 MOGL의 repository를 `Fork`해 주세요.
 1. `Fork`한 repository를 로컬에 `Clone` 받아 코드를 작성합니다.
-1. 코드 작성시에는 반드시 아래의 [Guideline](#Guideline)을 확인해 주세요.
+1. 코드 작성시에는 반드시 아래의 [Guideline](#guideline)을 확인해 주세요.
 1. 변경된 코드를 본인의 repository에 `Push`합니다.
 1. `Pull Request`를 보내주시면 검토 후 `Merge` 됩니다.
 
