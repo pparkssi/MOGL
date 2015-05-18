@@ -3,7 +3,7 @@
   "version": "r0.1",
   "homepage": "https://github.com/projectBS/MoGL",
   "description": "MOGL is a lightweight & high performance MObile webGL library.",
-  "main": "lib/mogl.js",
+  "main": "mogl.js",
   "keywords": [
     "mobile",
     "webgl"
@@ -19,6 +19,10 @@
     "ibare"
   ],
   "ignore": [
-    "tutorial/"
+    "tutorial/",
+    "doc/",
+    "lib/",
+    "CONTRIBUTING.md",
+    "GETTING-STARTED.md"
   ]
 }
