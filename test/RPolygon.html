@@ -36,7 +36,8 @@
 var world = new World('test_triangle'),
     scene = new Scene(),
     camera = new Camera(),
-    triangle = new Geometry([-1,0,0,  1,0,0,  0,1,0], [0, 1, 2]),
+    // triangle = new Geometry([-1,0,0,  1,0,0,  0,1,0], [0, 1, 2]),
+    triangle = Primitive.rpolygon(3, 1);
     solidWhite = new Material('#ffffff'),
     mesh = new Mesh(triangle, solidWhite);
 
@@ -44,6 +45,7 @@ world.addScene('scene', scene);
 scene.addChild('camera', camera);
 world.addRender('scene', 'camera');
 scene.addChild('whiteTriangle', mesh);
+mesh.z = -10;
 world.render();
 </script>
 <hr/>
