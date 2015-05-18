@@ -66,6 +66,7 @@ var World = (function () {
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                         gl.uniform3fv(tProgram.uColor, [tMaterial._r, tMaterial._g, tMaterial._b])
                     }else{
+                        var dLite = [0,1,-1]
                         if(tMaterial._shading.type=='none'){
                             tProgram=scene._glPROGRAMs['bitmap'],
                             gl.useProgram(tProgram)
@@ -74,7 +75,6 @@ var World = (function () {
                             gl.useProgram(tProgram),
                             gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO)
                             gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0)
-                            var dLite = [0,1,1]
                             gl.uniform3fv(tProgram.uDLite, dLite)
                             gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                         }else if(tMaterial._shading.type=='phong'){
@@ -82,7 +82,6 @@ var World = (function () {
                             gl.useProgram(tProgram),
                             gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO)
                             gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0)
-                            var dLite = [0,1,1]
                             gl.uniform3fv(tProgram.uDLite, dLite)
                             gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                         }
