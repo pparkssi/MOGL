@@ -18,7 +18,7 @@
 [MoGL Release 페이지](https://github.com/projectBS/MoGL/releases) 링크에서 최신 버전을 다운로드할 수 있고 이 예제는 0.1 버전을 사용하였습니다.
 
 이 예제는 MoGL의 기본적인 사용법은 다루지 않습니다.
-기본적인 사용법을 익히고 싶다면 [시작하기](https://github.com/projectBS/MoGL/blob/master/GettingStart.md) 링크를 먼저 살펴봐 주세요.
+기본적인 사용법을 익히고 싶다면 [시작하기](https://github.com/projectBS/MoGL/blob/master/GettingStart.md) 링크를 먼저 확인해 주세요.
 
 **1. Material( 재질 ) 등록하기**
 
@@ -148,10 +148,7 @@ requestAnimationFrame( render );
 ```
 
 여기까지 작성해주면.
-
-[[include ref=http://projectbs.github.io/MoGL/showcase.0.1/monkey.html]]
-
-Blender에서 생성한 모델링 데이터를 로드해서 MoGL에서 메시를 생성하고 제어하는 예제의 완성입니다.
+Blender에서 생성한 모델링 데이터를 로드해서 MoGL에서 메시를 생성하고 제어하는 [예제의 완성](http://projectbs.github.io/MoGL/showcase.0.1/monkey.html)입니다.
 
 **6. 더 보기**
 
@@ -163,6 +160,6 @@ for( var i = 0; i < 500; i++ ) {
 }
 ```
 
-해당 예제는 500개의 메시를 생성하여 장면에 추가하고 있습니다.
+500개의 메시를 생성하여 장면에 추가하고 있습니다.
 
 [링크](http://projectbs.github.io/MoGL/showcase.0.1/monkeys.html)에서 확인 가능합니다.
