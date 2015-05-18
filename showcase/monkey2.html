@@ -142,51 +142,22 @@
 
             scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
 
-            var mesh = new Mesh('geometry', 'material');
-            mesh.z =-5
-            mesh.x = -3
-            mesh.y = -1
-            scene.addChild('monkey', mesh);
-            mesh.getMaterial().setWireFrame(1)
-
-            var mesh2 = new Mesh('geometry', 'material2');
-            mesh2.z =-5
-            mesh2.y = -1
-            scene.addChild('monkey2', mesh2);
-
-
-            var mesh3 = new Mesh('geometry', 'material3');
-            mesh3.z =-5
-            mesh3.x = 3
-            mesh3.y = -1
-            scene.addChild('monkey3', mesh3);
-            mesh3.getMaterial().setShading(Shading.gouraud)
-
-
-            var mesh4 = new Mesh('geometry', 'material4');
-            mesh4.z =-5
-            mesh4.x = 3
-            mesh4.y = 1
-            scene.addChild('monkey4', mesh4);
-            mesh4.getMaterial().setShading(Shading.gouraud)
-            mesh4.getMaterial().setLambert(1.5)
-
 
             var mesh5 = new Mesh('geometry', 'material5');
             mesh5.z =-5
             mesh5.x = 0
-            mesh5.y = 1
+            mesh5.y = -1
             scene.addChild('monkey5', mesh5);
-            mesh5.getMaterial().setShading(Shading.phong)
+            mesh5.getMaterial().setShading(Shading.gouraud)
             mesh5.getMaterial().setLambert(1)
 
             var mesh6 = new Mesh('geometry', 'material6');
             mesh6.z =-5
-            mesh6.x =-3
+            mesh6.x =0
             mesh6.y = 1
             scene.addChild('monkey6', mesh6);
             mesh6.getMaterial().setShading(Shading.phong)
-            mesh6.getMaterial().setLambert(1.5)
+            mesh6.getMaterial().setLambert(1)
 
 
             var sum = 0, count = 1;
@@ -198,10 +169,6 @@
                 divCurrentFPS.textContent = currentFPS.toFixed( 2 );
                 divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
 
-                mesh.rotateY -= 0.01;
-                mesh2.rotateY -= 0.01;
-                mesh3.rotateY -= 0.01;
-                mesh4.rotateY -= 0.01;
                 mesh5.rotateY -= 0.01;
                 mesh6.rotateY -= 0.01;
                 world.render();

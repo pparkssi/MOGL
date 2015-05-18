@@ -85,15 +85,54 @@ var Scene = (function () {
             'gl_FragColor.a = 1.0;'
             ]
         }
+        var bitmapVertexShaderPhong = {
+            attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
+            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+            varyings: ['vec2 vUV','vec3 vNormal', 'vec3 vPosition'],
+            function: [VertexShader.baseFunction],
+            main: ['' +
+            'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+            'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+            'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
+            'vNormal = vec3(mv * vec4(aVertexNormal, 0.0));\n' +
+            'vUV = aUV;'
+            ]
+        }
+        var bitmapFragmentShaderPhong = {
+            precision: 'mediump float',
+            uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
+            varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
+            function: [],
+            main: ['' +
+            'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+            'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+            'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
+            'vec3 normal = normalize(vNormal);\n' +
+            'vec3 lightDir = normalize(-uDLite);\n' +
+            'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+            'vec3 viewDir = normalize(-vPosition);\n' +
+
+            'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
+            'float specular = 0.0;\n' +
+
+            'if(lambertian > 0.0) {\n' +
+            'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
+            '   specular = pow(specAngle, 4.0);\n' +
+            '}\n' +
+            'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
+            'gl_FragColor.a = 1.0;'
+            ]
+        }
 
         this.addVertexShader('base', baseVertexShader),
         this.addFragmentShader('base', baseFragmentShader),
         this.addVertexShader('bitmap', bitmapVertexShader),
         this.addFragmentShader('bitmap', bitmapFragmentShader);
         this.addVertexShader('bitmapGouraud', bitmapVertexShaderGouraud),
-        this.addFragmentShader('bitmapGouraud', bitmapFragmentShaderGouraud)
-
+        this.addFragmentShader('bitmapGouraud', bitmapFragmentShaderGouraud),
+        this.addVertexShader('bitmapPhong', bitmapVertexShaderPhong),
+        this.addFragmentShader('bitmapPhong', bitmapFragmentShaderPhong);
 
     }
     /////////////////////////////////////////////////////////////////
@@ -180,6 +219,9 @@ var Scene = (function () {
         for (i = 0; i < vShader.uniforms.length; i++) {
             program[vShader.uniforms[i]] = gl.getUniformLocation(program, vShader.uniforms[i])
         }
+        for (i = 0; i < fShader.uniforms.length; i++) {
+            program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i])
+        }
         self._glPROGRAMs[name] = program
         console.log(vShader)
         console.log(fShader)
@@ -221,7 +263,7 @@ var Scene = (function () {
         else resultStr+='precision mediump float;\n'
         t0 = source.uniforms, len = t0.length
         for(i=0; i<len; i++) {
-            resultStr += 'uniform '+t0[i]+';\n',
+            resultStr += 'uniform ' + t0[i] + ';\n',
             shader.uniforms.push(t0[i].split(' ')[1])
         }
         t0=source.varyings,len = t0.length
@@ -231,8 +273,9 @@ var Scene = (function () {
         resultStr+='void main(void){\n',
         resultStr+=source.main+';\n',
         resultStr+='}\n',
-        gl.shaderSource(shader, resultStr), gl.compileShader(shader),
-        shader.uniforms = source.uniforms
+            console.log(resultStr)
+        gl.shaderSource(shader, resultStr),
+        gl.compileShader(shader)
         return shader
     }
     var makeTexture = function makeTexture(self, id,image) {
