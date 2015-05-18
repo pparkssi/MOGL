@@ -147,7 +147,6 @@ function render() {
 requestAnimationFrame( render );
 ```
 
-여기까지 작성해주면.
 Blender에서 생성한 모델링 데이터를 로드해서 MoGL에서 메시를 생성하고 제어하는 [예제의 완성](http://projectbs.github.io/MoGL/showcase.0.1/monkey.html)입니다.
 
 **6. 더 보기**
@@ -163,3 +162,11 @@ for( var i = 0; i < 500; i++ ) {
 500개의 메시를 생성하여 장면에 추가하고 있습니다.
 
 [링크](http://projectbs.github.io/MoGL/showcase.0.1/monkeys.html)에서 확인 가능합니다.
+
+**7. 참고 API**
+
+* [Scene](https://github.com/projectBS/MoGL/blob/master/doc/Scene.md)
+* [Material](https://github.com/projectBS/MoGL/blob/master/doc/Material.md)
+* [Geometry](https://github.com/projectBS/MoGL/blob/master/doc/Geometry.md)
+* [Mesh](https://github.com/projectBS/MoGL/blob/master/doc/Mesh.md)
+* [World](https://github.com/projectBS/MoGL/blob/master/doc/World.md)
