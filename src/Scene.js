@@ -70,7 +70,7 @@ var Scene = (function () {
             ' mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
             ' vec3 LD = normalize(uDLite);\n' +
             ' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
-            ' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.0,1.0)),1.0);\n' +
+            ' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.1,1.0)),1.0);\n' +
             ' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
             ' vUV = aUV;'
             ]
@@ -85,54 +85,16 @@ var Scene = (function () {
             'gl_FragColor.a = 1.0;'
             ]
         }
-        var bitmapVertexShaderPhong = {
-            attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
-            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
-            varyings: ['vec2 vUV', 'vec4 vPosition', 'float vLambert', 'vec3 vNormal', 'vec3 vVertex'],
-            function: [VertexShader.baseFunction],
-            main: ['' +
-            'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-            'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-            'vVertex = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-            'vNormal = (vec3(mv * vec4(aVertexNormal, 0.0)));\n' +
-            'vUV = aUV;' +
-            'vLambert = uLambert;'
-            ]
-        }
-        var bitmapFragmentShaderPhong = {
-            precision: 'mediump float',
-            uniforms: ['sampler2D uSampler', 'vec3 uDLite'],
-            varyings: ['vec2 vUV', 'float vLambert', 'vec3 vNormal', 'vec3 vVertex'],
-            function: [],
-            main: ['' +
-            'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
-            'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
-            'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-            'vec3 normal = normalize(vNormal);\n' +
-            'vec3 lightDir = normalize(uDLite - vVertex);\n' +
-            'vec3 reflectDir = reflect(-lightDir, vNormal);\n' +
-            'vec3 viewDir = normalize(-vVertex);\n' +
 
-            'float lambertian = max(dot(lightDir,normal), 0.0)*vLambert;\n' +
-            'float specular = 0.0;\n' +
-
-            'if(lambertian > 0.0) {\n' +
-            'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
-            '   specular = pow(specAngle, 4.0);\n' +
-            '}\n' +
-            'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
-            'gl_FragColor.a = 1.0;'
-            ]
-        }
         this.addVertexShader('base', baseVertexShader),
         this.addFragmentShader('base', baseFragmentShader),
         this.addVertexShader('bitmap', bitmapVertexShader),
         this.addFragmentShader('bitmap', bitmapFragmentShader);
         this.addVertexShader('bitmapGouraud', bitmapVertexShaderGouraud),
-        this.addFragmentShader('bitmapGouraud', bitmapFragmentShaderGouraud),
-        this.addVertexShader('bitmapPhong', bitmapVertexShaderPhong),
-        this.addFragmentShader('bitmapPhong', bitmapFragmentShaderPhong);
+        this.addFragmentShader('bitmapGouraud', bitmapFragmentShaderGouraud)
+
+
     }
     /////////////////////////////////////////////////////////////////
     var makeVBO = function makeVBO(self, name, data, stride) {
