@@ -66,7 +66,7 @@ var World = (function () {
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                         gl.uniform3fv(tProgram.uColor, [tMaterial._r, tMaterial._g, tMaterial._b])
                     }else{
-                        var dLite = [0,1,-1]
+                        var dLite = [2,-1,-1]
                         if(tMaterial._shading.type=='none'){
                             tProgram=scene._glPROGRAMs['bitmap'],
                             gl.useProgram(tProgram)
