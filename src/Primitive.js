@@ -78,26 +78,26 @@ var Primitive = (function () {
 			var result
 			return result
 		},
-        rpolygon: function rpolygon(n, radius) {
-            if (n < 3) MoGL.error('Primitive', 'rpolygon', 0);
-            var i, vertCoords = 3, angle = 2 * PI / n,
-                vs = [0.0, radius, 0.0], is = [],
-                result;
+		rpolygon: function rpolygon(n, radius) {
+			if (n < 3) MoGL.error('Primitive', 'rpolygon', 0);
+			var i, j, vertCoords = 3, angle = 2 * PI / n,
+				vs = [0.0, radius, 0.0], is = [],
+				result;
 
-            for (i = 0 ; i < n - 1 ; i = i / vertCoords + 1) {
-                vs.push(
-                    vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
-                    vs[--i] * mS(angle) + vs[++i] * mC(angle),
-                    vs[--i + 2]
-                );
-                if (i > 0) {
-                    is.push(0, i, i + 1); // 최상단 최초 꼭지점 기준
-                    // is.push(n, i / vertCoords, i / vertCoords + 1); 중심점을 기준으로
-                }
-            }
-            result = new Geometry(vs, is);
-            result._key = 'rpolygon_' + (arguments[0] || 1)
-            return result;
-        }
+			for (i = 0 ; i < n - 1 ; i = i / vertCoords + 1) {
+				vs.push(
+					vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
+					vs[--i] * mS(angle) + vs[++i] * mC(angle),
+					vs[--i + 2]
+				);
+				if (i > 0) {
+					j = i / 3;
+					is.push(0, j , j + 1); // 최상단 최초 꼭지점 기준
+				}
+			}
+			result = new Geometry(vs, is);
+			result._key = 'rpolygon_' + (arguments[0] || 1);
+			return result;
+		}
 	}
 })()
