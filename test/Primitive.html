@@ -39,7 +39,7 @@
 <script>
     document.getElementById('canvasTest').width = window.innerWidth;
     document.getElementById('canvasTest').height = window.innerHeight;
-
+//
     var world = new World('canvasTest')
     var scene = new Scene()
 
@@ -50,33 +50,36 @@
     world.addRender('scene', 'camera')
 
     var material = new Material()
-    material.addTexture(Texture.diffuse,'texture')
-    var mesh1 = new Mesh(Primitive.sphere(), material)
-    mesh1.z = -2
-    mesh1.x = -1.5
+    material.addTexture(Texture.diffuse, 'texture')
+    var mesh1 = new Mesh(Primitive.plane(2,2), new Material('#fff'))
+    mesh1.z = -5
+    mesh1.x = 0
     scene.addChild('mesh1', mesh1)
 
-    var mesh2 = new Mesh(Primitive.sphere(12), material)
-    mesh2.z = -2
-    scene.addChild('mesh2', mesh2)
-
-    var mesh3 = new Mesh(Primitive.sphere(32), material)
-    mesh3.z = -2
-    mesh3.x = 1.5
-    scene.addChild('mesh3', mesh3)
+//    var mesh2 = new Mesh(Primitive.sphere(12), material)
+//    mesh2.z = -2
+////    scene.addChild('mesh2', mesh2)
+//
+//    var mesh3 = new Mesh(Primitive.sphere(32), material)
+//    mesh3.z = -2
+//    mesh3.x = 1.5
+//    scene.addChild('mesh3', mesh3)
 
     setInterval(function () {
         mesh1.rotateX += 0.01
         mesh1.rotateY += 0.01
         mesh1.rotateZ += 0.01
-        mesh2.rotateX += 0.01
-        mesh2.rotateY += 0.01
-        mesh2.rotateZ += 0.01
-        mesh3.rotateX += 0.01
-        mesh3.rotateY += 0.01
-        mesh3.rotateZ += 0.01
+//        mesh2.rotateX += 0.01
+//        mesh2.rotateY += 0.01
+//        mesh2.rotateZ += 0.01
+//        mesh3.rotateX += 0.01
+//        mesh3.rotateY += 0.01
+//        mesh3.rotateZ += 0.01
         world.render();
     }, 1000 / 60)
+
+    console.log('$$$$$$$$$$$$$$')
+    console.log(Primitive.plane())
 
 </script>
 </body>

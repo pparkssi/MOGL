@@ -66,8 +66,10 @@
 
         scene.addChild('camera', new Camera());
         scene.addMaterial('material', new Material());
+        scene.addMaterial('material2', new Material());
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
         scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
+        scene.getMaterial('material2').addTexture(Texture.diffuse,'texture');
 
 
         world.addRender('scene', 'camera');
@@ -131,7 +133,15 @@
 
             var mesh = new Mesh('geometry', 'material');
             mesh.z =-5
+            mesh.x = -2
             scene.addChild('monkey', mesh);
+            mesh.getMaterial().setWireFrame(1)
+
+            var mesh2 = new Mesh('geometry', 'material2');
+            mesh2.z =-5
+            mesh2.x = 2
+            scene.addChild('monkey2', mesh2);
+
 
 
             var sum = 0, count = 1;
@@ -144,6 +154,7 @@
                 divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
 
                 mesh.rotateY -= 0.01;
+                mesh2.rotateY -= 0.01;
 
                 world.render();
 
