@@ -13,7 +13,7 @@
 ## Constructor
 
 ```javascript
-Geometry( vertexBuffer:Array, indexBuffer:Array[, vertexInfo:Array]  )
+Geometry( vertexBuffer:Array, indexBuffer:Array, [vertexInfo:Array]  )
 ```
 
 **description**
