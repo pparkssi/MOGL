@@ -27,20 +27,7 @@
             width: 400px;
         }
     </style>
-    <script src="../src/MoGL.js"></script>
-    <script src="../src/BlendMode.js"></script>
-    <script src="../src/Filter.js"></script>
-    <script src="../src/Vertex.js"></script>
-    <script src="../src/VertexShaderFunctions.js"></script>
-    <script src="../src/Matrix.js"></script>
-    <script src="../src/Geometry.js"></script>
-    <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
-    <script src="../src/Mesh.js"></script>
-    <script src="../src/Group.js"></script>
-    <script src="../src/Camera.js"></script>
-    <script src="../src/Scene.js"></script>
-    <script src="../src/World.js"></script>
+    <script src="lib/mogl.min.js"></script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -142,8 +129,8 @@
                 monkey.rotateX = Math.random() * PI2;
                 monkey.rotateY = Math.random() * PI2;
                 monkey.rotateZ = Math.random() * PI2;
-                scene.addChild('monkey' + i, monkey);
 
+                scene.addChild('monkey' + i, monkey);
                 meshes.push(monkey);
             }
 
