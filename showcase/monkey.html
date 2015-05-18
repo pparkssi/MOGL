@@ -70,11 +70,13 @@
         scene.addMaterial('material2', new Material());
         scene.addMaterial('material3', new Material());
         scene.addMaterial('material4', new Material());
+        scene.addMaterial('material5', new Material());
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
         scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
         scene.getMaterial('material2').addTexture(Texture.diffuse,'texture');
         scene.getMaterial('material3').addTexture(Texture.diffuse,'texture');
         scene.getMaterial('material4').addTexture(Texture.diffuse,'texture');
+        scene.getMaterial('material5').addTexture(Texture.diffuse,'texture');
 
 
 
@@ -165,7 +167,17 @@
             mesh4.y = 1
             scene.addChild('monkey4', mesh4);
             mesh4.getMaterial().setShading(Shading.gouraud)
-            mesh4.getMaterial().setLambert(10)
+            mesh4.getMaterial().setLambert(1.5)
+
+
+            var mesh5 = new Mesh('geometry', 'material5');
+            mesh5.z =-5
+            mesh5.x = 0
+            mesh5.y = 1
+            scene.addChild('monkey5', mesh5);
+            mesh5.getMaterial().setShading(Shading.phong)
+            mesh5.getMaterial().setLambert(1.5)
+
             var sum = 0, count = 1;
 
             function render( currTime ) {
@@ -179,7 +191,7 @@
                 mesh2.rotateY -= 0.01;
                 mesh3.rotateY -= 0.01;
                 mesh4.rotateY -= 0.01;
-
+                mesh5.rotateY -= 0.01;
                 world.render();
 
                 requestAnimationFrame( render );
