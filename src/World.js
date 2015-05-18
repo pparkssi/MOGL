@@ -76,6 +76,7 @@ var World = (function () {
                             gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0)
                             var dLite = [0,1,1]
                             gl.uniform3fv(tProgram.uDLite, dLite)
+                            gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                         }
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
@@ -112,20 +113,21 @@ var World = (function () {
                 gl.bindFramebuffer(gl.FRAMEBUFFER, null);
             }
         }
-         gl.viewport(0, 0, this._cvs.clientWidth, this._cvs.clientHeight);
-         gl.clearColor(0, 0, 0, 1)
-         //gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL)
-         gl.disable(gl.DEPTH_TEST)
+        ////
+         // 프레임버퍼를 모아서 찍어!!!
+        gl.viewport(0, 0, this._cvs.clientWidth, this._cvs.clientHeight);
+        gl.clearColor(0, 0, 0, 1)
+        //gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL)
+        gl.disable(gl.DEPTH_TEST)
          gl.enable(gl.BLEND)
          gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
          tVBO = scene._glVBOs['rect'],
-         tUVBO = scene._glUVBOs['rect'],
-         tIBO = scene._glIBOs['rect'],
-         tProgram = scene._glPROGRAMs['bitmap']
-        if (!tVBO) return
+             tUVBO = scene._glUVBOs['rect'],
+             tIBO = scene._glIBOs['rect'],
+             tProgram = scene._glPROGRAMs['bitmap']
+         if (!tVBO) return
          gl.useProgram(tProgram)
-
          gl.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
              2 / this._cvs.clientWidth, 0, 0, 0,
              0, -2 / this._cvs.clientHeight, 0, 0,
@@ -134,25 +136,25 @@ var World = (function () {
 
          ])
          gl.bindBuffer(gl.ARRAY_BUFFER, tVBO),
-         gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0),
-         gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO),
-         gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0),
-         gl.uniform3fv(tProgram.uRotate, [0,0,0])
-         gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,rectMatrix)
+             gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0),
+             gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO),
+             gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0),
+             gl.uniform3fv(tProgram.uRotate, [0, 0, 0])
+         gl.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix)
          for (i = 0, len = tList.length; i < len; i++) {
              scene = tList[i].scene,
-             camera = scene.getChild(tList[i].cameraID)
-             if(camera._visible){
+                 camera = scene.getChild(tList[i].cameraID)
+             if (camera._visible) {
                  tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer
-                 f3[0] = tFrameBuffer.x +tFrameBuffer.width/2, f3[1] = tFrameBuffer.y+tFrameBuffer.height/2 , f3[2] = 0
-                 gl.uniform3fv(tProgram.uPosition,f3),
-                 f3[0] = tFrameBuffer.width / 2, f3[1] = tFrameBuffer.height / 2, f3[2] = 1
+                 f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 , f3[2] = 0
+                 gl.uniform3fv(tProgram.uPosition, f3),
+                     f3[0] = tFrameBuffer.width / 2, f3[1] = tFrameBuffer.height / 2, f3[2] = 1
                  gl.uniform3fv(tProgram.uScale, f3),
-                 gl.activeTexture(gl.TEXTURE0),
-                 gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture),
-                 gl.uniform1i(tProgram.uSampler, 0),
-                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
-                 gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
+                     gl.activeTexture(gl.TEXTURE0),
+                     gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture),
+                     gl.uniform1i(tProgram.uSampler, 0),
+                     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
+                     gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
              }
          }
     },

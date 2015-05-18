@@ -63,13 +63,13 @@ var Scene = (function () {
         }
         var bitmapVertexShaderGouraud = {
             attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
             varyings: ['vec2 vUV','vec4 vShadow'],
             function: [VertexShader.baseFunction],
             main: ['' +
             'mat4 mvp = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
             'vec3 light = normalize (mvp * vec4 (uDLite, 0.0 )). xyz;\n' + // 라이트 방향을 결정하고...
-            'float lambert = clamp (dot (aVertexNormal, light), 0.1 , 1.0 );\n' + // 라이트 세기를 보냄
+            'float lambert = clamp (dot (aVertexNormal, light)*uLambert, 0.1 , 1.0 );\n' + // 라이트 세기를 보냄
             'vShadow = vec4 ( vec3 (lambert), 1.0 );\n' +
             'gl_Position = mvp*vec4(aVertexPosition, 1.0);\n' +
             'vUV = aUV;'
