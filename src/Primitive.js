@@ -3,7 +3,7 @@
  */
 // TODO 기본으로 버텍스좌표, 노말좌표 정도까지는 알아야되는겐가?
 var Primitive = (function () {
-	var mS = Math.sin, mC = Math.cos, PI = Math.PI,mSqt = Math.sqrt
+	var mS = Math.sin, mC = Math.cos, PI = Math.PI, mSqt = Math.sqrt
 	return {
 		cube: function cube(/*splitX:int, splitY:int, splitZ:int*/) {
 			// TODO 내장된 Geometry. 각 정육면체 구조를 생성함.
@@ -31,13 +31,15 @@ var Primitive = (function () {
 			//TODO 이걸 계산해서 넘겨야 되는군
 			var vs, is
 			vs = [
-				1.0, 1.0, 0.0, 0.0, 0.0,
-				-1.0, 1.0, 0.0, 1.0, 0.0,
-				1.0, -1.0, 0.0, 0.0, 1.0,
-				-1.0, -1.0, 0.0, 1.0, 1.0
+				1.0, 1.0, 0.0,// 0.0, 0.0,
+				-1.0, 1.0, 0.0, //1.0, 0.0,
+				1.0, -1.0, 0.0, //0.0, 1.0,
+				-1.0, -1.0, 0.0//, //1.0, 1.0
 			]
 			is = [0, 1, 2, 1, 2, 3]
-			var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+
+
+			var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z])
 			result._key = 'plane_' + ( arguments[0] || 1) + '_' + (arguments[1] || 1)
 			return result
 		},
@@ -50,7 +52,7 @@ var Primitive = (function () {
 		},
 		sphere: function sphere(/*split:int*/) {
 			// TODO 헉!! 노말도 계산해서 넘겨야되!!!
-			if(arguments[0]<8) arguments[0] = 8
+			if (arguments[0] < 8) arguments[0] = 8
 			var vs = [], is = [], split = (arguments[0] || 8), radius = 0.5, t, st, ct;
 			var i, longNumber, t1, t2;
 			for (i = 0; i <= split; i++) {
@@ -63,7 +65,7 @@ var Primitive = (function () {
 			for (i = 0; i < split; i++) {
 				for (longNumber = 0; longNumber < split; longNumber++)
 					t1 = (i * (split + 1)) + longNumber, t2 = t1 + split + 1,
-					is.push(t1, t2, t1 + 1, t2, t2 + 1, t1 + 1)
+						is.push(t1, t2, t1 + 1, t2, t2 + 1, t1 + 1)
 			}
 			var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
 			result._key = 'sphere_' + ( arguments[0] || 1)
