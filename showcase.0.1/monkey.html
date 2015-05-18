@@ -3,7 +3,7 @@
 <head>
     <title>Monkey</title>
     <meta charset="utf-8"/>
-    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/2.jpg"/>
+    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/1.jpg"/>
     <meta property="og:title" content="Monkey"/>
     <meta property="og:description" content="MoGL.js version"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -23,24 +23,10 @@
             color: #FFF;
             left: 0px;
             top: 0px;
-            position: absolute;
-            width: 400px;
+            position: absolute
         }
     </style>
-    <script src="../src/MoGL.js"></script>
-    <script src="../src/BlendMode.js"></script>
-    <script src="../src/Filter.js"></script>
-    <script src="../src/Vertex.js"></script>
-    <script src="../src/VertexShaderFunctions.js"></script>
-    <script src="../src/Matrix.js"></script>
-    <script src="../src/Geometry.js"></script>
-    <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
-    <script src="../src/Mesh.js"></script>
-    <script src="../src/Group.js"></script>
-    <script src="../src/Camera.js"></script>
-    <script src="../src/Scene.js"></script>
-    <script src="../src/World.js"></script>
+    <script src="lib/mogl.min.js"></script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -56,9 +42,8 @@
         var scene = new Scene();
         var canvas = document.getElementById('canvas');
 
-
-        var divCurrentFPS = document.getElementById('currentFPS');
-        var divAverageFPS = document.getElementById('averageFPS');
+        var divCurrentFPS = document.getElementById( 'currentFPS' );
+        var divAverageFPS = document.getElementById( 'averageFPS' );
         var prevTime = 0;
 
         canvas.width = W.innerWidth;
@@ -73,6 +58,7 @@
 
 
         world.addRender('scene', 'camera');
+
 
         var xmlhttp = new XMLHttpRequest();
 
@@ -130,49 +116,28 @@
 
             scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
 
-            var meshes = [];
-            var monkey;
-            var PI2 = Math.PI * 2;
+            var mesh = new Mesh('geometry', 'material');
+            mesh.z =-5
+            scene.addChild('monkey', mesh);
 
-            for (i = 0; i < 500; i++) {
-                monkey = new Mesh('geometry', 'material');
-                monkey.x = Math.random() * 50 - 25;
-                monkey.y = Math.random() * 50 - 25;
-                monkey.z = -Math.random() * 200;
-                monkey.rotateX = Math.random() * PI2;
-                monkey.rotateY = Math.random() * PI2;
-                monkey.rotateZ = Math.random() * PI2;
-                scene.addChild('monkey' + i, monkey);
-
-                meshes.push(monkey);
-            }
 
             var sum = 0, count = 1;
 
-            function render(currTime) {
+            function render( currTime ) {
                 var currentFPS = 1000 / ( currTime - prevTime );
                 prevTime = currTime;
 
-                divCurrentFPS.textContent = currentFPS.toFixed(2);
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed(2);
+                divCurrentFPS.textContent = currentFPS.toFixed( 2 );
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
 
-                var i = 0;
-                var j = meshes.length;
-                var mesh;
-
-                for (; i < j; i++) {
-                    mesh = meshes[i];
-                    mesh.rotateX += 0.05;
-                    mesh.rotateY += 0.05;
-                    mesh.rotateZ += 0.05;
-                }
+                mesh.rotateY -= 0.01;
 
                 world.render();
 
-                requestAnimationFrame(render);
+                requestAnimationFrame( render );
             }
 
-            requestAnimationFrame(render);
+            requestAnimationFrame( render );
         }
     })(this);
 </script>
