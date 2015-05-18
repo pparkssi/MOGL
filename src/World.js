@@ -84,6 +84,13 @@ var World = (function () {
                             gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0)
                             gl.uniform3fv(tProgram.uDLite, dLite)
                             gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
+                        }else if(tMaterial._shading.type=='blinn'){
+                            tProgram=scene._glPROGRAMs['bitmapBlinn']
+                            gl.useProgram(tProgram),
+                                gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO)
+                            gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0)
+                            gl.uniform3fv(tProgram.uDLite, dLite)
+                            gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                         }
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
