@@ -1,12 +1,12 @@
 MOGL
 =======
-MOGL is light weight & high performance **MO**bile web**GL** library.
+MOGL is a lightweight & high performance **MO**bile web**GL** library.
 
 **Document**
 
-* [Getting Start](GettingStart.md)
-* [Tutorial](tutorial)
-* [Contribution](CONTRIBUTING.md)
+* [Getting Started](GETTING-STARTED.md)
+* [Tutorials](tutorial)
+* [Contributing](CONTRIBUTING.md)
 * [APIs](doc)
 
 **ShowCase**
