@@ -3,6 +3,8 @@
 MoGL(모글)은 모바일브라우저에 최적화 되어있는 작고 가벼운 웹지엘 라이브러리입니다.
 쉽고 일관성 있는 인터페이스로 웹지엘에 대한 지식없이 화려한 그래픽을 만들어 낼 수 있습니다.
 
+[Release 페이지](https://github.com/projectBS/MoGL/releases)에서 최신 버전을 다운 받거나 `bower`가 설치된 경우 `bower install mogl`을 실행하여 사용 가능합니다.
+
 ## 간단한 삼각형만들기
 
 우선 웹지엘계의 Hello World에 해당되는 삼각형 그리기를 해보겠습니다.
