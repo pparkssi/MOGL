@@ -18,6 +18,7 @@ var Scene = (function () {
         // for GPU
         this._gl = null,
         this._glVBOs = {},
+        this._glVNBOs = {},
         this._glUVBOs = {},
         this._glIBOs = {},
         this._glPROGRAMs = {},
@@ -31,7 +32,8 @@ var Scene = (function () {
             function: [VertexShader.baseFunction],
             main: ['' +
             'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-            'vColor = uColor ;'
+            'vColor = uColor ;' +
+            'gl_PointSize = 10.0;'
             ]
         }
         var baseFragmentShader = {
@@ -59,10 +61,36 @@ var Scene = (function () {
             function: [],
             main: ['gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))']
         }
+        var bitmapVertexShaderGouraud = {
+            attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
+            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+            varyings: ['vec2 vUV','vec4 vShadow'],
+            function: [VertexShader.baseFunction],
+            main: ['' +
+            'mat4 mvp = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+            'vec3 light = normalize (mvp * vec4 (uDLite, 0.0 )). xyz;\n' + // 라이트 방향을 결정하고...
+            'float lambert = clamp (dot (aVertexNormal, light), 0.1 , 1.0 );\n' + // 라이트 세기를 보냄
+            'vShadow = vec4 ( vec3 (lambert), 1.0 );\n' +
+            'gl_Position = mvp*vec4(aVertexPosition, 1.0);\n' +
+            'vUV = aUV;'
+            ]
+        }
+        var bitmapFragmentShaderGouraud = {
+            precision: 'mediump float',
+            uniforms: ['sampler2D uSampler'],
+            varyings: ['vec2 vUV','vec4 vShadow'],
+            function: [],
+            main: ['' +
+            'gl_FragColor =  (vShadow*texture2D(uSampler, vec2(vUV.s, vUV.t)));\n' +
+            'gl_FragColor.a = 1.0;'
+            ]
+        }
         this.addVertexShader('base', baseVertexShader),
         this.addFragmentShader('base', baseFragmentShader),
         this.addVertexShader('bitmap', bitmapVertexShader),
         this.addFragmentShader('bitmap', bitmapFragmentShader);
+        this.addVertexShader('bitmapGouraud', bitmapVertexShaderGouraud),
+        this.addFragmentShader('bitmapGouraud', bitmapFragmentShaderGouraud);
     }
     /////////////////////////////////////////////////////////////////
     var makeVBO = function makeVBO(self, name, data, stride) {
@@ -79,6 +107,22 @@ var Scene = (function () {
         self._glVBOs[name] = buffer,
         console.log('VBO생성', self._glVBOs[name])
         return self._glVBOs[name]
+    }
+
+    var makeVNBO = function makeVNBO(self, name, data, stride) {
+        var gl = self._gl,buffer = self._glVNBOs[name]
+        if (buffer) return buffer
+        buffer = gl.createBuffer(),
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
+            buffer.name = name,
+            buffer.type = 'VNBO',
+            buffer.data = data,
+            buffer.stride = stride,
+            buffer.numItem = data.length / stride,
+            self._glVNBOs[name] = buffer,
+            console.log('VNBO생성', self._glVNBOs[name])
+        return self._glVNBOs[name]
     }
 
     var makeIBO = function makeIBO(self, name, data, stride) {
@@ -259,21 +303,16 @@ var Scene = (function () {
                 if(!this._glVBOs[geo]){
                     _key = geo._key,
                     this._glVBOs[_key] = makeVBO(this, _key, geo._position, 3),
+                    this._glVNBOs[_key] = makeVNBO(this, _key, geo._normal, 3),
                     this._glUVBOs[_key] = makeUVBO(this, _key, geo._uv, 2),
                     this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1)
                 }
             }
         }
         if (!this._glVBOs['rect']) {
-            this.addGeometry('rect', new Geometry([
-                1.0, 1.0, 0.0, 0.0, 0.0,
-                -1.0, 1.0, 0.0, 1.0, 0.0,
-                1.0, -1.0, 0.0, 0.0, 1.0,
-                -1.0, -1.0, 0.0, 1.0, 1.0
-            ], [0, 1, 2, 1, 2, 3], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])),
-            this._glVBOs['rect'] = makeVBO(this, 'rect', [1.0, 1.0, 0.0,-1.0, 1.0, 0.0,1.0, -1.0, 0.0,-1.0, -1.0, 0.0], 3),
-            this._glUVBOs['rect'] = makeUVBO(this, 'rect', [0.0, 0.0,1.0, 0.0,0.0, 1.0,1.0, 1.0], 2),
-            this._glIBOs['rect'] = makeIBO(this, 'rect', [0, 1, 2, 1, 2, 3], 1)
+            this._glVBOs['rect'] = makeVBO(this, 'rect', [-1, -1, 0.0, 1, -1, 0.0, 1, 1, 0.0, -1, 1, 0.0], 3),
+            this._glUVBOs['rect'] = makeUVBO(this, 'rect', [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0], 2),
+            this._glIBOs['rect'] = makeIBO(this, 'rect', [0, 1, 2, 0, 2, 3], 1)
         }
         for (k in this._cameras) {
             var camera = this._cameras[k];
@@ -290,6 +329,7 @@ var Scene = (function () {
         console.log('////////////////////////////////////////////'),
         console.log('Scene 업데이트'),
         console.log('this._glVBOs :',this._glVBOs),
+        console.log('this._glVNBOs :',this._glVNBOs),
         console.log('this._glIBOs :',this._glIBOs),
         console.log('this._glPROGRAMs :',this._glPROGRAMs),
         console.log('this._geometrys :',this._geometrys),

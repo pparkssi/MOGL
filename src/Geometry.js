@@ -42,14 +42,32 @@ var Geometry = (function () {
                 info.r ? this._color.push(vertex[t2 + info.r], vertex[t2 + info.g], vertex[t2 + info.b], vertex[t2 + info.a]) : 0
             }
             this._position = new Float32Array(this._position),
-            this._normal = new Float32Array(this._normal),
             this._uv = new Float32Array(this._uv),
             this._color = new Float32Array(this._color)
         } else this._position = isFloat32 ? vertex : new Float32Array(vertex)
         //TODO Uint32Array을 받아줄것인가! 고민해야됨..
         this._index = isUint16 ? index : new Uint16Array(index)
+        if(this._normal.length==0) this._normal = new Float32Array(calculateNormals(this._position, this._index))
+        else this._normal = new Float32Array(this._normal)
         ///////////////////////////////
-    },
+    }
+    var calculateNormals = function calculateNormals(v, i) {
+        var x = 0, y = 1, z = 2, j, k, len, mSqt = Math.sqrt, ns = [], v1 = [], v2 = [], n0 = [], n1 = [];
+        for (j = 0, len = v.length; j < len; j++) ns[j] = 0.0;
+        for (j = 0, len = i.length; j < len; j = j + 3) {
+            v1 = [], v2 = [], n0 = [], v1[x] = v[3 * i[j + 1] + x] - v[3 * i[j] + x], v1[y] = v[3 * i[j + 1] + y] - v[3 * i[j] + y], v1[z] = v[3 * i[j + 1] + z] - v[3 * i[j] + z], v2[x] = v[3 * i[j + 2] + x] - v[3 * i[j + 1] + x], v2[y] = v[3 * i[j + 2] + y] - v[3 * i[j + 1] + y], v2[z] = v[3 * i[j + 2] + z] - v[3 * i[j + 1] + z], n0[x] = v1[y] * v2[z] - v1[z] * v2[y], n0[y] = v1[z] * v2[x] - v1[x] * v2[z], n0[z] = v1[x] * v2[y] - v1[y] * v2[x];
+            for (k = 0; k < 3; k++) ns[3 * i[j + k] + x] = ns[3 * i[j + k] + x] + n0[x], ns[3 * i[j + k] + y] = ns[3 * i[j + k] + y] + n0[y], ns[3 * i[j + k] + z] = ns[3 * i[j + k] + z] + n0[z]
+        }
+        ;
+        for (var i = 0, len = v.length; i < len; i = i + 3) {
+            n1 = [], n1[x] = ns[i + x], n1[y] = ns[i + y], n1[z] = ns[i + z];
+            var len = mSqt((n1[x] * n1[x]) + (n1[y] * n1[y]) + (n1[z] * n1[z]));
+            if (len == 0) len = 0.00001;
+            n1[x] = n1[x] / len, n1[y] = n1[y] / len, n1[z] = n1[z] / len, ns[i + x] = n1[x], ns[i + y] = n1[y], ns[i + z] = n1[z];
+        }
+        ;
+        return ns;
+    }
     fn = Geometry.prototype,
     fn.addVertexShader = function addVertexShader(id) { MoGL.isAlive(this);
         // TODO 마일스톤0.2

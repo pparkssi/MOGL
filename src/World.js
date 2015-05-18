@@ -22,8 +22,8 @@ var World = (function () {
      fn.render = function render() { MoGL.isAlive(this);
         var i, k, len, tList = this._renderList
         var scene,camera,gl,children;
-        var tItem, tMaterial, tProgram, tVBO, tUVBO, tIBO,tFrameBuffer,tDiffuseList;
-        var pVBO, pUVBO, pIBO,pNormal
+         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;
+         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse
         for (k in this.LOOP)  this.LOOP[k]()
         for (i = 0, len = tList.length; i < len; i++) {
             //console.log(tList[i],'렌더')
@@ -41,6 +41,7 @@ var World = (function () {
                 gl.clearColor(camera._r, camera._g, camera._b, camera._a)
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
                 gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS)
+                //gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW)
                 //gl.enable(gl.BLEND)
                 //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
                 for(k in scene._glPROGRAMs){
@@ -53,34 +54,43 @@ var World = (function () {
                 for (k in children) {
                     tItem = children[k],
                     tVBO = scene._glVBOs[tItem._geometry._key],
+                    tVNBO = scene._glVNBOs[tItem._geometry._key],
                     tUVBO = scene._glUVBOs[tItem._geometry._key],
                     tIBO = scene._glIBOs[tItem._geometry._key],
                     tMaterial = tItem._material,
                     tDiffuseList = tMaterial._diffuse
-                    tProgram = tDiffuseList.__indexList.length>0 ?scene._glPROGRAMs['bitmap'] :scene._glPROGRAMs['base'] // TODO 이놈은 어디서 결정하지?
-                    gl.useProgram(tProgram)
+                    tProgram = tDiffuseList.__indexList.length==0 ? scene._glPROGRAMs['base'] :0
                     if(tProgram==scene._glPROGRAMs['base']){
+                        gl.useProgram(tProgram)
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                        gl.uniform3fv(tProgram.uRotate, [tItem.rotateX, tItem.rotateY, tItem.rotateZ]),
-                        gl.uniform3fv(tProgram.uPosition, [tItem.x, tItem.y, tItem.z]),
-                        gl.uniform3fv(tProgram.uScale, [tItem.scaleX, tItem.scaleY, tItem.scaleZ]),
                         gl.uniform3fv(tProgram.uColor, [tMaterial._r, tMaterial._g, tMaterial._b])
-                    }else if(tProgram==scene._glPROGRAMs['bitmap']){
+                    }else{
+                        if(tMaterial._shading.type=='none'){
+                            tProgram=scene._glPROGRAMs['bitmap'],
+                            gl.useProgram(tProgram)
+                        }else if(tMaterial._shading.type=='gouraud'){
+                            tProgram=scene._glPROGRAMs['bitmapGouraud']
+                            gl.useProgram(tProgram),
+                            gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO)
+                            gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0)
+                            var dLite = [0,1,1]
+                            gl.uniform3fv(tProgram.uDLite, dLite)
+                        }
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                         tUVBO!=pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
                         tUVBO!=pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                        gl.uniform3fv(tProgram.uRotate, [tItem.rotateX, tItem.rotateY, tItem.rotateZ]),
-                        gl.uniform3fv(tProgram.uPosition, [tItem.x, tItem.y, tItem.z]),
-                        gl.uniform3fv(tProgram.uScale, [tItem.scaleX, tItem.scaleY, tItem.scaleZ]),
                         gl.activeTexture(gl.TEXTURE0);
                         var textureObj = scene._glTEXTUREs[tDiffuseList.__indexList[0].id]
                         if(textureObj.loaded){
-                            textureObj!=pNormal ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
+                            textureObj!=pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
                             gl.uniform1i(tProgram.uSampler, 0);
                         }
                     }
+                    gl.uniform3fv(tProgram.uRotate, [tItem.rotateX, tItem.rotateY, tItem.rotateZ]),
+                    gl.uniform3fv(tProgram.uPosition, [tItem.x, tItem.y, tItem.z]),
+                    gl.uniform3fv(tProgram.uScale, [tItem.scaleX, -tItem.scaleY, tItem.scaleZ]),
                     tIBO !=pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0
                     if(tMaterial._wireFrame) {
                         tProgram=scene._glPROGRAMs['base']
@@ -89,13 +99,13 @@ var World = (function () {
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                         gl.uniform3fv(tProgram.uRotate, [tItem.rotateX, tItem.rotateY, tItem.rotateZ]),
                         gl.uniform3fv(tProgram.uPosition, [tItem.x, tItem.y, tItem.z]),
-                        gl.uniform3fv(tProgram.uScale, [tItem.scaleX, tItem.scaleY, tItem.scaleZ]),
+                        gl.uniform3fv(tProgram.uScale, [tItem.scaleX, -tItem.scaleY, tItem.scaleZ]),
                         gl.uniform3fv(tProgram.uColor, [tMaterial._rw, tMaterial._gw, tMaterial._bw])
                         gl.drawElements(gl.LINES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                     }
                     else gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
 
-                    pVBO = tVBO, pUVBO = tUVBO, pIBO = tIBO,pNormal = textureObj
+                    pVBO = tVBO, pVNBO = tVNBO, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj
                 }
                 //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                 //gl.bindTexture(gl.TEXTURE_2D, null);
