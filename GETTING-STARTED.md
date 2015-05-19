@@ -91,6 +91,7 @@ var white = new Material( '#ffffff' );
 
 ```javascript
 var mesh = new Mesh( triangle, white );
+mesh.z = -10; // mesh가 camera 앞에 위치하도록 z 적용.
 scene.addChild( 'whiteTriangle', mesh );
 ```
 
