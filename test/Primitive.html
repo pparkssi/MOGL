@@ -106,7 +106,7 @@ bsTest('polygon',
 			}, true
 );
 </script>
-<canvas id='polygon' width=300 height=300></canvas>
+<canvas id='polygon' width=500 height=500></canvas>
 <script>
 (function() {
 	var world = new World('polygon'),
@@ -117,17 +117,17 @@ bsTest('polygon',
 	world.addScene('scene', scene);
 	scene.addChild('camera', camera);
 	world.addRender('scene', 'camera');
-	scene.addMaterial('bitmapMat', new Material());
+	// scene.addMaterial('bitmapMat', new Material());
 	scene.addTexture('texture1', '../asset/honey1.png');
-	scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1');
+	// scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1');
 
 	var setMesh = function(n) {
-		var polygon = Primitive.polygon(n, 4),
+		var polygon = Primitive.polygon(n, 2),
 			// newMesh = new Mesh(polygon, solidWhite);
 			newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, 'texture1'));
 		scene.removeChild('polygon' + Math.max(3, n - 1));
 		scene.addChild('polygon' + n, newMesh);
-		newMesh.z = -10;
+		newMesh.z = -5;
 	};
 
 	var start = 3, end = 15,
