@@ -85,11 +85,11 @@ var Primitive = (function () {
 				result;
 
 			for (i = 0 ; i < n - 1 ; i = i / vertCoords + 1) {
-                x = vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
-                y = vs[--i] * mS(angle) + vs[++i] * mC(angle),
-                z = vs[--i + 2],
-                u = 0.5 + x / 2,
-                v = 0.5 - y / 2,
+				x = vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
+				y = vs[--i] * mS(angle) + vs[++i] * mC(angle),
+				z = vs[--i + 2],
+				u = (0.5 + x / 2) / 2,
+				v = (0.5 - y / 2) / 2,
 				vs.push( x, y, z, u, v);
 				if (i > 0) {
 					j = i / vertCoords;
