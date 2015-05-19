@@ -143,8 +143,16 @@ console.log('polygon._position : ', polygon._position);
 	// }, 300);
 	// if (start == end)
 	// 	clearInterval(intervalId);
+
+    var intervalId;
     setMesh(3);
     world.render();
+    intervalId = setInterval( function() {
+        setMesh(3);
+        world.render();
+    }, 300);
+    // setMesh(3);
+    // world.render();
 }());
 </script>
 <hr/>
