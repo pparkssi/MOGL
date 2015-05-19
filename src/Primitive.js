@@ -78,25 +78,28 @@ var Primitive = (function () {
 			var result
 			return result
 		},
-		rpolygon: function rpolygon(n, radius) {
-			if (n < 3) MoGL.error('Primitive', 'rpolygon', 0);
-			var i, j, vertCoords = 3, angle = 2 * PI / n,
-				vs = [0.0, radius, 0.0], is = [],
+		polygon: function polygon(n, radius) {
+			if (n < 3) MoGL.error('Primitive', 'polygon', 0);
+			var i, j, angle = 2 * PI / n, x, y, z, u, v,
+				vs = [0.0, radius, 0.0, 0.5, 0.0], is = [], vertCoords = vs.length,
 				result;
 
 			for (i = 0 ; i < n - 1 ; i = i / vertCoords + 1) {
-				vs.push(
-					vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
-					vs[--i] * mS(angle) + vs[++i] * mC(angle),
-					vs[--i + 2]
-				);
+                x = vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
+                y = vs[--i] * mS(angle) + vs[++i] * mC(angle),
+                z = vs[--i + 2],
+                u = 0.5 + x / 2,
+                v = 0.5 - y / 2,
+				vs.push( x, y, z, u, v);
 				if (i > 0) {
-					j = i / 3;
+					j = i / vertCoords;
 					is.push(0, j , j + 1); // 최상단 최초 꼭지점 기준
 				}
 			}
-			result = new Geometry(vs, is);
-			result._key = 'rpolygon_' + (arguments[0] || 1);
+// console.log('vs : ', vs);
+// console.log('is : ', is);
+			result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
+			result._key = 'polygon_' + (arguments[0] || 1);
 			return result;
 		}
 	}
