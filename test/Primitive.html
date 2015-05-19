@@ -123,9 +123,9 @@ scene.addTexture('texture1', '../asset/honey1.png');
 scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1');
 
 var setMesh = function(n) {
-    var triangle = Primitive.polygon(n, 4),
+    var polygon = Primitive.polygon(n, 4),
         // newMesh = new Mesh(triangle, solidWhite);
-        newMesh = new Mesh(triangle, 'bitmapMat');
+        newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, 'texture1'));
     scene.removeChild('polygon' + Math.max(3, n - 1));
     scene.addChild('polygon' + n, newMesh);
     newMesh.z = -10;
