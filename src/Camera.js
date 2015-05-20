@@ -32,7 +32,7 @@ var Camera = (function () {
         Matrix.rotateX(this._matrix,this._matrix,this.rotateX)
         Matrix.rotateY(this._matrix,this._matrix,this.rotateY)
         Matrix.rotateZ(this._matrix,this._matrix,this.rotateZ)
-        f3[0] = -this.x,f3[1] = this.y,f3[2] = -this.z
+        f3[0] = -this.x,f3[1] = -this.y,f3[2] = -this.z
         Matrix.translate(this._matrix,this._matrix,f3)
         return this._matrix
     }
