@@ -73,45 +73,37 @@ var World = (function () {
                             f3[0] = tMaterial._r,f3[1] = tMaterial._g,f3[2] = tMaterial._b
                             gl.uniform3fv(tProgram.uColor, f3)
                         }else{
-                            var dLite = [0,0,-1],useTexture=true
+                            var dLite = [0,0,-1],useNormalBuffer=0
                             if(tMaterial._shading.type=='none'){
                                 tProgram=scene._glPROGRAMs['bitmap'],
                                 gl.useProgram(tProgram)
                             }else if(tMaterial._shading.type=='flat'){
-                                tProgram=scene._glPROGRAMs['flat']
-                                useTexture=0,tUVBO=null
-                                gl.useProgram(tProgram),
-                                gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO)
-                                gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0)
-                                f3[0] = tMaterial._r,f3[1] = tMaterial._g,f3[2] = tMaterial._b
-                                gl.uniform3fv(tProgram.uColor, f3)
                             }else if(tMaterial._shading.type=='gouraud'){
                                 tProgram=scene._glPROGRAMs['bitmapGouraud']
-                                gl.useProgram(tProgram),
-                                gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO)
-                                gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0)
+                                gl.useProgram(tProgram)
+                                useNormalBuffer=1
+
                             }else if(tMaterial._shading.type=='phong'){
                                 tProgram=scene._glPROGRAMs['bitmapPhong']
-                                gl.useProgram(tProgram),
-                                gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO)
-                                gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0)
-
+                                gl.useProgram(tProgram)
+                                useNormalBuffer=1
                             }else if(tMaterial._shading.type=='blinn'){
-
+                            }
+                            if(useNormalBuffer){
+                                tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
+                                tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0): 0
                             }
                             gl.uniform3fv(tProgram.uDLite, dLite)
                             gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                             tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0
-                            if(useTexture){
-                                tUVBO!=pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
-                                tUVBO!=pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                                gl.activeTexture(gl.TEXTURE0);
-                                var textureObj = scene._glTEXTUREs[tDiffuseList.__indexList[0].id]
-                                if(textureObj.loaded){
-                                    textureObj!=pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
-                                    gl.uniform1i(tProgram.uSampler, 0);
-                                }
+                            tUVBO!=pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
+                            tUVBO!=pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                            gl.activeTexture(gl.TEXTURE0);
+                            var textureObj = scene._glTEXTUREs[tDiffuseList.__indexList[0].id]
+                            if(textureObj.loaded){
+                                textureObj!=pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
+                                gl.uniform1i(tProgram.uSampler, 0);
                             }
                         }
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ
@@ -138,7 +130,7 @@ var World = (function () {
                         }
                         else gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
 
-                        pVBO = tVBO, pVNBO = tVNBO, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj
+                        pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj
                     }
                     //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                     //gl.bindTexture(gl.TEXTURE_2D, null);
