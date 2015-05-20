@@ -9,6 +9,7 @@
 * [Primitive.point](#primitivepoint-widthnumber-)
 * [Primitive.sphere](#primitivesphere-splitint-)
 * [Primitive.skybox](#primitiveskybox-splitxint-splityint-splitzint-)
+* [Primitive.polygon](#primitivepolygon-nint-radiusnumber-)
 
 [top](#)
 ## Primitive.cube( [splitX:int, splitY:int, splitZ:int] )
@@ -138,6 +139,26 @@ scene.addChild( 's1', new Mesh( Primitive.sphere(50), new Material() );
 
 ```javascript
 scene.addChild( 'box', new Mesh( Primitive.skybox( 5, 5, 5 ), new Material() );
+```
+
+[top](#)
+## Primitive.polygon( [n:int, radius:number] )
+
+**description**
+
+내장된 Geometry.
+꼭지점의 수가 n이고, 반경이 number인 정다각형
+
+**param**
+
+1. ?n:int - 정다각형 꼭지점의 수. 생략 시 3으로 지정됨.
+2. ?radius:number - 정다각형의 중심에서 각 꼭지점까지의 거리. 생략 시 1로 지정됨.
+
+
+**sample**
+
+```javascript
+scene.addChild( 'polygon', new Mesh( Primitive.polygon(17, 4.5), new Material() ) );
 ```
 
 [top](#)
