@@ -17,6 +17,7 @@
 **description**
 
 내장된 Geometry.
+
 각 정육면체 구조를 생성함.
 
 **param**
@@ -35,6 +36,7 @@ scene.addChild( 'cube1', new Mesh( Primitive.cube( 2, 3, 1 ), new Material() );
 **description**
 
 내장된 Geometry.
+
 극점에서 폴리곤이 몰리지 않도록 Geodesic 형태로 생성되는 구의 구조.
 
 **param**
@@ -53,6 +55,7 @@ scene.addChild( 'geo0', new Mesh( Primitive.geodesic(30), new Material() );
 **description**
 
 내장된 Geometry.
+
 두 점을 지나는 직선.
 
 **param**
@@ -72,6 +75,7 @@ scene.addChild( 'l', new Mesh( Primitive.line( 0,0,0, 10,10,10, 2 ), new Materia
 **description**
 
 내장된 Geometry.
+
 하나의 평면.
 
 **param**
@@ -90,6 +94,7 @@ scene.addChild( 'pl', new Mesh( Primitive.plane(5,5), new Material() );
 **description**
 
 내장된 Geometry.
+
 하나의 점을 나타내는 구조.
 
 **param**
@@ -109,6 +114,7 @@ scene.addChild( 'p', new Mesh( Primitive.point(5), new Material() );
 **description**
 
 내장된 Geometry.
+
 일반적으로 극점에 삼각형이 몰리되게되는구형태의 구조물.
 
 **param**
@@ -128,6 +134,7 @@ scene.addChild( 's1', new Mesh( Primitive.sphere(50), new Material() );
 **description**
 
 내장된 Geometry.
+
 큐브형태의 구조로 각 평면이 내부를 바라보도록 되어있음.
 
 **param**
@@ -147,7 +154,8 @@ scene.addChild( 'box', new Mesh( Primitive.skybox( 5, 5, 5 ), new Material() );
 **description**
 
 내장된 Geometry.
-꼭지점의 수가 n이고, 반경이 number인 정다각형
+
+꼭지점의 수가 n이고, 반경이 radius인 정다각형
 
 **param**
 
