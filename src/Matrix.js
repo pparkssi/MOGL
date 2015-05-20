@@ -224,23 +224,11 @@ var Matrix = (function () {
 	};
 
 
-	/**
-	 * Generates a frustum matrix with the given bounds
-	 *
-	 * @param {Matrix} out Matrix frustum matrix will be written into
-	 * @param {Number} left Left bound of the frustum
-	 * @param {Number} right Right bound of the frustum
-	 * @param {Number} bottom Bottom bound of the frustum
-	 * @param {Number} top Top bound of the frustum
-	 * @param {Number} near Near bound of the frustum
-	 * @param {Number} far Far bound of the frustum
-	 * @returns {Matrix} out
-	 */
-	Matrix.frustum = function (out, left, right, bottom, top, near, far) {
-		var rl = 1 / (right - left), tb = 1 / (top - bottom), nf = 1 / (near - far);
-		out[0] = (near * 2) * rl, out[1] = 0, out[2] = 0, out[3] = 0, out[4] = 0, out[5] = (near * 2) * tb, out[6] = 0, out[7] = 0, out[8] = (right + left) * rl, out[9] = (top + bottom) * tb, out[10] = (far + near) * nf, out[11] = -1, out[12] = 0, out[13] = 0, out[14] = (far * near * 2) * nf, out[15] = 0;
-		return out;
-	};
+
+	Matrix._frustum = function (a, b, c, d, e, g, f) {
+		var h = b - a, i = d - c, j = g - e;
+		return f || (f = Matrix.create()), f[0] = e * 2 / h, f[1] = 0, f[2] = 0, f[3] = 0, f[4] = 0, f[5] = e * 2 / i, f[6] = 0, f[7] = 0, f[8] = (b + a) / h, f[9] = (d + c) / i, f[10] = -(g + e) / j, f[11] = -1, f[12] = 0, f[13] = 0, f[14] = -(g * e * 2) / j, f[15] = 0, f
+	}
 
 	/**
 	 * Generates a perspective projection matrix with the given bounds
@@ -252,10 +240,9 @@ var Matrix = (function () {
 	 * @param {number} far Far bound of the frustum
 	 * @returns {Matrix} out
 	 */
-	Matrix.perspective = function (out, fovy, aspect, near, far) {
-		var f = 1.0 / Math.tan(fovy / 2), nf = 1 / (near - far);
-		out[0] = f / aspect, out[1] = 0, out[2] = 0, out[3] = 0, out[4] = 0, out[5] = f, out[6] = 0, out[7] = 0, out[8] = 0, out[9] = 0, out[10] = (far + near) * nf, out[11] = -1, out[12] = 0, out[13] = 0, out[14] = (2 * far * near) * nf, out[15] = 0
-		return out;
+	//mat4.perspective(this.fov, GL._w / GL._h, this.near, this.far, mtx);
+	Matrix.perspective = function (fov, aspect, near, far, out) {
+		return fov = near * Math.tan(fov * Math.PI / 360), aspect = fov * aspect, Matrix._frustum(-aspect, aspect, -fov, fov, near, far, out)
 	};
 
 	/**
