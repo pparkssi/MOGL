@@ -30,15 +30,15 @@ var Mesh = (function () {
         return this._scene ? this._material : null
     },
     fn.getMatrix = function getMatrix() { MoGL.isAlive(this);
-        //TODO 매트릭스 먼가 이상함
+        //console.log('실행되면안됨')
         Matrix.identity(this._matrix)
-        f3[0] = this.x,f3[1] = this.y,f3[2] = this.z
-        Matrix.translate(this._matrix,this._matrix,f3)
+        f3[0] = this.scaleX,f3[1] = this.scaleY,f3[2] = this.scaleZ
+        Matrix.scale(this._matrix,this._matrix,f3)
         Matrix.rotateX(this._matrix,this._matrix,this.rotateX)
         Matrix.rotateY(this._matrix,this._matrix,this.rotateY)
         Matrix.rotateZ(this._matrix,this._matrix,this.rotateZ)
-        f3[0] = this.scaleX,f3[1] = this.scaleY,f3[2] = this.scaleZ
-        Matrix.scale(this._matrix,this._matrix,f3)
+        f3[0] = this.x,f3[1] = this.y,f3[2] = this.z
+        Matrix.translate(this._matrix,this._matrix,f3)
         return this._matrix
     },
     fn.getParent = function getParent() { MoGL.isAlive(this);

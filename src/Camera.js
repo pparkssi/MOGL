@@ -30,12 +30,10 @@ var Camera = (function () {
         //TODO 매트릭스 먼가 이상함
         Matrix.identity(this._matrix)
         f3[0] = this.x,f3[1] = this.y,f3[2] = -this.z
-        Matrix.translate(this._matrix,this._matrix,f3)
         Matrix.rotateX(this._matrix,this._matrix,this.rotateX)
         Matrix.rotateY(this._matrix,this._matrix,this.rotateY)
         Matrix.rotateZ(this._matrix,this._matrix,this.rotateZ)
-        f3[0] = this.scaleX,f3[1] = this.scaleY,f3[2] = this.scaleZ
-        Matrix.scale(this._matrix,this._matrix,f3)
+        Matrix.translate(this._matrix,this._matrix,f3)
         return this._matrix
     }
     fn.getBackgroundColor = function getBackgroundColor(){MoGL.isAlive(this);
@@ -284,6 +282,13 @@ var Camera = (function () {
     fn.removeFilter = function removeFilter(filter){MoGL.isAlive(this);
         delete this._filters[filter]
         return this
+    },
+    fn.lookAt = function looAt(x,y,z){MoGL.isAlive(this);
+        Matrix.identity(this._matrix)
+        f3[0] = this.x , f3[1] = this.y , f3[2] = this.z
+        Matrix.translate(this._matrix, this._matrix, f3),
+        Matrix.lookAt(this._matrix, f3, [x, y, z], [0, 1, 0])
+        this.rotateX = -Math.atan2(this._matrix[6], this._matrix[10]), this.rotateY = Math.asin(this._matrix[2]), this.rotateZ = -Math.atan2(this._matrix[1], this._matrix[0])
     }
     return MoGL.ext(Camera, Mesh);
 })();
