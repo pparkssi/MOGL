@@ -26,7 +26,7 @@
 * [setRenderArea](#setrenderarea-left-top-width-height-)
 * [setVisible](#setvisible-isvisibleboolean-)
 * [removeFilter](#removefilter-filterstring-)
-* [lookAt](#lookAt-)
+* [lookAt](#lookat-xnumber-ynumber-znumber-)
 
 [top](#)
 ## Constructor
