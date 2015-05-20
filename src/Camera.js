@@ -29,10 +29,10 @@ var Camera = (function () {
     fn.getMatrix = function getMatrix() { MoGL.isAlive(this);
         //TODO 매트릭스 먼가 이상함
         Matrix.identity(this._matrix)
-        f3[0] = this.x,f3[1] = this.y,f3[2] = -this.z
         Matrix.rotateX(this._matrix,this._matrix,this.rotateX)
         Matrix.rotateY(this._matrix,this._matrix,this.rotateY)
         Matrix.rotateZ(this._matrix,this._matrix,this.rotateZ)
+        f3[0] = -this.x,f3[1] = this.y,f3[2] = -this.z
         Matrix.translate(this._matrix,this._matrix,f3)
         return this._matrix
     }
@@ -285,12 +285,11 @@ var Camera = (function () {
     },
     fn.lookAt = function looAt(x,y,z){MoGL.isAlive(this);
         Matrix.identity(this._matrix),
-        f3[0] = this.x , f3[1] = this.y , f3[2] = this.z,
+        f3[0] = -this.x , f3[1] = this.y , f3[2] = this.z,
         Matrix.translate(this._matrix, this._matrix, f3),
         f3_2[0] = x , f3_2[1] = y , f3_2[2] = z,
         Matrix.lookAt(this._matrix, f3, f3_2, [0, 1, 0]),
         this.rotateX = -Math.atan2(this._matrix[6], this._matrix[10]), this.rotateY = Math.asin(this._matrix[2]), this.rotateZ = -Math.atan2(this._matrix[1], this._matrix[0])
-        return this
     }
     return MoGL.ext(Camera, Mesh);
 })();
