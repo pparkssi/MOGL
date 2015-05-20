@@ -32,7 +32,7 @@ var Mesh = (function () {
     fn.getMatrix = function getMatrix() { MoGL.isAlive(this);
         //TODO 매트릭스 먼가 이상함
         Matrix.identity(this._matrix)
-        f3[0] = this.x,f3[1] = this.y,f3[2] = this.y
+        f3[0] = this.x,f3[1] = this.y,f3[2] = this.z
         Matrix.translate(this._matrix,this._matrix,f3)
         Matrix.rotateX(this._matrix,this._matrix,this.rotateX)
         Matrix.rotateY(this._matrix,this._matrix,this.rotateY)
