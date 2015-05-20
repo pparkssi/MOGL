@@ -9,6 +9,7 @@
 * [Primitive.point](#primitivepoint-widthnumber-)
 * [Primitive.sphere](#primitivesphere-splitint-)
 * [Primitive.skybox](#primitiveskybox-splitxint-splityint-splitzint-)
+* [Primitive.polygon](#primitivepolygon-nint-radiusnumber-)
 
 [top](#)
 ## Primitive.cube( [splitX:int, splitY:int, splitZ:int] )
