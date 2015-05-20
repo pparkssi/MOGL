@@ -187,6 +187,8 @@
             mesh6.getMaterial().setShading(Shading.phong)
             mesh6.getMaterial().setLambert(2)
 
+            scene.getChild('camera').setBackgroundColor(1,1,1)
+
 
             var sum = 0, count = 1;
 
@@ -197,12 +199,12 @@
                 divCurrentFPS.textContent = currentFPS.toFixed( 2 );
                 divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
 
-                mesh.rotateY -= 0.01;
-                mesh2.rotateY -= 0.01;
-                mesh3.rotateY -= 0.01;
-                mesh4.rotateY -= 0.01;
-                mesh5.rotateY -= 0.01;
-                mesh6.rotateY -= 0.01;
+                mesh.rotateY -= 0.02;
+                mesh2.rotateY -= 0.02;
+                mesh3.rotateY -= 0.02;
+                mesh4.rotateY -= 0.02;
+                mesh5.rotateY -= 0.02;
+                mesh6.rotateY -= 0.02;
                 world.render();
 
                 requestAnimationFrame( render );

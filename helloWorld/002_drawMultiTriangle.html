@@ -50,11 +50,10 @@
     scene.addChild('mesh2', new Mesh('triangle', new Material(0.3, 0.2, 0.1, 1)))
 
 
-    scene.getChild('mesh1').z = -5
 
 
-    scene.getChild('mesh2').x = 5
-    scene.getChild('mesh2').z = -10
+    scene.getChild('mesh2').x = 3
+
 
     setInterval(function () {
         world.render();

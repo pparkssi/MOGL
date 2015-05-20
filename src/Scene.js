@@ -293,17 +293,6 @@ var Scene = (function () {
 		//TODO 비디오 처리
 
 		texture.img.onload = function () {
-			// gl.bindTexture(gl.TEXTURE_2D, texture),
-			// //TODO 다변화 대응해야됨
-			// gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img);
-			// //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-			// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-			// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
-			// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
-			// gl.generateMipmap(gl.TEXTURE_2D)
-			// gl.bindTexture(gl.TEXTURE_2D, null)
-			// texture.loaded=1
-
 			var isPowerOf2 = function(value) {
 				return (value & (value - 1)) == 0;
 			};
@@ -311,6 +300,10 @@ var Scene = (function () {
 			//TODO 다변화 대응해야됨
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img);
 			if (isPowerOf2(texture.img.width) && isPowerOf2(texture.img.height)) {
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 				gl.generateMipmap(gl.TEXTURE_2D);
 			} else {
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
@@ -321,6 +314,7 @@ var Scene = (function () {
 		}
 		texture.data = image
 		self._glTEXTUREs[id] = texture
+		gl.bindTexture(gl.TEXTURE_2D, null)
 		return texture
 	}
 
@@ -333,11 +327,12 @@ var Scene = (function () {
 
 		var texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_2D, texture),
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-// make it work even if not a power of 2
+
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 
 		var renderbuffer = gl.createRenderbuffer();
 		gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer),
