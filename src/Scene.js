@@ -27,21 +27,20 @@ var Scene = (function () {
 
         var baseVertexShader = {
             attributes: ['vec3 aVertexPosition'],
-            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec3 uColor'],
-            varyings: ['vec3 vColor'],
+            uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+            varyings: [],
             function: [VertexShader.baseFunction],
             main: ['' +
             'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-            'vColor = uColor ;' +
             'gl_PointSize = 10.0;'
             ]
         }
         var baseFragmentShader = {
             precision: 'mediump float',
-            uniforms: [],
-            varyings: ['vec3 vColor'],
+            uniforms: ['vec3 uColor'],
+            varyings: [],
             function: [],
-            main: ['gl_FragColor =  vec4(vColor, 1.0)']
+            main: ['gl_FragColor =  vec4(uColor, 1.0)']
         }
 
         var bitmapVertexShader = {
@@ -67,11 +66,11 @@ var Scene = (function () {
             varyings: ['vec2 vUV','vec4 vLight'],
             function: [VertexShader.baseFunction],
             main: ['' +
-            ' mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+            ' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
             ' vec3 LD = normalize(uDLite);\n' +
             ' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
             ' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.1,1.0)),1.0);\n' +
-            ' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+            ' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
             ' vUV = aUV;'
             ]
         }
@@ -128,12 +127,11 @@ var Scene = (function () {
         this.addVertexShader('base', baseVertexShader),
         this.addFragmentShader('base', baseFragmentShader),
         this.addVertexShader('bitmap', bitmapVertexShader),
-        this.addFragmentShader('bitmap', bitmapFragmentShader);
+        this.addFragmentShader('bitmap', bitmapFragmentShader),
         this.addVertexShader('bitmapGouraud', bitmapVertexShaderGouraud),
         this.addFragmentShader('bitmapGouraud', bitmapFragmentShaderGouraud),
         this.addVertexShader('bitmapPhong', bitmapVertexShaderPhong),
-        this.addFragmentShader('bitmapPhong', bitmapFragmentShaderPhong);
-
+        this.addFragmentShader('bitmapPhong', bitmapFragmentShaderPhong)
     }
     /////////////////////////////////////////////////////////////////
     var makeVBO = function makeVBO(self, name, data, stride) {
@@ -156,15 +154,15 @@ var Scene = (function () {
         var gl = self._gl,buffer = self._glVNBOs[name]
         if (buffer) return buffer
         buffer = gl.createBuffer(),
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
-            buffer.name = name,
-            buffer.type = 'VNBO',
-            buffer.data = data,
-            buffer.stride = stride,
-            buffer.numItem = data.length / stride,
-            self._glVNBOs[name] = buffer,
-            console.log('VNBO생성', self._glVNBOs[name])
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
+        buffer.name = name,
+        buffer.type = 'VNBO',
+        buffer.data = data,
+        buffer.stride = stride,
+        buffer.numItem = data.length / stride,
+        self._glVNBOs[name] = buffer,
+        console.log('VNBO생성', self._glVNBOs[name])
         return self._glVNBOs[name]
     }
 
@@ -188,15 +186,15 @@ var Scene = (function () {
         var gl = self._gl,buffer = self._glUVBOs[name]
         if (buffer) return buffer
         buffer = gl.createBuffer(),
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
-            buffer.name = name,
-            buffer.type = 'UVBO',
-            buffer.data = data,
-            buffer.stride = stride,
-            buffer.numItem = data.length / stride,
-            self._glUVBOs[name] = buffer,
-            console.log('UVBO생성', self._glUVBOs[name])
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
+        buffer.name = name,
+        buffer.type = 'UVBO',
+        buffer.data = data,
+        buffer.stride = stride,
+        buffer.numItem = data.length / stride,
+        self._glUVBOs[name] = buffer,
+        console.log('UVBO생성', self._glUVBOs[name])
         return self._glUVBOs[name]
     }
 
@@ -273,7 +271,7 @@ var Scene = (function () {
         resultStr+='void main(void){\n',
         resultStr+=source.main+';\n',
         resultStr+='}\n',
-            console.log(resultStr)
+        console.log(resultStr)
         gl.shaderSource(shader, resultStr),
         gl.compileShader(shader)
         return shader
@@ -319,7 +317,7 @@ var Scene = (function () {
         var texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture),
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-// make it work even if not a power of 2
+        // make it work even if not a power of 2
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
