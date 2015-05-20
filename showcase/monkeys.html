@@ -137,15 +137,17 @@
 
             for (i = 0; i < 500; i++) {
                 monkey = new Mesh('geometry', 'material');
-                monkey.x = Math.random() * 50 - 25;
-                monkey.y = Math.random() * 50 - 25;
-                monkey.z = -Math.random() * 200;
+                monkey.x = Math.random() * 100 - 50;
+                monkey.y = Math.random() * 100 - 50;
+                monkey.z = Math.random() * 100 - 50;
                 monkey.rotateX = Math.random() * PI2;
                 monkey.rotateY = Math.random() * PI2;
                 monkey.rotateZ = Math.random() * PI2;
                 scene.addChild('monkey' + i, monkey);
 
                 meshes.push(monkey);
+                console.log(monkey.x,monkey.y,monkey.z)
+
             }
 
             var sum = 0, count = 1;
@@ -167,7 +169,11 @@
                     mesh.rotateY += 0.05;
                     mesh.rotateZ += 0.05;
                 }
-
+                scene.getChild('camera').x = Math.sin(count/100)*50
+//                scene.getChild('camera').y = Math.cos(count/100)*25
+                scene.getChild('camera').z = Math.cos(count/100)*50
+                scene.getChild('camera').lookAt(0,10,0);
+//                                scene.getChild('camera').rotateY+=0.01
                 world.render();
 
                 requestAnimationFrame(render);
