@@ -26,6 +26,7 @@
 * [setRenderArea](#setrenderarea-left-top-width-height-)
 * [setVisible](#setvisible-isvisibleboolean-)
 * [removeFilter](#removefilter-filterstring-)
+* [lookAt](#lookat-xnumber-ynumber-znumber-)
 
 [top](#)
 ## Constructor
@@ -565,3 +566,28 @@ var cam = Camera().removeFilter( Filter.glow );
 ```
 
 [top](#)
+## lookAt( x:number, y:number, z:number )
+
+**description**
+
+카메라를 x,y,z를 바라보게함
+rotateX,rotateY,rotateZ가 자동반영
+
+**param**
+
+1. x:number - 바라볼 x위치
+2. y:number - 바라볼 y위치
+3. z:number - 바라볼 z위치
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환.
+
+**sample**
+
+```javascript
+var cam = Camera().lookAt( 0,0,0 );
+```
+
+[top](#)
+
