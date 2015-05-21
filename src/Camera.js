@@ -5,6 +5,8 @@
 var Camera = (function () {
     var Camera, fn,a4=[],PERPI=Math.PI / 180, f3 = new Float32Array(3), f3_2 = new Float32Array(3);
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
+    var transform = {}
+    var inverseTransform = {}
     Camera = function Camera() {
         this._cvs=null
         this._renderArea = null,
@@ -16,25 +18,27 @@ var Camera = (function () {
         this._b = 0,
         this._a = 1,
         this._fov = 55,
-        this._near = 0.01,
-        this._far = 10000,
+        this._near = 0.1,
+        this._far = 1000000,
         this._visible=1,
         this._filters ={},
         this._fog = null,
         this._antialias = false
         this._pixelMatrix = Matrix.create()
-        this.z =10
+        this.z =-10
+
     }
+
     fn = Camera.prototype,
     fn.getMatrix = function getMatrix() { MoGL.isAlive(this);
-        //TODO 매트릭스 먼가 이상함
         Matrix.identity(this._matrix)
         Matrix.rotateX(this._matrix,this._matrix,this.rotateX)
         Matrix.rotateY(this._matrix,this._matrix,this.rotateY)
         Matrix.rotateZ(this._matrix,this._matrix,this.rotateZ)
-        f3[0] = -this.x,f3[1] = -this.y,f3[2] = -this.z
+        f3[0] = this.x,f3[1] = this.y,f3[2] = this.z
         Matrix.translate(this._matrix,this._matrix,f3)
         return this._matrix
+
     }
     fn.getBackgroundColor = function getBackgroundColor(){MoGL.isAlive(this);
         return a4[0] = this._r, a4[1] = this._g, a4[2] = this._b, a4[3] = this._a, a4
@@ -284,12 +288,8 @@ var Camera = (function () {
         return this
     },
     fn.lookAt = function looAt(x,y,z){MoGL.isAlive(this);
-        Matrix.identity(this._matrix),
-        f3[0] = -this.x , f3[1] = this.y , f3[2] = this.z,
-        Matrix.translate(this._matrix, this._matrix, f3),
-        f3_2[0] = x , f3_2[1] = y , f3_2[2] = z,
-        Matrix.lookAt(this._matrix, f3, f3_2, [0, 1, 0]),
-        this.rotateX = -Math.atan2(this._matrix[6], this._matrix[10]), this.rotateY = Math.asin(this._matrix[2]), this.rotateZ = -Math.atan2(this._matrix[1], this._matrix[0])
+
     }
     return MoGL.ext(Camera, Mesh);
 })();
+
