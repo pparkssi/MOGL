@@ -110,7 +110,7 @@ var World = (function () {
                         }
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ
                         gl.uniform3fv(tProgram.uRotate, f3),
-                        f3[0] = -tItem.x,f3[1] = -tItem.y,f3[2] = tItem.z
+                        f3[0] = tItem.x,f3[1] = -tItem.y,f3[2] = tItem.z
                         gl.uniform3fv(tProgram.uPosition, f3),
                         f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ
                         gl.uniform3fv(tProgram.uScale, f3),
@@ -122,7 +122,7 @@ var World = (function () {
                             tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                             f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ,
                             gl.uniform3fv(tProgram.uRotate, f3),
-                            f3[0] = -tItem.x, f3[1] = -tItem.y, f3[2] = tItem.z,
+                            f3[0] = tItem.x, f3[1] = -tItem.y, f3[2] = tItem.z,
                             gl.uniform3fv(tProgram.uPosition, f3),
                             f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                             gl.uniform3fv(tProgram.uScale, f3),
