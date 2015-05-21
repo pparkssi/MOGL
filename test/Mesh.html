@@ -183,26 +183,11 @@
                 temp = mesh1.getPosition()
                 return temp instanceof Float32Array
             }, true,
-            function(){
-                // Position - no param
-                var test = '';
-                try{
-                    mesh1.setPosition()
-                }catch(e){
-                    test = e.toString();
-                }
-                return test
-            }, 'Error: Mesh.setPosition:0',
-            function(){
-                // Position - 1 param - X
-                var test = '';
-                try{
-                    mesh1.setPosition(10)
-                }catch(e){
-                    test = e.toString();
-                }
-                return test
-            }, 'Error: Mesh.setPosition:0',
+            function () {
+                // Position - no param - initialization
+                mesh1.setPosition()
+                return mesh1.x == 0 && mesh1.y == 0 && mesh1.z == 0;
+            }, true,
             function () {
                 // Position - 1 array param [x, y, z]
                 mesh1.setPosition([10, 20, 30])
@@ -231,26 +216,11 @@
                 temp = mesh1.getRotate()
                 return temp instanceof Float32Array
             }, true,
-            function(){
-                // rotation - no param
-                var test = '';
-                try{
-                    mesh1.setRotate(10)
-                }catch(e){
-                    test = e.toString();
-                }
-                return test
-            }, 'Error: Mesh.setRotate:0',
-            function(){
-                // rotation - 1 param - rotateX
-                var test = '';
-                try{
-                    mesh1.setRotate(10)
-                }catch(e){
-                    test = e.toString();
-                }
-                return test
-            }, 'Error: Mesh.setRotate:0',
+            function () {
+                // rotation - no param - initialization
+                mesh1.setRotate()
+                return mesh1.rotateX == 0 && mesh1.rotateY == 0 && mesh1.rotateZ == 0;
+            }, true,
             function () {
                 // rotation - 1 array param [rotateX, rotateY, rotateZ]
                 mesh1.setRotate([10, 20, 30])
@@ -279,26 +249,11 @@
                 temp = mesh1.getScale()
                 return temp instanceof Float32Array
             }, true,
-            function(){
-                // rotation - no param
-                var test = '';
-                try{
-                    mesh1.setScale(10)
-                }catch(e){
-                    test = e.toString();
-                }
-                return test
-            }, 'Error: Mesh.setScale:0',
-            function(){
-                // rotation - 1 param - scaleX
-                var test = '';
-                try{
-                    mesh1.setScale(10)
-                }catch(e){
-                    test = e.toString();
-                }
-                return test
-            }, 'Error: Mesh.setScale:0',
+            function () {
+                // scale - no param - initialization
+                mesh1.setScale()
+                return mesh1.scaleX == 1 && mesh1.scaleY == 1 && mesh1.scaleZ == 1;
+            }, true,
             function () {
                 // scale - 1 array param [scaleX, scaleY, scaleZ]
                 mesh1.setScale([10, 20, 30])

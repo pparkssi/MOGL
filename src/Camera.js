@@ -3,8 +3,10 @@
  * description
  */
 var Camera = (function () {
-    var Camera, fn,a4=[],PERPI=Math.PI / 180;
+    var Camera, fn,a4=[],PERPI=Math.PI / 180, f3 = new Float32Array(3), f3_2 = new Float32Array(3);
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
+    var transform = {}
+    var inverseTransform = {}
     Camera = function Camera() {
         this._cvs=null
         this._renderArea = null,
@@ -17,14 +19,27 @@ var Camera = (function () {
         this._a = 1,
         this._fov = 55,
         this._near = 0.1,
-        this._far = 100000,
+        this._far = 1000000,
         this._visible=1,
         this._filters ={},
         this._fog = null,
         this._antialias = false
         this._pixelMatrix = Matrix.create()
+        this.z =10
+        this.lookAt(0,0,0)
     }
+
     fn = Camera.prototype,
+    fn.getMatrix = function getMatrix() { MoGL.isAlive(this);
+        Matrix.identity(this._matrix)
+        Matrix.rotateX(this._matrix,this._matrix,this.rotateX)
+        Matrix.rotateY(this._matrix,this._matrix,this.rotateY)
+        Matrix.rotateZ(this._matrix,this._matrix,this.rotateZ)
+        f3[0] = this.x,f3[1] = this.y,f3[2] = this.z
+        Matrix.translate(this._matrix,this._matrix,f3)
+        return this._matrix
+
+    }
     fn.getBackgroundColor = function getBackgroundColor(){MoGL.isAlive(this);
         return a4[0] = this._r, a4[1] = this._g, a4[2] = this._b, a4[3] = this._a, a4
     },
@@ -227,6 +242,7 @@ var Camera = (function () {
     fn.setFOV = function setFOV(){MoGL.isAlive(this);
         if (arguments.length == 1) this._fov = arguments[0]
         else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
+
         return this
     },
     fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
@@ -241,7 +257,7 @@ var Camera = (function () {
     },
     fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
         Matrix.identity(this._pixelMatrix)
-        Matrix.perspective(this._pixelMatrix, this._fov*Math.PI/180, this._renderArea[2]/this._renderArea[3], this._near, this._far)
+        Matrix.perspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far,this._pixelMatrix)
         return this
     },
     fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);
@@ -274,3 +290,4 @@ var Camera = (function () {
     }
     return MoGL.ext(Camera, Mesh);
 })();
+

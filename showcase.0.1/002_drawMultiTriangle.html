@@ -10,20 +10,7 @@
     <meta name="viewport"
           content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
     <link rel="stylesheet" type="text/css" href="../test/css.css"/>
-    <script src="../src/MoGL.js"></script>
-    <script src="../src/BlendMode.js"></script>
-    <script src="../src/Filter.js"></script>
-    <script src="../src/Vertex.js"></script>
-    <script src="../src/VertexShaderFunctions.js"></script>
-    <script src="../src/Matrix.js"></script>
-    <script src="../src/Geometry.js"></script>
-    <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
-    <script src="../src/Mesh.js"></script>
-    <script src="../src/Group.js"></script>
-    <script src="../src/Camera.js"></script>
-    <script src="../src/Scene.js"></script>
-    <script src="../src/World.js"></script>
+    <script src="lib/mogl.min.js"></script>
 </head>
 <body>
 <canvas id="firstWorld" width="600" height="512"></canvas>
@@ -50,10 +37,11 @@
     scene.addChild('mesh2', new Mesh('triangle', new Material(0.3, 0.2, 0.1, 1)))
 
 
+    scene.getChild('mesh1').z = -5
 
 
-    scene.getChild('mesh2').x = 3
-
+    scene.getChild('mesh2').x = 5
+    scene.getChild('mesh2').z = -10
 
     setInterval(function () {
         world.render();

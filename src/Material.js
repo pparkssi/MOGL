@@ -6,45 +6,23 @@ var Material = (function () {
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
     Material = function Material() {
         this._textures = {},
+        this._shading = {type: 'none',lambert :1},
         this._diffuse = {__indexList: []},
         this._specular = {__indexList: []},
         this._diffuseWrap = {__indexList: []},
         this._normal = {__indexList: []},
         this._specularNormal = {__indexList: []},
-        this._r = 1,
-        this._g = 1,
-        this._b = 1,
+        this._r = 1,this._rw = Math.random(),
+        this._g = 1,this._gw = Math.random(),
+        this._b = 1,this._bw = Math.random(),
         this._a = 1,
+        this._wireFrame = 0
         this._count = 0,
         this._scene = null,
         this._key = null
         this.setBackgroundColor.apply(this, arguments)
     },
     fn = Material.prototype,
-    fn.setBackgroundColor=function setBackgroundColor(){
-        var t0 = arguments[0], t1, ta
-        if (arguments.length == 1) {
-            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7)
-            if (t0.charAt(0) == '#') {
-                if (t1 = hex.exec(t0)) {
-                    this._r = parseInt(t1[1], 16) / 255,
-                        this._g = parseInt(t1[2], 16) / 255,
-                        this._b = parseInt(t1[3], 16) / 255
-                } else {
-                    t1 = hex_s.exec(t0),
-                        this._r = parseInt(t1[1] + t1[1], 16) / 255,
-                        this._g = parseInt(t1[2] + t1[2], 16) / 255,
-                        this._b = parseInt(t1[3] + t1[3], 16) / 255
-                }
-                this._a = ta ? ta > 1 ? 1 : ta : 1
-            }
-        } else {
-            this._r = arguments[0],
-                this._g = arguments[1],
-                this._b = arguments[2],
-                this._a = arguments[3] ? arguments[3] : 1
-        }
-    },
     fn.addTexture = function addTexture(type,textureID/*,index,blendMode*/) {
         var t = this._scene
         if (t && !t._textures[textureID]) MoGL.error('Material', 'addTexture', 0)
@@ -73,6 +51,53 @@ var Material = (function () {
         }
         delete this._textures[textureID]
         return this
+    },
+    fn.setBackgroundColor=function setBackgroundColor(){
+        var t0 = arguments[0], t1, ta
+        if (arguments.length == 1) {
+            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7)
+            if (t0.charAt(0) == '#') {
+                if (t1 = hex.exec(t0)) {
+                    this._r = parseInt(t1[1], 16) / 255,
+                        this._g = parseInt(t1[2], 16) / 255,
+                        this._b = parseInt(t1[3], 16) / 255
+                } else {
+                    t1 = hex_s.exec(t0),
+                        this._r = parseInt(t1[1] + t1[1], 16) / 255,
+                        this._g = parseInt(t1[2] + t1[2], 16) / 255,
+                        this._b = parseInt(t1[3] + t1[3], 16) / 255
+                }
+                this._a = ta ? ta > 1 ? 1 : ta : 1
+            }
+        } else {
+            this._r = arguments[0],
+            this._g = arguments[1],
+            this._b = arguments[2],
+            this._a = arguments[3] ? arguments[3] : 1
+        }
+    },
+    fn.setWireFrame = function setWireFrame(isVisible){
+        this._wireFrame =isVisible
+        var t0 = arguments[1], t1, ta
+        if (arguments.length == 2) {
+            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7)
+            if (t1 = hex.exec(t0)) {
+                this._rw = parseInt(t1[1], 16) / 255,
+                this._gw = parseInt(t1[2], 16) / 255,
+                this._bw = parseInt(t1[3], 16) / 255
+            } else {
+                t1 = hex_s.exec(t0),
+                this._rw = parseInt(t1[1] + t1[1], 16) / 255,
+                this._gw = parseInt(t1[2] + t1[2], 16) / 255,
+                this._bw = parseInt(t1[3] + t1[3], 16) / 255
+            }
+        }
+    },
+    fn.setShading = function setShading(type){
+        type.apply(this)
+    },
+    fn.setLambert = function setShading(rate){
+        this._shading.lambert=rate
     }
     return MoGL.ext(Material, MoGL);
 })();

@@ -3,7 +3,7 @@
 <head>
     <title>Monkey</title>
     <meta charset="utf-8"/>
-    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/1.jpg"/>
+    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/2.jpg"/>
     <meta property="og:title" content="Monkey"/>
     <meta property="og:description" content="MoGL.js version"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -23,24 +23,11 @@
             color: #FFF;
             left: 0px;
             top: 0px;
-            position: absolute
+            position: absolute;
+            width: 400px;
         }
     </style>
-    <script src="../src/MoGL.js"></script>
-    <script src="../src/BlendMode.js"></script>
-    <script src="../src/Filter.js"></script>
-    <script src="../src/Vertex.js"></script>
-    <script src="../src/Shading.js"></script>
-    <script src="../src/VertexShaderFunctions.js"></script>
-    <script src="../src/Matrix.js"></script>
-    <script src="../src/Geometry.js"></script>
-    <script src="../src/Material.js"></script>
-    <script src="../src/Texture.js"></script>
-    <script src="../src/Mesh.js"></script>
-    <script src="../src/Group.js"></script>
-    <script src="../src/Camera.js"></script>
-    <script src="../src/Scene.js"></script>
-    <script src="../src/World.js"></script>
+    <script src="lib/mogl.min.js"></script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -56,8 +43,9 @@
         var scene = new Scene();
         var canvas = document.getElementById('canvas');
 
-        var divCurrentFPS = document.getElementById( 'currentFPS' );
-        var divAverageFPS = document.getElementById( 'averageFPS' );
+
+        var divCurrentFPS = document.getElementById('currentFPS');
+        var divAverageFPS = document.getElementById('averageFPS');
         var prevTime = 0;
 
         canvas.width = W.innerWidth;
@@ -67,24 +55,11 @@
 
         scene.addChild('camera', new Camera());
         scene.addMaterial('material', new Material());
-        scene.addMaterial('material2', new Material());
-        scene.addMaterial('material3', new Material());
-        scene.addMaterial('material4', new Material());
-        scene.addMaterial('material5', new Material());
-        scene.addMaterial('material6', new Material());
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
         scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material2').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material3').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material4').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material5').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material6').addTexture(Texture.diffuse,'texture');
-
-
 
 
         world.addRender('scene', 'camera');
-
 
         var xmlhttp = new XMLHttpRequest();
 
@@ -142,77 +117,49 @@
 
             scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
 
-            var mesh = new Mesh('geometry', 'material');
-            mesh.z =-1
-            mesh.x = -3
-            mesh.y = -1
-            scene.addChild('monkey', mesh);
-            mesh.getMaterial().setWireFrame(1)
+            var meshes = [];
+            var monkey;
+            var PI2 = Math.PI * 2;
 
-            var mesh2 = new Mesh('geometry', 'material2');
+            for (i = 0; i < 500; i++) {
+                monkey = new Mesh('geometry', 'material');
+                monkey.x = Math.random() * 50 - 25;
+                monkey.y = Math.random() * 50 - 25;
+                monkey.z = -Math.random() * 200;
+                monkey.rotateX = Math.random() * PI2;
+                monkey.rotateY = Math.random() * PI2;
+                monkey.rotateZ = Math.random() * PI2;
 
-            mesh2.y = -1
-            scene.addChild('monkey2', mesh2);
-
-
-            var mesh3 = new Mesh('geometry', 'material3');
-
-            mesh3.x = 3
-            mesh3.y = -1
-            scene.addChild('monkey3', mesh3);
-            mesh3.getMaterial().setShading(Shading.gouraud)
-
-
-            var mesh4 = new Mesh('geometry', 'material4');
-
-            mesh4.x = 3
-            mesh4.y = 1
-            scene.addChild('monkey4', mesh4);
-            mesh4.getMaterial().setShading(Shading.gouraud)
-            mesh4.getMaterial().setLambert(3)
-
-
-            var mesh5 = new Mesh('geometry', 'material5');
-
-            mesh5.x = 0
-            mesh5.y = 1
-            scene.addChild('monkey5', mesh5);
-            mesh5.getMaterial().setShading(Shading.phong)
-            mesh5.getMaterial().setLambert(1)
-
-            var mesh6 = new Mesh('geometry', 'material6');
-            mesh6.x =-3
-            mesh6.y = 1
-            scene.addChild('monkey6', mesh6);
-            mesh6.getMaterial().setShading(Shading.phong)
-            mesh6.getMaterial().setLambert(2)
-
-            scene.getChild('camera').setBackgroundColor(1,1,1)
-
-
+                scene.addChild('monkey' + i, monkey);
+                meshes.push(monkey);
+            }
 
             var sum = 0, count = 1;
 
-            function render( currTime ) {
+            function render(currTime) {
                 var currentFPS = 1000 / ( currTime - prevTime );
                 prevTime = currTime;
 
-                divCurrentFPS.textContent = currentFPS.toFixed( 2 );
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
+                divCurrentFPS.textContent = currentFPS.toFixed(2);
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed(2);
 
-                mesh.rotateY -= 0.02;
-                mesh2.rotateY -= 0.02;
-                mesh3.rotateY -= 0.02;
-                mesh4.rotateY -= 0.02;
-                mesh5.rotateY -= 0.02;
-                mesh6.rotateY -= 0.02;
+                var i = 0;
+                var j = meshes.length;
+                var mesh;
+
+                for (; i < j; i++) {
+                    mesh = meshes[i];
+                    mesh.rotateX += 0.05;
+                    mesh.rotateY += 0.05;
+                    mesh.rotateZ += 0.05;
+                }
 
                 world.render();
 
-                requestAnimationFrame( render );
+                requestAnimationFrame(render);
             }
 
-            requestAnimationFrame( render );
+            requestAnimationFrame(render);
         }
     })(this);
 </script>

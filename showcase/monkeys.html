@@ -3,7 +3,7 @@
 <head>
     <title>Monkey</title>
     <meta charset="utf-8"/>
-    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/1.jpg"/>
+    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/2.jpg"/>
     <meta property="og:title" content="Monkey"/>
     <meta property="og:description" content="MoGL.js version"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -30,7 +30,9 @@
     <script src="../src/MoGL.js"></script>
     <script src="../src/BlendMode.js"></script>
     <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
     <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
     <script src="../src/Matrix.js"></script>
     <script src="../src/Geometry.js"></script>
@@ -69,8 +71,8 @@
         scene.addChild('camera', new Camera());
         scene.addMaterial('material', new Material());
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
-        scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
-
+        scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
+        scene.getMaterial('material').setShading(Shading.phong)
 
         world.addRender('scene', 'camera');
 
@@ -131,21 +133,37 @@
             scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
 
             var meshes = [];
-            var mesh;
+            var monkey;
             var PI2 = Math.PI * 2;
 
             for (i = 0; i < 500; i++) {
-                mesh = new Mesh('geometry', 'material');
-                mesh.x = Math.random() * 50 - 25;
-                mesh.y = Math.random() * 50 - 25;
-                mesh.z = -Math.random() * 200
-                mesh.rotateX = Math.random() * PI2;
-                mesh.rotateY = Math.random() * PI2;
-                mesh.rotateZ = Math.random() * PI2;
+                monkey = new Mesh('geometry', 'material');
+                monkey.x = Math.random() * 50 - 25;
+                monkey.y = Math.random() * 50 - 25;
+                monkey.z = Math.random() * 50 - 25;
+                monkey.rotateX = Math.random() * PI2;
+                monkey.rotateY = Math.random() * PI2;
+                monkey.rotateZ = Math.random() * PI2;
 
-                scene.addChild('monkey' + i, mesh);
-                meshes.push(mesh);
+                scene.addChild('monkey' + i, monkey);
+
+                meshes.push(monkey);
+
+
             }
+            monkey = new Mesh(Primitive.sphere(), 'material');
+            scene.addChild('center', monkey);
+            monkey.setScale(3, 3, 3)
+
+            monkey = new Mesh(Primitive.sphere(), 'material');
+            scene.addChild('center1', monkey);
+            monkey.setScale(2, 2, 2)
+            monkey.setPosition(-3,0,0)
+
+            monkey = new Mesh(Primitive.sphere(), 'material');
+            scene.addChild('center2', monkey);
+            monkey.setScale(2, 2, 2)
+            monkey.setPosition(3,0,0)
 
             var sum = 0, count = 1;
 
@@ -153,8 +171,9 @@
                 var currentFPS = 1000 / ( currTime - prevTime );
                 prevTime = currTime;
 
+                count++
                 divCurrentFPS.textContent = currentFPS.toFixed(2);
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed(2);
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
                 var i = 0;
                 var j = meshes.length;
@@ -166,7 +185,16 @@
                     mesh.rotateY += 0.05;
                     mesh.rotateZ += 0.05;
                 }
-
+//                console.log(scene.getChild('camera').x)
+                scene.getChild('camera').x = Math.sin(count / 100) * 50
+                scene.getChild('camera').y = Math.cos(count / 100) * 50
+                scene.getChild('camera').z = Math.cos(count / 100) * 50+Math.sin(count / 100) * 50
+//                scene.getChild('camera').z = 10
+//                scene.getChild('camera').z = 10
+//                scene.getChild('camera').x =50
+//                scene.getChild('camera').y =10
+                scene.getChild('camera').lookAt(0, 0, 0);
+//                                scene.getChild('camera').rotateY+=0.01
                 world.render();
 
                 requestAnimationFrame(render);
