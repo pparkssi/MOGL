@@ -68,10 +68,10 @@ var Scene = (function () {
 			function: [VertexShader.baseFunction],
 			main: ['' +
 			' mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			' vec3 LD = normalize(uDLite);\n' +
 			' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
 			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.1,1.0)),1.0);\n' +
-			' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			' vUV = aUV;'
 			]
 		}
@@ -91,8 +91,8 @@ var Scene = (function () {
 			varyings: ['vec2 vUV','vec3 vNormal', 'vec3 vPosition'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
-			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
 			'vNormal = vec3(mv * vec4(aVertexNormal, 0.0));\n' +
 			'vUV = aUV;'

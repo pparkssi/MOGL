@@ -188,6 +188,7 @@
             mesh6.getMaterial().setLambert(2)
 
             scene.getChild('camera').setBackgroundColor(1,1,1)
+//            scene.getChild('camera').y=-3
 
 
             var sum = 0, count = 1;
@@ -205,6 +206,7 @@
                 mesh4.rotateY -= 0.02;
                 mesh5.rotateY -= 0.02;
                 mesh6.rotateY -= 0.02;
+
                 world.render();
 
                 requestAnimationFrame( render );

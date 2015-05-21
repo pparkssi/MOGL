@@ -30,6 +30,7 @@
     <script src="../src/MoGL.js"></script>
     <script src="../src/BlendMode.js"></script>
     <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
     <script src="../src/Vertex.js"></script>
     <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
@@ -137,9 +138,9 @@
 
             for (i = 0; i < 500; i++) {
                 monkey = new Mesh('geometry', 'material');
-                monkey.x = Math.random() * 50 - 25;
-                monkey.y = Math.random() * 50 - 25;
-                monkey.z = Math.random() * 50 - 25;
+                monkey.x = Math.random() * 150 - 75;
+                monkey.y = Math.random() * 150 - 75;
+                monkey.z = Math.random() * 150 - 75;
                 monkey.rotateX = Math.random() * PI2;
                 monkey.rotateY = Math.random() * PI2;
                 monkey.rotateZ = Math.random() * PI2;
@@ -150,6 +151,9 @@
 
 
             }
+            monkey = new Mesh(Primitive.sphere(), 'material');
+            scene.addChild('center' , monkey);
+            monkey.setScale(3,3,3)
 
             var sum = 0, count = 1;
 
@@ -170,10 +174,13 @@
                     mesh.rotateY += 0.05;
                     mesh.rotateZ += 0.05;
                 }
-                scene.getChild('camera').x = Math.sin(count/100)*50
-//                scene.getChild('camera').y = Math.cos(count/100)*25
-                scene.getChild('camera').z = Math.cos(count/100)*50
-                scene.getChild('camera').lookAt(0,10,0);
+//                scene.getChild('camera').x = Math.sin(count/100)*50
+//                scene.getChild('camera').y = Math.sin(count/100)*50
+//                scene.getChild('camera').z = Math.cos(count/100)*50
+//                scene.getChild('camera').z=0
+//                scene.getChild('camera').x =10
+//                scene.getChild('camera').y =10
+                scene.getChild('camera').lookAt(0,0,0);
 //                                scene.getChild('camera').rotateY+=0.01
                 world.render();
 
