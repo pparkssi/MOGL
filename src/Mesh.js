@@ -95,7 +95,7 @@ var Mesh = (function () {
         if (cosY <= 0.001) radianZ = 0, radianX = Math.atan2(-d23, d22)
         else radianZ = Math.atan2(d21, d11), radianX = Math.atan2(d32, d33)
         this.rotateX = radianX,
-        this.rotateY = radianY,
+        this.rotateY = radianY
         this.rotateZ = radianZ
     },
     fn.setPosition = function setPosition() { MoGL.isAlive(this);
