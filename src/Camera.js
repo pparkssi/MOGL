@@ -241,7 +241,8 @@ var Camera = (function () {
     },
     fn.setFOV = function setFOV(){MoGL.isAlive(this);
         if (arguments.length == 1) this._fov = arguments[0]
-        else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])))
+        else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
+
         return this
     },
     fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
