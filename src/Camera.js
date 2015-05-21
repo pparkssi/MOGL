@@ -5,8 +5,6 @@
 var Camera = (function () {
     var Camera, fn,a4=[],PERPI=Math.PI / 180, f3 = new Float32Array(3), f3_2 = new Float32Array(3);
     var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
-    var transform = {}
-    var inverseTransform = {}
     Camera = function Camera() {
         this._cvs=null
         this._renderArea = null,
