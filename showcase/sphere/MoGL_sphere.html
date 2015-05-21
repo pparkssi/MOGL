@@ -23,6 +23,7 @@
     <script src="../../src/BlendMode.js"></script>
     <script src="../../src/Filter.js"></script>
     <script src="../../src/Vertex.js"></script>
+	<script src="../../src/Shading.js"></script>
     <script src="../../src/VertexShaderFunctions.js"></script>
     <script src="../../src/Matrix.js"></script>
     <script src="../../src/Geometry.js"></script>
@@ -61,6 +62,7 @@
         scene.addTexture('earth', 'earth.jpg');
 		
 		scene.getMaterial("m_sphere").addTexture(Texture.diffuse, "earth");
+		scene.getMaterial("m_sphere").setShading(Shading.phong)
 		
 		world.addRender("scene1", "camera1");
 		
