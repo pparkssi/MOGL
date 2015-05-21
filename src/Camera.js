@@ -289,7 +289,23 @@ var Camera = (function () {
         return this
     },
     fn.lookAt = function looAt(x,y,z){MoGL.isAlive(this);
-
+        Matrix.identity(this._matrix)
+        f3[0] = this.x, f3[1] = this.y, f3[2] = this.z
+        Matrix.lookAt(this._matrix, [this.x, this.y, -this.z], [x, y, z], [0, 1, 0])
+        Matrix.translate(this._matrix, this._matrix, f3)
+        var d = this._matrix;
+        var d11 = d[0], d12 = d[1], d13 = d[2], d21 = d[4], d22 = d[5], d23 = d[6], d31 = d[8], d32 = d[9], d33 = d[10];
+        var radianX, radianY, radianZ;
+        var md31 = -d31;
+        if (md31 <= -1) radianY = -Math.PI * 0.5;
+        else if (1 <= md31) radianY = Math.PI * 0.5;
+        else radianY = Math.asin(md31);
+        var cosY = Math.cos(radianY);
+        if (cosY <= 0.001) radianZ = 0, radianX = Math.atan2(-d23, d22)
+        else radianZ = Math.atan2(d21, d11), radianX = Math.atan2(d32, d33)
+        this.rotateX = radianX,
+        this.rotateY = radianY,
+        this.rotateZ = radianZ
     }
     return MoGL.ext(Camera, Mesh);
 })();
