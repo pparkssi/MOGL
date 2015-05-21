@@ -24,9 +24,9 @@ KeyBoard.A
 
 **method**
 
-* [bindKey](#bindKey)
-* [unBindKey](#unBindKey)
-* [unBindAll](#unBindAll)
+* [bindKey](#bindkeykeyint-funcfuntion)
+* [unBindKey](#unbindkeykeyint)
+* [unBindAll](#unbindall)
 
 ## bindKey(key:int, func:funtion)
 
