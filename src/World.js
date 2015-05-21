@@ -73,7 +73,7 @@ var World = (function () {
                             f3[0] = tMaterial._r,f3[1] = tMaterial._g,f3[2] = tMaterial._b
                             gl.uniform3fv(tProgram.uColor, f3)
                         }else{
-                            var dLite = [0,0,-1],useNormalBuffer=0
+                            var dLite = [0,1,1],useNormalBuffer=0
                             if(tMaterial._shading.type=='none'){
                                 tProgram=scene._glPROGRAMs['bitmap'],
                                 gl.useProgram(tProgram)
@@ -108,7 +108,7 @@ var World = (function () {
                         }
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ
                         gl.uniform3fv(tProgram.uRotate, f3),
-                        f3[0] = tItem.x,f3[1] = tItem.y,f3[2] = tItem.z
+                        f3[0] = -tItem.x,f3[1] = -tItem.y,f3[2] = tItem.z
                         gl.uniform3fv(tProgram.uPosition, f3),
                         f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ
                         gl.uniform3fv(tProgram.uScale, f3),
@@ -120,7 +120,7 @@ var World = (function () {
                             tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                             f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ,
                             gl.uniform3fv(tProgram.uRotate, f3),
-                            f3[0] = tItem.x, f3[1] = tItem.y, f3[2] = tItem.z,
+                            f3[0] = -tItem.x, f3[1] = -tItem.y, f3[2] = tItem.z,
                             gl.uniform3fv(tProgram.uPosition, f3),
                             f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                             gl.uniform3fv(tProgram.uScale, f3),
@@ -183,6 +183,7 @@ var World = (function () {
                     }
                 }
             }
+            gl.finish()
         },
     fn.addRender = function addRender(sceneID, cameraID, index) { MoGL.isAlive(this);
         var uuid = sceneID + '_' + cameraID, tScene = this._sceneList[sceneID], tList = this._renderList;
