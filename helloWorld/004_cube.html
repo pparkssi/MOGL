@@ -94,24 +94,34 @@
     scene.addMaterial('bitmapMat', new Material())
 
     scene.addTexture('texture1', '../src/ohno.png')
-    scene.getMaterial('bitmapMat').addTexture(Texture.diffuse,'texture1')
+    scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1')
 
     scene.addChild('cubeMesh', new Mesh('cube', 'bitmapMat'))
 
+
+    scene.addChild('cubeMesh2', new Mesh('cube', 'bitmapMat'))
+
+
     var cubeMesh = scene.getChild('cubeMesh')
+    var cubeMesh2 = scene.getChild('cubeMesh2')
+
+    scene.getChild('testCamera').z = 20
+    scene.getChild('testCamera').y = 20
+    scene.getChild('testCamera').lookAt(0,0,0)
 
 
-
+    var t = 0
     setInterval(function () {
+        t++
+        cubeMesh2.x = Math.sin(t/100)*4
+//        cubeMesh2.y =5
+        cubeMesh2.y = Math.cos(t/100)*4
+        cubeMesh2.lookAt(cubeMesh.x, cubeMesh.y, cubeMesh.z)
+
         world.render();
     }, 1000 / 60)
     // 렌더 루프 추가
 
-    world.LOOP['test'] = function () {
-        cubeMesh.rotateX += 0.01
-        cubeMesh.rotateY += 0.01
-        cubeMesh.rotateZ += 0.01
-    }
 </script>
 <div>GitHub - <a href="https://github.com/projectBS/MoGL">https://github.com/projectBS/MoGL</a></div>
 <div>Facebook - <a href="https://www.facebook.com/groups/MObilewebGL/">https://www.facebook.com/groups/MObilewebGL/</a>

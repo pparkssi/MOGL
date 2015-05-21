@@ -138,9 +138,9 @@
 
             for (i = 0; i < 500; i++) {
                 monkey = new Mesh('geometry', 'material');
-                monkey.x = Math.random() * 150 - 75;
-                monkey.y = Math.random() * 150 - 75;
-                monkey.z = Math.random() * 150 - 75;
+                monkey.x = Math.random() * 50 - 25;
+                monkey.y = Math.random() * 50 - 25;
+                monkey.z = Math.random() * 50 - 25;
                 monkey.rotateX = Math.random() * PI2;
                 monkey.rotateY = Math.random() * PI2;
                 monkey.rotateZ = Math.random() * PI2;
@@ -171,8 +171,9 @@
                 var currentFPS = 1000 / ( currTime - prevTime );
                 prevTime = currTime;
 
+                count++
                 divCurrentFPS.textContent = currentFPS.toFixed(2);
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed(2);
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
 
                 var i = 0;
                 var j = meshes.length;
@@ -184,10 +185,10 @@
                     mesh.rotateY += 0.05;
                     mesh.rotateZ += 0.05;
                 }
-                console.log(scene.getChild('camera').x)
-                scene.getChild('camera').x = Math.sin(count / 100) * 50
+//                console.log(scene.getChild('camera').x)
+//                scene.getChild('camera').x = Math.sin(count / 100) * 50
                 scene.getChild('camera').y = Math.cos(count / 100) * 50
-                scene.getChild('camera').z = Math.cos(count / 100) * 50
+                scene.getChild('camera').z = Math.cos(count / 100) * 50+Math.sin(count / 100) * 50
 //                scene.getChild('camera').z = 10
 //                scene.getChild('camera').z = 10
 //                scene.getChild('camera').x =50
