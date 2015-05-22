@@ -74,9 +74,9 @@
         scene.addMaterial('material5', new Material());
         scene.addMaterial('material6', new Material());
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
-        scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material2').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material3').addTexture(Texture.diffuse,'texture');
+//        scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
+//        scene.getMaterial('material2').addTexture(Texture.diffuse,'texture');
+//        scene.getMaterial('material3').addTexture(Texture.diffuse,'texture');
         scene.getMaterial('material4').addTexture(Texture.diffuse,'texture');
         scene.getMaterial('material5').addTexture(Texture.diffuse,'texture');
         scene.getMaterial('material6').addTexture(Texture.diffuse,'texture');
@@ -155,13 +155,11 @@
             mesh2.y = -1
             scene.addChild('monkey2', mesh2);
 
-
             var mesh3 = new Mesh('geometry', 'material3');
-
             mesh3.x = 3
             mesh3.y = -1
             scene.addChild('monkey3', mesh3);
-            mesh3.getMaterial().setShading(Shading.gouraud)
+            mesh3.getMaterial().setShading(Shading.toon)
 
 
             var mesh4 = new Mesh('geometry', 'material4');
@@ -170,7 +168,7 @@
             mesh4.y = 1
             scene.addChild('monkey4', mesh4);
             mesh4.getMaterial().setShading(Shading.gouraud)
-            mesh4.getMaterial().setLambert(3)
+            mesh4.getMaterial().setLambert(1)
 
 
             var mesh5 = new Mesh('geometry', 'material5');
@@ -186,7 +184,7 @@
             mesh6.y = 1
             scene.addChild('monkey6', mesh6);
             mesh6.getMaterial().setShading(Shading.phong)
-            mesh6.getMaterial().setLambert(2)
+            mesh6.getMaterial().setLambert(3)
 
             scene.getChild('camera').setBackgroundColor(1,1,1)
 

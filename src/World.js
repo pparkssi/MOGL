@@ -27,7 +27,7 @@ var World = (function () {
             var i, k, len, tList = this._renderList
             var scene,camera,gl,children;
             var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;
-            var pVBO, pVNBO, pUVBO, pIBO, pDiffuse
+            var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram
             for (k in this.LOOP)  this.LOOP[k]()
             for (i = 0, len = tList.length; i < len; i++) {
                 //console.log(tList[i],'렌더')
@@ -73,6 +73,11 @@ var World = (function () {
                                 tProgram=scene._glPROGRAMs['color']
                                 gl.useProgram(tProgram)
                             }
+                            else if(tMaterial._shading.type=='toon'){
+                                tProgram=scene._glPROGRAMs['colorToon']
+                                gl.useProgram(tProgram)
+                                useNormalBuffer=1
+                            }
                             else if(tMaterial._shading.type=='gouraud'){
                                 tProgram=scene._glPROGRAMs['colorGouraud']
                                 gl.useProgram(tProgram)
@@ -83,6 +88,7 @@ var World = (function () {
                                 gl.useProgram(tProgram)
                                 useNormalBuffer=1
                             }
+                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null
                             if(useNormalBuffer){
                                 tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
                                 tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0): 0
@@ -108,6 +114,8 @@ var World = (function () {
                                 useNormalBuffer=1
                             }else if(tMaterial._shading.type=='blinn'){
                             }
+                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null
+
                             if(useNormalBuffer){
                                 tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
                                 tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0): 0
@@ -125,9 +133,9 @@ var World = (function () {
                                 gl.uniform1i(tProgram.uSampler, 0);
                             }
                         }
-                        f3[0] = tItem.rotateX,f3[1] = -tItem.rotateY,f3[2] = tItem.rotateZ
+                        f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ
                         gl.uniform3fv(tProgram.uRotate, f3),
-                        f3[0] = tItem.x,f3[1] = -tItem.y,f3[2] = tItem.z
+                        f3[0] = -tItem.x,f3[1] = -tItem.y,f3[2] = tItem.z
                         gl.uniform3fv(tProgram.uPosition, f3),
                         f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ
                         gl.uniform3fv(tProgram.uScale, f3),
@@ -137,9 +145,9 @@ var World = (function () {
                             gl.useProgram(tProgram),
                             tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                            f3[0] = tItem.rotateX, f3[1] = -tItem.rotateY, f3[2] = tItem.rotateZ,
+                            f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ,
                             gl.uniform3fv(tProgram.uRotate, f3),
-                            f3[0] = tItem.x, f3[1] = -tItem.y, f3[2] = tItem.z,
+                            f3[0] = -tItem.x, f3[1] = -tItem.y, f3[2] = tItem.z,
                             gl.uniform3fv(tProgram.uPosition, f3),
                             f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                             gl.uniform3fv(tProgram.uScale, f3),
@@ -149,7 +157,7 @@ var World = (function () {
                         }
                         else gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
 
-                        pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj
+                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj
                     }
                     //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                     //gl.bindTexture(gl.TEXTURE_2D, null);

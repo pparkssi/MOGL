@@ -30,10 +30,10 @@ var FreeController = (function () {
         if (downKey[KeyBoard.W]) forward = true
         if (downKey[KeyBoard.S]) back = true
 
-        if (downKey[KeyBoard.Q]) updateRotateY = -0.01
-        if (downKey[KeyBoard.E]) updateRotateY = 0.01
-        if (downKey[KeyBoard.T]) updateRotateX = -0.01
-        if (downKey[KeyBoard.G]) updateRotateX = 0.01
+        if (downKey[KeyBoard.Q]) updateRotateY = 0.01
+        if (downKey[KeyBoard.E]) updateRotateY = -0.01
+        if (downKey[KeyBoard.T]) updateRotateX = 0.01
+        if (downKey[KeyBoard.G]) updateRotateX = -0.01
 
         this._displacement[0] = right ? -1 : (left ? 1 : 0),
         this._displacement[1] = up ? -1 : (down ? 1 : 0),
