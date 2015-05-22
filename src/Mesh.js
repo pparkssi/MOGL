@@ -97,6 +97,12 @@ var Mesh = (function () {
         this.rotateX = radianX,
         this.rotateY = radianY
         this.rotateZ = radianZ
+        //var dx = x - this.x;
+        //var dy = y - this.y;
+        //var dz = z - this.z;
+        //this.rotationX = Math.atan2(dz, Math.sqrt(dx * dx + dy * dy)) - Math.PI / 2;
+        //this.rotationY = 0;
+        //this.rotationZ = -Math.atan2(dx, dy);
     },
     fn.setPosition = function setPosition() { MoGL.isAlive(this);
         var len, arg0;
