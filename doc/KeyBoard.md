@@ -22,83 +22,20 @@ F1: 112, F2: 113, F3: 114, F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120,
 KeyBoard.A
 ```
 
-**method**
+**property**
 
-* [bindKey](#bindkeykeyint-funcfuntion)
-* [unBindKey](#unbindkeykeyint)
-* [unBindAll](#unbindall)
-
-## bindKey(key:int, func:funtion)
+## KeyBoard.downed
 
 **description**
 
-키보드 이벤트를 발생시킬 키보드 키를 등록함..
+키다운된 리스트를 관리
 
-**param**
-
-1. key:int - KeyBoard 상수로 입력(KeyBoard.A)
-2. func:function 
-  - 키보드 이벤트에 반응할 이벤트를 발생시킴.
-  - func 발생시 인자값으로 type과 key가 반영되어 실행됨.
-
-**return**
-
-없음
 
 **sample**
 
 ```javascript
-// 키바인딩
-KeyBoard.bindkey(KeyBoard.A, downTest)
-// 핸들러 함수
-function downTest(type, key) {
-    if (type == 'keydown') console.log(type, key, '가 다운')
-    if (type == 'keyup') console.log(type, key, '가 업')
-}
-```
-
-[top](#)
-
-## unBindkey(key:int)
-
-**description**
-
-등록된 키보드 이벤트 키를 삭제함
-
-**param**
-
-1. key:int - KeyBoard 상수로 입력(KeyBoard.A)
-
-**return**
-
-없음
-
-**sample**
-
-```javascript
-KeyBoard.unBindkey(KeyBoard.A)
-```
-
-[top](#)
-
-## unBindAll()
-
-**description**
-
-현재 등록되어진 키보드 이벤트키를 모두삭제
-
-**param**
-
-없음
-
-**return**
-
-없음
-
-**sample**
-
-```javascript
-KeyBoard.unBindAll()
+// KeyBoard.A가 다운상태인지 판단
+if(KeyBoard.downed[KeyBoard.A]) this._diplacement[0]-=0.1
 ```
 
 [top](#)
