@@ -73,9 +73,9 @@ var Material = (function () {
                 this._a = ta ? ta > 1 ? 1 : ta : 1
             }
         } else {
-            this._r = arguments[0],
-            this._g = arguments[1],
-            this._b = arguments[2],
+            this._r = arguments[0] ? arguments[0] : Math.random(),
+            this._g = arguments[1] ? arguments[1] : Math.random(),
+            this._b = arguments[2] ? arguments[2] : Math.random(),
             this._a = arguments[3] ? arguments[3] : 1
         }
     },

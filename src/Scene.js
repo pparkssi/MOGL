@@ -25,7 +25,7 @@ var Scene = (function () {
 		this._glTEXTUREs = {},
 		this._glFREAMBUFFERs = {}
 
-		var baseVertexShader = {
+		var colorVertexShader = {
 			attributes: ['vec3 aVertexPosition'],
 			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec3 uColor'],
 			varyings: ['vec3 vColor'],
@@ -36,7 +36,7 @@ var Scene = (function () {
 			'gl_PointSize = 10.0;'
 			]
 		}
-		var baseFragmentShader = {
+		var colorFragmentShader = {
 			precision: 'mediump float',
 			uniforms: [],
 			varyings: ['vec3 vColor'],
@@ -85,6 +85,69 @@ var Scene = (function () {
 			'gl_FragColor.a = 1.0;'
 			]
 		}
+		var colorVertexShaderGouraud = {
+			attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
+			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec3 uColor'],
+			varyings: ['vec3 vColor','vec4 vLight'],
+			function: [VertexShader.baseFunction],
+			main: ['' +
+			' mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			' vec3 LD = normalize(uDLite);\n' +
+			' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
+			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.1,1.0)),1.0);\n' +
+			' vColor = uColor;'
+			]
+		}
+		var colorFragmentShaderGouraud = {
+			precision: 'mediump float',
+			uniforms: ['sampler2D uSampler'],
+			varyings: ['vec3 vColor', 'vec4 vLight'],
+			function: [],
+			main: ['' +
+			'gl_FragColor =  vLight*vec4(vColor,1.0);\n' +
+			'gl_FragColor.a = 1.0;'
+			]
+		}
+		var colorVertexShaderPhong = {
+			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
+			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec3 uColor'],
+			varyings: ['vec3 vNormal', 'vec3 vPosition','vec3 vColor'],
+			function: [VertexShader.baseFunction],
+			main: ['' +
+			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
+			'vNormal = vec3(mv * vec4(aVertexNormal, 0.0));\n' +
+			'vColor = uColor;'
+			]
+		}
+		var colorFragmentShaderPhong = {
+			precision: 'mediump float',
+			uniforms: ['float uLambert', 'vec3 uDLite'],
+			varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec3 vColor'],
+			function: [],
+			main: ['' +
+			'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+			'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+
+			'vec3 normal = normalize(vNormal);\n' +
+			'vec3 lightDir = normalize(-uDLite);\n' +
+			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 viewDir = normalize(-vPosition);\n' +
+
+			'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
+			'float specular = 0.0;\n' +
+
+			'if(lambertian > 0.0) {\n' +
+			'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
+			'   specular = pow(specAngle, 4.0);\n' +
+			'}\n' +
+			'gl_FragColor = vec4(vColor,1.0)*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
+			'gl_FragColor.a = 1.0;'
+			]
+		}
 		var bitmapVertexShaderPhong = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
 			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
@@ -125,12 +188,16 @@ var Scene = (function () {
 			]
 		}
 
-		this.addVertexShader('base', baseVertexShader),
-		this.addFragmentShader('base', baseFragmentShader),
+		this.addVertexShader('color', colorVertexShader),
+		this.addFragmentShader('color', colorFragmentShader),
 		this.addVertexShader('bitmap', bitmapVertexShader),
 		this.addFragmentShader('bitmap', bitmapFragmentShader),
 		this.addVertexShader('bitmapGouraud', bitmapVertexShaderGouraud),
 		this.addFragmentShader('bitmapGouraud', bitmapFragmentShaderGouraud),
+		this.addVertexShader('colorGouraud', colorVertexShaderGouraud),
+		this.addFragmentShader('colorGouraud', colorFragmentShaderGouraud),
+		this.addVertexShader('colorPhong', colorVertexShaderPhong),
+		this.addFragmentShader('colorPhong', colorFragmentShaderPhong);
 		this.addVertexShader('bitmapPhong', bitmapVertexShaderPhong),
 		this.addFragmentShader('bitmapPhong', bitmapFragmentShaderPhong);
 	}
