@@ -66,16 +66,34 @@ var World = (function () {
                         tUVBO = scene._glUVBOs[tItem._geometry._key],
                         tIBO = scene._glIBOs[tItem._geometry._key],
                         tMaterial = tItem._material,
-                        tDiffuseList = tMaterial._diffuse,
-                        tProgram = tDiffuseList.__indexList.length==0 ? scene._glPROGRAMs['base'] :0
-                        if(tProgram==scene._glPROGRAMs['base']){
-                            gl.useProgram(tProgram)
+                        tDiffuseList = tMaterial._diffuse
+                        var dLite = [0,1,1],useNormalBuffer=0
+                        if(tDiffuseList.__indexList.length==0){
+                            if(tMaterial._shading.type=='none'){
+                                tProgram=scene._glPROGRAMs['color']
+                                gl.useProgram(tProgram)
+                            }
+                            else if(tMaterial._shading.type=='gouraud'){
+                                tProgram=scene._glPROGRAMs['colorGouraud']
+                                gl.useProgram(tProgram)
+                                useNormalBuffer=1
+                            }
+                            else if(tMaterial._shading.type=='phong'){
+                                tProgram=scene._glPROGRAMs['colorPhong']
+                                gl.useProgram(tProgram)
+                                useNormalBuffer=1
+                            }
+                            if(useNormalBuffer){
+                                tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
+                                tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0): 0
+                            }
+                            gl.uniform3fv(tProgram.uDLite, dLite)
+                            gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                             tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                             f3[0] = tMaterial._r,f3[1] = tMaterial._g,f3[2] = tMaterial._b
                             gl.uniform3fv(tProgram.uColor, f3)
                         }else{
-                            var dLite = [0,1,1],useNormalBuffer=0
                             if(tMaterial._shading.type=='none'){
                                 tProgram=scene._glPROGRAMs['bitmap'],
                                 gl.useProgram(tProgram)
@@ -84,7 +102,6 @@ var World = (function () {
                                 tProgram=scene._glPROGRAMs['bitmapGouraud']
                                 gl.useProgram(tProgram)
                                 useNormalBuffer=1
-
                             }else if(tMaterial._shading.type=='phong'){
                                 tProgram=scene._glPROGRAMs['bitmapPhong']
                                 gl.useProgram(tProgram)
@@ -116,7 +133,7 @@ var World = (function () {
                         gl.uniform3fv(tProgram.uScale, f3),
                         tIBO !=pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0
                         if(tMaterial._wireFrame) {
-                            tProgram = scene._glPROGRAMs['base'],
+                            tProgram = scene._glPROGRAMs['color'],
                             gl.useProgram(tProgram),
                             tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
