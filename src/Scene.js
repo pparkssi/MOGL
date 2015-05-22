@@ -184,6 +184,7 @@ var Scene = (function () {
 			' if(lambertian>0.95) src.rgb*=0.95;\n' +
 			' else if(lambertian>0.6) src.rgb*=0.5;\n' +
 			' else if(lambertian>0.3) src.rgb*=0.3;\n' +
+			' else src.rgb*=0.1;\n' +
 
 			'if(lambertian > 0.0) {\n' +
 			'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
