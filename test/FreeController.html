@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - FreeController.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+</head>
+<body>
+<div style="position: absolute; z-index: 10;color: #fff;padding: 10px">
+    A:left / D:right
+    W:forward / S:back
+    R:up / F:down
+    Q,E,T,G : rotation
+</div>
+<canvas id="world" width="600" height="600"></canvas>
+
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+<script src="../src/MoGL.js"></script>
+<script src="../src/KeyBoard.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/FreeController.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+
+    var canvas = document.getElementById('world');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    var camera = new Camera()
+    var world = new World('world')
+    var scene = new Scene()
+    var controller = new FreeController(camera)
+    console.log(camera)
+
+    world.addScene('scene',scene)
+    scene.addChild('camera',camera)
+
+    var material = new Material()
+    material.setShading(Shading.phong)
+
+    for(var i = 0; i<500; i++){
+        var a =new Mesh(Primitive.sphere(),material)
+        scene.addChild('test'+i,a)
+        a.x = Math.random()*50-25
+        a.y = Math.random()*50-25
+        a.z = Math.random()*50-25
+    }
+
+    world.addRender('scene','camera')
+    var controller = new FreeController(camera)
+    setInterval(function(){
+    controller.update()
+      world.render()
+    },1000/60)
+    console.log(camera)
+
+</script>
+<div></div>
+</body>
+</html>
