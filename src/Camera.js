@@ -27,7 +27,7 @@ var Camera = (function () {
         this._fog = null,
         this._antialias = false
         this._pixelMatrix = Matrix.create()
-        this.z =10
+        this.z =-10
         this.lookAt(0,0,0)
     }
     fn = Camera.prototype,
