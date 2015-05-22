@@ -4,23 +4,8 @@
 
  */
 var KeyBoard = (function () {
-    var W, KeyBoard, bindedKey;
+    var W, KeyBoard;
     W = window,
-    bindedKey = {},
-    W.addEventListener('keydown', function (e) {
-        var t0,t1,t2;
-        t0 = e.keyCode,
-        t1 = bindedKey[t0],
-        t2 = KeyBoard._keys[e.keyCode]
-        if(t1) t1(e.type,t2)
-    }),
-    W.addEventListener('keyup', function (e) {
-        var t0,t1,t2;
-        t0 = e.keyCode,
-        t1 = bindedKey[t0],
-        t2 = KeyBoard._keys[e.keyCode]
-        if(t1) t1(e.type,t2)
-    })
     KeyBoard =  {
         BACKSPACE: 8, TAB: 9, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, PAUSE: 19, CAPSLOCK: 20, ESC: 27,
         PAGE_UP: 33, PAGE_DOWN: 34, END: 35, HOME: 36, LEFT_ARROW: 37, UP_ARROW: 38, RIGHT_ARROW: 39, DOWN_ARROW: 40, INSERT: 45, DELETE: 46,
@@ -31,16 +16,13 @@ var KeyBoard = (function () {
         F1: 112, F2: 113, F3: 114, F4: 115, F5: 116, F6: 117, F7: 118, F8: 119, F9: 120, F10: 121, F11: 122, F12: 123,
         "=": 187, COMA: 188, "SLASH/": 191, "BACKSLASH": 220
     }
-    KeyBoard._keys = {};
-    for (var k in KeyBoard) KeyBoard._keys[KeyBoard[k]] = k;
-    KeyBoard.bindkey = function bindkey(key,func){
-        bindedKey[key] = func
-    },
-    KeyBoard.unBindkey = function unBindkey(key){
-        if(bindedKey[key]) delete bindedKey[key]
-    },
-    KeyBoard.unBindAll = function unBindAll(){
-        for(var k in bindedKey) delete bindedKey[key]
-    }
+    KeyBoard.downed = {}
+    for (var k in KeyBoard) KeyBoard.downed[k] = 0;
+        W.addEventListener('keydown', function (e) {
+            KeyBoard.downed[e.keyCode] = 1
+        }),
+        W.addEventListener('keyup', function (e) {
+            KeyBoard.downed[e.keyCode] = 0
+        })
     return KeyBoard;
 })();
