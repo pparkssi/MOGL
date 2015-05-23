@@ -102,12 +102,13 @@ var World = (function () {
                                 useNormalBuffer=1
                             }
                             if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null
+
                             if(useNormalBuffer){
                                 tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
                                 tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0): 0
+                                gl.uniform3fv(tProgram.uDLite, dLite)
+                                gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                             }
-                            gl.uniform3fv(tProgram.uDLite, dLite)
-                            gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                             tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                             f3[0] = tMaterial._r,f3[1] = tMaterial._g,f3[2] = tMaterial._b
@@ -132,9 +133,9 @@ var World = (function () {
                             if(useNormalBuffer){
                                 tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
                                 tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0): 0
+                                gl.uniform3fv(tProgram.uDLite, dLite)
+                                gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                             }
-                            gl.uniform3fv(tProgram.uDLite, dLite)
-                            gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                             tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0
                             tUVBO!=pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,

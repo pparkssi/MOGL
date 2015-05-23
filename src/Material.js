@@ -43,6 +43,8 @@ var Material = (function () {
         return this._count
     },
     fn.removeTexture = function removeTexture(textureID){ MoGL.isAlive(this);
+        var t = this._textures[textureID]
+        if(!t) return this
         var type = this._textures[textureID].type
         var typeList = this['_' + type].__indexList
         var i = typeList.length
@@ -53,8 +55,24 @@ var Material = (function () {
             }
         }
         delete this._textures[textureID]
+        console.log('확인', this['_' + type])
         return this
     },
+    //    fn.removeTexture = function removeTexture(type,textureID){ MoGL.isAlive(this);
+    //        console.log('지울텍스쳐',type,textureID)
+    //        console.log(this)
+    //        var typeList = this['_' + type].__indexList
+    //        var i = typeList.length
+    //        while (i--) {
+    //            if (typeList[i].id == textureID) {
+    //                typeList.splice(i, 1)
+    //                break
+    //            }
+    //        }
+    //        delete this._textures[textureID]
+    //        console.log('확인', this['_' + type])
+    //        return this
+    //    },
     fn.setBackgroundColor=function setBackgroundColor(){ MoGL.isAlive(this);
         var t0 = arguments[0], t1, ta
         if (arguments.length == 1) {
