@@ -495,7 +495,7 @@ var Scene = (function () {
 		for (k in this._cameras) {
 			var camera = this._cameras[k];
 			camera._cvs = this._cvs
-			if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.clientWidth, this._cvs.clientHeight)
+			if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
 			if (camera._updateRenderArea) {
 				camera.getProjectionMatrix(),
 				makeFrameBuffer(this, camera),

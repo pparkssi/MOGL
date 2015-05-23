@@ -12,6 +12,19 @@ var World = (function () {
         if (!id) MoGL.error('World', 'constructor', 0)
         this._cvs = document.getElementById(id);
         if (!this._cvs) MoGL.error('World', 'constructor', 1)
+
+        var width = window.innerWidth
+        var height = window.innerHeight
+
+        //this._pixelRatio = width/height > 1 ? window.devicePixelRatio : 1
+        this._pixelRatio = window.devicePixelRatio
+
+        this._cvs.width = width * this._pixelRatio
+        this._cvs.height = height * this._pixelRatio
+        this._cvs.style.width = width + 'px';
+        this._cvs.style.height = height + 'px';
+
+
         this._renderList = [],
         this._sceneList = {},
         this.LOOP = {},
@@ -43,7 +56,7 @@ var World = (function () {
                         //TODO 뷰포트가 아닌....이게...프레임에 어떻게 그릴껀지로 가야함..
                         gl.viewport(0,0, tFrameBuffer.width, tFrameBuffer.height);
                     }else{
-                        gl.viewport(0, 0, this._cvs.clientWidth, this._cvs.clientHeight);
+                        gl.viewport(0, 0, this._cvs.width, this._cvs.height);
                     }
                     children = scene._children,
                     gl.clearColor(camera._r, camera._g, camera._b, camera._a)
