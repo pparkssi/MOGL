@@ -149,8 +149,8 @@ var Camera = (function () {
     fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);
         var tw, th;
         this._updateRenderArea = 1
-        tw = this._cvs.clientWidth,
-        th = this._cvs.clientHeight,
+        tw = this._cvs.width,
+        th = this._cvs.height,
         console.log(typeof x == 'string' ? tw * x.replace('%', '') : x)
         this._renderArea = [
             typeof x == 'string' ? tw * x.replace('%', '') * 0.01 : x,
