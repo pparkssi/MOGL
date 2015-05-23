@@ -10,7 +10,7 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <style>
         body {
             background-color: #000;
@@ -23,7 +23,7 @@
         .FPS {
             color: #FFF;
             left: 0px;
-            top: 0px;
+            top: 60px;
             position: absolute;
             width: 400px;
         }
@@ -51,21 +51,19 @@
     Current FPS: <span id="currentFPS"></span>
     Average FPS: <span id="averageFPS"></span>
 </div>
+<div style="position: absolute; top: 0px; background: #fff; padding: 5px">GitHub - <a href="https://github.com/projectBS/MoGL">https://github.com/projectBS/MoGL</a></div>
+<div style="position: absolute; top: 25px; background: #fff; padding: 5px">Facebook - <a href="https://www.facebook.com/groups/MObilewebGL/">https://www.facebook.com/groups/MObilewebGL/</a></div>
 <script>
     (function (W) {
         'use strict';
 
         var world = new World('canvas');
         var scene = new Scene();
-        var canvas = document.getElementById('canvas');
 
 
         var divCurrentFPS = document.getElementById('currentFPS');
         var divAverageFPS = document.getElementById('averageFPS');
         var prevTime = 0;
-
-        canvas.width = W.innerWidth;
-        canvas.height = W.innerHeight;
 
         world.addScene('scene', scene);
 
