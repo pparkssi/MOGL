@@ -8,7 +8,7 @@ var FreeController = (function () {
         if(!(camera instanceof Camera)) MoGL.error('FreeController','contructor',0)
         this._camera = camera
         this._displacement = [0,0,0]
-        this._speed = 1
+        this._speed = 1.0
         this._smoothDelay = 0.1
         this._desirePosition=this._camera.getPosition()
     },
@@ -23,7 +23,7 @@ var FreeController = (function () {
         this._speed = value
     },
     fn.setSmoothDelay = function setSmoothDelay(value){
-        this._smoothDelay = value
+        this._smoothDelay = value > 0.5 ? 0.5 : value
     },
     fn.getSpeed = function getSpeed(){
          return this._speed
