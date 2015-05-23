@@ -29,6 +29,8 @@
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
+<script src="../showcase/dat.gui.min.js"></script>
+
 <script src="../src/MoGL.js"></script>
 <script src="../src/KeyBoard.js"></script>
 <script src="../src/BlendMode.js"></script>
@@ -63,6 +65,8 @@
     world.addScene('scene',scene)
     scene.addChild('camera',camera)
 
+    scene.addTexture('texture', '../showcase/monkey/Suzanne.jpg');
+
     var material = new Material()
     material.setShading(Shading.phong)
     material.setLambert(2)
@@ -82,7 +86,43 @@
       world.render()
     },1000/60)
     console.log(camera)
+    var testMat = material
+    var params = {
+        color: function () {
+            testMat.removeTexture('texture');
+            testMat.setShading(Shading.none)
+        },
+        toon: function () {
+            testMat.removeTexture('texture');
+            testMat.setShading(Shading.toon)
+        },
+        PhongColor: function () {
+            testMat.removeTexture('texture');
+            testMat.setShading(Shading.phong)
+        },
+        GouraudColor: function () {
+            testMat.removeTexture('texture');
+            testMat.setShading(Shading.gouraud)
+        },
+        GouraudTextrue: function () {
+            testMat.removeTexture('texture');
+            testMat.addTexture(Texture.diffuse, 'texture');
+            testMat.setShading(Shading.gouraud)
+        },
+        PhongTextrue: function () {
+            testMat.removeTexture('texture');
+            testMat.addTexture(Texture.diffuse, 'texture');
+            testMat.setShading(Shading.phong)
+        }
+    };
 
+    var gui = new dat.GUI();
+    gui.add(params, 'color');
+    gui.add(params, 'toon');
+    gui.add(params, 'GouraudColor');
+    gui.add(params, 'PhongColor');
+    gui.add(params, 'GouraudTextrue');
+    gui.add(params, 'PhongTextrue');
 </script>
 <div></div>
 </body>
