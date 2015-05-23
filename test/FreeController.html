@@ -7,10 +7,11 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <link rel="stylesheet" type="text/css" href="css.css"/>
     <style>
-        html,body{
+        html, body {
             margin: 0px;
             padding: 0px;
             overflow: hidden;
@@ -52,9 +53,6 @@
 <script src="http://js.bsapi.co/test/"></script>
 <script>
 
-    var canvas = document.getElementById('world');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
 
     var camera = new Camera()
     var world = new World('world')
@@ -62,8 +60,8 @@
     var controller = new FreeController(camera)
     console.log(camera)
 
-    world.addScene('scene',scene)
-    scene.addChild('camera',camera)
+    world.addScene('scene', scene)
+    scene.addChild('camera', camera)
 
     scene.addTexture('texture', '../showcase/monkey/Suzanne.jpg');
 
@@ -71,23 +69,32 @@
     material.setShading(Shading.phong)
     material.setLambert(2)
 
-    for(var i = 0; i<500; i++){
-        var a =new Mesh(Primitive.sphere(32),material)
-        scene.addChild('test'+i,a)
-        a.x = Math.random()*50-25
-        a.y = Math.random()*50-25
-        a.z = Math.random()*50-25
+    for (var i = 0; i < 500; i++) {
+        var a = new Mesh(Primitive.sphere(32), material)
+        scene.addChild('test' + i, a)
+        a.x = Math.random() * 50 - 25
+        a.y = Math.random() * 50 - 25
+        a.z = Math.random() * 50 - 25
     }
 
-    world.addRender('scene','camera')
+    world.addRender('scene', 'camera')
     var controller = new FreeController(camera)
-    setInterval(function(){
-    controller.update()
-      world.render()
-    },1000/60)
+    setInterval(function () {
+        controller.update()
+        world.render()
+    }, 1000 / 60)
     console.log(camera)
     var testMat = material
-    var params = {
+
+
+    ///////////////////////////////////////////////////
+    // UI
+    ///////////////////////////////////////////////////
+    var controllerParams = {
+        speed: 1,
+        smoothDelay: 0.1
+    };
+    var shadingParams = {
         color: function () {
             testMat.removeTexture('texture');
             testMat.setShading(Shading.none)
@@ -115,14 +122,22 @@
             testMat.setShading(Shading.phong)
         }
     };
-
     var gui = new dat.GUI();
-    gui.add(params, 'color');
-    gui.add(params, 'toon');
-    gui.add(params, 'GouraudColor');
-    gui.add(params, 'PhongColor');
-    gui.add(params, 'GouraudTextrue');
-    gui.add(params, 'PhongTextrue');
+    var controllerPanel = gui.addFolder('Controller');
+    controllerPanel.add(controllerParams, 'speed', 0.1, 5).onChange(function (value) {
+        controller.setSpeed(value)
+    })
+    controllerPanel.add(controllerParams, 'smoothDelay', 0.01, 0.5).onChange(function (value) {
+        controller.setSmoothDelay(value)
+    })
+    controllerPanel.open()
+    var shading = gui.addFolder('Shading');
+    shading.add(shadingParams, 'color');
+    shading.add(shadingParams, 'toon');
+    shading.add(shadingParams, 'GouraudColor');
+    shading.add(shadingParams, 'PhongColor');
+    shading.add(shadingParams, 'GouraudTextrue');
+    shading.add(shadingParams, 'PhongTextrue');
 </script>
 <div></div>
 </body>
