@@ -230,6 +230,195 @@
             }, 3
     )
     console.log(indexTestMaterial)
+
+
+    bsTest( 'NEW TEST', function(){} );
+
+    bsTest( 'Constructor',
+            function(){
+                var material = new Material();
+                return material._a;
+            }, 1,
+            function(){
+                var material = new Material( '#F00' );
+                return material._r;
+            }, 1,
+            function(){
+                var material = new Material( '#ff0000' );
+                return material._r;
+            }, 1,
+            function(){
+                var material = new Material( '#ff00000.8' );
+                return material._a;
+            }, 0.8,
+            function(){
+                var material = new Material( 0xff/0xff, 0xaf/0xff, 0x45/0xff, 0.5 );
+                return material._r;
+            }, 1
+    );
+
+    bsTest( 'addTexture',
+            function(){
+                var material = new Material(), test;
+                try{
+                    material.addTexture( Texture.diffuse, 'floor' );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:0',
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby'), test;
+
+                lobby.addTexture( 'floor', document.getElementById('img0') );
+
+                var mat = lobby.addMaterial( 'floor', new Material()).getMaterial('floor');
+
+                try{
+                    mat.addTexture( Texture.diffuse, 'floor1' );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:0',
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' ), test;
+
+                lobby.addTexture( 'floor', document.getElementById('img0') );
+
+                var mat = lobby.addMaterial( 'floor', new Material()).getMaterial('floor');
+                mat.addTexture( Texture.diffuse, 'floor' );
+
+                try{
+                    mat.addTexture( Texture.diffuseWrap, 'floor' );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Material.addTexture:1',
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' );
+
+                lobby.addTexture( 'floor1', document.getElementById('img0') );
+
+                var mat1 = lobby.addMaterial( 'floor1', new Material()).getMaterial('floor1');
+                mat1.addTexture( Texture.diffuse, 'floor1' );
+
+                return mat1._textures['floor1'].type;
+            }, Texture.diffuse,
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' );
+
+                lobby.addTexture( 'floor1', document.getElementById('img0') );
+
+                var mat1 = lobby.addMaterial( 'floor1', new Material()).getMaterial('floor1');
+                mat1.addTexture( Texture.diffuseWrap, 'floor1' );
+
+                return mat1._textures['floor1'].type;
+            }, Texture.diffuseWrap,
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' );
+
+                lobby.addTexture( 'floor1', document.getElementById('img0') );
+
+                var mat1 = lobby.addMaterial( 'floor1', new Material()).getMaterial('floor1');
+                mat1.addTexture( Texture.normal, 'floor1' );
+
+                return mat1._textures['floor1'].type;
+            }, Texture.normal,
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' );
+
+                lobby.addTexture( 'floor1', document.getElementById('img0') );
+
+                var mat1 = lobby.addMaterial( 'floor1', new Material()).getMaterial('floor1');
+                mat1.addTexture( Texture.specular, 'floor1' );
+
+                return mat1._textures['floor1'].type;
+            }, Texture.specular,
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' );
+
+                lobby.addTexture( 'floor1', document.getElementById('img0') );
+
+                var mat1 = lobby.addMaterial( 'floor1', new Material()).getMaterial('floor1');
+                mat1.addTexture( Texture.specularNormal, 'floor1' );
+
+                return mat1._textures['floor1'].type;
+            }, Texture.specularNormal,
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' );
+
+                lobby.addTexture( 'floor1', document.getElementById('img0') );
+                lobby.addTexture( 'floor2', document.getElementById('img0') );
+
+                var mat1 = lobby.addMaterial( 'floor1', new Material()).getMaterial('floor1');
+                mat1.addTexture( Texture.diffuse, 'floor1', 3 );
+                mat1.addTexture( Texture.diffuse, 'floor2', 1 );
+
+                console.log(mat1['_' + Texture.diffuse].__indexList);
+
+                return mat1['_' + Texture.diffuse].__indexList.map(function( v ){ return v.id }).join(',');
+            }, 'floor2,floor1',
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' );
+
+                lobby.addTexture( 'floor1', document.getElementById('img0') );
+                lobby.addTexture( 'floor2', document.getElementById('img0') );
+                lobby.addTexture( 'floor3', document.getElementById('img0') );
+                lobby.addTexture( 'floor4', document.getElementById('img0') );
+                lobby.addTexture( 'floor5', document.getElementById('img0') );
+                lobby.addTexture( 'floor6', document.getElementById('img0') );
+                lobby.addTexture( 'floor7', document.getElementById('img0') );
+                lobby.addTexture( 'floor8', document.getElementById('img0') );
+                lobby.addTexture( 'floor9', document.getElementById('img0') );
+                lobby.addTexture( 'floor10', document.getElementById('img0') );
+                lobby.addTexture( 'floor11', document.getElementById('img0') );
+
+
+
+
+                var mat1 = lobby.addMaterial( 'floor1', new Material()).getMaterial('floor1');
+                mat1.addTexture( Texture.diffuse, 'floor1', 1, BlendMode.add );
+                mat1.addTexture( Texture.diffuse, 'floor2', 2, BlendMode.alpha );
+                mat1.addTexture( Texture.diffuse, 'floor3', 3, BlendMode.darken );
+                mat1.addTexture( Texture.diffuse, 'floor4', 4, BlendMode.difference );
+                mat1.addTexture( Texture.diffuse, 'floor5', 5, BlendMode.erase );
+                mat1.addTexture( Texture.diffuse, 'floor6', 6, BlendMode.hardlight );
+                mat1.addTexture( Texture.diffuse, 'floor7', 7, BlendMode.invert );
+                mat1.addTexture( Texture.diffuse, 'floor8', 8, BlendMode.lighten );
+                mat1.addTexture( Texture.diffuse, 'floor9', 9, BlendMode.multiply );
+                mat1.addTexture( Texture.diffuse, 'floor10', 10, BlendMode.screen );
+                mat1.addTexture( Texture.diffuse, 'floor11', 11, BlendMode.subtract );
+
+
+                console.log(mat1['_' + Texture.diffuse].__indexList);
+
+                return mat1['_' + Texture.diffuse].__indexList.map(function( v ){ return v.blendMode }).join(',');
+            }, 'add,alpha,darken,difference,erase,hardlight,invert,lighten,multiply,screen,subtract'
+    );
+
+    bsTest( 'getRefCount',
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' );
+                lobby.addGeometry('cube', new Geometry([], []));
+                var mat = new Material('#f00').addTexture(Texture.diffuse,'temp');
+                var mesh1 = new Mesh( 'cube', mat );
+                lobby.addChild( 'box1', mesh1 );
+                lobby.addChild( 'box2', new Mesh( 'cube', mat ) );
+                return mat.getRefCount();
+            }, 2
+    );
 </script>
 </body>
 </html>
