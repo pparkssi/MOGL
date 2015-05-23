@@ -258,6 +258,7 @@ var World = (function () {
         return this
     },
     fn.getScene = function getScene(sceneID) { MoGL.isAlive(this);
+        if( typeof sceneID === 'undefined' ) MoGL.error('World', 'getScene', 0);
         return this._sceneList[sceneID] ? this._sceneList[sceneID] : null
     },
     fn.removeRender = function removeRender(sceneID, cameraID) { MoGL.isAlive(this);
