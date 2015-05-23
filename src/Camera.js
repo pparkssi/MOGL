@@ -28,6 +28,7 @@ var Camera = (function () {
         this._antialias = false
         this._pixelMatrix = Matrix.create()
         this.z =-10
+        this._mode = '3d'
         this.lookAt(0,0,0)
     }
     fn = Camera.prototype,
@@ -58,7 +59,16 @@ var Camera = (function () {
         return this._fov
     },
     fn.getProjectionMatrix = function getProjectionMatrix(){MoGL.isAlive(this);
-        return this.setPerspective(), this._pixelMatrix
+        Matrix.identity(this._pixelMatrix)
+        if(this._mode =='2d'){
+            this._pixelMatrix=[
+                2 / this._renderArea[2], 0, 0, 0,
+                0, -2 / this._renderArea[3], 0, 0,
+                0, 0, 0, 0,
+                -1, 1, 0, 1
+            ]
+        }else Matrix.perspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far,this._pixelMatrix)
+        return this._pixelMatrix
     },
     fn.getRenderArea = function getRenderArea(){MoGL.isAlive(this);
         return this._renderArea
@@ -128,18 +138,11 @@ var Camera = (function () {
         return this
     },
     fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
-        Matrix.identity(this._pixelMatrix)
-        this._pixelMatrix=[
-            2 / this._renderArea[2], 0, 0, 0,
-            0, -2 / this._renderArea[3], 0, 0,
-            0, 0, 0, 0,
-            -1, 1, 0, 1
-        ]
+        this._mode = '2d'
         return this
     },
     fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
-        Matrix.identity(this._pixelMatrix)
-        Matrix.perspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far,this._pixelMatrix)
+        this._mode = '3d'
         return this
     },
     fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);
