@@ -3,10 +3,12 @@
  * description
  */
 var Camera = (function () {
-    var Camera, fn,a4=[],PERPI=Math.PI / 180, f3 = new Float32Array(3), f3_2 = new Float32Array(3);
-    var hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
-    var transform = {}
-    var inverseTransform = {}
+    var Camera, fn, A4, F3, PERPI;
+    var hex, hex_s;
+    A4=[],PERPI=Math.PI / 180,
+    F3 = new Float32Array(3),
+    hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i,
+    hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
     Camera = function Camera() {
         this._cvs=null
         this._renderArea = null,
@@ -25,23 +27,21 @@ var Camera = (function () {
         this._fog = null,
         this._antialias = false
         this._pixelMatrix = Matrix.create()
-        this.z =10
+        this.z =-10
         this.lookAt(0,0,0)
     }
-
     fn = Camera.prototype,
     fn.getMatrix = function getMatrix() { MoGL.isAlive(this);
         Matrix.identity(this._matrix)
         Matrix.rotateX(this._matrix,this._matrix,this.rotateX)
         Matrix.rotateY(this._matrix,this._matrix,this.rotateY)
         Matrix.rotateZ(this._matrix,this._matrix,this.rotateZ)
-        f3[0] = this.x,f3[1] = this.y,f3[2] = this.z
-        Matrix.translate(this._matrix,this._matrix,f3)
+        F3[0] = this.x,F3[1] = this.y,F3[2] = -this.z
+        Matrix.translate(this._matrix,this._matrix,F3)
         return this._matrix
-
     }
     fn.getBackgroundColor = function getBackgroundColor(){MoGL.isAlive(this);
-        return a4[0] = this._r, a4[1] = this._g, a4[2] = this._b, a4[3] = this._a, a4
+        return A4[0] = this._r, A4[1] = this._g, A4[2] = this._b, A4[3] = this._a, A4
     },
     fn.getClipPlane = function getClipPlane(){MoGL.isAlive(this);
         return [this._near,this._far]
@@ -70,7 +70,8 @@ var Camera = (function () {
         return this._visible ? true : false
     },
     fn.setBackgroundColor = function setBackgroundColor() {MoGL.isAlive(this);
-        var t0 = arguments[0], t1, ta
+        var t0, t1, ta;
+        t0 = arguments[0]
         if (arguments.length == 1) {
             if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7)
             if (t0.charAt(0) == '#') {
@@ -97,6 +98,74 @@ var Camera = (function () {
     },
     fn.setClipPlane = function setClipPlane(near,far){MoGL.isAlive(this);
         this._near = near, this._far = far
+        return this
+    },
+    fn.setFog = function setFog(color,near,far){MoGL.isAlive(this);
+        var t0 = color,t1,result
+        if (t0 !=false && t0.charAt(0) == '#') {
+            result= {}
+            if (t1 = hex.exec(t0)) {
+                result.r = parseInt(t1[1], 16) / 255,
+                result.g = parseInt(t1[2], 16) / 255,
+                result.b = parseInt(t1[3], 16) / 255
+
+            } else {
+                t1 = hex_s.exec(t0),
+                result.r = parseInt(t1[1] + t1[1], 16) / 255,
+                result.g = parseInt(t1[2] + t1[2], 16) / 255,
+                result.b = parseInt(t1[3] + t1[3], 16) / 255
+            }
+            result.a =1,
+            result.near = near,
+            result.far = far,
+            this._fog = result
+        } else if (!t0) this._fog = null
+        return this
+    },
+    fn.setFOV = function setFOV(){MoGL.isAlive(this);
+        if (arguments.length == 1) this._fov = arguments[0]
+        else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
+        return this
+    },
+    fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
+        Matrix.identity(this._pixelMatrix)
+        this._pixelMatrix=[
+            2 / this._renderArea[2], 0, 0, 0,
+            0, -2 / this._renderArea[3], 0, 0,
+            0, 0, 0, 0,
+            -1, 1, 0, 1
+        ]
+        return this
+    },
+    fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
+        Matrix.identity(this._pixelMatrix)
+        Matrix.perspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far,this._pixelMatrix)
+        return this
+    },
+    fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);
+        //TODO 이거 없애버림...
+        return this
+    },
+    fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);
+        var tw, th;
+        this._updateRenderArea = 1
+        tw = this._cvs.width,
+        th = this._cvs.height,
+        console.log(typeof x == 'string' ? tw * x.replace('%', '') : x)
+        this._renderArea = [
+            typeof x == 'string' ? tw * x.replace('%', '') * 0.01 : x,
+            typeof y == 'string' ? th * y.replace('%', '') * 0.01 : y,
+            typeof w == 'string' ? tw * w.replace('%', '') * 0.01 : w,
+            typeof h == 'string' ? th * h.replace('%', '') * 0.01 : h,
+        ]
+        return this
+    },
+    fn.setAntialias = function setAntialias(isAntialias){MoGL.isAlive(this);
+        this._antialias = isAntialias
+        return this
+    },
+    fn.setVisible = function setVisible(value){MoGL.isAlive(this);
+        this._visible = value
         return this
     },
     fn.setFilter = function setFilter(filter/*,needIe*/){MoGL.isAlive(this);
@@ -215,73 +284,6 @@ var Camera = (function () {
             }
         }
         this._filters[filter] = result
-        return this
-    },
-    fn.setFog = function setFog(color,near,far){MoGL.isAlive(this);
-        var t0 = color,t1,result
-        if (t0 !=false && t0.charAt(0) == '#') {
-            result= {}
-            if (t1 = hex.exec(t0)) {
-                result.r = parseInt(t1[1], 16) / 255,
-                result.g = parseInt(t1[2], 16) / 255,
-                result.b = parseInt(t1[3], 16) / 255
-
-            } else {
-                t1 = hex_s.exec(t0),
-                result.r = parseInt(t1[1] + t1[1], 16) / 255,
-                result.g = parseInt(t1[2] + t1[2], 16) / 255,
-                result.b = parseInt(t1[3] + t1[3], 16) / 255
-            }
-            result.a =1,
-            result.near = near,
-            result.far = far,
-            this._fog = result
-        } else if (!t0) this._fog = null
-        return this
-    },
-    fn.setFOV = function setFOV(){MoGL.isAlive(this);
-        if (arguments.length == 1) this._fov = arguments[0]
-        else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
-
-        return this
-    },
-    fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
-        Matrix.identity(this._pixelMatrix)
-        this._pixelMatrix=[
-            2 / this._cvs.clientWidth, 0, 0, 0,
-            0, -2 / this._cvs.clientHeight, 0, 0,
-            0, 0, 0, 0,
-            -1, 1, 0, 1
-        ]
-        return this
-    },
-    fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
-        Matrix.identity(this._pixelMatrix)
-        Matrix.perspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far,this._pixelMatrix)
-        return this
-    },
-    fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);
-        //TODO 이거 없애버림...
-        return this
-    },
-    fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);
-        this._updateRenderArea = 1
-        var tw = this._cvs.clientWidth, th = this._cvs.clientHeight;
-        console.log(typeof x == 'string' ? tw * x.replace('%', '') : x)
-        this._renderArea = [
-            typeof x == 'string' ? tw * x.replace('%', '') * 0.01 : x,
-            typeof y == 'string' ? th * y.replace('%', '') * 0.01 : y,
-            typeof w == 'string' ? tw * w.replace('%', '') * 0.01 : w,
-            typeof h == 'string' ? th * h.replace('%', '') * 0.01 : h,
-        ]
-        return this
-    },
-    fn.setAntialias = function setAntialias(isAntialias){MoGL.isAlive(this);
-        this._antialias = isAntialias
-        return this
-    },
-    fn.setVisible = function setVisible(value){MoGL.isAlive(this);
-        this._visible = value
         return this
     },
     fn.removeFilter = function removeFilter(filter){MoGL.isAlive(this);

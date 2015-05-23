@@ -13,7 +13,7 @@
 </head>
 <body>
 <img src="../src/ohno.png">
-<canvas id="world" width="600" height="10"></canvas>
+<canvas id="world" style="position: absolute"></canvas>
 <div>TODO</div>
 <div>setProjectionMatrix 이후 far,near,fov값 추출 정상작동하는지 확인</div>
 <div id="stage"></div>
@@ -130,8 +130,13 @@
             }, 26
     )
     bsTest('renderArea', function () {
+                scene1.getChild('camera1').setRenderArea('10%', '10%', 300, 300)
                 return scene1.getChild('camera1').getRenderArea().toString()
-            }, [0, 0, 600, 10].toString(),
+            }, [window.innerWidth*0.1, window.innerHeight*0.1, 300, 300].toString(),
+            function () {
+                scene1.getChild('camera1').setRenderArea('10%', '10%', '20%', '30%')
+                return scene1.getChild('camera1').getRenderArea().toString()
+            }, [window.innerWidth*0.1, window.innerHeight*0.1, window.innerWidth*0.2, window.innerHeight*0.3].toString(),
             function () {
                 scene1.getChild('camera1').setRenderArea(100, 200, 300, 300)
                 return scene1.getChild('camera1').getRenderArea().toString()

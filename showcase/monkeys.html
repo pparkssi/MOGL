@@ -10,6 +10,9 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
+    <script type="text/javascript" src="dat.gui.min.js"></script>
     <style>
         body {
             background-color: #000;
@@ -24,7 +27,6 @@
             left: 0px;
             top: 0px;
             position: absolute;
-            width: 400px;
         }
     </style>
     <script src="../src/MoGL.js"></script>
@@ -50,29 +52,27 @@
     Current FPS: <span id="currentFPS"></span>
     Average FPS: <span id="averageFPS"></span>
 </div>
+
 <script>
     (function (W) {
         'use strict';
 
         var world = new World('canvas');
         var scene = new Scene();
-        var canvas = document.getElementById('canvas');
 
 
         var divCurrentFPS = document.getElementById('currentFPS');
         var divAverageFPS = document.getElementById('averageFPS');
         var prevTime = 0;
 
-        canvas.width = W.innerWidth;
-        canvas.height = W.innerHeight;
-
         world.addScene('scene', scene);
 
         scene.addChild('camera', new Camera());
         scene.addMaterial('material', new Material());
         scene.addTexture('texture', 'monkey/Suzanne.jpg');
-        scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
+//        scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
         scene.getMaterial('material').setShading(Shading.phong)
+//        scene.getMaterial('material').setShading(Shading.gouraud)
 
         world.addRender('scene', 'camera');
 
@@ -158,12 +158,12 @@
             monkey = new Mesh(Primitive.sphere(), 'material');
             scene.addChild('center1', monkey);
             monkey.setScale(2, 2, 2)
-            monkey.setPosition(-3,0,0)
+            monkey.setPosition(-3, 0, 0)
 
             monkey = new Mesh(Primitive.sphere(), 'material');
             scene.addChild('center2', monkey);
             monkey.setScale(2, 2, 2)
-            monkey.setPosition(3,0,0)
+            monkey.setPosition(3, 0, 0)
 
             var sum = 0, count = 1;
 
@@ -188,9 +188,9 @@
 //                console.log(scene.getChild('camera').x)
                 scene.getChild('camera').x = Math.sin(count / 100) * 50
                 scene.getChild('camera').y = Math.cos(count / 100) * 50
-                scene.getChild('camera').z = Math.cos(count / 100) * 50+Math.sin(count / 100) * 50
+                scene.getChild('camera').z = Math.cos(count / 100) * 50 + Math.sin(count / 100) * 50
 //                scene.getChild('camera').z = 10
-//                scene.getChild('camera').z = 10
+//                scene.getChild('camera').z = 0
 //                scene.getChild('camera').x =50
 //                scene.getChild('camera').y =10
                 scene.getChild('camera').lookAt(0, 0, 0);
@@ -202,7 +202,48 @@
 
             requestAnimationFrame(render);
         }
+
+
+        var testMat = scene.getMaterial('material')
+        var params = {
+            color: function () {
+                testMat.removeTexture('texture');
+                testMat.setShading(Shading.none)
+            },
+            toon: function () {
+                testMat.removeTexture('texture');
+                testMat.setShading(Shading.toon)
+            },
+            PhongColor: function () {
+                testMat.removeTexture('texture');
+                testMat.setShading(Shading.phong)
+            },
+            GouraudColor: function () {
+                testMat.removeTexture('texture');
+                testMat.setShading(Shading.gouraud)
+            },
+            GouraudTextrue: function () {
+                testMat.removeTexture('texture');
+                testMat.addTexture(Texture.diffuse, 'texture');
+                testMat.setShading(Shading.gouraud)
+            },
+            PhongTextrue: function () {
+                testMat.removeTexture('texture');
+                testMat.addTexture(Texture.diffuse, 'texture');
+                testMat.setShading(Shading.phong)
+            }
+        };
+
+        var gui = new dat.GUI();
+        gui.add(params, 'color');
+        gui.add(params, 'toon');
+        gui.add(params, 'GouraudColor');
+        gui.add(params, 'PhongColor');
+        gui.add(params, 'GouraudTextrue');
+        gui.add(params, 'PhongTextrue');
     })(this);
+
+
 </script>
 </body>
 </html>

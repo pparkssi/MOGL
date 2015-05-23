@@ -8,15 +8,30 @@
 var World = (function () {
     var World, fn, rectMatrix = Matrix.create(), f3=new Float32Array(3);
     World = function World(id) {
-        if(!id) MoGL.error('World','constructor',0)
+        var keys, i,ext;
+        if (!id) MoGL.error('World', 'constructor', 0)
         this._cvs = document.getElementById(id);
-        if(!this._cvs) MoGL.error('World','constructor',1)
+        if (!this._cvs) MoGL.error('World', 'constructor', 1)
+
+        var width = window.innerWidth
+        var height = window.innerHeight
+
+        //this._pixelRatio = width/height > 1 ? window.devicePixelRatio : 1
+        this._pixelRatio = window.devicePixelRatio
+
+        this._cvs.width = width * this._pixelRatio
+        this._cvs.height = height * this._pixelRatio
+        this._cvs.style.width = width + 'px';
+        this._cvs.style.height = height + 'px';
+
+
         this._renderList = [],
         this._sceneList = {},
-        this.LOOP={}
-        var keys = 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length
-        while (i--) if (this._gl = this._cvs.getContext(keys[i],{antialias: true})) break
-        var ext = this._gl.getExtension("OES_element_index_uint");
+        this.LOOP = {},
+
+        keys = 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length
+        while (i--) if (this._gl = this._cvs.getContext(keys[i], {antialias: true})) break
+        ext = this._gl.getExtension("OES_element_index_uint");
         if (!ext) alert('no! OES_element_index_uint')
         console.log(this._gl ? id + ' : MoGL 초기화 성공!' : console.log(id + ' : MoGL 초기화 실패!!'))
      },
@@ -25,7 +40,7 @@ var World = (function () {
             var i, k, len, tList = this._renderList
             var scene,camera,gl,children;
             var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;
-            var pVBO, pVNBO, pUVBO, pIBO, pDiffuse
+            var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram
             for (k in this.LOOP)  this.LOOP[k]()
             for (i = 0, len = tList.length; i < len; i++) {
                 //console.log(tList[i],'렌더')
@@ -41,7 +56,7 @@ var World = (function () {
                         //TODO 뷰포트가 아닌....이게...프레임에 어떻게 그릴껀지로 가야함..
                         gl.viewport(0,0, tFrameBuffer.width, tFrameBuffer.height);
                     }else{
-                        gl.viewport(0, 0, this._cvs.clientWidth, this._cvs.clientHeight);
+                        gl.viewport(0, 0, this._cvs.width, this._cvs.height);
                     }
                     children = scene._children,
                     gl.clearColor(camera._r, camera._g, camera._b, camera._a)
@@ -64,16 +79,41 @@ var World = (function () {
                         tUVBO = scene._glUVBOs[tItem._geometry._key],
                         tIBO = scene._glIBOs[tItem._geometry._key],
                         tMaterial = tItem._material,
-                        tDiffuseList = tMaterial._diffuse,
-                        tProgram = tDiffuseList.__indexList.length==0 ? scene._glPROGRAMs['base'] :0
-                        if(tProgram==scene._glPROGRAMs['base']){
-                            gl.useProgram(tProgram)
+                        tDiffuseList = tMaterial._diffuse
+                        var dLite = [0,1,1],useNormalBuffer=0
+                        if(tDiffuseList.__indexList.length==0){
+                            if(tMaterial._shading.type=='none'){
+                                tProgram=scene._glPROGRAMs['color']
+                                gl.useProgram(tProgram)
+                            }
+                            else if(tMaterial._shading.type=='toon'){
+                                tProgram=scene._glPROGRAMs['colorToon']
+                                gl.useProgram(tProgram)
+                                useNormalBuffer=1
+                            }
+                            else if(tMaterial._shading.type=='gouraud'){
+                                tProgram=scene._glPROGRAMs['colorGouraud']
+                                gl.useProgram(tProgram)
+                                useNormalBuffer=1
+                            }
+                            else if(tMaterial._shading.type=='phong'){
+                                tProgram=scene._glPROGRAMs['colorPhong']
+                                gl.useProgram(tProgram)
+                                useNormalBuffer=1
+                            }
+                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null
+
+                            if(useNormalBuffer){
+                                tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
+                                tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0): 0
+                                gl.uniform3fv(tProgram.uDLite, dLite)
+                                gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
+                            }
                             tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                             f3[0] = tMaterial._r,f3[1] = tMaterial._g,f3[2] = tMaterial._b
                             gl.uniform3fv(tProgram.uColor, f3)
                         }else{
-                            var dLite = [0,1,1],useNormalBuffer=0
                             if(tMaterial._shading.type=='none'){
                                 tProgram=scene._glPROGRAMs['bitmap'],
                                 gl.useProgram(tProgram)
@@ -82,19 +122,20 @@ var World = (function () {
                                 tProgram=scene._glPROGRAMs['bitmapGouraud']
                                 gl.useProgram(tProgram)
                                 useNormalBuffer=1
-
                             }else if(tMaterial._shading.type=='phong'){
                                 tProgram=scene._glPROGRAMs['bitmapPhong']
                                 gl.useProgram(tProgram)
                                 useNormalBuffer=1
                             }else if(tMaterial._shading.type=='blinn'){
                             }
+                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null
+
                             if(useNormalBuffer){
                                 tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
                                 tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0): 0
+                                gl.uniform3fv(tProgram.uDLite, dLite)
+                                gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                             }
-                            gl.uniform3fv(tProgram.uDLite, dLite)
-                            gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert)
                             tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0
                             tUVBO!=pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
@@ -114,7 +155,7 @@ var World = (function () {
                         gl.uniform3fv(tProgram.uScale, f3),
                         tIBO !=pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0
                         if(tMaterial._wireFrame) {
-                            tProgram = scene._glPROGRAMs['base'],
+                            tProgram = scene._glPROGRAMs['color'],
                             gl.useProgram(tProgram),
                             tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
@@ -130,7 +171,7 @@ var World = (function () {
                         }
                         else gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
 
-                        pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj
+                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj
                     }
                     //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                     //gl.bindTexture(gl.TEXTURE_2D, null);
@@ -186,22 +227,26 @@ var World = (function () {
             gl.finish()
         },
     fn.addRender = function addRender(sceneID, cameraID, index) { MoGL.isAlive(this);
-        var uuid = sceneID + '_' + cameraID, tScene = this._sceneList[sceneID], tList = this._renderList;
-        for (var i = 0, len = tList.length; i < len; i++) if (tList[i].uuid == uuid) MoGL.error('World', 'addRender', 0)
+        var uuid, tScene, tList,
+            i,len,temp;
+        uuid = sceneID + '_' + cameraID,
+        tScene = this._sceneList[sceneID],
+        tList = this._renderList;
+        for (i = 0, len = tList.length; i < len; i++) if (tList[i].uuid == uuid) MoGL.error('World', 'addRender', 0)
         if (!tScene) MoGL.error('World', 'addRender', 1)
         else if (!tScene.isAlive) MoGL.error('World', 'addRender', 1)
         if (tScene) {
             if (!tScene.getChild(cameraID)) MoGL.error('World', 'addRender', 2)
             else if (!tScene.getChild(cameraID).isAlive) MoGL.error('World', 'addRender', 2)
         }
-        var temp = {
+        temp = {
             uuid: uuid,
             sceneID: sceneID,
             cameraID: cameraID,
             scene: tScene,
             camera: tScene.getChild(cameraID)
         }
-        tScene._update=1
+        tScene._update = 1
         if (index) tList[index] = temp
         else tList.push(temp)
         return this
@@ -209,7 +254,7 @@ var World = (function () {
     fn.addScene = function addScene(sceneID, scene) { MoGL.isAlive(this);
         if (this._sceneList[sceneID]) MoGL.error('World', 'addScene', 0)
         if (!(scene instanceof Scene )) MoGL.error('World', 'addScene', 1)
-        this._sceneList[sceneID] = scene, scene._gl = this._gl,scene._cvs = this._cvs
+        this._sceneList[sceneID] = scene, scene._gl = this._gl, scene._cvs = this._cvs
         return this
     },
     fn.getScene = function getScene(sceneID) { MoGL.isAlive(this);
@@ -217,12 +262,12 @@ var World = (function () {
     },
     fn.removeRender = function removeRender(sceneID, cameraID) { MoGL.isAlive(this);
         var tList = this._renderList, i, len
-        var sTest=0,cTest=0
+        var sTest = 0, cTest = 0
         if (!this._sceneList[sceneID])  MoGL.error('World', 'removeRender', 0)
         if (!this._sceneList[sceneID]._cameras[cameraID]) console.log('2222222222222222222222222'), MoGL.error('World', 'removeRender', 1)
-        for (i = 0, len = tList.length; i < len; i++){
-            if(tList[i].uuid.indexOf(sceneID)>-1) sTest =1
-            if(tList[i].uuid.indexOf(cameraID)>-1) cTest =1
+        for (i = 0, len = tList.length; i < len; i++) {
+            if (tList[i].uuid.indexOf(sceneID) > -1) sTest = 1
+            if (tList[i].uuid.indexOf(cameraID) > -1) cTest = 1
         }
         if (!sTest)  MoGL.error('World', 'removeRender', 2)
         if (!cTest)  MoGL.error('World', 'removeRender', 3)
@@ -231,8 +276,8 @@ var World = (function () {
     },
     fn.removeScene = function removeScene(sceneID) { MoGL.isAlive(this);
         this._sceneList[sceneID] ? 0 : MoGL.error('World', 'removeScene', 0),
-            this._sceneList[sceneID]._gl = this._gl,
-            delete this._sceneList[sceneID]
+        this._sceneList[sceneID]._gl = this._gl,
+        delete this._sceneList[sceneID]
         return this
     }
     return MoGL.ext(World, MoGL);
