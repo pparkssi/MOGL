@@ -9,8 +9,8 @@
 * [update](#update)
 * [getSpeed](#getspeed)
 * [getSmoothDelay](#getsmoothdelay)
-* [setSpeed](#setspeed)
-* [setSmoothDelay](#setsmoothdelay)
+* [setSpeed](#setspeed-valuenumber)
+* [setSmoothDelay](#setsmoothdelay-valuenumber)
 * [autoBindKey](#autoBindKey)
 * [bindKey](#bindKey) - 작성해야됨
 * [unbindKey](#unbindKey) - 작성해야됨
