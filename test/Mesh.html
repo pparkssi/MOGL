@@ -177,7 +177,7 @@
             }, true,
             function () {
                 try {
-                    // 등록 안되어있는 Geometry id 로 이미 씬에 추가된 mesh에 set
+                    // 등록 안되어있는 Geometry id 로 생성된 mesh를 scene에 추가
                     return testScene.addChild("mesh3", mesh3);
                 }catch(e){
                     console.log(e);
@@ -195,7 +195,7 @@
             }, "Error: Mesh.setGeometry:0",
             function () {
                 try {
-                    // 이미 씬에 등록된 mesh 에 Geometry를 바꿈
+                    // 이미 씬에 등록된 mesh 에 Material 바꿈
                     testScene.addChild('mesh5', mesh5);
                     mesh5.setMaterial("unkwon_meter");
                 }catch(e){
