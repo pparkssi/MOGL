@@ -8,7 +8,7 @@ var FreeController = (function () {
         if(!(camera instanceof Camera)) MoGL.error('FreeController','contructor',0)
         this._camera = camera
         this._displacement = [0,0,0]
-        this._speed = 1.0
+        this._speed = 1000.0
         this._smoothDelay = 0.1
         this._desirePosition=this._camera.getPosition()
     },
@@ -45,12 +45,14 @@ var FreeController = (function () {
         if (downKey[KeyBoard.W]) forward = true
         if (downKey[KeyBoard.S]) back = true
 
-        if (downKey[KeyBoard.Q]) updateRotateY = 0.01 * this._speed
-        if (downKey[KeyBoard.E]) updateRotateY = -0.01 * this._speed
-        if (downKey[KeyBoard.T]) updateRotateX = 0.01 * this._speed
-        if (downKey[KeyBoard.G]) updateRotateX = -0.01 * this._speed
+        speed = this._speed*0.001
 
-        speed = this._speed
+        if (downKey[KeyBoard.Q]) updateRotateY = 0.01 * speed
+        if (downKey[KeyBoard.E]) updateRotateY = -0.01 * speed
+        if (downKey[KeyBoard.T]) updateRotateX = 0.01 * speed
+        if (downKey[KeyBoard.G]) updateRotateX = -0.01 * speed
+
+
         this._displacement[0] = right ? -speed : (left ? speed : 0),
         this._displacement[1] = up ? -speed : (down ? speed : 0),
         this._displacement[2] = forward ? -speed : (back ? speed : 0)

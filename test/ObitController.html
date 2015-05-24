@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>MoGL Test Suite - FreeController.js</title>
+    <title>MoGL Test Suite - ObitController.js</title>
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="format-detection" content="telephone=no"/>
@@ -19,13 +19,7 @@
     </style>
 </head>
 <body>
-<div style="position: absolute; z-index: 10;color: #fff;padding: 10px">
-    A:left / D:right
-    W:forward / S:back
-    R:up / F:down
-    Q,E,T,G : rotation
-</div>
-<canvas id="world" width="600" height="600"></canvas>
+<canvas id="world" ></canvas>
 
 <div id="stage"></div>
 <div id="result"></div>
@@ -47,7 +41,7 @@
 <script src="../src/Primitive.js"></script>
 <script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
-<script src="../src/FreeController.js"></script>
+<script src="../src/ObitController.js"></script>
 <script src="../src/Scene.js"></script>
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
@@ -57,7 +51,7 @@
     var camera = new Camera()
     var world = new World('world')
     var scene = new Scene()
-    var controller = new FreeController(camera)
+    var controller = new ObitController(camera)
     console.log(camera)
 
     world.addScene('scene', scene)
@@ -66,10 +60,11 @@
     scene.addTexture('texture', '../showcase/monkey/Suzanne.jpg');
 
     var material = new Material()
+    material.addTexture(Texture.diffuse,'texture')
     material.setShading(Shading.phong)
-    material.setLambert(2)
+//    material.setLambert(2)
 
-    for (var i = 0; i < 500; i++) {
+    for (var i = 0; i < 250; i++) {
         var a = new Mesh(Primitive.sphere(32), material)
         scene.addChild('test' + i, a)
         a.x = Math.random() * 50 - 25
@@ -78,7 +73,7 @@
     }
 
     world.addRender('scene', 'camera')
-    var controller = new FreeController(camera)
+    var controller = new ObitController(camera)
     setInterval(function () {
         controller.update()
         world.render()
@@ -87,57 +82,7 @@
     var testMat = material
 
 
-    ///////////////////////////////////////////////////
-    // UI
-    ///////////////////////////////////////////////////
-    var controllerParams = {
-        speed: 1000,
-        smoothDelay: 0.1
-    };
-    var shadingParams = {
-        color: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.none)
-        },
-        toon: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.toon)
-        },
-        PhongColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.phong)
-        },
-        GouraudColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.gouraud)
-        },
-        GouraudTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.gouraud)
-        },
-        PhongTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.phong)
-        }
-    };
-    var gui = new dat.GUI();
-    var controllerPanel = gui.addFolder('Controller');
-    controllerPanel.add(controllerParams, 'speed', 100, 5000).onChange(function (value) {
-        controller.setSpeed(value)
-    })
-    controllerPanel.add(controllerParams, 'smoothDelay', 0.01, 0.5).onChange(function (value) {
-        controller.setSmoothDelay(value)
-    })
-    controllerPanel.open()
-    var shading = gui.addFolder('Shading');
-    shading.add(shadingParams, 'color');
-    shading.add(shadingParams, 'toon');
-    shading.add(shadingParams, 'GouraudColor');
-    shading.add(shadingParams, 'PhongColor');
-    shading.add(shadingParams, 'GouraudTextrue');
-    shading.add(shadingParams, 'PhongTextrue');
+
 </script>
 <div></div>
 </body>

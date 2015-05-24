@@ -32,6 +32,7 @@
 <script src="../src/Camera.js"></script>
 <script src="../src/Scene.js"></script>
 <script src="../src/World.js"></script>
+<script src="../src/Shading.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
     var testMaterial1 = new Material('#000');
@@ -259,15 +260,6 @@
 
     bsTest( 'addTexture',
             function(){
-                var material = new Material(), test;
-                try{
-                    material.addTexture( Texture.diffuse, 'floor' );
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: Material.addTexture:0',
-            function(){
                 var world = new World( 'canvas' );
                 var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby'), test;
 
@@ -418,6 +410,91 @@
                 lobby.addChild( 'box2', new Mesh( 'cube', mat ) );
                 return mat.getRefCount();
             }, 2
+    );
+
+    bsTest( 'removeTexture',
+            function(){
+                var mat = new Material('#f00').addTexture(Texture.diffuse,'temp');
+                mat.removeTexture('temp');
+                return mat._textures['temp'];
+            }, undefined
+    );
+
+    bsTest( 'setBackgroundColor',
+            function(){
+                var mat = new Material();
+                mat.setBackgroundColor('#f00');
+                return mat._r;
+            }, 1,
+            function(){
+                var mat = new Material();
+                mat.setBackgroundColor('#ff0000');
+                return mat._b;
+            }, 0,
+            function(){
+                var mat = new Material();
+                mat.setBackgroundColor('#ff00000.8');
+                return mat._a;
+            }, 0.8,
+            function(){
+                var mat = new Material();
+                mat.setBackgroundColor( 0xff/0xff, 0xaf/0xff, 0x45/0xff, 0.5 );
+                return mat._g;
+            }, 0xaf/0xff
+    );
+
+    bsTest( 'setLambert',
+            function(){
+                var mat = new Material();
+                mat.setLambert( 0.5 );
+                return mat._shading.lambert;
+            }, 0.5
+    );
+
+    bsTest( 'setShading',
+            function(){
+                var mat = new Material();
+                mat.setShading( Shading.none );
+                return mat._shading.type
+            }, 'none',
+            function(){
+                var mat = new Material();
+                mat.setShading( Shading.gouraud );
+                return mat._shading.type
+            }, 'gouraud',
+            function(){
+                var mat = new Material();
+                mat.setShading( Shading.phong );
+                return mat._shading.type
+            }, 'phong',
+            function(){
+                var mat = new Material();
+                mat.setShading( Shading.blinn );
+                return mat._shading.type
+            }, 'blinn',
+            function(){
+                var mat = new Material();
+                mat.setShading( Shading.flat );
+                return mat._shading.type
+            }, 'flat',
+            function(){
+                var mat = new Material();
+                mat.setShading( Shading.toon );
+                return mat._shading.type
+            }, 'toon'
+    );
+
+    bsTest( 'setWireFrame',
+            function(){
+                var mat = new Material();
+                mat.setWireFrame( true );
+                return mat._wireFrame;
+            }, true,
+            function(){
+                var mat = new Material();
+                mat.setWireFrame( true, '#ff0000' );
+                return mat._rw
+            }, 1
     );
 </script>
 </body>
