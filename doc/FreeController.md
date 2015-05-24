@@ -58,7 +58,7 @@ var controller = new FreeController(new Camera())
 ```javascript
 var camera = new Camera()
 var controller = new FreeController(camera)
-controller.getSpeed(value)
+controller.getSpeed()
 ```
 [top](#)
 ## getSmoothDelay
@@ -77,7 +77,7 @@ controller.getSpeed(value)
 ```javascript
 var camera = new Camera()
 var controller = new FreeController(camera)
-controller.getSmoothDelay(value)
+controller.getSmoothDelay()
 ```
 
 [top](#)
