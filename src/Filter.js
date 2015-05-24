@@ -15,5 +15,5 @@ var Filter = {
     mono: 'mono',
     sepia: 'sepia',
     shadow: 'shadow'
-}
+};
 Object.freeze(Filter);
