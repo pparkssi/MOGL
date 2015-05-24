@@ -19,11 +19,8 @@
     </style>
 </head>
 <body>
-<div id="test"></div>
-<canvas id="world" ></canvas>
 
-<script src="dat.gui.min.js"></script>
-
+<canvas id="world"></canvas>
 <script src="../src/MoGL.js"></script>
 <script src="../src/KeyBoard.js"></script>
 <script src="../src/BlendMode.js"></script>
@@ -44,8 +41,6 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-
-
     var camera = new Camera()
     var world = new World('world')
     var scene = new Scene()
@@ -58,9 +53,8 @@
     scene.addTexture('texture', '../showcase/monkey/Suzanne.jpg');
 
     var material = new Material()
-    material.addTexture(Texture.diffuse,'texture')
+    material.addTexture(Texture.diffuse, 'texture')
     material.setShading(Shading.phong)
-//    material.setLambert(2)
 
     for (var i = 0; i < 250; i++) {
         var a = new Mesh(Primitive.sphere(32), material)
@@ -73,12 +67,22 @@
     world.addRender('scene', 'camera')
     var controller = new OrbitController(camera)
     setInterval(function () {
+//        var t = document.getElementById('test')
+//        var str = ''
+//        str += 'controller.getSpeed() : ' + controller.getSpeed() + '<br/>'
+//        str += 'controller.getSmoothDelay() : ' + controller.getSmoothDelay() + '<br/>'
+//        str += 'controller.getMinDistance() : ' + controller.getMinDistance() + '<br/>'
+//        str += 'controller.getMaxDistance() : ' + controller.getMaxDistance() + '<br/>'
+//        str += 'controller.getDistance() : ' + controller.getDistance() + '<br/>'
+//        str += 'controller.getPan() : ' + controller.getPan() + '<br/>'
+//        str += 'controller.getTilt() : ' + controller.getTilt() + '<br/>'
+//
+//        t.innerHTML = str
         controller.update()
         world.render()
     }, 1000 / 60)
     console.log(camera)
     var testMat = material
-
 
 
 </script>

@@ -94,6 +94,12 @@ var OrbitController = (function () {
         }
     },
     fn = OrbitController.prototype,
+    fn.setSpeed = function setSpeed(value){
+        this._speed = value
+    },
+    fn.setSmoothDelay = function setSmoothDelay(value){
+        this._smoothDelay = value > 0.5 ? 0.5 : value
+    },
     fn.setMinDistance = function setMinDistance(value){
         this._minDistance = value < 1 ? 1 : value
     },
@@ -103,12 +109,6 @@ var OrbitController = (function () {
     fn.setDistance = function setDistance(value){
         this._distance = value
     },
-    fn.setSpeed = function setSpeed(value){
-        this._speed = value
-    },
-    fn.setSmoothDelay = function setSmoothDelay(value){
-        this._smoothDelay = value > 0.5 ? 0.5 : value
-    },
     fn.getSpeed = function getSpeed(){
          return this._speed
     },
@@ -116,13 +116,19 @@ var OrbitController = (function () {
         return this._smoothDelay
     },
     fn.getMinDistance = function getMinDistance(){
-        this._minDistance = value
+        return this._minDistance
     },
     fn.getMaxDistance = function getMaxDistance(){
-        this._maxDistance = value
+        return this._maxDistance
     },
     fn.getDistance = function getDistance(){
-        this._maxDistance = value
+        return this._distance
+    },
+    fn.getPan = function getPan(){
+        return this._pan
+    },
+    fn.getTilt = function getTilt(){
+        return this._tilt
     },
     fn.update = function update(){
         if(this._mouseInfo.zoom){
@@ -134,12 +140,13 @@ var OrbitController = (function () {
             this._camera.z += (Math.cos(this._pan )*this._distance- this._camera.z)*this._smoothDelay
         }else{
             this._pan+= this._mouseInfo.dx / window.innerWidth * this._speed * Math.PI/180,
-            this._tilt  += this._mouseInfo.dy / window.innerHeight/2* this._speed  * Math.PI/180,
+            this._tilt  += this._mouseInfo.dy / window.innerHeight/2* this._speed  * Math.PI/180
             this._camera.x += (-Math.sin(this._pan )*this._distance - this._camera.x)*this._smoothDelay,
             this._camera.y += (Math.sin(this._tilt )*this._distance +Math.cos(this._tilt )*this._distance- this._camera.y)*this._smoothDelay,
             this._camera.z += (Math.cos(this._pan )*this._distance- this._camera.z)*this._smoothDelay
             this._camera.lookAt(0,0,0)
         }
+
         this._mouseInfo.dx = 0,
         this._mouseInfo.dy = 0
 

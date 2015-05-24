@@ -17,7 +17,7 @@ var Geometry = (function () {
             i = info.length
             if(vertex.length % i) MoGL.error('Geometry', 'constructor', 2)
             while(i--) info[info[i]] = i
-            console.log(info)
+            //console.log(info)
         }
         /////////////////////////////////////
         t = arguments[2] ? arguments[2].length : 3
