@@ -3,23 +3,23 @@
  */
 var Shading = {
     none: function none() {
-        this._shading.type = 'none'
+        this._shading.type = 'none';
     },
     gouraud: function gouraud() {
-        this._shading.type = 'gouraud'
+        this._shading.type = 'gouraud';
     },
     phong: function phong() {
-        this._shading.type = 'phong'
+        this._shading.type = 'phong';
     },
     blinn: function blinn() {
-        this._shading.type = 'blinn'
+        this._shading.type = 'blinn';
     },
     flat: function flat() {
-        this._shading.type = 'flat'
+        this._shading.type = 'flat';
     },
     toon: function toon() {
-        this._shading.type = 'toon'
+        this._shading.type = 'toon';
     }
-}
+};
 Object.freeze(Shading);
 
