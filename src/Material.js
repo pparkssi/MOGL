@@ -21,42 +21,42 @@ var Material = (function () {
         this._count = 0,
         this._scene = null,
         this._key = null,
-        this.setBackgroundColor.apply(this, arguments)
+        this.setBackgroundColor.apply(this, arguments);
     },
     fn = Material.prototype,
     fn.addTexture = function addTexture(type,textureID/*,index,blendMode*/) { MoGL.isAlive(this);
-        var t = this._scene
-        if (t && !t._textures[textureID]) MoGL.error('Material', 'addTexture', 0)
-        if (this._textures[textureID]) MoGL.error('Material', 'addTexture', 1)
-        this._textures[textureID] = {id: textureID, type: type}
-        var result
-        console.log('type :', '_' + type)
-        console.log('확인', this['_' + type])
+        var t = this._scene;
+        if (t && !t._textures[textureID]) MoGL.error('Material', 'addTexture', 0);
+        if (this._textures[textureID]) MoGL.error('Material', 'addTexture', 1);
+        this._textures[textureID] = {id: textureID, type: type};
+        var result;
+        console.log('type :', '_' + type);
+        console.log('확인', this['_' + type]);
         //배열화
         if (arguments[2]) {
-            result = this['_' + type].__indexList.splice(arguments[2], 0, {id: textureID, blendMode: arguments[3]})
+            result = this['_' + type].__indexList.splice(arguments[2], 0, {id: textureID, blendMode: arguments[3]});
         }
-        else result = this['_' + type].__indexList.push({id: textureID, blendMode: arguments[3]})
-        return this
+        else result = this['_' + type].__indexList.push({id: textureID, blendMode: arguments[3]});
+        return this;
     },
     fn.getRefCount = function getRefCount(){ MoGL.isAlive(this);
-        return this._count
+        return this._count;
     },
     fn.removeTexture = function removeTexture(textureID){ MoGL.isAlive(this);
-        var t = this._textures[textureID]
-        if(!t) return this
-        var type = this._textures[textureID].type
-        var typeList = this['_' + type].__indexList
-        var i = typeList.length
+        var t = this._textures[textureID];
+        if(!t) return this;
+        var type = this._textures[textureID].type;
+        var typeList = this['_' + type].__indexList;
+        var i = typeList.length;
         while (i--) {
             if (typeList[i].id == textureID) {
-                typeList.splice(i, 1)
+                typeList.splice(i, 1);
                 break
             }
         }
-        delete this._textures[textureID]
-        console.log('확인', this['_' + type])
-        return this
+        delete this._textures[textureID];
+        console.log('확인', this['_' + type]);
+        return this;
     },
     //    fn.removeTexture = function removeTexture(type,textureID){ MoGL.isAlive(this);
     //        console.log('지울텍스쳐',type,textureID)
@@ -73,52 +73,52 @@ var Material = (function () {
     //        console.log('확인', this['_' + type])
     //        return this
     //    },
-    fn.setBackgroundColor=function setBackgroundColor(){ MoGL.isAlive(this);
-        var t0 = arguments[0], t1, ta
+    fn.setBackgroundColor = function setBackgroundColor(){ MoGL.isAlive(this);
+        var t0 = arguments[0], t1, ta;
         if (arguments.length == 1) {
-            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7)
+            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7);
             if (t0.charAt(0) == '#') {
                 if (t1 = hex.exec(t0)) {
                     this._r = parseInt(t1[1], 16) / 255,
                     this._g = parseInt(t1[2], 16) / 255,
-                    this._b = parseInt(t1[3], 16) / 255
+                    this._b = parseInt(t1[3], 16) / 255;
                 } else {
                     t1 = hex_s.exec(t0),
                     this._r = parseInt(t1[1] + t1[1], 16) / 255,
                     this._g = parseInt(t1[2] + t1[2], 16) / 255,
-                    this._b = parseInt(t1[3] + t1[3], 16) / 255
+                    this._b = parseInt(t1[3] + t1[3], 16) / 255;
                 }
-                this._a = ta ? ta > 1 ? 1 : ta : 1
+                this._a = ta ? ta > 1 ? 1 : ta : 1;
             }
         } else {
             this._r = arguments[0] ? arguments[0] : Math.random(),
             this._g = arguments[1] ? arguments[1] : Math.random(),
             this._b = arguments[2] ? arguments[2] : Math.random(),
-            this._a = arguments[3] ? arguments[3] : 1
+            this._a = arguments[3] ? arguments[3] : 1;
         }
     },
     fn.setWireFrame = function setWireFrame(isVisible){ MoGL.isAlive(this);
-        this._wireFrame = isVisible
-        var t0 = arguments[1], t1, ta
+        this._wireFrame = isVisible;
+        var t0 = arguments[1], t1, ta;
         if (arguments.length == 2) {
-            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7)
+            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7);
             if (t1 = hex.exec(t0)) {
                 this._rw = parseInt(t1[1], 16) / 255,
                 this._gw = parseInt(t1[2], 16) / 255,
-                this._bw = parseInt(t1[3], 16) / 255
+                this._bw = parseInt(t1[3], 16) / 255;
             } else {
                 t1 = hex_s.exec(t0),
                 this._rw = parseInt(t1[1] + t1[1], 16) / 255,
                 this._gw = parseInt(t1[2] + t1[2], 16) / 255,
-                this._bw = parseInt(t1[3] + t1[3], 16) / 255
+                this._bw = parseInt(t1[3] + t1[3], 16) / 255;
             }
         }
     },
     fn.setShading = function setShading(type){ MoGL.isAlive(this);
-        type.apply(this)
+        type.apply(this);
     },
     fn.setLambert = function setShading(rate){ MoGL.isAlive(this);
-        this._shading.lambert=rate
-    }
+        this._shading.lambert = rate;
+    };
     return MoGL.ext(Material, MoGL);
 })();
