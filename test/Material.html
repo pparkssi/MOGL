@@ -260,15 +260,6 @@
 
     bsTest( 'addTexture',
             function(){
-                var material = new Material(), test;
-                try{
-                    material.addTexture( Texture.diffuse, 'floor' );
-                }catch(e){
-                    test = e.toString();
-                }
-                return test;
-            }, 'Error: Material.addTexture:0',
-            function(){
                 var world = new World( 'canvas' );
                 var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby'), test;
 
