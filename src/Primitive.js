@@ -53,7 +53,7 @@ var Primitive = (function () {
         sphere: function sphere(/*split:int*/) {
             // TODO 헉!! 노말도 계산해서 넘겨야되!!!
             if (arguments[0] < 8) arguments[0] = 8
-            var vs = [], is = [], split = (arguments[0] || 8), radius = 0.5, t, st, ct;
+            var vs = [], is = [], split = (arguments[0] || 8), radius = 1.0, t, st, ct;
             var i, longNumber, t1, t2;
             for (i = 0; i <= split; i++) {
                 t = i * PI / split, st = mS(t), ct = mC(t)
@@ -96,11 +96,9 @@ var Primitive = (function () {
                     is.push(0, j, j + 1); // 최상단 최초 꼭지점 기준
                 }
             }
-// console.log('vs : ', vs);
-// console.log('is : ', is);
             result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
             result._key = 'polygon_' + (arguments[0] || 1);
             return result;
         }
     }
-})()
+})();
