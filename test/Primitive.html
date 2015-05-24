@@ -34,28 +34,39 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-//var polygon, xyz = 3, xyzuv = 5;
-//bsTest('polygon',
-//			function () {
-//				// 사각형이면 vs.length == 4
-//				polygon = Primitive.polygon(4, 1);
-//				return polygon.getVertexCount();
-//			}, 11,
-//			function () {
-//				// 사각형이면 is.length == 2
-//				polygon = Primitive.polygon(4, 1);
-//				return polygon.getTriangleCount();
-//			}, 8,
-//			function () {
-//				// 오각형이면 vs.length == 5
-//				polygon = Primitive.polygon(5, 1);
-//				return polygon.getVertexCount();
-//			}, 5,
-//			function () {
-//				// 사각형이면 is.length == 3
-//				polygon = Primitive.polygon(5, 1);
-//				return polygon.getTriangleCount();
-//			}, 3,
+var polygon, xyz = 3, xyzuv = 5;
+bsTest('polygon',
+			function () {
+				// 삼각형이면 vs.length == 4
+				polygon = Primitive.polygon(3, 1);
+				return polygon.getVertexCount();
+			}, 4,
+			function () {
+				// 삼각형이면 is.length == 2
+				polygon = Primitive.polygon(3, 1);
+				return polygon.getTriangleCount();
+			}, 2,
+			function () {
+				// 사각형이면 vs.length == 5
+				polygon = Primitive.polygon(4, 1);
+				return polygon.getVertexCount();
+			}, 5,
+			function () {
+				// 사각형이면 is.length == 3
+				polygon = Primitive.polygon(4, 1);
+				return polygon.getTriangleCount();
+			}, 3,
+			function () {
+				// 오각형이면 vs.length == 6
+				polygon = Primitive.polygon(5, 1);
+				return polygon.getVertexCount();
+			}, 6,
+			function () {
+				// 사각형이면 is.length == 4
+				polygon = Primitive.polygon(5, 1);
+				return polygon.getTriangleCount();
+			}, 4
+//		,
 //			function () {
 //				// 홀수각형이면
 //				// n / 2 미만 번째 점의 x좌표 < 0
@@ -94,7 +105,7 @@
 //
 //				return checkPosNeg;
 //			}, true
-//);
+);
 </script>
 <canvas id='polygon' width=500 height=500></canvas>
 <script>
