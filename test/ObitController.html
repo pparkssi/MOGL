@@ -60,10 +60,11 @@
     scene.addTexture('texture', '../showcase/monkey/Suzanne.jpg');
 
     var material = new Material()
+    material.addTexture(Texture.diffuse,'texture')
     material.setShading(Shading.phong)
-    material.setLambert(2)
+//    material.setLambert(2)
 
-    for (var i = 0; i < 500; i++) {
+    for (var i = 0; i < 250; i++) {
         var a = new Mesh(Primitive.sphere(32), material)
         scene.addChild('test' + i, a)
         a.x = Math.random() * 50 - 25
@@ -81,57 +82,7 @@
     var testMat = material
 
 
-    ///////////////////////////////////////////////////
-    // UI
-    ///////////////////////////////////////////////////
-    var controllerParams = {
-        speed: 500,
-        smoothDelay: 0.1
-    };
-    var shadingParams = {
-        color: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.none)
-        },
-        toon: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.toon)
-        },
-        PhongColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.phong)
-        },
-        GouraudColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.gouraud)
-        },
-        GouraudTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.gouraud)
-        },
-        PhongTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.phong)
-        }
-    };
-    var gui = new dat.GUI();
-    var controllerPanel = gui.addFolder('Controller');
-    controllerPanel.add(controllerParams, 'speed', 300, 2000).onChange(function (value) {
-        controller.setSpeed(value)
-    })
-    controllerPanel.add(controllerParams, 'smoothDelay', 0.01, 0.5).onChange(function (value) {
-        controller.setSmoothDelay(value)
-    })
-    controllerPanel.open()
-    var shading = gui.addFolder('Shading');
-    shading.add(shadingParams, 'color');
-    shading.add(shadingParams, 'toon');
-    shading.add(shadingParams, 'GouraudColor');
-    shading.add(shadingParams, 'PhongColor');
-    shading.add(shadingParams, 'GouraudTextrue');
-    shading.add(shadingParams, 'PhongTextrue');
+
 </script>
 <div></div>
 </body>
