@@ -7,8 +7,7 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport"
-          content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=high-dpi "/>
     <link rel="stylesheet" type="text/css" href="css.css"/>
 
 </head>
@@ -112,6 +111,37 @@ console.log('polygon._position : ', polygon._position);
                 return polygon.getVertexCount() == 3 && polygon._position[1] == 1;
             }, true
 );
+bsTest('sphere',
+        function () {
+            // 삼각형이면 vs.length == 3
+            polygon = Primitive.polygon(3, 1);
+            return polygon.getVertexCount();
+        }, 3,
+        function () {
+            // 홀수각형이면
+            // n / 2 미만 번째 점의 x좌표 < 0
+            // n / 2 이상 번째 점의 x좌표 > 0
+            var vArr, checkPosNeg = true,
+                    n = 17, i;
+            polygon = Primitive.polygon(n, 1);
+            vArr = polygon._position;
+            console.log('polygon._position : ', polygon._position);
+            for (i = 1 ; i < n ; i++) {
+                if (i < (n / 2))
+                    checkPosNeg = checkPosNeg && (vArr[i *= xyz] < 0);
+                else
+                    checkPosNeg = checkPosNeg && (vArr[i *= xyz] > 0);
+            }
+
+            return checkPosNeg;
+        }, true,
+        function () {
+            // 파라미터 전달 안하면 반경 1인 삼각형 반환
+            polygon = Primitive.polygon();
+
+            return polygon.getVertexCount() == 3 && polygon._position[1] == 1;
+        }, true
+);
 </script>
 <canvas id='polygon' width=500 height=500></canvas>
 <script>
@@ -151,56 +181,117 @@ console.log('polygon._position : ', polygon._position);
         clearInterval(intervalId);
 }());
 </script>
-<hr/>
-
-<img src="../src/ohno.png"/>
-<div> // TODO 헉!! 노말도 계산해서 넘겨야되!!!</div>
-<canvas id="canvasTest" height="256" width="512"></canvas>
+<canvas id='sphere' width=500 height=500></canvas>
 <script>
-    document.getElementById('canvasTest').width = window.innerWidth;
-    document.getElementById('canvasTest').height = window.innerHeight;
-//
-    var world = new World('canvasTest')
-    var scene = new Scene()
+(function() {
+    var world = new World('sphere'),
+        scene = new Scene(),
+        camera = new Camera(),
+        sphere = Primitive.sphere(15),
+        solidWhite = new Material('#ffffff'),
+        mesh = new Mesh(sphere, solidWhite);
 
+    world.addScene('scene', scene);
+    scene.addChild('camera', camera);
+    world.addRender('scene', 'camera');
+    scene.addChild('sphere', mesh);
+    mesh.z = -5;
 
-    world.addScene('scene', scene)
-    scene.addChild('camera', new Camera())
-    scene.addTexture('texture', '../src/ohno.png')
-    world.addRender('scene', 'camera')
+    world.render();
 
-    var material = new Material()
-    material.addTexture(Texture.diffuse, 'texture')
-    var mesh1 = new Mesh(Primitive.plane(2,2), new Material('#fff'))
-    mesh1.z = -5
-    mesh1.x = 0
-    scene.addChild('mesh1', mesh1)
+//        var start = 3, end = 15,
+//                intervalId;
+//        setMesh(start++);
+//        world.render();
+//        intervalId = setInterval( function() {
+//            if ( start < end) {
+//                setMesh(start++);
+//                world.render();
+//            }
+//        }, 300);
+//        if (start == end)
+//            clearInterval(intervalId);
+}());
+</script>
+<canvas id='plane' width=500 height=500></canvas>
+<script>
+(function() {
+    var world = new World('plane'),
+        scene = new Scene(),
+        camera = new Camera(),
+        mesh;
 
-//    var mesh2 = new Mesh(Primitive.sphere(12), material)
-//    mesh2.z = -2
-////    scene.addChild('mesh2', mesh2)
-//
-//    var mesh3 = new Mesh(Primitive.sphere(32), material)
-//    mesh3.z = -2
-//    mesh3.x = 1.5
-//    scene.addChild('mesh3', mesh3)
+    world.addScene('scene', scene);
+    scene.addChild('camera', new Camera());
+    world.addRender('scene', 'camera');
+    scene.addTexture('texture', '../asset/honey1.png');
+//        mesh = new Mesh(Primitive.plane(2,2), new Material('#afc'));
+    mesh = new Mesh(Primitive.plane(2,2), new Material().addTexture(Texture.diffuse, 'texture'));
+    mesh.z = -5;
+    mesh.x = 0;
+    scene.addChild('mesh', mesh);
 
     setInterval(function () {
-        mesh1.rotateX += 0.01
-        mesh1.rotateY += 0.01
-        mesh1.rotateZ += 0.01
-//        mesh2.rotateX += 0.01
-//        mesh2.rotateY += 0.01
-//        mesh2.rotateZ += 0.01
-//        mesh3.rotateX += 0.01
-//        mesh3.rotateY += 0.01
-//        mesh3.rotateZ += 0.01
+        mesh.rotateX += 0.01,
+        mesh.rotateY += 0.01,
+        mesh.rotateZ += 0.01;
+
         world.render();
     }, 1000 / 60)
 
-    console.log('$$$$$$$$$$$$$$')
-    console.log(Primitive.plane())
+}());
 </script>
+<hr/>
+
+<!--<img src="../src/ohno.png"/>-->
+<!--<div> // TODO 헉!! 노말도 계산해서 넘겨야되!!!</div>-->
+<!--<canvas id="canvasTest" height="256" width="512"></canvas>-->
+<!--<script>-->
+    <!--document.getElementById('canvasTest').width = window.innerWidth;-->
+    <!--document.getElementById('canvasTest').height = window.innerHeight;-->
+<!--//-->
+    <!--var world = new World('canvasTest')-->
+    <!--var scene = new Scene()-->
+
+
+    <!--world.addScene('scene', scene)-->
+    <!--scene.addChild('camera', new Camera())-->
+    <!--scene.addTexture('texture', '../src/ohno.png')-->
+    <!--world.addRender('scene', 'camera')-->
+
+    <!--var material = new Material()-->
+    <!--material.addTexture(Texture.diffuse, 'texture')-->
+<!--//    var mesh1 = new Mesh(Primitive.plane(2,2), new Material('#afc'))-->
+    <!--var mesh1 = new Mesh(Primitive.plane(2,2), material)-->
+    <!--mesh1.z = -5-->
+    <!--mesh1.x = 0-->
+    <!--scene.addChild('mesh1', mesh1)-->
+
+<!--//    var mesh2 = new Mesh(Primitive.sphere(12), material)-->
+<!--//    mesh2.z = -2-->
+<!--////    scene.addChild('mesh2', mesh2)-->
+<!--//-->
+<!--//    var mesh3 = new Mesh(Primitive.sphere(32), material)-->
+<!--//    mesh3.z = -2-->
+<!--//    mesh3.x = 1.5-->
+<!--//    scene.addChild('mesh3', mesh3)-->
+
+    <!--setInterval(function () {-->
+        <!--mesh1.rotateX += 0.01-->
+        <!--mesh1.rotateY += 0.01-->
+        <!--mesh1.rotateZ += 0.01-->
+<!--//        mesh2.rotateX += 0.01-->
+<!--//        mesh2.rotateY += 0.01-->
+<!--//        mesh2.rotateZ += 0.01-->
+<!--//        mesh3.rotateX += 0.01-->
+<!--//        mesh3.rotateY += 0.01-->
+<!--//        mesh3.rotateZ += 0.01-->
+        <!--world.render();-->
+    <!--}, 1000 / 60)-->
+
+    <!--console.log('$$$$$$$$$$$$$$')-->
+    <!--console.log(Primitive.plane())-->
+<!--</script>-->
 
 </body>
 </html>
