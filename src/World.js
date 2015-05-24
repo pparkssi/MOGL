@@ -223,7 +223,7 @@ var World = (function () {
                     }
                 }
             }
-            gl.finish();
+            //gl.finish();
         },
     fn.addRender = function addRender(sceneID, cameraID, index) { MoGL.isAlive(this);
         var uuid, tScene, tList,
