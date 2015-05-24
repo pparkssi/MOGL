@@ -13,6 +13,7 @@ MOGL is a lightweight & high performance **MO**bile web**GL** library.
 * [Getting Started](GETTING-STARTED.md)
 * [Tutorials](tutorial)
 * [Contributing](CONTRIBUTING.md)
+* [Committing](COMMITTING.md)
 * [APIs](doc)
 
 **ShowCase**
