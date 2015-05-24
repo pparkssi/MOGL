@@ -99,25 +99,18 @@ var Primitive = (function () {
         },
         polygon: function polygon(n, radius) {
             if (n < 3) MoGL.error('Primitive', 'polygon', 0);
-            var i, j, angle = 2 * PI / n, x, y, z, u, v,
-                vs = [0.0, radius, 0.0, 0.5, 0.0], is = [], vertCoords = vs.length,
-                result;
-
-            for (i = 0; i < n - 1; i = i / vertCoords + 1) {
-                x = vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
-                    y = vs[--i] * mS(angle) + vs[++i] * mC(angle),
-                    z = vs[--i + 2],
-                    u = (0.5 + x / 2) / (radius / 2),
-                    v = (0.5 - y / 2) / (radius / 2),
-                    vs.push(x, y, z, u, v);
-                if (i > 0) {
-                    j = i / vertCoords;
-                    is.push(0, j, j + 1); // 최상단 최초 꼭지점 기준
-                }
+            var perAngle = Math.PI*2/(n)
+            var vs = [],is = [],i
+            for(i =0; i<n+1; i++){
+                vs.push(0,0,0, 0.5,0.5)
+                vs.push(mS(perAngle*i),mC(perAngle*i),0,  -mS(perAngle*i)/2+0.5,-mC(perAngle*i)/2+0.5)
+                vs.push(mS(perAngle*(i+1)),mC(perAngle*(i+1)),0,  -mS(perAngle*(i+1))/2+0.5,-mC(perAngle*(i+1))/2+0.5)
             }
-// console.log('vs : ', vs);
-// console.log('is : ', is);
-            result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
+            for (i = 0; i < n; i++) {
+                is.push(i * 3, i * 3 + 1, i * 3 + 2),
+                is.push(i * 3 + 1, i * 3 + 2, i * 3 + 3)
+            }
+            var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
             result._key = 'polygon_' + (arguments[0] || 1);
             return result;
         }
