@@ -3,7 +3,7 @@
  */
 var ObitController = (function () {
     var ObitController, fn,self,MAT1;
-    var HD_down, HD_move, HD_up;
+    var HD_down, HD_move, HD_up,HD_down2, HD_move2, HD_up2;
        MAT1 = Matrix.create(),
     HD_down = function HD_down(e){
         self._mouseInfo.downed = 1
@@ -11,6 +11,7 @@ var ObitController = (function () {
         self._mouseInfo.startY = e.screenY
         self._mouseInfo.dx = 0,
         self._mouseInfo.dy = 0
+        e.preventDefault()
     },
     HD_move= function HD_move(e){
         if(self._mouseInfo.downed){
@@ -19,10 +20,33 @@ var ObitController = (function () {
         }
         self._mouseInfo.startX = e.screenX,
         self._mouseInfo.startY = e.screenY
+        e.preventDefault()
     },
     HD_up = function HD_up(e){
         self._mouseInfo.downed = 0
+        e.preventDefault()
     },
+   HD_down2 = function HD_down(e){
+       self._mouseInfo.downed = 1
+       self._mouseInfo.startX = e.changedTouches[0].screenX,
+           self._mouseInfo.startY = e.changedTouches[0].screenY
+       self._mouseInfo.dx = 0,
+           self._mouseInfo.dy = 0
+       e.preventDefault()
+   },
+   HD_move2= function HD_move(e){
+       if(self._mouseInfo.downed){
+           self._mouseInfo.dx = self._mouseInfo.startX-e.changedTouches[0].screenX
+           self._mouseInfo.dy = self._mouseInfo.startY-e.changedTouches[0].screenY
+       }
+       self._mouseInfo.startX = e.changedTouches[0].screenX,
+           self._mouseInfo.startY = e.changedTouches[0].screenY
+       e.preventDefault()
+   },
+   HD_up2 = function HD_up(e){
+       self._mouseInfo.downed = 0
+       e.preventDefault()
+   },
     ObitController = function ObitController(camera) {
         if(!(camera instanceof Camera)) MoGL.error('ObitController','contructor',0)
         this._camera = camera
@@ -45,12 +69,18 @@ var ObitController = (function () {
         }
 
         self = this
-        document.addEventListener('mousedown',HD_down)
-        document.addEventListener('mousemove',HD_move)
-        document.addEventListener('mouseup',HD_up)
-        document.addEventListener('touchstart',HD_down)
-        document.addEventListener('touchmove',HD_move)
-        document.addEventListener('touchend',HD_up)
+
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            document.body.addEventListener('touchstart',HD_down2,false)
+            document.body.addEventListener('touchmove',HD_move2,false)
+            document.body.addEventListener('touchend',HD_up2,false)
+        }else{
+            document.body.addEventListener('mousedown',HD_down,false)
+            document.body.addEventListener('mousemove',HD_move,false)
+            document.body.addEventListener('mouseup',HD_up,false)
+        }
+
+
     },
     fn = ObitController.prototype,
     fn.setSpeed = function setSpeed(value){
