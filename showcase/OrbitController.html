@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>MoGL Test Suite - ObitController.js</title>
+    <title>MoGL Test Suite - OrbitController.js</title>
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="format-detection" content="telephone=no"/>
@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
-    <link rel="stylesheet" type="text/css" href="css.css"/>
+    <link rel="stylesheet" type="text/css" href="../test/css.css"/>
     <style>
         html, body {
             margin: 0px;
@@ -22,7 +22,7 @@
 <div id="test"></div>
 <canvas id="world" ></canvas>
 
-<script src="../showcase/dat.gui.min.js"></script>
+<script src="dat.gui.min.js"></script>
 
 <script src="../src/MoGL.js"></script>
 <script src="../src/KeyBoard.js"></script>
@@ -39,7 +39,7 @@
 <script src="../src/Primitive.js"></script>
 <script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
-<script src="../src/ObitController.js"></script>
+<script src="../src/OrbitController.js"></script>
 <script src="../src/Scene.js"></script>
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
@@ -49,7 +49,7 @@
     var camera = new Camera()
     var world = new World('world')
     var scene = new Scene()
-    var controller = new ObitController(camera)
+    var controller = new OrbitController(camera)
     console.log(camera)
 
     world.addScene('scene', scene)
@@ -71,7 +71,7 @@
     }
 
     world.addRender('scene', 'camera')
-    var controller = new ObitController(camera)
+    var controller = new OrbitController(camera)
     setInterval(function () {
         controller.update()
         world.render()
