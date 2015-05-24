@@ -99,12 +99,12 @@ var Primitive = (function () {
         },
         polygon: function polygon(n, radius) {
             if (n < 3) MoGL.error('Primitive', 'polygon', 0);
-            var perAngle = Math.PI*2/(n)
+            var perAngle = Math.PI*2/(n-1)
             var vs = [0,0,0,0.5,0.5],is = [],i
-            for(i =0; i<n+1; i++){
+            for(i =0; i<n; i++){
                 vs.push(mS(perAngle*i),mC(perAngle*i),0,  -mS(perAngle*i)/2+0.5,-mC(perAngle*i)/2+0.5)
             }
-            for (i = 0; i < n; i++) {
+            for (i = 0; i < n-1; i++) {
                 is.push(0, i + 1, i  + 2)
             }
             var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
