@@ -37,74 +37,73 @@
 var polygon, xyz = 3, xyzuv = 5;
 bsTest('polygon',
 			function () {
-				// 삼각형이면 vs.length == 4
+				// 삼각형이면 vs.length == 3
 				polygon = Primitive.polygon(3, 1);
+				return polygon.getVertexCount();
+			}, 3,
+			function () {
+				// 삼각형이면 is.length == 1
+				polygon = Primitive.polygon(3, 1);
+				return polygon.getTriangleCount();
+			}, 1,
+			function () {
+				// 사각형이면 vs.length == 4
+				polygon = Primitive.polygon(4, 1);
 				return polygon.getVertexCount();
 			}, 4,
 			function () {
-				// 삼각형이면 is.length == 2
-				polygon = Primitive.polygon(3, 1);
+				// 사각형이면 is.length == 2
+				polygon = Primitive.polygon(4, 1);
 				return polygon.getTriangleCount();
 			}, 2,
 			function () {
-				// 사각형이면 vs.length == 5
-				polygon = Primitive.polygon(4, 1);
+				// 오각형이면 vs.length == 5
+				polygon = Primitive.polygon(5, 1);
 				return polygon.getVertexCount();
 			}, 5,
 			function () {
 				// 사각형이면 is.length == 3
-				polygon = Primitive.polygon(4, 1);
+				polygon = Primitive.polygon(5, 1);
 				return polygon.getTriangleCount();
 			}, 3,
 			function () {
-				// 오각형이면 vs.length == 6
-				polygon = Primitive.polygon(5, 1);
-				return polygon.getVertexCount();
-			}, 6,
+				// 홀수각형이면
+				// n / 2 미만 번째 점의 x좌표 < 0
+				// n / 2 이상 번째 점의 x좌표 > 0
+				var vArr, checkPosNeg = true,
+					n = 17, i;
+				polygon = Primitive.polygon(n, 1);
+				vArr = polygon._position;
+				for (i = 1 ; i < n ; i++) {
+					if (i < (n / 2))
+						checkPosNeg = checkPosNeg && (vArr[i *= xyz] < 0);
+					else
+						checkPosNeg = checkPosNeg && (vArr[i *= xyz] > 0);
+				}
+
+				return checkPosNeg;
+			}, true,
 			function () {
-				// 사각형이면 is.length == 4
-				polygon = Primitive.polygon(5, 1);
-				return polygon.getTriangleCount();
-			}, 4
-//		,
-//			function () {
-//				// 홀수각형이면
-//				// n / 2 미만 번째 점의 x좌표 < 0
-//				// n / 2 이상 번째 점의 x좌표 > 0
-//				var vArr, checkPosNeg = true,
-//					n = 17, i;
-//				polygon = Primitive.polygon(n, 1);
-//				vArr = polygon._position;
-//				for (i = 1 ; i < n ; i++) {
-//					if (i < (n / 2))
-//						checkPosNeg = checkPosNeg && (vArr[i *= xyz] < 0);
-//					else
-//						checkPosNeg = checkPosNeg && (vArr[i *= xyz] > 0);
-//				}
-//
-//				return checkPosNeg;
-//			}, true,
-//			function () {
-//				// 짝수각형이면
-//				// n / 2 미만 번째 점의 x좌표 < 0
-//				// n / 2 번째 점의 x 좌표 == 0
-//				// n / 2 초과 번째 점의 x좌표 > 0
-//				var vArr, checkPosNeg = true,
-//					n = 8, i;
-//				polygon = Primitive.polygon(n, 1);
-//				vArr = polygon._position;
-//
-//				for (i = 1 ; i < n ; i++) {
-//					if (i < (n / 2))
-//						checkPosNeg = checkPosNeg && (vArr[i *= xyz] < 0);
-//					else if ( i == (n / 2))
-//						checkPosNeg = checkPosNeg && (Math.round(vArr[i *= xyz]) == 0);
-//					else
-//						checkPosNeg = checkPosNeg && (vArr[i *= xyz] > 0);
-//				}
-//
-//				return checkPosNeg;
-//			}, true
+				// 짝수각형이면
+				// n / 2 미만 번째 점의 x좌표 < 0
+				// n / 2 번째 점의 x 좌표 == 0
+				// n / 2 초과 번째 점의 x좌표 > 0
+				var vArr, checkPosNeg = true,
+					n = 8, i;
+				polygon = Primitive.polygon(n, 1);
+				vArr = polygon._position;
+
+				for (i = 1 ; i < n ; i++) {
+					if (i < (n / 2))
+						checkPosNeg = checkPosNeg && (vArr[i *= xyz] < 0);
+					else if ( i == (n / 2))
+						checkPosNeg = checkPosNeg && (Math.round(vArr[i *= xyz]) == 0);
+					else
+						checkPosNeg = checkPosNeg && (vArr[i *= xyz] > 0);
+				}
+
+				return checkPosNeg;
+			}, true
 );
 </script>
 <canvas id='polygon' width=500 height=500></canvas>
@@ -118,23 +117,20 @@ bsTest('polygon',
 	world.addScene('scene', scene);
 	scene.addChild('camera', camera);
 	world.addRender('scene', 'camera');
-	// scene.addMaterial('bitmapMat', new Material());
 	scene.addTexture('texture1', '../asset/honey1.png');
-	// scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1');
 
 	var setMesh = function(n) {
 		var polygon = Primitive.polygon(n, 2),
-			// newMesh = new Mesh(polygon, solidWhite);
+//		var polygon = Primitive.polygon(),
+//			newMesh = new Mesh(polygon, solidWhite);
 			newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, 'texture1'));
 		scene.removeChild('polygon' + Math.max(3, n - 1));
 		scene.addChild('polygon' + n, newMesh);
-		newMesh.z = -5;
 	};
 
 	var start = 3, end = 15,
 		intervalId;
-	setMesh(start++);
-	world.render();
+
 	intervalId = setInterval( function() {
 		if (start < end) {
 			setMesh(start++);
@@ -173,6 +169,38 @@ bsTest('polygon',
 
         world.render();
     }, 1000 / 60)
+}());
+</script>
+
+<canvas id='plane' width=500 height=500></canvas>
+<script>
+(function() {
+	var world = new World('plane'),
+		scene = new Scene(),
+		camera = new Camera(),
+		solidWhite = new Material('#ffffff');
+
+	world.addScene('scene', scene);
+	scene.addChild('camera', camera);
+	world.addRender('scene', 'camera');
+	scene.addMaterial('bitmapMat', new Material());
+	scene.addTexture('texture1', '../asset/honey1.png');
+	scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1');
+
+	var plane = Primitive.plane(),
+		newMesh = new Mesh(plane, scene.getMaterial('bitmapMat'));
+//		newMesh = new Mesh(plane, solidWhite);
+
+	scene.addChild('planeMesh', newMesh);
+//	newMesh.z = -5;
+
+	setInterval(function () {
+//		newMesh.rotateX += 0.01,
+//		newMesh.rotateY += 0.01,
+		newMesh.rotateZ += 0.01;
+
+		world.render();
+	}, 1000 / 60)
 }());
 </script>
 <hr/>
