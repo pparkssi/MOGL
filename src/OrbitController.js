@@ -135,14 +135,18 @@ var OrbitController = (function () {
             this._distance *= self._mouseInfo.distStart/self._mouseInfo.dist
             if(this._distance<this._minDistance) this._distance = this._minDistance
             if(this._distance>this._maxDistance) this._distance = this._maxDistance
+            this._camera.x += (-Math.sin(this._pan )*this._distance - this._camera.x)*this._smoothDelay,
+            this._camera.y += (Math.sin(this._tilt )*this._distance +Math.cos(this._tilt )*this._distance- this._camera.y)*this._smoothDelay,
+            this._camera.z += (Math.cos(this._pan )*this._distance- this._camera.z)*this._smoothDelay
         }else{
             this._pan+= this._mouseInfo.dx / window.innerWidth * this._speed * Math.PI/180,
             this._tilt  += this._mouseInfo.dy / window.innerHeight/2* this._speed  * Math.PI/180
+            this._camera.x += (-Math.sin(this._pan )*this._distance - this._camera.x)*this._smoothDelay,
+            this._camera.y += (Math.sin(this._tilt )*this._distance +Math.cos(this._tilt )*this._distance- this._camera.y)*this._smoothDelay,
+            this._camera.z += (Math.cos(this._pan )*this._distance- this._camera.z)*this._smoothDelay
+            this._camera.lookAt(0,0,0)
         }
-        this._camera.x += (-Math.sin(this._pan )*this._distance - this._camera.x)*this._smoothDelay,
-        this._camera.y += (Math.sin(this._tilt )*this._distance +Math.cos(this._tilt )*this._distance- this._camera.y)*this._smoothDelay,
-        this._camera.z += (Math.cos(this._pan )*this._distance- this._camera.z)*this._smoothDelay
-        this._camera.lookAt(0,0,0)
+
         this._mouseInfo.dx = 0,
         this._mouseInfo.dy = 0
 

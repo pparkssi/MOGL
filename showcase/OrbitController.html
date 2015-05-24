@@ -19,7 +19,7 @@
     </style>
 </head>
 <body>
-<div id="test" style="position: absolute; background: #fff; padding: 5px; font-size: 0.7em"></div>
+
 <canvas id="world"></canvas>
 <script src="../src/MoGL.js"></script>
 <script src="../src/KeyBoard.js"></script>
@@ -67,17 +67,17 @@
     world.addRender('scene', 'camera')
     var controller = new OrbitController(camera)
     setInterval(function () {
-        var t = document.getElementById('test')
-        var str = ''
-        str += 'controller.getSpeed() : ' + controller.getSpeed() + '<br/>'
-        str += 'controller.getSmoothDelay() : ' + controller.getSmoothDelay() + '<br/>'
-        str += 'controller.getMinDistance() : ' + controller.getMinDistance() + '<br/>'
-        str += 'controller.getMaxDistance() : ' + controller.getMaxDistance() + '<br/>'
-        str += 'controller.getDistance() : ' + controller.getDistance() + '<br/>'
-        str += 'controller.getPan() : ' + controller.getPan() + '<br/>'
-        str += 'controller.getTilt() : ' + controller.getTilt() + '<br/>'
-
-        t.innerHTML = str
+//        var t = document.getElementById('test')
+//        var str = ''
+//        str += 'controller.getSpeed() : ' + controller.getSpeed() + '<br/>'
+//        str += 'controller.getSmoothDelay() : ' + controller.getSmoothDelay() + '<br/>'
+//        str += 'controller.getMinDistance() : ' + controller.getMinDistance() + '<br/>'
+//        str += 'controller.getMaxDistance() : ' + controller.getMaxDistance() + '<br/>'
+//        str += 'controller.getDistance() : ' + controller.getDistance() + '<br/>'
+//        str += 'controller.getPan() : ' + controller.getPan() + '<br/>'
+//        str += 'controller.getTilt() : ' + controller.getTilt() + '<br/>'
+//
+//        t.innerHTML = str
         controller.update()
         world.render()
     }, 1000 / 60)
