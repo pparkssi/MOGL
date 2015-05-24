@@ -31,10 +31,11 @@ var Material = (function () {
         this._textures[textureID] = {id: textureID, type: type};
         var result;
         console.log('type :', '_' + type);
-        console.log('확인', this['_' + type]);
+        console.log('확인', this['_' + type],this['_' + type].__indexList.length);
         //배열화
-        if (arguments[2]) {
-            result = this['_' + type].__indexList.splice(arguments[2], 0, {id: textureID, blendMode: arguments[3]});
+        if (arguments[2] !=undefined) {
+            var idx = arguments[2] >this['_' + type].__indexList.length ? this['_' + type].__indexList.length : arguments[2]
+            result = this['_' + type].__indexList.splice(idx, 0, {id: textureID, blendMode: arguments[3]});
         }
         else result = this['_' + type].__indexList.push({id: textureID, blendMode: arguments[3]});
         return this;
