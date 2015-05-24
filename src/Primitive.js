@@ -52,22 +52,41 @@ var Primitive = (function () {
         },
         sphere: function sphere(/*split:int*/) {
             // TODO 헉!! 노말도 계산해서 넘겨야되!!!
-            if (arguments[0] < 8) arguments[0] = 8
-            var vs = [], is = [], split = (arguments[0] || 8), radius = 1.0, t, st, ct;
-            var i, longNumber, t1, t2;
-            for (i = 0; i <= split; i++) {
-                t = i * PI / split, st = mS(t), ct = mC(t)
-                for (var j = 0; j <= split; j++) {
-                    var phi = j * 2 * PI / split, sinPhi = mS(phi), cosPhi = mC(phi), x = cosPhi * st, y = ct, z = sinPhi * st, u = 1 - (j / split), v = 1 - (i / split);
-                    vs.push(radius * x, radius * y, -radius * z), vs.push(u, v)
+            var vertices = [];
+            var indices = [];
+
+            var latitudeBands = 8;
+            var longitudeBands = 8;
+            var radius = 1.0;
+
+            for (var latNumber = 0; latNumber <= latitudeBands; ++latNumber) {
+                var theta = latNumber * Math.PI / latitudeBands;
+                var sinTheta = Math.sin(theta);
+                var cosTheta = Math.cos(theta);
+
+                for (var longNumber = 0; longNumber <= longitudeBands; ++ longNumber) {
+                    var phi = longNumber * 2 * Math.PI / longitudeBands;
+                    var sinPhi = Math.sin(phi);
+                    var cosPhi = Math.cos(phi);
+
+                    var x = cosPhi * sinTheta;
+                    var y = cosTheta;
+                    var z = sinPhi * sinTheta;
+                    var u = 1 - longNumber / longitudeBands;
+                    var v = 1 - latNumber / latitudeBands;
+                    vertices.push(radius * x, radius * y, radius * z,u, v);
                 }
             }
-            for (i = 0; i < split; i++) {
-                for (longNumber = 0; longNumber < split; longNumber++)
-                    t1 = (i * (split + 1)) + longNumber, t2 = t1 + split + 1,
-                        is.push(t1, t2, t1 + 1, t2, t2 + 1, t1 + 1)
+
+            for (latNumber = 0; latNumber < latitudeBands; ++latNumber) {
+                for (longNumber = 0; longNumber < longitudeBands; ++ longNumber) {
+                    var first = latNumber * (longitudeBands + 1) + longNumber;
+                    var second = first + longitudeBands + 1;
+                    indices.push(second, first, first + 1, second + 1, second, first + 1);
+                }
             }
-            var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+
+            var result = new Geometry(vertices, indices, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
             result._key = 'sphere_' + ( arguments[0] || 1)
             return result
         },
@@ -80,23 +99,15 @@ var Primitive = (function () {
         },
         polygon: function polygon(n, radius) {
             if (n < 3) MoGL.error('Primitive', 'polygon', 0);
-            var i, j, angle = 2 * PI / n, x, y, z, u, v,
-                vs = [0.0, radius, 0.0, 0.5, 0.0], is = [], vertCoords = vs.length,
-                result;
-
-            for (i = 0; i < n - 1; i = i / vertCoords + 1) {
-                x = vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
-                    y = vs[--i] * mS(angle) + vs[++i] * mC(angle),
-                    z = vs[--i + 2],
-                    u = (0.5 + x / 2) / (radius / 2),
-                    v = (0.5 - y / 2) / (radius / 2),
-                    vs.push(x, y, z, u, v);
-                if (i > 0) {
-                    j = i / vertCoords;
-                    is.push(0, j, j + 1); // 최상단 최초 꼭지점 기준
-                }
+            var perAngle = Math.PI*2/(n-1)
+            var vs = [0,0,0,0.5,0.5],is = [],i
+            for(i =0; i<n; i++){
+                vs.push(mS(perAngle*i),mC(perAngle*i),0,  -mS(perAngle*i)/2+0.5,-mC(perAngle*i)/2+0.5)
             }
-            result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
+            for (i = 0; i < n-1; i++) {
+                is.push(0, i + 1, i  + 2)
+            }
+            var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
             result._key = 'polygon_' + (arguments[0] || 1);
             return result;
         }

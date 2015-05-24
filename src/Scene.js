@@ -342,9 +342,9 @@ var Scene = (function () {
 			program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i])
 		}
 		self._glPROGRAMs[name] = program
-		console.log(vShader)
-		console.log(fShader)
-		console.log(program)
+		//console.log(vShader)
+		//console.log(fShader)
+		//console.log(program)
 		return program
 	}
 
@@ -371,7 +371,7 @@ var Scene = (function () {
 		resultStr += 'void main(void){\n',
 		resultStr += source.main + ';\n',
 		resultStr += '}\n',
-		console.log(resultStr),
+		//console.log(resultStr),
 		gl.shaderSource(shader, resultStr),
 		gl.compileShader(shader)
 		return shader
@@ -394,7 +394,7 @@ var Scene = (function () {
 		resultStr += 'void main(void){\n',
 		resultStr += source.main + ';\n',
 		resultStr += '}\n',
-		console.log(resultStr),
+		//console.log(resultStr),
 		gl.shaderSource(shader, resultStr),
 		gl.compileShader(shader)
 		return shader
