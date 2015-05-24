@@ -181,18 +181,18 @@
                     return testScene.addChild("mesh3", mesh3);
                 }catch(e){
                     console.log(e);
-                    return e.toString();
+                    return false;
                 }
-            }, "Error: Mesh.setGeometry:0",
+            }, false,
             function () {
                 try {
                     // 이미 씬에 등록된 mesh 에 Geometry를 바꿈
                     mesh1.setGeometry("unkwon_geo");
                 }catch(e){
                     console.log(e);
-                    return e.toString();
+                    return false;
                 }
-            }, "Error: Mesh.setGeometry:0",
+            }, false,
             function () {
                 try {
                     // 이미 씬에 등록된 mesh 에 Geometry 에 null 입력
@@ -210,9 +210,9 @@
                     mesh5.setMaterial("unkwon_meter");
                 }catch(e){
                     console.log(e);
-                    return e.toString();
+                    return false;
                 }
-            }, "Error: Mesh.setMaterial:0"
+            },false
     )
 
     bsTest('getParent',
