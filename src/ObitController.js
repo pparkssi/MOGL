@@ -48,6 +48,9 @@ var ObitController = (function () {
         document.addEventListener('mousedown',HD_down)
         document.addEventListener('mousemove',HD_move)
         document.addEventListener('mouseup',HD_up)
+        document.addEventListener('touchstart',HD_down)
+        document.addEventListener('touchmove',HD_move)
+        document.addEventListener('touchend',HD_up)
     },
     fn = ObitController.prototype,
     fn.setSpeed = function setSpeed(value){
