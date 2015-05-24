@@ -6,14 +6,12 @@
 
 **method**
 
-* [update](#update)
-* 
+* [update](#update)* 
 * [getSpeed](#getspeed)
 * [getSmoothDelay](#getsmoothdelay)
 * [getMinDistance](#getmindistance)
 * [getMaxDistance](#getmaxdistance)
 * [getDistance](#getdistance)
- 
 * [setSpeed](#setspeed-valuenumber)
 * [setSmoothDelay](#setsmoothdelay-valuenumber)
 * [setMinDistance](#setmindistance-valuenumber)
