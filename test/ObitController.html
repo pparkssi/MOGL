@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>MoGL Test Suite - FreeController.js</title>
+    <title>MoGL Test Suite - ObitController.js</title>
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="format-detection" content="telephone=no"/>
@@ -47,7 +47,7 @@
 <script src="../src/Primitive.js"></script>
 <script src="../src/Group.js"></script>
 <script src="../src/Camera.js"></script>
-<script src="../src/FreeController.js"></script>
+<script src="../src/ObitController.js"></script>
 <script src="../src/Scene.js"></script>
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
@@ -57,7 +57,7 @@
     var camera = new Camera()
     var world = new World('world')
     var scene = new Scene()
-    var controller = new FreeController(camera)
+    var controller = new ObitController(camera)
     console.log(camera)
 
     world.addScene('scene', scene)
@@ -78,7 +78,7 @@
     }
 
     world.addRender('scene', 'camera')
-    var controller = new FreeController(camera)
+    var controller = new ObitController(camera)
     setInterval(function () {
         controller.update()
         world.render()
@@ -91,7 +91,7 @@
     // UI
     ///////////////////////////////////////////////////
     var controllerParams = {
-        speed: 1000,
+        speed: 500,
         smoothDelay: 0.1
     };
     var shadingParams = {
@@ -124,7 +124,7 @@
     };
     var gui = new dat.GUI();
     var controllerPanel = gui.addFolder('Controller');
-    controllerPanel.add(controllerParams, 'speed', 100, 5000).onChange(function (value) {
+    controllerPanel.add(controllerParams, 'speed', 300, 2000).onChange(function (value) {
         controller.setSpeed(value)
     })
     controllerPanel.add(controllerParams, 'smoothDelay', 0.01, 0.5).onChange(function (value) {

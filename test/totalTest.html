@@ -33,22 +33,33 @@
 </head>
 <body>
 <script>
-    var list = ['FreeController.html','Primitive.html','Camera.html','parseShader.html','World.html', 'Scene.html', 'Group.html', 'Mesh.html', 'Geometry.html', 'Material.html', 'MoGL.html']
-    var BODY = document.body
+    var list = [
+        'FreeController.html',
+        'Primitive.html',
+        'Camera.html',
+        'parseShader.html',
+        'World.html',
+        'Scene.html',
+        'Group.html',
+        'Mesh.html',
+        'Geometry.html',
+        'Material.html',
+        'MoGL.html',
+        'Shading.html'
+    ];
+    var BODY = document.body;
     for (var i = 0, len = list.length; i < len; i++) {
-        var container = document.createElement('div')
-        var title = document.createElement('div')
-        var iframe = document.createElement('iframe')
+        var container = document.createElement('div');
+        var title = document.createElement('div');
+        var iframe = document.createElement('iframe');
 
-        container.style.display = 'inline-block'
-        title.innerHTML =  "<a href='"+list[i]+"'>"+list[i]+"</a>"
-        iframe.src = list[i]
+        container.style.display = 'inline-block';
+        title.innerHTML =  "<a href='"+list[i]+"'>"+list[i]+"</a>";
+        iframe.src = list[i];
 
-        container.appendChild(title)
-        container.appendChild(iframe)
-        BODY.appendChild(container)
-
-
+        container.appendChild(title);
+        container.appendChild(iframe);
+        BODY.appendChild(container);
     }
 </script>
 

@@ -11,5 +11,5 @@ var Texture = {
     diffuseWrap: 'diffuseWrap', //' - 디퓨즈랩 맵으로 등록함.
     normal: 'normal', // - 노말 맵으로 등록함.
     specularNormal: 'specularNormal' // - 스페큘러노말 맵으로 등록함.
-}
+};
 Object.freeze(Texture);
