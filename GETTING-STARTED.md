@@ -3,7 +3,11 @@
 MoGL(모글)은 모바일 브라우저에 최적화된 작고 가벼운 웹지엘 라이브러리입니다.
 쉽고 일관적인 인터페이스로 웹지엘에 대한 특별한 지식없이도 화려한 그래픽을 만들어 낼 수 있습니다.
 
-[Release 페이지](https://github.com/projectBS/MoGL/releases)에서 최신 버전을 다운 받거나 `bower`가 설치된 경우 `bower install mogl`을 실행하여 사용 가능합니다.
+[Release 페이지](https://github.com/projectBS/MoGL/releases)에서 최신 버전을 다운 받거나 https://cdnjs.com/libraries/mogl 에서 제공하는 링크를 삽입하여 사용 가능합니다.
+
+```javascript
+<script src="//cdnjs.cloudflare.com/ajax/libs/mogl/r0.1/mogl.min.js"></script>
+```
 
 ## 간단한 삼각형만들기
 
