@@ -72,6 +72,7 @@
     // UI
     /////////////////////////////////////////////
     var shadingParams = {
+        WireFrame : false,
         color: function () {
             testMat.removeTexture('texture');
             testMat.setShading(Shading.none)
@@ -107,6 +108,9 @@
     shading.add(shadingParams, 'PhongColor');
     shading.add(shadingParams, 'GouraudTextrue');
     shading.add(shadingParams, 'PhongTextrue');
+    shading.add(shadingParams, 'WireFrame').onChange(function(){
+        testMat.setWireFrame(shadingParams.WireFrame)
+    });
 </script>
 <hr/>
 
