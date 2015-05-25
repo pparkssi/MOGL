@@ -15,6 +15,10 @@ var fragmentShader = {
 }
 ```
 
+**precision**
+  - 프레그먼트 쉐이더에서 사용할 기본 정밀도를 선언.
+  - ''로 선언시 기본 mediup float으로 선언.
+
 **uniforms**
   - Fragment Shader에 사용될 uniform 선언
   - 'Type uniformName'
