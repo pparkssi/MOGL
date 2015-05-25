@@ -157,7 +157,7 @@ var Primitive = (function () {
             var result
             return result
         },
-        polygon: function polygon(n, radius) {
+        polygon: function polygon(n) {
             n = arguments[0] || 3;
             if (n < 3) MoGL.error('Primitive', 'polygon', 0);
 
