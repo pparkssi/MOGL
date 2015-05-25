@@ -1,8 +1,8 @@
 /**
  * Created by redcamel on 2015-05-22.
  */
-var ObitController = (function () {
-    var ObitController, fn,self,MAT1;
+var OrbitController = (function () {
+    var OrbitController, fn,self,MAT1;
     var HD_down, HD_move, HD_up,HD_downTouch, HD_moveTouch, HD_upTouch;
     MAT1 = Matrix.create(),
     HD_down = function HD_down(e) {
@@ -57,8 +57,8 @@ var ObitController = (function () {
         self._mouseInfo.zoom = false
         e.preventDefault()
     },
-    ObitController = function ObitController(camera) {
-        if(!(camera instanceof Camera)) MoGL.error('ObitController','contructor',0)
+    OrbitController = function OrbitController(camera) {
+        if(!(camera instanceof Camera)) MoGL.error('OrbitController','contructor',0)
         this._camera = camera,
         this._camera.x = 0.1,
         this._camera.y = 0.1,
@@ -93,30 +93,42 @@ var ObitController = (function () {
             document.body.addEventListener('mouseup',HD_up,false)
         }
     },
-    fn = ObitController.prototype,
-    fn.setMinDistance = function setMinDistance(value){
-        this._minDistance = value < 1 ? 1 : value
-    },
-    fn.setMaxDistance = function setMaxDistance(value){
-        this._maxDistance = value
-    },
-    fn.getMinDistance = function getMinDistance(value){
-        this._minDistance = value
-    },
-    fn.getMaxDistance = function getMaxDistance(value){
-        this._maxDistance = value
-    },
+    fn = OrbitController.prototype,
     fn.setSpeed = function setSpeed(value){
         this._speed = value
     },
     fn.setSmoothDelay = function setSmoothDelay(value){
         this._smoothDelay = value > 0.5 ? 0.5 : value
     },
+    fn.setMinDistance = function setMinDistance(value){
+        this._minDistance = value < 1 ? 1 : value
+    },
+    fn.setMaxDistance = function setMaxDistance(value){
+        this._maxDistance = value
+    },
+    fn.setDistance = function setDistance(value){
+        this._distance = value
+    },
     fn.getSpeed = function getSpeed(){
          return this._speed
     },
     fn.getSmoothDelay = function getSmoothDelay(){
         return this._smoothDelay
+    },
+    fn.getMinDistance = function getMinDistance(){
+        return this._minDistance
+    },
+    fn.getMaxDistance = function getMaxDistance(){
+        return this._maxDistance
+    },
+    fn.getDistance = function getDistance(){
+        return this._distance
+    },
+    fn.getPan = function getPan(){
+        return this._pan
+    },
+    fn.getTilt = function getTilt(){
+        return this._tilt
     },
     fn.update = function update(){
         if(this._mouseInfo.zoom){
@@ -128,15 +140,16 @@ var ObitController = (function () {
             this._camera.z += (Math.cos(this._pan )*this._distance- this._camera.z)*this._smoothDelay
         }else{
             this._pan+= this._mouseInfo.dx / window.innerWidth * this._speed * Math.PI/180,
-            this._tilt  += this._mouseInfo.dy / window.innerHeight/2* this._speed  * Math.PI/180,
+            this._tilt  += this._mouseInfo.dy / window.innerHeight/2* this._speed  * Math.PI/180
             this._camera.x += (-Math.sin(this._pan )*this._distance - this._camera.x)*this._smoothDelay,
             this._camera.y += (Math.sin(this._tilt )*this._distance +Math.cos(this._tilt )*this._distance- this._camera.y)*this._smoothDelay,
             this._camera.z += (Math.cos(this._pan )*this._distance- this._camera.z)*this._smoothDelay
             this._camera.lookAt(0,0,0)
         }
+
         this._mouseInfo.dx = 0,
         this._mouseInfo.dy = 0
 
     }
-    return MoGL.ext(ObitController, MoGL);
+    return MoGL.ext(OrbitController, MoGL);
 })();

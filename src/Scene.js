@@ -134,7 +134,7 @@ var Scene = (function () {
 
 			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(-uDLite);\n' +
-			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
 			'float lambertian = max(dot(lightDir,normal), 0.05)*uLambert;\n' +
@@ -173,7 +173,7 @@ var Scene = (function () {
 
 			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(-uDLite);\n' +
-			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
 			'float lambertian = max(dot(lightDir,normal), 0.0)*uLambert;\n' +
@@ -219,7 +219,7 @@ var Scene = (function () {
 
 			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(-uDLite);\n' +
-			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
 			'float lambertian = max(dot(lightDir,normal), 0.05)*uLambert;\n' +
@@ -342,9 +342,9 @@ var Scene = (function () {
 			program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i])
 		}
 		self._glPROGRAMs[name] = program
-		console.log(vShader)
-		console.log(fShader)
-		console.log(program)
+		//console.log(vShader)
+		//console.log(fShader)
+		//console.log(program)
 		return program
 	}
 
@@ -371,7 +371,7 @@ var Scene = (function () {
 		resultStr += 'void main(void){\n',
 		resultStr += source.main + ';\n',
 		resultStr += '}\n',
-		console.log(resultStr),
+		//console.log(resultStr),
 		gl.shaderSource(shader, resultStr),
 		gl.compileShader(shader)
 		return shader
@@ -394,7 +394,7 @@ var Scene = (function () {
 		resultStr += 'void main(void){\n',
 		resultStr += source.main + ';\n',
 		resultStr += '}\n',
-		console.log(resultStr),
+		//console.log(resultStr),
 		gl.shaderSource(shader, resultStr),
 		gl.compileShader(shader)
 		return shader
