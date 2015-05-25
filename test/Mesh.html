@@ -41,7 +41,13 @@
     var testGeometry2 = new Geometry([], [])
     var testMaterial1 = Material('#f00')
     var testMaterial2 = Material('#f00')
-    var testScene = Scene()
+
+    var testScene = Scene();
+    testScene.addMaterial("red", new Material("#ff0000"));
+    testScene.addGeometry("triangle", new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]));
+    var mesh5 = Mesh("triangle", "red");
+    var mesh6 = Mesh("triangle", "red");
+
     var tempGeo, tempMaterial
     var temp
     bsTest('new',
@@ -78,7 +84,7 @@
                 return mesh1.getGeometry();
             }, null,
             function () {
-                // 신에 등록하기전
+                // 신에 등록하기전 - new Mesh('cube', 'mat1')
                 mesh1.setGeometry(testGeometry1)
                 return mesh1.getGeometry();
             }, null,
@@ -168,7 +174,35 @@
             function () {
                 // 널로 된놈은 등록후에도 찾아지면안됨
                 return mesh4.getGeometry() == null;
-            }, true
+            }, true,
+            function () {
+                try {
+                    // 등록 안되어있는 Geometry id 로 생성된 mesh를 scene에 추가
+                    return testScene.addChild("mesh3", mesh3);
+                }catch(e){
+                    console.log(e);
+                    return e;
+                }
+            }, "Error: Mesh.setGeometry:0",
+            function () {
+                try {
+                    // 이미 씬에 등록된 mesh 에 Geometry를 바꿈
+                    mesh1.setGeometry("unkwon_geo");
+                }catch(e){
+                    console.log(e);
+                    return e;
+                }
+            }, "Error: Mesh.setGeometry:0",
+            function () {
+                try {
+                    // 이미 씬에 등록된 mesh 에 Material 바꿈
+                    testScene.addChild('mesh5', mesh5);
+                    mesh5.setMaterial("unkwon_meter");
+                }catch(e){
+                    console.log(e);
+                    return e;
+                }
+            }, "Error: Mesh.setMaterial:0"
     )
 
     bsTest('getParent',

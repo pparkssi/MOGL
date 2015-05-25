@@ -9,16 +9,15 @@ var Geometry = (function () {
     var Geometry, fn;
     Geometry = function Geometry(vertex, index, info) {
         var i, len, t, t2,
-            isFloat32 = vertex instanceof Float32Array,
-            isUint16 = index instanceof Uint16Array
-        console.log(index)
+        isFloat32 = vertex instanceof Float32Array,
+        isUint16 = index instanceof Uint16Array
         if (!(Array.isArray(vertex) || isFloat32 )) MoGL.error('Geometry', 'constructor', 0)
         if (!(Array.isArray(index) || isUint16  )) MoGL.error('Geometry', 'constructor', 1)
         if (info) {
             i = info.length
             if(vertex.length % i) MoGL.error('Geometry', 'constructor', 2)
             while(i--) info[info[i]] = i
-            console.log(info)
+            //console.log(info)
         }
         /////////////////////////////////////
         t = arguments[2] ? arguments[2].length : 3
@@ -58,19 +57,17 @@ var Geometry = (function () {
             v1 = [], v2 = [], n0 = [], v1[x] = v[3 * i[j + 1] + x] - v[3 * i[j] + x], v1[y] = v[3 * i[j + 1] + y] - v[3 * i[j] + y], v1[z] = v[3 * i[j + 1] + z] - v[3 * i[j] + z], v2[x] = v[3 * i[j + 2] + x] - v[3 * i[j + 1] + x], v2[y] = v[3 * i[j + 2] + y] - v[3 * i[j + 1] + y], v2[z] = v[3 * i[j + 2] + z] - v[3 * i[j + 1] + z], n0[x] = v1[y] * v2[z] - v1[z] * v2[y], n0[y] = v1[z] * v2[x] - v1[x] * v2[z], n0[z] = v1[x] * v2[y] - v1[y] * v2[x];
             for (k = 0; k < 3; k++) ns[3 * i[j + k] + x] = ns[3 * i[j + k] + x] + n0[x], ns[3 * i[j + k] + y] = ns[3 * i[j + k] + y] + n0[y], ns[3 * i[j + k] + z] = ns[3 * i[j + k] + z] + n0[z]
         }
-        ;
         for (var i = 0, len = v.length; i < len; i = i + 3) {
             n1 = [], n1[x] = ns[i + x], n1[y] = ns[i + y], n1[z] = ns[i + z];
             var len = mSqt((n1[x] * n1[x]) + (n1[y] * n1[y]) + (n1[z] * n1[z]));
             if (len == 0) len = 0.00001;
             n1[x] = n1[x] / len, n1[y] = n1[y] / len, n1[z] = n1[z] / len, ns[i + x] = n1[x], ns[i + y] = n1[y], ns[i + z] = n1[z];
         }
-        ;
         return ns;
     }
     fn = Geometry.prototype,
     fn.addVertexShader = function addVertexShader(id) { MoGL.isAlive(this);
-        // TODO 마일스톤0.2
+        // TODO 마일스톤0.5
         this._vertexShaders[id] = id
         return this
     },
@@ -83,8 +80,8 @@ var Geometry = (function () {
     fn.getVolume = function getVolume() { MoGL.isAlive(this);
         if (!this._volume) {
             var minX = 0, minY = 0, minZ = 0, maxX = 0, maxY = 0, maxZ = 0
-            var t0, t1, t2, t = this._position,i= t.length
-            while(i--){
+            var t0, t1, t2, t = this._position, i = t.length
+            while (i--) {
                 t0 = i * 3, t1 = t0 + 1, t2 = t0 + 2
                 minX = t[t0] < minX ? t[t0] : minX,
                 maxX = t[t0] > maxX ? t[t0] : maxX,
@@ -98,9 +95,8 @@ var Geometry = (function () {
         return this._volume
     },
     fn.removeVertexShader = function removeVertexShader(id) { MoGL.isAlive(this);
-        // TODO 마일스톤0.2
+        // TODO 마일스톤0.5
         return delete this._vertexShaders[id], this
-    };
-
+    }
     return MoGL.ext(Geometry, MoGL);
 })();

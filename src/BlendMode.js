@@ -13,5 +13,5 @@ var BlendMode = {
     multiply: 'multiply', //'multiply' - 전면색에 배경색을 곱하고 0xFF로 나누어 정규화하여 보다 어두운 색을 만듬.
     screen: 'screen', //'screen' - 전면색의 보수(역수)에 배경색 보수를 곱하여 표백 효과를 냄.
     subtract: 'subtract' //'subtract' - 전면색의 값을 배경색에서 빼고 내림값 0을 적용
-}
+};
 Object.freeze(BlendMode);
