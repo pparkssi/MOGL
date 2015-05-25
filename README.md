@@ -6,7 +6,6 @@ MOGL is a lightweight & high performance **MO**bile web**GL** library.
 
 * [Releases](https://github.com/projectBS/MoGL/releases)
 * CDN : https://cdnjs.com/libraries/mogl
-* Bower : `$ bower install mogl`
 
 **Document**
 
