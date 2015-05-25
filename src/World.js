@@ -60,7 +60,7 @@ var World = (function () {
                     children = scene._children;
                     gl.clearColor(camera._r, camera._g, camera._b, camera._a);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                    gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL);
+                    gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                     //gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW)
                     //gl.enable(gl.BLEND)
                     //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
