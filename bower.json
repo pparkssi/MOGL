@@ -1,9 +1,9 @@
 {
   "name": "MoGL",
-  "version": "r0.1",
+  "version": "0.2.0",
   "homepage": "https://github.com/projectBS/MoGL",
   "description": "MOGL is a lightweight & high performance MObile webGL library.",
-  "main": "mogl.js",
+  "main": "mogl.min.js",
   "keywords": [
     "mobile",
     "webgl"
@@ -21,6 +21,7 @@
   "ignore": [
     "tutorial/",
     "doc/",
+    "COMMITTING.md",
     "CONTRIBUTING.md",
     "GETTING-STARTED.md"
   ]
