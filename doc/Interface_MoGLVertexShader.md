@@ -51,7 +51,7 @@ var vertexShader = {
   - 위 선언된	attributes, uniforms,varyings,function을 활용하여 main 함수를 작성
 ```
   main: ['' +
-  'gl_Position = uPixelMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+  'gl_Position = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
   'vColor = uColor;\n'
   ]
 ```
