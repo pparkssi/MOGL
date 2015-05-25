@@ -38,8 +38,9 @@ var fragmentShader = {
 **function**
   - Fragment Shader에 사용될 쉐이더용 함수를 설정
   - FragmentShader([FragmentFunctions](FragmentFunctions.md))에 선언된 함수목록을 참조
+  - 0.2 버전까지는 지원하지 않음
 ```
-  function: [FragmentShader.baseFunction]
+  function: []
 ```
 
 **main**
