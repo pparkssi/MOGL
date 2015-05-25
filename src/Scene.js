@@ -71,7 +71,7 @@ var Scene = (function () {
 			' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			' vec3 LD = normalize(uDLite);\n' +
 			' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
-			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.05,1.0)),1.0);\n' +
+			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.001,1.0)),1.0);\n' +
 			' vUV = aUV;'
 			]
 		}
@@ -95,7 +95,7 @@ var Scene = (function () {
 			' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			' vec3 LD = normalize(uDLite);\n' +
 			' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
-			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.05,1.0)),1.0);\n' +
+			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.001,1.0)),1.0);\n' +
 			' vColor = uColor;'
 			]
 		}
@@ -134,10 +134,10 @@ var Scene = (function () {
 
 			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(-uDLite);\n' +
-			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
-			'float lambertian = max(dot(lightDir,normal), 0.05)*uLambert;\n' +
+			'float lambertian = max(dot(lightDir,normal), 0.001)*uLambert;\n' +
 			'float specular = 0.0;\n' +
 
 			'if(lambertian > 0.0) {\n' +
@@ -173,7 +173,7 @@ var Scene = (function () {
 
 			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(-uDLite);\n' +
-			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
 			'float lambertian = max(dot(lightDir,normal), 0.0)*uLambert;\n' +
@@ -219,10 +219,10 @@ var Scene = (function () {
 
 			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(-uDLite);\n' +
-			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
-			'float lambertian = max(dot(lightDir,normal), 0.05)*uLambert;\n' +
+			'float lambertian = max(dot(lightDir,normal), 0.001)*uLambert;\n' +
 			'float specular = 0.0;\n' +
 
 			'if(lambertian > 0.0) {\n' +
