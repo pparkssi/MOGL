@@ -134,7 +134,7 @@ var Scene = (function () {
 
 			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(-uDLite);\n' +
-			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
 			'float lambertian = max(dot(lightDir,normal), 0.05)*uLambert;\n' +
@@ -173,7 +173,7 @@ var Scene = (function () {
 
 			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(-uDLite);\n' +
-			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
 			'float lambertian = max(dot(lightDir,normal), 0.0)*uLambert;\n' +
@@ -219,7 +219,7 @@ var Scene = (function () {
 
 			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(-uDLite);\n' +
-			'vec3 reflectDir = reflect(-lightDir, normal);\n' +
+			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
 			'float lambertian = max(dot(lightDir,normal), 0.05)*uLambert;\n' +
