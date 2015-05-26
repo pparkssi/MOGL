@@ -78,10 +78,19 @@
         function start(json) {
             var vertices = json.vertices, faces = json.faces, uvs = json.uv;
 
-            var vertexBuffer = [], indexBuffer = [], i, j;
+            var vertexBuffer = [], indexBuffer = [], uvArray = [], i, j, fv = 0, uvSize = uvs.length;
+
+            faces.forEach(function(v){
+                v.forEach(function(vv){
+                    if( fv < uvSize )
+                        uvArray[vv] = uvs[fv];
+                    fv++;
+                })
+            });
+
 
             for (i = 0, j = vertices.length; i < j; i++) {
-                vertexBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2], uvs[i][0], uvs[i][1]);
+                vertexBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2], uvArray[i][0], uvArray[i][1]);
             }
 
             for (i = 0, j = faces.length; i < j; i++) {
@@ -92,7 +101,7 @@
 
             scene.addGeometry('geometry', new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
 
-            var mesh = new Mesh('geometry', 'material')
+            var mesh = new Mesh('geometry', 'material');
             mesh.scaleX = 10;
             mesh.scaleY = 10;
             mesh.scaleZ = 10;
