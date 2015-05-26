@@ -143,6 +143,42 @@ city1.destroy();
 ```
 
 [top](#)
+## error( id:int )
+
+**description**
+
+특정 id로 에러를 보고함.
+
+**param**
+
+1. id:int - 에러의 고유 id.
+
+**exception**
+
+에러함수는 무조건 예외를 발생시키며 에러메세지는 '클래스명.메서드명:id' 형태로 출력됨.
+* 이 메서드는 외부에서 사용하지 못하고 내부의 메서드 구현시 사용하는 시스템임.
+
+**return**
+
+없음.
+
+**sample**
+
+```javascript
+var Test = function(){}
+Test.prototype.action = function(){
+  this.error(0);
+};
+Test = MoGL.ext(Test);
+var a = new Test();
+try{
+  a.action();
+}catch(e){
+  console.log( e.toString() ); //'Test.action:0'
+}
+```
+
+[top](#)
 ## MoGL.count( [class:function] )
 
 **description**
