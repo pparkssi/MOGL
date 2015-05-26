@@ -15,7 +15,7 @@
 
 * [destroy](#destroy)
 * [error](#error-idint-)
-* [setId](#setid)
+* [setId](#setid-idstring-)
  
 **static**
 
