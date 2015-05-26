@@ -24,31 +24,31 @@
     var mat = new Matrix()
     mat[3] = 100
     console.log(mat)
-    var mat2 = mat.clone()
+    var mat2 = mat.matClone()
     console.log(mat2)
     var mat3 = new Matrix()
-    mat2.copy(mat3)
+    mat2.matCopy(mat3)
     console.log(mat3)
 
     var mat4 = new Matrix()
     mat4[4] = 100
-    mat4.invert()
+    mat4.matInvert()
     console.log(mat4)
 
     var mat5 = new Matrix()
     var mat6 = new Matrix()
-    mat5.scale(10, 10, 10)
+    mat5.matScale(10, 10, 10)
     console.log(mat5)
-    mat5.translate(100, 100, 100)
+    mat5.matTranslate(100, 100, 100)
     console.log(mat5)
     mat5[0] = 100
     mat6[0] = 100
-    mat5.multiply(mat6)
+    mat5.matMultiply(mat6)
     console.log(mat5)
     var mat7 = Matrix()
-    mat7.rotateX(Math.PI / 2)
+    mat7.matRotateX(Math.PI / 2)
     console.log(mat7)
-    console.log(mat7.str())
+    console.log(mat7.matStr())
 
     var mat8 = new Matrix()
     var fov = 55
@@ -56,7 +56,7 @@
     var h = 1024
     var near = 0.1
     var far = 10000
-    mat8.perspective(fov, w / h, near, far)
+    mat8.matPerspective(fov, w / h, near, far)
     console.log(mat8)
 </script>
 </body>
