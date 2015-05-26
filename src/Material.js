@@ -24,10 +24,10 @@ var Material = (function () {
         this.setBackgroundColor.apply(this, arguments);
     },
     fn = Material.prototype,
-    fn.addTexture = function addTexture(type,textureID/*,index,blendMode*/) { MoGL.isAlive(this);
+    fn.addTexture = function addTexture(type,textureID/*,index,blendMode*/) { 
         var t = this._scene;
-        if (t && !t._textures[textureID]) MoGL.error('Material', 'addTexture', 0);
-        if (this._textures[textureID]) MoGL.error('Material', 'addTexture', 1);
+        if (t && !t._textures[textureID]) this.error(0);
+        if (this._textures[textureID]) this.error(1);
         this._textures[textureID] = {id: textureID, type: type};
         var result;
         console.log('type :', '_' + type);
@@ -40,10 +40,10 @@ var Material = (function () {
         else result = this['_' + type].__indexList.push({id: textureID, blendMode: arguments[3]});
         return this;
     },
-    fn.getRefCount = function getRefCount(){ MoGL.isAlive(this);
+    fn.getRefCount = function getRefCount(){ 
         return this._count;
     },
-    fn.removeTexture = function removeTexture(textureID){ MoGL.isAlive(this);
+    fn.removeTexture = function removeTexture(textureID){ 
         var t = this._textures[textureID];
         if(!t) return this;
         var type = this._textures[textureID].type;
@@ -59,7 +59,7 @@ var Material = (function () {
         console.log('확인', this['_' + type]);
         return this;
     },
-    //    fn.removeTexture = function removeTexture(type,textureID){ MoGL.isAlive(this);
+    //    fn.removeTexture = function removeTexture(type,textureID){ 
     //        console.log('지울텍스쳐',type,textureID)
     //        console.log(this)
     //        var typeList = this['_' + type].__indexList
@@ -74,7 +74,7 @@ var Material = (function () {
     //        console.log('확인', this['_' + type])
     //        return this
     //    },
-    fn.setBackgroundColor = function setBackgroundColor(){ MoGL.isAlive(this);
+    fn.setBackgroundColor = function setBackgroundColor(){ 
         var t0 = arguments[0], t1, ta;
         if (arguments.length == 1) {
             if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7);
@@ -98,7 +98,7 @@ var Material = (function () {
             this._a = arguments[3] == undefined ?  1 : arguments[3]
         }
     },
-    fn.setWireFrame = function setWireFrame(isVisible){ MoGL.isAlive(this);
+    fn.setWireFrame = function setWireFrame(isVisible){ 
         this._wireFrame = isVisible;
         var t0 = arguments[1], t1, ta;
         if (arguments.length == 2) {
@@ -115,10 +115,10 @@ var Material = (function () {
             }
         }
     },
-    fn.setShading = function setShading(type){ MoGL.isAlive(this);
+    fn.setShading = function setShading(type){ 
         type.apply(this);
     },
-    fn.setLambert = function setShading(rate){ MoGL.isAlive(this);
+    fn.setLambert = function setShading(rate){ 
         this._shading.lambert = rate;
     };
     return MoGL.ext(Material, MoGL);

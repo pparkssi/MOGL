@@ -5,7 +5,7 @@ var FreeController = (function () {
     var FreeController, fn,MAT1,MAT2;
     MAT1 = Matrix.create(), MAT2 = Matrix.create(),
     FreeController = function FreeController(camera) {
-        if(!(camera instanceof Camera)) MoGL.error('FreeController','contructor',0)
+        if(!(camera instanceof Camera)) this.error(0)
         this._camera = camera
         this._displacement = [0,0,0]
         this._speed = 1000.0

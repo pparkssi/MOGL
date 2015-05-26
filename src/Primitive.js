@@ -159,7 +159,7 @@ var Primitive = (function () {
         },
         polygon: function polygon(n) {
             n = arguments[0] || 3;
-            if (n < 3) MoGL.error('Primitive', 'polygon', 0);
+            if (n < 3) this.error(0);
 
             var i, j, angle = 2 * PI / n, x, y, z, u, v,
                 vs = [0.0, 1.0, 0.0, 0.5, 0.0], is = [], vertCoords = vs.length,

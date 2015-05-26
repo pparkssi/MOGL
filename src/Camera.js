@@ -32,7 +32,7 @@ var Camera = (function () {
         this.lookAt(0,0,0);
     }
     fn = Camera.prototype,
-    fn.getMatrix = function getMatrix() { MoGL.isAlive(this);
+    fn.getMatrix = function getMatrix() { 
         Matrix.identity(this._matrix);
         Matrix.rotateX(this._matrix,this._matrix,this.rotateX);
         Matrix.rotateY(this._matrix,this._matrix,this.rotateY);
@@ -41,24 +41,24 @@ var Camera = (function () {
         Matrix.translate(this._matrix,this._matrix,F3);
         return this._matrix;
     },
-    fn.getBackgroundColor = function getBackgroundColor(){MoGL.isAlive(this);
+    fn.getBackgroundColor = function getBackgroundColor(){
         return A4[0] = this._r, A4[1] = this._g, A4[2] = this._b, A4[3] = this._a, A4;
     },
-    fn.getClipPlane = function getClipPlane(){MoGL.isAlive(this);
+    fn.getClipPlane = function getClipPlane(){
         return [this._near,this._far];
     },
-    fn.getFilters = function getFilters(){MoGL.isAlive(this);
+    fn.getFilters = function getFilters(){
         var result = [],t = this._filters;
         for(var k in t) result.push(k);
         return result;
     },
-    fn.getFog = function getFog(){MoGL.isAlive(this);
+    fn.getFog = function getFog(){
         return this._fog ? true : false;
     },
-    fn.getFOV = function getFOV(){MoGL.isAlive(this);
+    fn.getFOV = function getFOV(){
         return this._fov;
     },
-    fn.getProjectionMatrix = function getProjectionMatrix(){MoGL.isAlive(this);
+    fn.getProjectionMatrix = function getProjectionMatrix(){
         Matrix.identity(this._pixelMatrix);
         if(this._mode == '2d'){
             this._pixelMatrix = [
@@ -70,16 +70,16 @@ var Camera = (function () {
         }else Matrix.perspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far, this._pixelMatrix);
         return this._pixelMatrix;
     },
-    fn.getRenderArea = function getRenderArea(){MoGL.isAlive(this);
+    fn.getRenderArea = function getRenderArea(){
         return this._renderArea;
     },
-    fn.getAntialias = function getAntialias(){MoGL.isAlive(this);
+    fn.getAntialias = function getAntialias(){
         return this._antialias ? true : false;
     },
-    fn.getVisible = function getVisible(){MoGL.isAlive(this);
+    fn.getVisible = function getVisible(){
         return this._visible ? true : false;
     },
-    fn.setBackgroundColor = function setBackgroundColor() {MoGL.isAlive(this);
+    fn.setBackgroundColor = function setBackgroundColor() {
         var t0, t1, ta;
         t0 = arguments[0];
         if (arguments.length == 1) {
@@ -105,11 +105,11 @@ var Camera = (function () {
         }
         return this;
     },
-    fn.setClipPlane = function setClipPlane(near,far){MoGL.isAlive(this);
+    fn.setClipPlane = function setClipPlane(near,far){
         this._near = near, this._far = far;
         return this;
     },
-    fn.setFog = function setFog(color,near,far){MoGL.isAlive(this);
+    fn.setFog = function setFog(color,near,far){
         var t0 = color, t1, result;
         if (t0 !=false && t0.charAt(0) == '#') {
             result= {};
@@ -131,24 +131,24 @@ var Camera = (function () {
         } else if (!t0) this._fog = null;
         return this;
     },
-    fn.setFOV = function setFOV(){MoGL.isAlive(this);
+    fn.setFOV = function setFOV(){
         if (arguments.length == 1) this._fov = arguments[0];
         else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI));
         return this;
     },
-    fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
+    fn.setOthogonal = function setOthogonal(){
         this._mode = '2d';
         return this;
     },
-    fn.setPerspective = function setPerspective(){MoGL.isAlive(this);
+    fn.setPerspective = function setPerspective(){
         this._mode = '3d';
         return this;
     },
-    fn.setProjectionMatrix = function setProjectionMatrix(matrix){MoGL.isAlive(this);
+    fn.setProjectionMatrix = function setProjectionMatrix(matrix){
         //TODO 이거 없애버림...
         return this;
     },
-    fn.setRenderArea = function setRenderArea(x,y,w,h){MoGL.isAlive(this);
+    fn.setRenderArea = function setRenderArea(x,y,w,h){
         var tw, th;
         this._updateRenderArea = 1,
         tw = this._cvs.width,
@@ -162,15 +162,15 @@ var Camera = (function () {
         ];
         return this;
     },
-    fn.setAntialias = function setAntialias(isAntialias){MoGL.isAlive(this);
+    fn.setAntialias = function setAntialias(isAntialias){
         this._antialias = isAntialias;
         return this;
     },
-    fn.setVisible = function setVisible(value){MoGL.isAlive(this);
+    fn.setVisible = function setVisible(value){
         this._visible = value;
         return this;
     },
-    fn.setFilter = function setFilter(filter/*,needIe*/){MoGL.isAlive(this);
+    fn.setFilter = function setFilter(filter/*,needIe*/){
         var result;
         if(arguments[1]) result = arguments[1];
         else {
@@ -288,7 +288,7 @@ var Camera = (function () {
         this._filters[filter] = result;
         return this;
     },
-    fn.removeFilter = function removeFilter(filter){MoGL.isAlive(this);
+    fn.removeFilter = function removeFilter(filter){
         delete this._filters[filter];
         return this;
     }
