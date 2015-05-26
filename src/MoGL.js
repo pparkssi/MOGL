@@ -131,7 +131,6 @@ var MoGL = (function(){
 		Object.freeze(cls),
 		Object.seal(newProto);
 		return cls;
-	},
-	Object.freeze(MoGL);
+	};
 	return MoGL;
 })();
