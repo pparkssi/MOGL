@@ -1,4 +1,4 @@
-var MoGL = ( function( global ){
+( function( global ){
 var MoGL = (function(){
 	var isFactory, isSuperChain, 
 		uuidProp, isAliveProp, idProp, 
@@ -111,8 +111,7 @@ var MoGL = (function(){
 		Object.freeze(cls),
 		Object.seal(newProto);
 		return cls;
-    },
-	Object.freeze(MoGL);
+    };
 	return MoGL;
 })();
 
@@ -2333,8 +2332,8 @@ var World = (function () {
     };
     return MoGL.ext(World, MoGL);
 })();
-return {
-    MoGL: MoGL,
+var t0, k;
+for( k in t0 = {
     BlendMode: BlendMode,
     Filter: Filter,
     Vertex: Vertex,
@@ -2351,7 +2350,9 @@ return {
     Scene:Scene,
     World:World,
     globalization:function(){ for( var key in this ) global[key] = this[key]; }
-};
+} ) MoGL[k] = t0[k];
+Object.freeze(MoGL);
+global['MoGL'] = MoGL;
 } )(this);
 
 if( typeof module !== 'undefined' && typeof module === 'object' ) module.exports = MoGL;
