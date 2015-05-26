@@ -16,7 +16,7 @@ var World = (function () {
         var width = window.innerWidth;
         var height = window.innerHeight;
 
-        //this._pixelRatio = width/height > 1 ? window.devicePixelRatio : 1
+        //this._pixelRatio = parseFloat(width)/parseFloat(height) > 1 ? window.devicePixelRatio : 1
         this._pixelRatio = window.devicePixelRatio;
 
         this._cvs.width = width * this._pixelRatio;
@@ -29,7 +29,14 @@ var World = (function () {
         this.LOOP = {},
 
         keys = 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length;
-        while (i--) if (this._gl = this._cvs.getContext(keys[i], {antialias: true})) break;
+        while (i--) if (this._gl = this._cvs.getContext(keys[i], {
+                alpha: true,
+                depth: true,
+                stencil:false,
+                antialias: true,
+                premultipliedAlpha:true,
+                preserveDrawingBuffer:false
+            })) break;
         ext = this._gl.getExtension("OES_element_index_uint");
         if (!ext) alert('no! OES_element_index_uint');
         console.log(this._gl ? id + ' : MoGL 초기화 성공!' : console.log(id + ' : MoGL 초기화 실패!!'));
