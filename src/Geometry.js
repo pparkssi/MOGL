@@ -11,11 +11,11 @@ var Geometry = (function () {
         var i, len, t, t2,
         isFloat32 = vertex instanceof Float32Array,
         isUint16 = index instanceof Uint16Array
-        if (!(Array.isArray(vertex) || isFloat32 )) MoGL.error('Geometry', 'constructor', 0)
-        if (!(Array.isArray(index) || isUint16  )) MoGL.error('Geometry', 'constructor', 1)
+        if (!(Array.isArray(vertex) || isFloat32 )) this.error(0)
+        if (!(Array.isArray(index) || isUint16  )) this.error(1)
         if (info) {
             i = info.length
-            if(vertex.length % i) MoGL.error('Geometry', 'constructor', 2)
+            if(vertex.length % i) this.error(2)
             while(i--) info[info[i]] = i
             //console.log(info)
         }
@@ -66,18 +66,18 @@ var Geometry = (function () {
         return ns;
     }
     fn = Geometry.prototype,
-    fn.addVertexShader = function addVertexShader(id) { MoGL.isAlive(this);
+    fn.addVertexShader = function addVertexShader(id) { 
         // TODO 마일스톤0.5
         this._vertexShaders[id] = id
         return this
     },
-    fn.getVertexCount = function getVertexCount() { MoGL.isAlive(this);
+    fn.getVertexCount = function getVertexCount() { 
         return this._vertexCount
     },
-    fn.getTriangleCount = function getTriangleCount() { MoGL.isAlive(this);
+    fn.getTriangleCount = function getTriangleCount() { 
         return this._triangleCount
     },
-    fn.getVolume = function getVolume() { MoGL.isAlive(this);
+    fn.getVolume = function getVolume() { 
         if (!this._volume) {
             var minX = 0, minY = 0, minZ = 0, maxX = 0, maxY = 0, maxZ = 0
             var t0, t1, t2, t = this._position, i = t.length
@@ -94,7 +94,7 @@ var Geometry = (function () {
         }
         return this._volume
     },
-    fn.removeVertexShader = function removeVertexShader(id) { MoGL.isAlive(this);
+    fn.removeVertexShader = function removeVertexShader(id) { 
         // TODO 마일스톤0.5
         return delete this._vertexShaders[id], this
     }

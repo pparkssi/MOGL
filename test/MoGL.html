@@ -15,22 +15,9 @@
 <div id="result"></div>
 <div id="test"></div>
 <script src="../src/MoGL.js"></script>
-<script src="../src/BlendMode.js"></script>
-<script src="../src/Filter.js"></script>
-<script src="../src/Vertex.js"></script>
-<script src="../src/VertexShaderFunctions.js"></script>
-<script src="../src/Matrix.js"></script>
-<script src="../src/Geometry.js"></script>
-<script src="../src/Material.js"></script>
-<script src="../src/Texture.js"></script>
-<script src="../src/Mesh.js"></script>
-<script src="../src/Group.js"></script>
-<script src="../src/Camera.js"></script>
-<script src="../src/Scene.js"></script>
-<script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-	var parent = function( a, b ){
+	var parent = function parent( a, b ){
 		this.a = a;
 		this.b = b;
 	};
@@ -40,22 +27,22 @@
 	parent.prototype.printB = function(){
 		return this.b;
 	};
-	parent = MoGL.ext( parent, MoGL );
+	parent = MoGL.ext( parent );
 
-	var child = function( a, b, c ){
+	var child = function child( a, b, c ){
 		this.c = c;
 	};
 	child.prototype.printC = function(){
 		return this.c;
+	};
+	child.prototype.errorTest = function(){
+		this.error(1);
 	};
 	child = MoGL.ext( child, parent );
 
 	var instance1 = new child( 1, 2, 3 );
 
 	bsTest( 'new',
-			function(){
-				return instance1.uuid;
-			}, 2,
 			function(){
 				return instance1.isAlive;
 			}, true,
@@ -73,9 +60,6 @@
 	var instance2 = child( 4, 5, 6 );
 
 	bsTest( 'factory',
-			function(){
-				return instance2.uuid;
-			}, 3,
 			function(){
 				return instance2.isAlive;
 			}, true,
@@ -98,7 +82,17 @@
 				return MoGL.count(child);
 			}, 2
 	);
-
+	bsTest( 'error',
+			function(){
+				var test = '';
+				try{
+					instance2.errorTest()
+				}catch(e){
+					test = e.toString();
+				}
+				return test;
+			}, 'Error: child.errorTest:1'
+	);
 	bsTest( 'destroy',
 			function(){
 				instance1.destroy();
@@ -110,16 +104,16 @@
 			}, false
 	);
 
-	bsTest( 'error',
+	bsTest( 'destroyed',
 			function(){
 				var test = '';
 				try{
-					MoGL.error( 'test', 'method', 3 )
+					instance2.errorTest()
 				}catch(e){
 					test = e.toString();
 				}
 				return test;
-			}, 'Error: test.method:3'
+			}, 'Error: Destroyed Object:[object Object]'
 	);
 
 	var instance3 = child(7, 8, 9);
@@ -161,7 +155,7 @@
 				return parent.constructor === MoGL && child.constructor === MoGL;
 			}, true
 	);
-
+/*
     bsTest( 'isAlive',
             function(){
                 var lobby = new Scene(), test;
@@ -174,7 +168,7 @@
                 return test;
             }, 'Error: Destroyed Object:[object Object]'
     );
-
+*/
 </script>
 </body>
 </html>

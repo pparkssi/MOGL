@@ -24,7 +24,7 @@ var Matrix = (function () {
         return out[0] = -a[0], out[1] = -a[1], out[2] = -a[2], out;
     },
     /*
-         ´ÜÀ§º¤ÅÍÈ­
+         ë‹¨ìœ„ë²¡í„°í™”
      */
     vec3.normalize = function normalize(out, a) {
         var x = a[0], y = a[1], z = a[2];
@@ -33,13 +33,13 @@ var Matrix = (function () {
         return out;
     },
     /*
-        ³»Àû
+        ë‚´ì 
      */
     vec3.dot = function (a, b) {
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     },
     /*
-        µÎº¤ÅÍ¿¡ ¼öÁ÷ÀÎ º¤ÅÍ
+        ë‘ë²¡í„°ì— ìˆ˜ì§ì¸ ë²¡í„°
      */
     vec3.cross = function(out, a, b) {
         var ax = a[0], ay = a[1], az = a[2],bx = b[0], by = b[1], bz = b[2];
@@ -62,7 +62,7 @@ var Matrix = (function () {
         return this;
     },
     /*
-     Çà·ÄÀÇ rawData¸¦ ±â¹İÀ¸·Î »õ·Î¿î Çà·Ä »ı¼º
+     í–‰ë ¬ì˜ rawDataë¥¼ ê¸°ë°˜ìœ¼ë¡œ ìƒˆë¡œìš´ í–‰ë ¬ ìƒì„±
      return Matrix
      */
     fn.matClone = function matClone() {
@@ -73,7 +73,7 @@ var Matrix = (function () {
         return out;
     },
     /*
-     Çà·ÄÀÇ ¸ğµç rawData¸¦ ´ë»ó °´Ã¼¿¡ º¹»ç
+     í–‰ë ¬ì˜ ëª¨ë“  rawDataë¥¼ ëŒ€ìƒ ê°ì²´ì— ë³µì‚¬
      return this
      */
     fn.matCopy = function matCopy(t) {
@@ -82,7 +82,7 @@ var Matrix = (function () {
         return this;
     },
     /*
-     ÇöÀç Çà·ÄÀ» ¹İÀü
+     í˜„ì¬ í–‰ë ¬ì„ ë°˜ì „
      return this
      */
     fn.matInvert = function matInvert() {
@@ -96,7 +96,7 @@ var Matrix = (function () {
         return this;
     },
     /*
-     ÇöÀç Çà·ÄÀ» ÀüÄ¡
+     í˜„ì¬ í–‰ë ¬ì„ ì „ì¹˜
      return this
      */
     fn.matTranspose = function matTranspose(t) {
@@ -106,7 +106,7 @@ var Matrix = (function () {
         return this;
     };
     /*
-     ÇöÀç Çà·Ä°ú ÀÔ·ÂµÈ Çà·ÄÀÇ °ö
+     í˜„ì¬ í–‰ë ¬ê³¼ ì…ë ¥ëœ í–‰ë ¬ì˜ ê³±
      return this
      */
     fn.matMultiply = function matMultiply(t) {
@@ -123,7 +123,7 @@ var Matrix = (function () {
         return this;
     },
     /*
-     x,y,zÃàÀ¸·Î ÆòÇàÀÌµ¿
+     x,y,zì¶•ìœ¼ë¡œ í‰í–‰ì´ë™
      return this
      */
     fn.matTranslate = function matTranslate(x, y, z) {
@@ -132,7 +132,7 @@ var Matrix = (function () {
         return this;
     },
     /*
-     x,y,zÃàÀ¸·Î È®´ë
+     x,y,zì¶•ìœ¼ë¡œ í™•ëŒ€
      return this
      */
     fn.matScale = function matScale(x, y, z) {
@@ -141,7 +141,7 @@ var Matrix = (function () {
         return this
     },
     /*
-     xÃà±âÁØ È¸Àü
+     xì¶•ê¸°ì¤€ íšŒì „
      */
     fn.matRotateX = function matRotateX(rad) {
         var a = this, s = SIN(rad), c = COS(rad), a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
@@ -149,7 +149,7 @@ var Matrix = (function () {
         return this;
     },
     /*
-     yÃà±âÁØ È¸Àü
+     yì¶•ê¸°ì¤€ íšŒì „
      */
     fn.matRotateY = function matRotateY(rad) {
         var a = this, s = SIN(rad), c = COS(rad), a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
@@ -157,7 +157,7 @@ var Matrix = (function () {
         return this;
     },
     /*
-     ZÃà±âÁØ È¸Àü
+     Zì¶•ê¸°ì¤€ íšŒì „
      */
     fn.matRotateZ = function matRotateZ(rad) {
         var a = this, s = SIN(rad), c = COS(rad), a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
@@ -165,7 +165,7 @@ var Matrix = (function () {
         return this;
     },
     /*
-     axis¸¦ ±âÁØÀ¸·Î ÇÑ ÁõºĞÈ¸Àü
+     axisë¥¼ ê¸°ì¤€ìœ¼ë¡œ í•œ ì¦ë¶„íšŒì „
      */
     fn.matRotate = function matRotate(rad, axis) {
         var a = this
@@ -186,7 +186,7 @@ var Matrix = (function () {
         return this
     },
     /*
-     ÆÛ½ºÆåÆ¼ºê Çà·Ä¹İÈ¯
+     í¼ìŠ¤í™í‹°ë¸Œ í–‰ë ¬ë°˜í™˜
      */
     fn.matPerspective = function matPerspective(fov, aspect, near, far, out) {
         fov = near * Math.tan(fov * Math.PI / 360),

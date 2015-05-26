@@ -13,8 +13,8 @@ var Mesh = (function () {
     F3 = new Float32Array(3), F3_2 = new Float32Array(3),
     Mesh = function Mesh(geometry, material) {
         // TODO 어디까지 허용할건가..
-        if (geometry && !(typeof geometry == 'string' || geometry instanceof Geometry  )) MoGL.error('Mesh', 'contructor', 0)
-        if (material && !(typeof material == 'string' || material instanceof Material  )) MoGL.error('Mesh', 'contructor', 1)
+        if (geometry && !(typeof geometry == 'string' || geometry instanceof Geometry  )) this.error(0)
+        if (material && !(typeof material == 'string' || material instanceof Material  )) this.error(1)
         this._geometry = geometry,
         this._material = material,
         this._scene = null,
@@ -25,13 +25,13 @@ var Mesh = (function () {
         this.x = 0, this.y = 0, this.z = 0
     },
     fn = Mesh.prototype,
-    fn.getGeometry = function getGeometry() { MoGL.isAlive(this);
+    fn.getGeometry = function getGeometry() { 
         return this._scene ? this._geometry : null
     },
-    fn.getMaterial = function getMaterial() { MoGL.isAlive(this);
+    fn.getMaterial = function getMaterial() { 
         return this._scene ? this._material : null
     },
-    fn.getMatrix = function getMatrix() { MoGL.isAlive(this);
+    fn.getMatrix = function getMatrix() { 
         Matrix.identity(this._matrix)
         F3[0] = this.scaleX, F3[1] = this.scaleY, F3[2] = this.scaleZ
         Matrix.scale(this._matrix, this._matrix, F3)
@@ -42,22 +42,22 @@ var Mesh = (function () {
         Matrix.translate(this._matrix, this._matrix, F3)
         return this._matrix
     },
-    fn.getParent = function getParent() { MoGL.isAlive(this);
+    fn.getParent = function getParent() { 
         return this._parent ? this._parent : null
     },
-    fn.getPosition = function getPosition() { MoGL.isAlive(this);
+    fn.getPosition = function getPosition() { 
         return F3[0] = this.x, F3[1] = this.y, F3[2] = this.z, F3
     },
-    fn.getRotate = function getRotate() { MoGL.isAlive(this);
+    fn.getRotate = function getRotate() { 
         return F3[0] = this.rotateX, F3[1] = this.rotateY, F3[2] = this.rotateZ, F3
     },
-    fn.getScale = function getScale() { MoGL.isAlive(this);
+    fn.getScale = function getScale() { 
         return F3[0] = this.scaleX, F3[1] = this.scaleY, F3[2] = this.scaleZ, F3
     },
     ///////////////////////////////////////////////////
     // set
-    fn.setGeometry = function setGeometry(geometry) { MoGL.isAlive(this);
-        if (!(geometry instanceof Geometry || typeof geometry == 'string')) MoGL.error('Mesh', 'setGeometry', 0)
+    fn.setGeometry = function setGeometry(geometry) { 
+        if (!(geometry instanceof Geometry || typeof geometry == 'string')) this.error(0)
         if (this._scene) {
             if (this._geometry = typeof geometry == 'string') this._geometry = this._scene._geometrys[geometry]
             else this._geometry = geometry
@@ -66,8 +66,8 @@ var Mesh = (function () {
         else this._geometry = geometry
         return this
     },
-    fn.setMaterial = function setMaterial(material) { MoGL.isAlive(this);
-        if (!(material instanceof Material || typeof material == 'string')) MoGL.error('Mesh', 'setMaterial', 0)
+    fn.setMaterial = function setMaterial(material) { 
+        if (!(material instanceof Material || typeof material == 'string')) this.error(0)
         if (this._scene) {
             if (this._material = typeof material == 'string') this._material = this._scene._materials[material]
             else this._material = material
@@ -76,7 +76,7 @@ var Mesh = (function () {
         else this._material = material
         return this
     },
-    fn.lookAt = function looAt(x,y,z){MoGL.isAlive(this);
+    fn.lookAt = function lookAt(x,y,z){
         Matrix.identity(this._matrix),
         F3[0] = this.x, F3[1] = this.y, F3[2] = this.z,
         F3_2[0] = x, F3_2[1] = y, F3_2[2] = z,
@@ -104,7 +104,7 @@ var Mesh = (function () {
         //this.rotationY = 0;
         //this.rotationZ = -Math.atan2(dx, dy);
     },
-    fn.setPosition = function setPosition() { MoGL.isAlive(this);
+    fn.setPosition = function setPosition() { 
         var len, arg0;
         len = arguments.length, arg0 = arguments[0];
         if (len == 1 && arg0 instanceof Array) this.x = arg0[0], this.y = arg0[1], this.z = arg0[2];
@@ -112,7 +112,7 @@ var Mesh = (function () {
         else this.x = 0, this.y = 0, this.z = 0;
         return this;
     },
-    fn.setRotate = function setRotate() { MoGL.isAlive(this);
+    fn.setRotate = function setRotate() { 
         var len, arg0;
         len = arguments.length, arg0 = arguments[0];
         if (len == 1 && arg0 instanceof Array) this.rotateX = arg0[0], this.rotateY = arg0[1], this.rotateZ = arg0[2];
@@ -120,7 +120,7 @@ var Mesh = (function () {
         else this.rotateX = 0, this.rotateY = 0, this.rotateZ = 0;
         return this;
     },
-    fn.setScale = function setScale() { MoGL.isAlive(this);
+    fn.setScale = function setScale() { 
         var len, arg0;
         len = arguments.length, arg0 = arguments[0];
         if (len == 1 && arg0 instanceof Array) this.scaleX = arg0[0], this.scaleY = arg0[1], this.scaleZ = arg0[2];
