@@ -56,8 +56,8 @@
                 }catch(e){
                     test = e.toString();
                 }
-                return test;
-            }, 'Error: World.constructor:0',
+                return test == '';
+            }, false,
             function(){
                 var test = '';
                 try{
@@ -65,8 +65,8 @@
                 }catch(e){
                     test = e.toString();
                 }
-                return test;
-            }, 'Error: World.constructor:1'
+                return test == '';
+            }, false
     );
 
     bsTest('add/get/remove ',

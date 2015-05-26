@@ -1,19 +1,19 @@
 var MoGL = (function(){
 	var isFactory, isSuperChain, value,
-		uuidProp, isAliveProp, idProp, 
+		uuidProp, isAliveProp, idProp,
 		uuid, counter, totalCount,
 		method, prevMethod, errorMethod,
 		MoGL, fn;
-	
+
 	//내부용 상수
 	isFactory = {factory:1},//팩토리 함수용 식별상수
 	isSuperChain = {superChain:1},//생성자체인용 상수
-	
+
 	//인스턴스 카운트 시스템
 	uuid = 0,//모든 인스턴스는 고유한 uuid를 갖게 됨.
 	totalCount = 0, //생성된 인스턴스의 갯수를 관리함
 	counter = {}, //클래스별로 관리
-	
+
 	//속성지정자용 기술객체
 	uuidProp = {value:0},
 	isAliveProp = {value:true, writable:true},
@@ -33,7 +33,7 @@ var MoGL = (function(){
 			return result;
 		};
 	},
-	
+
 	//MoGL정의
 	MoGL = function MoGL(){
 		uuidProp.value = uuid++;
