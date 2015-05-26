@@ -42,7 +42,7 @@ var MoGL = (function(){
 		totalCount++;
 	},
 	fn = MoGL.prototype,
-	fn.classId = uuid++,
+	fn.classId = MoGL.uuid = uuid++,
 	fn.className = 'MoGL',
 	fn.destroy = method(function destroy(){ //파괴자
 		var key;
@@ -71,14 +71,6 @@ var MoGL = (function(){
 			return totalCount;
 		}
 	},
-	//표준 error처리
-	MoGL.error = function error( cls, method, id ){
-		throw new Error( cls + '.' + method + ':' + id );
-	},
-	//isAlive확인
-	MoGL.isAlive = function isAlive(instance){
-		if( !instance.isAlive ) throw new Error( 'Destroyed Object:' + instance );
-	};
 	//parent클래스를 상속하는 자식클래스를 만들어냄.
 	MoGL.ext = function ext( child, parent ){
 		var cls, oldProto, newProto, key;
@@ -112,14 +104,14 @@ var MoGL = (function(){
 		newProto = Object.create(parent.prototype);
 		//기존 child의 프로토타입속성을 복사
 		oldProto = child.prototype;
-		for( key in oldProto ) if( oldProto.hasOwnProperty(key) ) newProto[key] = oldProto[key];
+		for( key in oldProto ) if( oldProto.hasOwnProperty(key) ) newProto[key] = method( oldProto[key], key );
 		//정적 속성을 복사
 		for( key in child ) if( child.hasOwnProperty(key) ) cls[key] = child[key];
-		value.value = uuid++,
+		value.value = cls.uuid = uuid++,
 		Object.defineProperty( newProto, 'classId', value );
 		value.value = child.name,
 		Object.defineProperty( newProto, 'className', value );
-		if( !( value.uuid in counter ) ) counter[value.uuid] = 0;
+		if( !( cls.uuid in counter ) ) counter[cls.uuid] = 0;
 		//새롭게 프로토타입을 정의함
 		cls.prototype = newProto,
 		Object.freeze(cls),
