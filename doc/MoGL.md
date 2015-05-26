@@ -14,7 +14,7 @@
 **method**
 
 * [destroy](#destroy)
-* [error](#error)
+* [error](#error-idint-)
 * [setId](#setid)
  
 **static**
@@ -176,6 +176,33 @@ try{
 }catch(e){
   console.log( e.toString() ); //'Test.action:0'
 }
+```
+
+
+[top](#)
+## setId( id:string )
+
+**description**
+
+자신의 id를 설정한 뒤 다시 자신을 반환하여 체이닝을 일으킴.
+
+**param**
+
+1. id:string - 고유 id.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var scene = new Scene();
+scene.addGeometry( new Geometry( vertex, index ).setId('test') );
 ```
 
 [top](#)
