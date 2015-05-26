@@ -1,3 +1,4 @@
+var MoGL = ( function( global ){
 var MoGL = (function(){
 	var isFactory, isSuperChain, 
 		uuidProp, isAliveProp, idProp, 
@@ -2332,3 +2333,25 @@ var World = (function () {
     };
     return MoGL.ext(World, MoGL);
 })();
+return {
+    MoGL: MoGL,
+    BlendMode: BlendMode,
+    Filter: Filter,
+    Vertex: Vertex,
+    Shading: Shading,
+    VertexShader: VertexShader,
+    Matrix: Matrix,
+    Geometry:Geometry,
+    Material:Material,
+    Texture:Texture,
+    Primitive:Primitive,
+    Mesh:Mesh,
+    Group:Group,
+    Camera:Camera,
+    Scene:Scene,
+    World:World,
+    globalization:function(){ for( var key in this ) global[key] = this[key]; }
+};
+} )(this);
+
+if( typeof module !== 'undefined' && typeof module === 'object' ) module.exports = MoGL;
