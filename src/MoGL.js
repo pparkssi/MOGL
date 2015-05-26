@@ -87,7 +87,9 @@ var MoGL = (function(){
 		}
 		//생성자클래스
 		cls = function(){
-			var arg, arg0 = arguments[0];
+			var arg, arg0 = arguments[0], result;
+			prevMethod[prevMethod.length] = errorMethod;
+			errorMethod = 'constructor';
 			if( arg0 === isSuperChain ){
 				parent.apply( this, arguments[1] ),
 				child.apply( this, arguments[1] );
@@ -100,10 +102,12 @@ var MoGL = (function(){
 				parent.call( this, isSuperChain, arg ),
 				child.apply( this, arg ),
 				Object.seal(this);
-				return this;
+				result = this;
 			}else{
-				return cls.call( Object.create(cls.prototype), isFactory, arguments );
+				result = cls.call( Object.create(cls.prototype), isFactory, arguments );
 			}
+			errorMethod = prevMethod.pop();
+			return result;
 		};
 		//parent와 프로토타입체인생성
 		newProto = Object.create(parent.prototype);
