@@ -20,6 +20,7 @@
 **static**
 
 * [MoGL.count](#moglcount-classfunction-)
+* [MoGL.error](#)
 * [MoGL.ext](#moglext-childfunction-parentfunction-)
 * [MoGL.globalization](#)
 
@@ -246,6 +247,33 @@ int - 인스턴스의 수.
 ```javascript
 console.log( MoGL.count(Scene) );
 ```
+
+[top](#)  
+## MoGL.error( className:string, methodName:string, id:int )  
+  
+**description**  
+  
+표준 예외를 보고함.  
+  
+**param**  
+  
+1. className:string - 예외가 발생한 클래스의 이름.  
+2. methodName:string - 예외가 발생한 메서드의 이름.  
+3. id:int - 예외별 id.  
+  
+**exception**  
+  
+주어진 인자에 따라 className + '.' + methodName + ':' + id 형태로 예외메세지가 출력됨.  
+  
+**return**  
+  
+없음  
+  
+**sample**  
+  
+```javascript  
+MoGL.error( 'Scene', 'addChild', 2 );  
+```  
 
 
 [top](#)
