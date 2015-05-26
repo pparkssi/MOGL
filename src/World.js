@@ -6,7 +6,7 @@
  * 메서드체이닝을 위해 대부분의 함수는 자신을 반환함.
  */
 var World = (function () {
-    var World, fn, rectMatrix = Matrix.create(), f3 = new Float32Array(3);
+    var World, fn, rectMatrix = Matrix.create(), f3 = new Float32Array(3),f4 = new Float32Array(4);
     World = function World(id) {
         var keys, i,ext;
         if (!id) MoGL.error('World', 'constructor', 0);
@@ -62,8 +62,8 @@ var World = (function () {
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                     //gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW)
-                    //gl.enable(gl.BLEND)
-                    //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+                    gl.enable(gl.BLEND)
+                    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
                     for(k in scene._glPROGRAMs){
                         tProgram = scene._glPROGRAMs[k];
                         gl.useProgram(tProgram);
@@ -110,8 +110,8 @@ var World = (function () {
                             }
                             tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                             tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                            f3[0] = tMaterial._r,f3[1] = tMaterial._g,f3[2] = tMaterial._b,
-                            gl.uniform3fv(tProgram.uColor, f3);
+                            f4[0] = tMaterial._r,f4[1] = tMaterial._g,f4[2] = tMaterial._b,f4[3] = tMaterial._a,
+                            gl.uniform4fv(tProgram.uColor, f4);
                         }else{
                             if(tMaterial._shading.type == 'none'){
                                 tProgram=scene._glPROGRAMs['bitmap'],
@@ -153,6 +153,7 @@ var World = (function () {
                         f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ,
                         gl.uniform3fv(tProgram.uScale, f3),
                         tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0;
+                        gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                         if(tMaterial._wireFrame) {
                             tProgram = scene._glPROGRAMs['color'],
                             gl.useProgram(tProgram),
@@ -164,11 +165,10 @@ var World = (function () {
                             gl.uniform3fv(tProgram.uPosition, f3),
                             f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                             gl.uniform3fv(tProgram.uScale, f3),
-                            f3[0] = tMaterial._rw, f3[1] = tMaterial._gw, f3[2] = tMaterial._bw,
-                            gl.uniform3fv(tProgram.uColor, f3),
+                            f4[0] = tMaterial._rw, f4[1] = tMaterial._gw, f4[2] = tMaterial._bw,f4[3] = 1,
+                            gl.uniform4fv(tProgram.uColor, f4),
                             gl.drawElements(gl.LINES, tIBO.numItem, gl.UNSIGNED_SHORT, 0);
                         }
-                        else gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0);
 
                         pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj;
                     }

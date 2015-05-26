@@ -101,7 +101,7 @@ var Camera = (function () {
             this._r = arguments[0],
             this._g = arguments[1],
             this._b = arguments[2],
-            this._a = arguments[3] ? arguments[3] : 1;
+            this._a = arguments[3] == undefined ?  1 : arguments[3]
         }
         return this;
     },
