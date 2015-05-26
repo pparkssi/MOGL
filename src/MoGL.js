@@ -27,9 +27,6 @@ var MoGL = (function(){
 			var result;
 			if( !this.isAlive ) throw new Error( 'Destroyed Object:' + this );
 			prevMethod[prevMethod.length] = errorMethod;
-			console.log(f)
-			console.log(key)
-			console.log(f.name)
 			errorMethod = key || f.name;
 			result = f.apply( this, arguments );
 			errorMethod = prevMethod.pop();
