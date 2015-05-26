@@ -9,8 +9,7 @@
 * [className](#classname)
 * [id](#id)
 * [isAlive](#isalive)
-* [uuid](#uuid)
-* 
+* [uuid](#uuid) 
  
 **method**
 
@@ -70,6 +69,21 @@ console.log( scene.classId == Scene.uuid );
 ```
 var scene = new Scene();
 console.log( scene.className == 'Scene' ); //true
+```
+
+[top](#)
+## id
+
+**description**
+
+사용자가 임의로 정의한 id.
+
+**sample**
+
+```
+var scene = new Scene();
+scene.id = 'test1';
+console.log( scene.id ); //'test1'
 ```
 
 [top](#)
