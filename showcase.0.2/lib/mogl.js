@@ -1,3 +1,4 @@
+var MoGL = ( function( global ){
 var MoGL = (function(){
 	var isFactory, isSuperChain, 
 		uuidProp, isAliveProp, idProp, 
@@ -897,17 +898,28 @@ var Primitive = (function () {
             var result
             return result
         },
-        polygon: function polygon(n, radius) {
+        polygon: function polygon(n) {
+
+            n = arguments[0] || 3;
             if (n < 3) MoGL.error('Primitive', 'polygon', 0);
-            var perAngle = Math.PI*2/(n-1)
-            var vs = [0,0,0,0.5,0.5],is = [],i
-            for(i =0; i<n; i++){
-                vs.push(mS(perAngle*i),mC(perAngle*i),0,  -mS(perAngle*i)/2+0.5,-mC(perAngle*i)/2+0.5)
+
+            var i, j, angle = 2 * PI / n, x, y, z, u, v,
+                vs = [0.0, 1.0, 0.0, 0.5, 0.0], is = [], vertCoords = vs.length,
+                result;
+
+            for (i = 0; i < n - 1; i = i / vertCoords + 1) {
+                x = vs[i *= vertCoords] * mC(angle) - vs[++i] * mS(angle),
+                    y = vs[--i] * mS(angle) + vs[++i] * mC(angle),
+                    z = vs[--i + 2],
+                    u = 0.5 + (x / 1.0) / 2,
+                    v = 0.5 - (y / 1.0) / 2,
+                    vs.push(x, y, z, u, v);
+                if (i > 0) {
+                    j = i / vertCoords;
+                    is.push(0, j, j + 1); // 최상단 최초 꼭지점 기준
+                }
             }
-            for (i = 0; i < n-1; i++) {
-                is.push(0, i + 1, i  + 2)
-            }
-            var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
+            result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]);
             result._key = 'polygon_' + (arguments[0] || 1);
             return result;
         }
@@ -2332,3 +2344,25 @@ var World = (function () {
     };
     return MoGL.ext(World, MoGL);
 })();
+return {
+    MoGL: MoGL,
+    BlendMode: BlendMode,
+    Filter: Filter,
+    Vertex: Vertex,
+    Shading: Shading,
+    VertexShader: VertexShader,
+    Matrix: Matrix,
+    Geometry:Geometry,
+    Material:Material,
+    Texture:Texture,
+    Primitive:Primitive,
+    Mesh:Mesh,
+    Group:Group,
+    Camera:Camera,
+    Scene:Scene,
+    World:World,
+    globalization:function(){ for( var key in this ) global[key] = this[key]; }
+};
+} )(this);
+
+if( typeof module !== 'undefined' && typeof module === 'object' ) module.exports = MoGL;
