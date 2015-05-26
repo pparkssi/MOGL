@@ -24,11 +24,13 @@ var MoGL = (function(){
 	prevMethod = []; //스택구조의 이전 함수이름의 배열
 	method = function method( f, key ){ //생성할 이름과 메서드
 		return function(){
+			var result;
 			if( !this.isAlive ) throw new Error( 'Destroyed Object:' + this );
 			prevMethod[prevMethod.length] = errorMethod;
 			errorMethod = key || f.name;
-			f.apply( this, arguments );
+			result = f.apply( this, arguments );
 			errorMethod = prevMethod.pop();
+			return result;
 		};
 	},
 	
@@ -44,6 +46,9 @@ var MoGL = (function(){
 	fn = MoGL.prototype,
 	fn.classId = MoGL.uuid = uuid++,
 	fn.className = 'MoGL',
+	fn.error = function error( id ){ //error
+		throw new Error( this.className + '.' + errorMethod + ':' + id );
+	},
 	fn.destroy = method(function destroy(){ //파괴자
 		var key;
 		for( key in this ) if( this.hasOwnProperty(key) ) this[key] = null;
@@ -54,9 +59,6 @@ var MoGL = (function(){
 	fn.setId = method(function setId(v){ //id setter
 		this.id = v;
 		return this;
-	}),
-	fn.error = method(function error( id ){ //error
-		throw new Error( this.className + '.' + errorMethod + ':' + id );
 	}),
 	Object.defineProperty( fn, 'id', { //id처리기
 		get:function idGet(){return this._id;},
@@ -70,6 +72,9 @@ var MoGL = (function(){
 		}else{
 			return totalCount;
 		}
+	},
+	MoGL.error = function error( cls, method, id ){ //error
+		throw new Error( cls + '.' + method + ':' + id );
 	},
 	//parent클래스를 상속하는 자식클래스를 만들어냄.
 	MoGL.ext = function ext( child, parent ){
@@ -109,7 +114,12 @@ var MoGL = (function(){
 		for( key in child ) if( child.hasOwnProperty(key) ) cls[key] = child[key];
 		value.value = cls.uuid = uuid++,
 		Object.defineProperty( newProto, 'classId', value );
-		value.value = child.name,
+		if( 'name' in child ){
+			value.value = child.name;
+		}else{
+			key = child.toString(), 
+			value.value = key.substring( key.indexOf('function') + 8, key.indexOf('(') ).trim();
+		}
 		Object.defineProperty( newProto, 'className', value );
 		if( !( cls.uuid in counter ) ) counter[cls.uuid] = 0;
 		//새롭게 프로토타입을 정의함
