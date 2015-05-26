@@ -76,7 +76,7 @@ var Mesh = (function () {
         else this._material = material
         return this
     },
-    fn.lookAt = function looAt(x,y,z){
+    fn.lookAt = function lookAt(x,y,z){
         Matrix.identity(this._matrix),
         F3[0] = this.x, F3[1] = this.y, F3[2] = this.z,
         F3_2[0] = x, F3_2[1] = y, F3_2[2] = z,
