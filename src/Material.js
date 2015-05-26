@@ -89,13 +89,13 @@ var Material = (function () {
                     this._g = parseInt(t1[2] + t1[2], 16) / 255,
                     this._b = parseInt(t1[3] + t1[3], 16) / 255;
                 }
-                this._a = ta ? ta > 1 ? 1 : ta : 1;
+                this._a = ta  ? ta > 1 ? 1 : ta : 1;
             }
         } else {
-            this._r = arguments[0] ? arguments[0] : Math.random(),
-            this._g = arguments[1] ? arguments[1] : Math.random(),
-            this._b = arguments[2] ? arguments[2] : Math.random(),
-            this._a = arguments[3] ? arguments[3] : 1;
+            this._r = arguments[0] || Math.random(),
+            this._g = arguments[1] || Math.random(),
+            this._b = arguments[2] || Math.random(),
+            this._a = arguments[3] == undefined ?  1 : arguments[3]
         }
     },
     fn.setWireFrame = function setWireFrame(isVisible){ MoGL.isAlive(this);

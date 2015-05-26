@@ -27,21 +27,20 @@ var Scene = (function () {
 
 		var colorVertexShader = {
 			attributes: ['vec3 aVertexPosition'],
-			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec3 uColor'],
-			varyings: ['vec3 vColor'],
+			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
+			varyings: ['vec4 vColor'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
 			'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-			'vColor = uColor ;' +
-			'gl_PointSize = 10.0;'
+			'vColor = uColor ;'
 			]
 		}
 		var colorFragmentShader = {
 			precision: 'mediump float',
 			uniforms: [],
-			varyings: ['vec3 vColor'],
+			varyings: ['vec4 vColor'],
 			function: [],
-			main: ['gl_FragColor =  vec4(vColor, 1.0)']
+			main: ['gl_FragColor =  vColor']
 		}
 
 		var bitmapVertexShader = {
@@ -87,8 +86,8 @@ var Scene = (function () {
 		}
 		var colorVertexShaderGouraud = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec3 uColor'],
-			varyings: ['vec3 vColor','vec4 vLight'],
+			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec4 uColor'],
+			varyings: ['vec4 vColor','vec4 vLight'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
 			' mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
@@ -102,17 +101,17 @@ var Scene = (function () {
 		var colorFragmentShaderGouraud = {
 			precision: 'mediump float',
 			uniforms: ['sampler2D uSampler'],
-			varyings: ['vec3 vColor', 'vec4 vLight'],
+			varyings: ['vec4 vColor', 'vec4 vLight'],
 			function: [],
 			main: ['' +
-			'gl_FragColor =  vLight*vec4(vColor,1.0);\n' +
-			'gl_FragColor.a = 1.0;'
+			'gl_FragColor =  vLight*vColor;\n' +
+			'gl_FragColor.a = vColor[3];'
 			]
 		}
 		var colorVertexShaderPhong = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
-			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec3 uColor'],
-			varyings: ['vec3 vNormal', 'vec3 vPosition','vec3 vColor'],
+			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec4 uColor'],
+			varyings: ['vec3 vNormal', 'vec3 vPosition','vec4 vColor'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
 			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
@@ -125,7 +124,7 @@ var Scene = (function () {
 		var colorFragmentShaderPhong = {
 			precision: 'mediump float',
 			uniforms: ['float uLambert', 'vec3 uDLite'],
-			varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec3 vColor'],
+			varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
 			function: [],
 			main: ['' +
 			'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
@@ -144,14 +143,14 @@ var Scene = (function () {
 			'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
 			'   specular = pow(specAngle, 4.0);\n' +
 			'}\n' +
-			'gl_FragColor = vec4(vColor,1.0)*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
-			'gl_FragColor.a = 1.0;'
+			'gl_FragColor = vColor*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
+			'gl_FragColor.a = vColor[3];'
 			]
 		}
 		var toonVertexShaderPhong = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
-			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec3 uColor'],
-			varyings: ['vec3 vNormal', 'vec3 vPosition','vec3 vColor'],
+			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec4 uColor'],
+			varyings: ['vec3 vNormal', 'vec3 vPosition','vec4 vColor'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
 			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
@@ -164,7 +163,7 @@ var Scene = (function () {
 		var toonFragmentShaderPhong = {
 			precision: 'mediump float',
 			uniforms: ['float uLambert', 'vec3 uDLite'],
-			varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec3 vColor'],
+			varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
 			function: [],
 			main: ['' +
 			'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
@@ -179,7 +178,7 @@ var Scene = (function () {
 			'float lambertian = max(dot(lightDir,normal), 0.0)*uLambert;\n' +
 			'float specular = 0.0;\n' +
 
-			'vec3 src = vColor;\n'+
+			'vec3 src = vColor.rgb;\n'+
 
 			' if(lambertian>0.95) src.rgb*=0.95;\n' +
 			' else if(lambertian>0.6) src.rgb*=0.5;\n' +
@@ -191,7 +190,7 @@ var Scene = (function () {
 			'   specular = pow(specAngle, 4.0);\n' +
 			'}\n' +
 			'gl_FragColor = vec4(src,1.0)*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
-			'gl_FragColor.a = 1.0;'
+			'gl_FragColor.a = vColor[3];'
 			]
 		}
 		var bitmapVertexShaderPhong = {

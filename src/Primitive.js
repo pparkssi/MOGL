@@ -17,7 +17,7 @@ var Primitive = (function () {
             // TODO ?split - 쪼개질 다각형의 갯수. 생략하거나 30이하의 값이 오면 30이 됨.
             // TODO scene.addChild( 'geo0', new Mesh( Primitive.geodesic(30), new Material() );
 
-            var radius = 1, fractures = 5, yUp = true;
+            var radius = 0.5, fractures = 30, yUp = true;
             var hnLat = fractures + 1; //위도 방향 쪼갠수/2
             var nLat = 2 * hnLat; //위도 방향 쪼갠수
             var nLon; //위도에 대한 경도 방향 쪼갠수 
@@ -91,10 +91,10 @@ var Primitive = (function () {
             //TODO 이걸 계산해서 넘겨야 되는군
             var vs, is
             vs = [
-                1.0, 1.0, 0.0,// 0.0, 0.0,
-                -1.0, 1.0, 0.0, //1.0, 0.0,
-                1.0, -1.0, 0.0, //0.0, 1.0,
-                -1.0, -1.0, 0.0//, //1.0, 1.0
+                0.5, 0.5, 0.0,// 0.0, 0.0,
+                -0.5, 0.5, 0.0, //0.5, 0.0,
+                0.5, -0.5, 0.0, //0.0, 0.5,
+                -0.5, -0.5, 0.0//, //0.5, 0.5
             ]
             is = [0, 1, 2, 1, 2, 3]
 
@@ -117,7 +117,7 @@ var Primitive = (function () {
 
             var latitudeBands = 8;
             var longitudeBands = 8;
-            var radius = 1.0;
+            var radius = 0.5;
 
             for (var latNumber = 0; latNumber <= latitudeBands; ++latNumber) {
                 var theta = latNumber * Math.PI / latitudeBands;
@@ -158,7 +158,6 @@ var Primitive = (function () {
             return result
         },
         polygon: function polygon(n) {
-
             n = arguments[0] || 3;
             if (n < 3) MoGL.error('Primitive', 'polygon', 0);
 
@@ -183,4 +182,4 @@ var Primitive = (function () {
             return result;
         }
     }
-})()
+})();
