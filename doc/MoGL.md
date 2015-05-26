@@ -20,7 +20,7 @@
 **static**
 
 * [MoGL.count](#moglcount-classfunction-)
-* [MoGL.error](#)
+* [MoGL.error](#moglerror-classnamestring-methodnamestring-idint-)
 * [MoGL.ext](#moglext-childfunction-parentfunction-)
 * [MoGL.globalization](#)
 
