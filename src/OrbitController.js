@@ -58,7 +58,7 @@ var OrbitController = (function () {
         e.preventDefault()
     },
     OrbitController = function OrbitController(camera) {
-        if(!(camera instanceof Camera)) MoGL.error('OrbitController','contructor',0)
+        if(!(camera instanceof Camera)) this.error(0)
         this._camera = camera,
         this._camera.x = 0.1,
         this._camera.y = 0.1,
@@ -82,7 +82,7 @@ var OrbitController = (function () {
             startY0: 0
         }
         self = this
-        //TODO ¸ğ¹ÙÀÏ Ã¼Å© µğÅØÅÍµµ ÇÊ¿äÇÏ±º
+        //TODO ëª¨ë°”ì¼ ì²´í¬ ë””í…í„°ë„ í•„ìš”í•˜êµ°
         if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
             document.body.addEventListener('touchstart',HD_downTouch,false)
             document.body.addEventListener('touchmove',HD_moveTouch,false)

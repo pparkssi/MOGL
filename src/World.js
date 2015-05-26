@@ -9,9 +9,9 @@ var World = (function () {
     var World, fn, rectMatrix = Matrix.create(), f3 = new Float32Array(3),f4 = new Float32Array(4);
     World = function World(id) {
         var keys, i,ext;
-        if (!id) MoGL.error('World', 'constructor', 0);
+        if (!id) this.error( 0);
         this._cvs = document.getElementById(id);
-        if (!this._cvs) MoGL.error('World', 'constructor', 1);
+        if (!this._cvs) this.error(1);
 
         var width = window.innerWidth;
         var height = window.innerHeight;
@@ -42,7 +42,7 @@ var World = (function () {
         console.log(this._gl ? id + ' : MoGL 초기화 성공!' : console.log(id + ' : MoGL 초기화 실패!!'));
     },
     fn = World.prototype,
-        fn.render = function render() { MoGL.isAlive(this);
+        fn.render = function render() { 
             var i, k, len, tList = this._renderList;
             var scene,camera,gl,children;
             var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;
@@ -232,18 +232,22 @@ var World = (function () {
             }
             //gl.finish();
         },
-    fn.addRender = function addRender(sceneID, cameraID, index) { MoGL.isAlive(this);
+    fn.addRender = function addRender(sceneID, cameraID, index) { 
         var uuid, tScene, tList,
             i,len,temp;
         uuid = sceneID + '_' + cameraID,
         tScene = this._sceneList[sceneID],
         tList = this._renderList;
-        for (i = 0, len = tList.length; i < len; i++) if (tList[i].uuid == uuid) MoGL.error('World', 'addRender', 0);
-        if (!tScene) MoGL.error('World', 'addRender', 1);
-        else if (!tScene.isAlive) MoGL.error('World', 'addRender', 1);
+        for (i = 0, len = tList.length; i < len; i++) if (tList[i].uuid == uuid) this.error(0);
+        if (!tScene) this.error(1);
+        else if (!tScene.isAlive) this.error(1);
         if (tScene) {
-            if (!tScene.getChild(cameraID)) MoGL.error('World', 'addRender', 2);
-            else if (!tScene.getChild(cameraID).isAlive) MoGL.error('World', 'addRender', 2);
+            console.log(tScene)
+            console.log(cameraID)
+            console.log(tScene.getChild)
+            console.log(tScene.getChild(cameraID))
+            if (!tScene.getChild(cameraID)) this.error(2);
+            else if (!tScene.getChild(cameraID).isAlive) this.error(2);
         }
         temp = {
             uuid: uuid,
@@ -257,32 +261,32 @@ var World = (function () {
         else tList.push(temp);
         return this;
     },
-    fn.addScene = function addScene(sceneID, scene) { MoGL.isAlive(this);
-        if (this._sceneList[sceneID]) MoGL.error('World', 'addScene', 0);
-        if (!(scene instanceof Scene )) MoGL.error('World', 'addScene', 1);
+    fn.addScene = function addScene(sceneID, scene) { 
+        if (this._sceneList[sceneID]) this.error(0);
+        if (!(scene instanceof Scene )) this.error(1);
         this._sceneList[sceneID] = scene, scene._gl = this._gl, scene._cvs = this._cvs;
         return this;
     },
-    fn.getScene = function getScene(sceneID) { MoGL.isAlive(this);
-        if( typeof sceneID === 'undefined' ) MoGL.error('World', 'getScene', 0);
+    fn.getScene = function getScene(sceneID) { 
+        if( typeof sceneID === 'undefined' ) this.error(0);
         return this._sceneList[sceneID] ? this._sceneList[sceneID] : null;
     },
-    fn.removeRender = function removeRender(sceneID, cameraID) { MoGL.isAlive(this);
+    fn.removeRender = function removeRender(sceneID, cameraID) { 
         var tList = this._renderList, i, len;
         var sTest = 0, cTest = 0;
-        if (!this._sceneList[sceneID])  MoGL.error('World', 'removeRender', 0);
-        if (!this._sceneList[sceneID]._cameras[cameraID]) console.log('2222222222222222222222222'), MoGL.error('World', 'removeRender', 1);
+        if (!this._sceneList[sceneID])  this.error(0);
+        if (!this._sceneList[sceneID]._cameras[cameraID]) console.log('2222222222222222222222222'), this.error(1);
         for (i = 0, len = tList.length; i < len; i++) {
             if (tList[i].uuid.indexOf(sceneID) > -1) sTest = 1;
             if (tList[i].uuid.indexOf(cameraID) > -1) cTest = 1;
         }
-        if (!sTest)  MoGL.error('World', 'removeRender', 2);
-        if (!cTest)  MoGL.error('World', 'removeRender', 3);
+        if (!sTest)  this.error(2);
+        if (!cTest)  this.error(3);
         for (i = 0, len = tList.length; i < len; i++) if (tList[i] && tList[i].uuid == sceneID + '_' + cameraID) tList.splice(i, 1);
         return this;
     },
-    fn.removeScene = function removeScene(sceneID) { MoGL.isAlive(this);
-        this._sceneList[sceneID] ? 0 : MoGL.error('World', 'removeScene', 0),
+    fn.removeScene = function removeScene(sceneID) { 
+        this._sceneList[sceneID] ? 0 : this.error(0),
         this._sceneList[sceneID]._gl = this._gl,
         delete this._sceneList[sceneID];
         return this;
