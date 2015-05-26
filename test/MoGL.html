@@ -40,6 +40,7 @@
 	};
 	child = MoGL.ext( child, parent );
 
+
 	var instance1 = new child( 1, 2, 3 );
 
 	bsTest( 'new',
@@ -154,6 +155,21 @@
 
 				return parent.constructor === MoGL && child.constructor === MoGL;
 			}, true
+	);
+	
+	bsTest( 'constructError',
+		function(){
+			var test = function test(){
+				this.error(1);
+			}, result = '';
+			test = MoGL.ext(test);
+			try{
+				var a = new test()
+			}catch(e){
+				result = e.toString();
+			}
+			return result;
+		}, 'Error: test.constructor:1'
 	);
 /*
     bsTest( 'isAlive',
