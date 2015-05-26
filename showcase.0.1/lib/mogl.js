@@ -1106,7 +1106,7 @@ var Camera = (function () {
         else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI))
         return this
     },
-    fn.setOthogonal = function setOthogonal(){MoGL.isAlive(this);
+    fn.setOrthogonal = function setOrthogonal(){MoGL.isAlive(this);
         Matrix.identity(this._pixelMatrix)
         this._pixelMatrix=[
             2 / this._cvs.clientWidth, 0, 0, 0,
