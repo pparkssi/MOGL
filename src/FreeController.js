@@ -3,7 +3,7 @@
  */
 var FreeController = (function () {
     var FreeController, fn,MAT1,MAT2;
-    MAT1 = Matrix.create(), MAT2 = Matrix.create(),
+    MAT1 = Matrix(), MAT2 = Matrix(),
     FreeController = function FreeController(camera) {
         if(!(camera instanceof Camera)) this.error(0)
         this._camera = camera
@@ -57,17 +57,17 @@ var FreeController = (function () {
         this._displacement[1] = up ? -speed : (down ? speed : 0),
         this._displacement[2] = forward ? -speed : (back ? speed : 0)
 
-        Matrix.identity(MAT1),
-        Matrix.translate(MAT1, MAT1, this._displacement),
-        Matrix.identity(MAT2),
-        Matrix.rotateZ(MAT2, MAT2, tCamera.rotateZ),
-        Matrix.rotateY(MAT2, MAT2, tCamera.rotateY),
-        Matrix.rotateX(MAT2, MAT2, tCamera.rotateX),
-        Matrix.multiply(MAT1, MAT2, MAT1),
+        MAT1.matIdentity(),
+        MAT1.matTranslate(this._displacement[0],this._displacement[1],this._displacement[2]),
+        MAT2.matIdentity(),
+        MAT2.matRotateZ(tCamera.rotateZ),
+        MAT2.matRotateY(tCamera.rotateY),
+        MAT2.matRotateX(tCamera.rotateX),
+        MAT2.matMultiply(MAT1),
 
-        this._desirePosition[0]+=MAT1[12]
-        this._desirePosition[1]+=MAT1[13]
-        this._desirePosition[2]+=MAT1[14]
+        this._desirePosition[0]+=MAT2._rowData[12]
+        this._desirePosition[1]+=MAT2._rowData[13]
+        this._desirePosition[2]+=MAT2._rowData[14]
 
         tCamera.x += (this._desirePosition[0] - tCamera.x)*this._smoothDelay,
         tCamera.y += (this._desirePosition[1] - tCamera.y)*this._smoothDelay,
