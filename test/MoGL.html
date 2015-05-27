@@ -17,7 +17,7 @@
 <script src="../src/MoGL.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-	var parent = function parent( a, b ){
+	var parent = function parent( a, b ){ 
 		this.a = a;
 		this.b = b;
 	};
@@ -172,17 +172,14 @@
 		}, 'Error: test.constructor:1'
 	);
 	var a = function(){
-		console.log('a');
 		this.a = 3;
 	};
 	a = MoGL.ext(a);
 	var b = function(){
-		console.log('b');
 		this.b = 5;
 	};
 	b = MoGL.ext( b, a );
 	var c = function(){
-		console.log('c');
 		this.c = 7;
 	};
 	c = MoGL.ext( c, b );

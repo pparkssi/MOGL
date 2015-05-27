@@ -495,27 +495,25 @@ var Scene = (function () {
 			var camera = this._cameras[k];
 			camera._cvs = this._cvs
 			if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
-			if (camera._updateRenderArea) {
-				camera.getProjectionMatrix(),
-				makeFrameBuffer(this, camera),
-				camera._updateRenderArea = 0
-			}
+			else camera.setRenderArea(camera._renderArea[0],camera._renderArea[1], camera._renderArea[2], camera._renderArea[3])
+			camera.getProjectionMatrix(),
+			makeFrameBuffer(this, camera)
 		}
 		checks = this._vertexShaders;
 		for (k in checks) makeProgram(this, k)
-		console.log('////////////////////////////////////////////'),
-		console.log('Scene 업데이트'),
-		console.log('this._glVBOs :', this._glVBOs),
-		console.log('this._glVNBOs :', this._glVNBOs),
-		console.log('this._glIBOs :', this._glIBOs),
-		console.log('this._glPROGRAMs :', this._glPROGRAMs),
-		console.log('this._geometrys :', this._geometrys),
-		console.log('this._materials :', this._materials),
-		console.log('this._textures :', this._textures),
-		console.log('this._vertexShaders :', this._vertexShaders),
-		console.log('this._fragmentShaders :', this._fragmentShaders),
-		console.log('this._glFREAMBUFFERs :', this._glFREAMBUFFERs),
-		console.log('////////////////////////////////////////////'),
+		//console.log('////////////////////////////////////////////'),
+		//console.log('Scene 업데이트'),
+		//console.log('this._glVBOs :', this._glVBOs),
+		//console.log('this._glVNBOs :', this._glVNBOs),
+		//console.log('this._glIBOs :', this._glIBOs),
+		//console.log('this._glPROGRAMs :', this._glPROGRAMs),
+		//console.log('this._geometrys :', this._geometrys),
+		//console.log('this._materials :', this._materials),
+		//console.log('this._textures :', this._textures),
+		//console.log('this._vertexShaders :', this._vertexShaders),
+		//console.log('this._fragmentShaders :', this._fragmentShaders),
+		//console.log('this._glFREAMBUFFERs :', this._glFREAMBUFFERs),
+		//console.log('////////////////////////////////////////////'),
 		this._update = 0
 	},
 	fn.addChild = function addChild(id, mesh) {  // isAlive는 함수선언 줄에 바로 같이 씁니다.

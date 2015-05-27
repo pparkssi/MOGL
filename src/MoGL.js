@@ -27,7 +27,7 @@ var MoGL = (function(){
 			var result;
 			if( !this.isAlive ) throw new Error( 'Destroyed Object:' + this );
 			prevMethod[prevMethod.length] = errorMethod;
-			errorMethod = key || f.name;
+			errorMethod = key;
 			result = f.apply( this, arguments );
 			errorMethod = prevMethod.pop();
 			return result;
@@ -92,7 +92,7 @@ var MoGL = (function(){
 			errorMethod = 'constructor';
 			if( arg0 === isSuperChain ){
 				parent.call( this, isSuperChain, arguments[1] ),
-				child.call( this, isSuperChain, arguments[1] );
+				child.apply( this, arguments[1] );
 			}else if( this instanceof cls ){
 				if( arg0 === isFactory ){
 					arg = arguments[1];
