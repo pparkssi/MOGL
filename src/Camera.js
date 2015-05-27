@@ -26,21 +26,13 @@ var Camera = (function () {
         this._filters ={},
         this._fog = null,
         this._antialias = false,
-        this._pixelMatrix = Matrix.create(),
+        this._pixelMatrix = Matrix(),
         this.z =-10,
-        this._mode = '3d',
+        this._mode = '3d'
         this.lookAt(0,0,0);
+
     }
     fn = Camera.prototype,
-    fn.getMatrix = function getMatrix() { 
-        Matrix.identity(this._matrix);
-        Matrix.rotateX(this._matrix,this._matrix,this.rotateX);
-        Matrix.rotateY(this._matrix,this._matrix,this.rotateY);
-        Matrix.rotateZ(this._matrix,this._matrix,this.rotateZ);
-        F3[0] = this.x, F3[1] = this.y, F3[2] = -this.z;
-        Matrix.translate(this._matrix,this._matrix,F3);
-        return this._matrix;
-    },
     fn.getBackgroundColor = function getBackgroundColor(){
         return A4[0] = this._r, A4[1] = this._g, A4[2] = this._b, A4[3] = this._a, A4;
     },
@@ -59,15 +51,14 @@ var Camera = (function () {
         return this._fov;
     },
     fn.getProjectionMatrix = function getProjectionMatrix(){
-        Matrix.identity(this._pixelMatrix);
+        this._pixelMatrix.matIdentity();
         if(this._mode == '2d'){
-            this._pixelMatrix = [
-                2 / this._renderArea[2], 0, 0, 0,
-                0, -2 / this._renderArea[3], 0, 0,
-                0, 0, 0, 0,
-                -1, 1, 0, 1
-            ];
-        }else Matrix.perspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far, this._pixelMatrix);
+            this._pixelMatrix._rowData[0] = 2 / this._renderArea[2]
+            this._pixelMatrix._rowData[5] = -2 / this._renderArea[3]
+            this._pixelMatrix._rowData[10] = 0
+            this._pixelMatrix._rowData[12] = -1
+            this._pixelMatrix._rowData[13] = 1
+        }else this._pixelMatrix.matPerspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far);
         return this._pixelMatrix;
     },
     fn.getRenderArea = function getRenderArea(){

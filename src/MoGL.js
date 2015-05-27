@@ -121,7 +121,7 @@ var MoGL = (function(){
 		if( 'name' in child ){
 			value.value = child.name;
 		}else{
-			key = child.toString(), 
+			key = child.toString(),
 			value.value = key.substring( key.indexOf('function') + 8, key.indexOf('(') ).trim();
 		}
 		Object.defineProperty( newProto, 'className', value );

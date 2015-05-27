@@ -6,7 +6,7 @@
  * 메서드체이닝을 위해 대부분의 함수는 자신을 반환함.
  */
 var World = (function () {
-    var World, fn, rectMatrix = Matrix.create(), f3 = new Float32Array(3),f4 = new Float32Array(4);
+    var World, fn, rectMatrix = Matrix(), f3 = new Float32Array(3),f4 = new Float32Array(4);
     World = function World(id) {
         var keys, i,ext;
         if (!id) this.error( 0);
@@ -74,8 +74,8 @@ var World = (function () {
                     for(k in scene._glPROGRAMs){
                         tProgram = scene._glPROGRAMs[k];
                         gl.useProgram(tProgram);
-                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera._pixelMatrix);
-                        gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.getMatrix());
+                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera._pixelMatrix._rowData);
+                        gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.getMatrix()._rowData);
                     }
                     tItem = tMaterial = tProgram = tVBO = tIBO = null;
                     for (k in children) {
@@ -212,7 +212,7 @@ var World = (function () {
                 gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO),
                 gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0),
                 gl.uniform3fv(tProgram.uRotate, [0, 0, 0]);
-                gl.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix);
+                gl.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix._rowData);
                 for (i = 0, len = tList.length; i < len; i++) {
                     scene = tList[i].scene,
                     camera = scene.getChild(tList[i].cameraID)

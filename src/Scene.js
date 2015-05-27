@@ -521,7 +521,7 @@ var Scene = (function () {
 	fn.addChild = function addChild(id, mesh) {  // isAlive는 함수선언 줄에 바로 같이 씁니다.
 		var k, checks;
 		if (this._children[id]) this.error(0)
-		if (!(mesh instanceof Mesh)) this.error(1)
+		if (!(mesh instanceof Mesh )) this.error(1)
 		mesh._scene = this, mesh._parent = this,
 		mesh.setGeometry(mesh._geometry),
 		mesh.setMaterial(mesh._material),
