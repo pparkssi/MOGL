@@ -171,6 +171,7 @@ var World = (function () {
                     tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0;
                     gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                     if(tMaterial._wireFrame) {
+                        gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL);
                         tProgram = scene._glPROGRAMs['wireFrame'],
                         gl.useProgram(tProgram),
                         tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
@@ -184,6 +185,7 @@ var World = (function () {
                         f4[0] = tMaterial._rw, f4[1] = tMaterial._gw, f4[2] = tMaterial._bw,f4[3] = 1,
                         gl.uniform4fv(tProgram.uColor, f4),
                         gl.drawElements(gl.LINES, tIBO.numItem, gl.UNSIGNED_SHORT, 0);
+                        gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                     }
 
                     pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj;

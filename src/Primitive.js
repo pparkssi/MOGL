@@ -87,20 +87,25 @@ var Primitive = (function () {
             var result
             return result
         },
-        plane: function plane(/*splitX, splitY*/) {
-            //TODO 이걸 계산해서 넘겨야 되는군
-            var vs, is
-            vs = [
-                0.5, 0.5, 0.0,// 0.0, 0.0,
-                -0.5, 0.5, 0.0, //0.5, 0.0,
-                0.5, -0.5, 0.0, //0.0, 0.5,
-                -0.5, -0.5, 0.0//, //0.5, 0.5
-            ]
-            is = [0, 1, 2, 1, 2, 3]
-
-
-            var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z])
-            result._key = 'plane_' + ( arguments[0] || 1) + '_' + (arguments[1] || 1)
+        plane: function plane(/*_segmentsW, _segmentsH*/) {
+            var _segmentsW = arguments[0] || 1, _segmentsH = arguments[1] || 1
+            var vs, is, x, y, base, tw;
+            var index, numIndices;
+            tw = _segmentsW + 1, index = 0, numIndices = 0, vs = [], is = []
+            for (var yi = 0; yi <= _segmentsH; ++yi) {
+                for (var xi = 0; xi <= _segmentsW; ++xi) {
+                    x = (xi / _segmentsW - .5), //*_width;
+                    y = (yi / _segmentsH - .5), //*_height;
+                    vs[index++] = x, vs[index++] = 0, vs[index++] = y, // x,y,z
+                    vs[index++] = (xi / _segmentsW), vs[index++] = (1 - yi / _segmentsH) // u,v
+                    if (xi != _segmentsW && yi != _segmentsH) {
+                        base = xi + yi * tw;
+                        is[numIndices++] = base , is[numIndices++] = (base + tw) , is[numIndices++] = (base + tw + 1) , is[numIndices++] = base , is[numIndices++] = (base + tw + 1) , is[numIndices++] = (base + 1)
+                    }
+                }
+            }
+            var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+            result._key = 'plane_' + _segmentsW + '_' + _segmentsH
             return result
         },
         point: function point(/*width*/) {
