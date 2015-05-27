@@ -4,6 +4,8 @@
 'use strict'
 var Scene = (function () {
 	var Scene, fn;
+	var textureCVS = document.createElement('canvas')
+	var textureCTX = textureCVS.getContext('2d')
 	Scene = function Scene() {
 		this._update = 0
 		this._cvs = null,
@@ -422,10 +424,19 @@ var Scene = (function () {
 		return shader
 	}
 
-	var setImage = function setImage(image/*,resizeType*/) {
-		var img = new Image()
-		console.log('resizeType', arguments[1])
-		//console.log(typeof image, image)
+
+	var makeTexture = function makeTexture(self, id, image/*,resizeType*/) {
+		var gl, texture;
+		gl = self._gl, texture = self._glTEXTUREs[id];
+		if (texture) return texture
+		texture = gl.createTexture()
+
+		var img, img2, tw,th;
+		img = new Image(), img2 = new Image(),
+		tw=1,th=1;
+
+		///////////////////////////////////
+		// 타입구분
 		if (image instanceof ImageData) img.src = image.data
 		else if (image instanceof HTMLCanvasElement) img.src = image.toDataURL()
 		else if (image instanceof HTMLImageElement) img.src = image.src
@@ -433,35 +444,37 @@ var Scene = (function () {
 		else if (typeof image == 'string') img.src = image
 		//TODO 일단 이미지만
 		//TODO 비디오 처리
-		return img
-	}
+		///////////////////////////////////
 
-	var makeTexture = function makeTexture(self, id, image/*,resizeType*/) {
-		var gl, texture;
-		gl = self._gl, texture = self._glTEXTUREs[id];
-		if (texture) return texture
-		texture = gl.createTexture(),
-		texture.img = setImage(image,arguments[3])
+		var resize = arguments[3] || Texture.zoomOut
+		img.onload=function(){
+			//TODO 이걸 인자타입에 따라 다르게 적용하면되겠군
+			while (img.width > tw) tw *= 2;
+			while (img.height > th) th *= 2;
+			console.log('텍스쳐크기 자동변환',img.width, img.height, '--->', tw, th),
+			textureCVS.width = tw,
+			textureCVS.height = th,
+			textureCTX.clearRect(0, 0, tw, th),
+			textureCTX.drawImage(img, 0, 0, tw, th),
+			console.log(textureCVS.toDataURL()),
+			img2.src = textureCVS.toDataURL()
+		}
+
+		texture.img = img2
 		texture.img.onload = function () {
-			var isPowerOf2 = function (value) {
-				return (value & (value - 1)) == 0;
-			};
 			gl.bindTexture(gl.TEXTURE_2D, texture),
 			//TODO 다변화 대응해야됨
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img);
-			if (isPowerOf2(texture.img.width) && isPowerOf2(texture.img.height)) {
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-				gl.generateMipmap(gl.TEXTURE_2D);
-			} else {
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-			}
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.generateMipmap(gl.TEXTURE_2D);
 			texture.loaded = 1;
 		}
+
+
+
 		texture.originalData = image,
 		self._glTEXTUREs[id] = texture,
 		gl.bindTexture(gl.TEXTURE_2D, null)
