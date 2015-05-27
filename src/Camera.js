@@ -142,7 +142,7 @@ var Camera = (function () {
         var tw, th;
         tw = this._cvs.width,
         th = this._cvs.height,
-        console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
+        //console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
         this._renderArea = [
             typeof x == 'string' ? tw * x.replace('%', '') * 0.01 : x,
             typeof y == 'string' ? th * y.replace('%', '') * 0.01 : y,

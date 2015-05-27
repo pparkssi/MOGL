@@ -32,7 +32,7 @@ var Scene = (function () {
 			function: [VertexShader.baseFunction],
 			main: ['' +
 			'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-			'vColor = uColor ;'
+			'vColor = uColor;'
 			]
 		}
 		var colorFragmentShader = {
@@ -41,6 +41,26 @@ var Scene = (function () {
 			varyings: ['vec4 vColor'],
 			function: [],
 			main: ['gl_FragColor =  vColor']
+		}
+
+		var wireFrameVertexShader = {
+			attributes: ['vec3 aVertexPosition'],
+			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
+			varyings: ['vec4 vColor'],
+			function: [VertexShader.baseFunction],
+			main: ['' +
+			'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+			'vColor = uColor ;'
+			]
+		}
+		var wireFrameFragmentShader = {
+			precision: 'mediump float',
+			uniforms: [],
+			varyings: ['vec4 vColor'],
+			function: [],
+			main: ['' +
+			'gl_FragColor =  vColor;' +
+			'']
 		}
 
 		var bitmapVertexShader = {
@@ -235,6 +255,8 @@ var Scene = (function () {
 
 		this.addVertexShader('color', colorVertexShader),
 		this.addFragmentShader('color', colorFragmentShader),
+		this.addVertexShader('wireFrame', wireFrameVertexShader),
+		this.addFragmentShader('wireFrame', wireFrameFragmentShader),
 		this.addVertexShader('bitmap', bitmapVertexShader),
 		this.addFragmentShader('bitmap', bitmapFragmentShader),
 		this.addVertexShader('bitmapGouraud', bitmapVertexShaderGouraud),
@@ -331,7 +353,7 @@ var Scene = (function () {
 		gl.useProgram(program)
 		for (i = 0; i < vShader.attributes.length; i++) {
 			gl.bindBuffer(gl.ARRAY_BUFFER, self._glVBOs['null']),
-			gl.enableVertexAttribArray(program[vShader.attributes[i]] = gl.getAttribLocation(program, vShader.attributes[i])),
+			gl.enableVertexAttribArray(program[vShader.attributes[i]] = gl.getAttribLocation(program, vShader.attributes[i]))
 			gl.vertexAttribPointer(program[vShader.attributes[i]], self._glVBOs['null'].stride, gl.FLOAT, false, 0, 0)
 		}
 		for (i = 0; i < vShader.uniforms.length; i++) {
@@ -380,7 +402,8 @@ var Scene = (function () {
 		gl = self._gl, resultStr = "", shader = gl.createShader(gl.FRAGMENT_SHADER),
 		shader.uniforms = []
 		if (source.precision) resultStr += 'precision ' + source.precision + ';\n'
-		else resultStr += 'precision mediump float;\n'
+		else resultStr += '' +
+			'precision mediump float;\n'
 		t0 = source.uniforms, len = t0.length
 		for (i = 0; i < len; i++) {
 			resultStr += 'uniform ' + t0[i] + ';\n',
@@ -398,20 +421,27 @@ var Scene = (function () {
 		gl.compileShader(shader)
 		return shader
 	}
-	var makeTexture = function makeTexture(self, id,image) {
+
+	var setImage = function setImage(image/*,resizeType*/) {
+		var img = new Image()
+		console.log('resizeType', arguments[1])
+		//console.log(typeof image, image)
+		if (image instanceof ImageData) img.src = image.data
+		else if (image instanceof HTMLCanvasElement) img.src = image.toDataURL()
+		else if (image instanceof HTMLImageElement) img.src = image.src
+		else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) img.src = image //base64문자열 - urlData형식으로 지정된 base64문자열
+		else if (typeof image == 'string') img.src = image
+		//TODO 일단 이미지만
+		//TODO 비디오 처리
+		return img
+	}
+
+	var makeTexture = function makeTexture(self, id, image/*,resizeType*/) {
 		var gl, texture;
 		gl = self._gl, texture = self._glTEXTUREs[id];
 		if (texture) return texture
 		texture = gl.createTexture(),
-		//TODO 일단 이미지만
-		texture.img = new Image()
-		console.log(typeof image, image)
-		if (image instanceof ImageData) texture.img.src = image.data
-		else if (image instanceof HTMLCanvasElement) texture.img.src = image.toDataURL()
-		else if (image instanceof HTMLImageElement) texture.img.src = image.src
-		else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) texture.img.src = image //base64문자열 - urlData형식으로 지정된 base64문자열
-		else if (typeof image == 'string') texture.img.src = image
-		//TODO 비디오 처리
+		texture.img = setImage(image,arguments[3])
 		texture.img.onload = function () {
 			var isPowerOf2 = function (value) {
 				return (value & (value - 1)) == 0;
@@ -432,7 +462,7 @@ var Scene = (function () {
 			}
 			texture.loaded = 1;
 		}
-		texture.data = image,
+		texture.originalData = image,
 		self._glTEXTUREs[id] = texture,
 		gl.bindTexture(gl.TEXTURE_2D, null)
 		return texture
@@ -533,8 +563,8 @@ var Scene = (function () {
 			if (typeof checks[k] == 'string')
 				if (!this._textures[checks[k]]) this.error(4)
 				else {
-					console.log(mesh._material._textures),
-					console.log(checks[k]),
+					//console.log(mesh._material._textures),
+					//console.log(checks[k]),
 					mesh._material._textures[checks[k]] = this._textures[checks[k]]
 				}
 		if (mesh instanceof Camera) this._cameras[id] = mesh, mesh._cvs = this._cvs
@@ -577,12 +607,12 @@ var Scene = (function () {
 			return 1
 		}
 
-		if (this._textures[id]) this._textures[id].img = makeTexture(this, id, image)
+		if (this._textures[id]) this._textures[id].webglTexture = makeTexture(this, id, image)
 		else {
-			this._textures[id] = {count: 0, last: 0, img: null, resizeType: arguments[2] || null},
-			this._textures[id].img = makeTexture(this, id, image),
-			console.log(this._textures),
-			console.log(id, image)
+			this._textures[id] = {count: 0, last: 0, webglTexture: null, resizeType: arguments[2] || null},
+			this._textures[id].webglTexture = makeTexture(this, id, image, arguments[2])
+			//console.log(this._textures),
+			//console.log(id, image)
 		}
 		return this
 	},

@@ -30,8 +30,8 @@ var Material = (function () {
         if (this._textures[textureID]) this.error(1);
         this._textures[textureID] = {id: textureID, type: type};
         var result;
-        console.log('type :', '_' + type);
-        console.log('확인', this['_' + type],this['_' + type].__indexList.length);
+        //console.log('type :', '_' + type);
+        //console.log('확인', this['_' + type],this['_' + type].__indexList.length);
         //배열화
         if (arguments[2] !=undefined) {
             var idx = arguments[2] >this['_' + type].__indexList.length ? this['_' + type].__indexList.length : arguments[2]
@@ -82,6 +82,7 @@ var Material = (function () {
             this._b = arguments[2] || Math.random(),
             this._a = arguments[3] == undefined ?  1 : arguments[3]
         }
+        return this
     },
     fn.setWireFrame = function setWireFrame(isVisible){ 
         this._wireFrame = isVisible;
@@ -99,12 +100,15 @@ var Material = (function () {
                 this._bw = parseInt(t1[3] + t1[3], 16) / 255;
             }
         }
+        return this
     },
     fn.setShading = function setShading(type){ 
         type.apply(this);
+        return this
     },
     fn.setLambert = function setShading(rate){ 
         this._shading.lambert = rate;
+        return this
     };
     return MoGL.ext(Material, MoGL);
 })();
