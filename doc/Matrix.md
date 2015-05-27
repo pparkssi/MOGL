@@ -1,5 +1,5 @@
 # Matrix
-* parent : 없음
+* parent : MoGL
 * [Constructor](#constructor)
 
 **field**
