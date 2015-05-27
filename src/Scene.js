@@ -463,11 +463,8 @@ var Scene = (function () {
 				if (img.width < tw) dw = tw / 2
 				if (img.height < th) dh = th / 2
 				textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, dw, dh)
-			} else if (resize == Texture.addSpace) {
-				textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, tw, th)
-			} else {
-				textureCTX.drawImage(img, 0, 0, dw, dh)
-			}
+			} else if (resize == Texture.addSpace) textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, tw, th)
+			else textureCTX.drawImage(img, 0, 0, dw, dh)
 			console.log(resize,'텍스쳐크기 자동변환', img.width, img.height, '--->', dw, dh),
 			console.log(textureCVS.toDataURL()),
 			img2.src = textureCVS.toDataURL()
@@ -485,8 +482,6 @@ var Scene = (function () {
 			gl.generateMipmap(gl.TEXTURE_2D);
 			texture.loaded = 1;
 		}
-
-
 
 		texture.originalData = image,
 		self._glTEXTUREs[id] = texture,

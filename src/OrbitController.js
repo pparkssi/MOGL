@@ -2,9 +2,8 @@
  * Created by redcamel on 2015-05-22.
  */
 var OrbitController = (function () {
-    var OrbitController, fn,self,MAT1;
+    var OrbitController, fn,self;
     var HD_down, HD_move, HD_up,HD_downTouch, HD_moveTouch, HD_upTouch;
-    MAT1 = Matrix.create(),
     HD_down = function HD_down(e) {
         self._mouseInfo.downed = 1
         self._mouseInfo.startX0 = e.screenX,
