@@ -16,9 +16,7 @@ var World = (function () {
         this.setViewport()
         window.addEventListener('resize',function(){
             self.setViewport()
-            for(var k in self._sceneList) {
-                self._sceneList[k]._update = 1
-            }
+
         })
 
         this._renderList = [],
@@ -41,6 +39,7 @@ var World = (function () {
     fn = World.prototype,
     fn.setViewport = function(){
         //this._pixelRatio = parseFloat(width)/parseFloat(height) > 1 ? window.devicePixelRatio : 1
+        var self = this;
         var width = window.innerWidth;
         var height = window.innerHeight;
         this._pixelRatio = window.devicePixelRatio;
@@ -48,7 +47,9 @@ var World = (function () {
         this._cvs.height = height * this._pixelRatio;
         this._cvs.style.width = width + 'px';
         this._cvs.style.height = height + 'px';
-
+        for(var k in self._sceneList) {
+            self._sceneList[k]._update = 1
+        }
     },
     fn.render = function render() {
         var i, k, len, tList = this._renderList;
