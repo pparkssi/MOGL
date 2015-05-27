@@ -90,7 +90,7 @@
 
 
             for (i = 0, j = vertices.length; i < j; i++) {
-                vertexBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2], uvArray[i][0], uvArray[i][1]);
+                vertexBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2], uvArray[i][0], 1.0-uvArray[i][1]);
             }
 
             for (i = 0, j = faces.length; i < j; i++) {
@@ -107,7 +107,7 @@
             mesh.scaleZ = 10;
             scene.addChild('head', mesh);
 
-            mesh.getMaterial().setShading(Shading.phong);
+            mesh.getMaterial().setShading(Shading.gouraud);
 
 
             var sum = 0, count = 1;
