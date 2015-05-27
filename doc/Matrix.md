@@ -8,260 +8,318 @@
 없음 
 
 **static**
-* [Matrix.create](#create)
-* [Matrix.clone](#clone)
-* [Matrix.copy](#copy)
-* [Matrix.copy](#identity)
-* [Matrix.invert](#invert)
-* [Matrix.multiply](#multiply)
-* [Matrix.translate](#translate)
-* [Matrix.scale](#scale)
-* [Matrix.rotate](#rotate)
-* [Matrix.rotateX](#rotateX)
-* [Matrix.rotateY](#rotateY)
-* [Matrix.rotateZ](#rotateZ)
-* [Matrix.perspective](#perspective)
-* [Matrix.lookAt](#lookAt)
-* [Matrix.str](#str)
+* [Matrix.matClone](#matclone)
+* [Matrix.matCopy](#matcopy)
+* [Matrix.matIdentity](#matㅑdentity)
+* [Matrix.matMultiply](#matmultiply)
+* [Matrix.matTranslate](#mattranslate)
+* [Matrix.matScale](#matscale)
+* [Matrix.matRotate](#matrotate)
+* [Matrix.matRotateX](#matrotateX)
+* [Matrix.matRotateY](#matrotateY)
+* [Matrix.matRotateZ](#matrotateZ)
+* [Matrix.matRotate](#matrotate)
+* [Matrix.matPerspective](#matperspective)
+* [Matrix.matLookAt](#matlookAt)
+* [Matrix.matStr](mat#str)
 
 [top][#]
 ## Constructor
 
 **description**
 
-행렬연산을 cpu측에서 수행하기 위한 헬퍼객체. 
-glMatrix (http://glmatrix.net/) 의 mat4 구현체중 일부를 사용함
+1. 행렬연산을 cpu측에서 수행하기 위한 헬퍼객체. 
+2. 생성과 함께 identyty를 실행
+3. this._rowData에 Float32Array형식의 초기 배열이 생김
+4. 4x4형식의 행렬을 다룸
 
 **param**
 
 없음.
 
-[top](#)
-## create()
+**return**
 
-**description**
-
-Float32Array 형식의 Mat44를 생성함
-
-**param**
-
-없음.
+this
 
 **sample**
 ```javascript
-var mat4 = Matrix.create()
+var matrix1 = new Matrix()
+var matrix2 = Matrix() // 팩토리로도 생성가능!
 ```
 
 [top](#)
-## clone(base:Array or Float32Array)
+## matIdentity()
 
 **description**
 
-Mat44 복제
+본인(this._rowData)를 초기화
 
 **param**
 
-1. base : Matrix.create()로 생성된 배열 또는 matrix 형식의 Array or Float32Array
+없음
 
 **sample**
 ```javascript
-var mat4 = Matrix.create()
-var cloneMat4 = Matrix.clone(mat4)
+var matrix = new Matrix()
+matrix.matIdentity()
 ```
 
 [top](#)
-## copy(out,base)
+## matClone()
 
 **description**
 
-out 매트릭스의 값을 base의 값으로 복사
+matrix를 복제
 
 **param**
 
-1. out : 복제될 대상
-2. base : 복제 소스
+없음
+
+**return**
+
+복제한 새로운 행렬 객체를 반환
 
 **sample**
 ```javascript
-var mat1 = Matrix.create()
-var mat2 = Matrix.create()
-Matrix.clone(mat1,mat2) // mat2의 값이 mat1으로 복사된다.
+var matrix = new Matrix()
+var cloneMatrix = matrix.matClone()
 ```
 
 [top](#)
-
-## identity(target)
+## matCopy(targetMatrix:Matrix)
 
 **description**
 
-target의 매트릭스 값을 초기화 
+targetMatrix에 matrix를 복사
 
 **param**
 
-1. target : 초기화 대상 매트릭스
+1. targetMatrix : 복제대상 매트릭스 객체
+
+**return**
+
+this
 
 **sample**
 ```javascript
-var mat1 = Matrix.create()
-mat1.identity()
-// [
-//  1,0,0,0,
-//  0,1,0,0,
-//  0,0,1,0,
-//  0,0,0,1
-// ]
+var mat1 = new Matrix()
+var mat2 = new Matrix()
+mat2= mat1.clone(mat2)
+// mat2의 _rowData에 mat1의 _rowData가 복제
 ```
 
 [top](#)
-## invert(out,base)
+
+## matIdentity()
 
 **description**
-target의 매트릭스 값을 반전시킨다.
+
+자신읜 _rowData를 초기화
 
 **param**
 
-1. out : 결과값을 반영할 매트릭스.
-2. base : 반전할 매트릭스 ( 본인은 변동없음 )
+없음
+
+**return**
+
+this
 
 **sample**
 ```javascript
-var mat44 = Matrix.create()
-var invertMat44 = Matrix.create()
-mat1.invert(invertMat44,mat44)
-
+var matrix = new Matrix(
+mat1.matIdentity()
 ```
 
 [top](#)
-## multiply(out,sourceMatrix1,sourceMatrix2)
+## matMultiply(targetMatrix:Matrix)
 
 **description**
-sourceMatrix1과 sourceMatrix2의 행렬을 곱한값을 out으로 반영
+자신읜 _rowData와 target Matrix의 _rowData를 곱
 
 **param**
 
-1. out : 결과값을 반영할 매트릭스.
-2. sourceMatrix1 : 매트릭스1 ( 연산후 본인은 변동없음 ).
-3. sourceMatrix1 : 매트릭스2 ( 연산후 본인은 변동없음 ).
+1. targetMatrix : 곱할 matrix 객체
+
+**return**
+
+this
 
 **sample**
 ```javascript
-var out = Matrix.create()
-var sourceMatrix1 = Matrix.create()
-var sourceMatrix2 = Matrix.create()
-mat1.multiply(out, sourceMatrix1, sourceMatrix2)
-
+var matrix1 = new Matrix()
+var matrix2 = new Matrix()
+matrix1.matMultiply(matrix2)
 ```
 
 [top](#)
-## translate(out,matrix,vec3:Array)
+## matTranslate(x:Number,y:Number,z:Number)
 
 **description**
-x, y, z 방향으로 평행이동 시킴
+자신의 _rowData를 x, y, z 방향으로 평행이동 시킴
 
 **param**
 
-1. out : 결과값을 반영할 매트릭스.
-2. matrix : 매트릭스 ( 연산후 본인은 변동없음 ).
-3. vec3 : 평행이동 시킬 x,y,z를 배열 형식으로 입력 [x,y,z]
+1. x : x 평행이동 값
+2. y : y 평행이동 값
+3. z : z 평행이동 값
+
+**return**
+
+this
 
 **sample**
 ```javascript
-var out = Matrix.create()
-Matrix.translate(out,out,[10,20,30])
+var matrix = new Matrix()
+matrix.matTranslate(10,20,30)
 ```
 
 [top](#)
-## scale(out,matrix,scaleVec3:Array)
+## matScale(x:Number,y:Number,z:Number)
 
 **description**
 x,y,z축 방향으로 행렬을 확장시킴
 
 **param**
 
-1. out : 결과값을 반영할 매트릭스.
-2. matrix : 매트릭스 ( 연산후 본인은 변동없음 ).
-3. vec3 : x,y,z축 방향의 확장값을 배열 형식으로 입력 [scaleX,scaleY,scaleZ]
+1. x : x 확대 값
+2. y : y 확대 값
+3. z : z 확대 값
+
+**return**
+
+this
 
 **sample**
 ```javascript
-var out = Matrix.create()
-Matrix.scale(out,out,[10,20,30])
+var matrix = new Matrix()
+matrix.matScale(10,20,30)
 ```
 
 [top](#)
-## rotateX(out,matrix,radian:number)
+## matRotateX(rad:Number)
 
 **description**
 x축 방향으로 행렬을 회전 시킨 행렬을 반환
 
 **param**
 
-1. out : 결과값을 반영할 매트릭스.
-2. matrix : 회전시킬 매트릭스 솟스.
-3. radian : 회전각
+1. rad : 회전 라디안 값
+
+**return**
+
+this
 
 **sample**
 ```javascript
-var out = Matrix.create()
-Matrix.rotateX(out,out,10*Math.PI/180)
+var matrix = new Matrix()
+matrix.matRotateX(0.1)
 ```
 
 [top](#)
-
-## rotateY(out,matrix,radian:number)
+## matRotateY(rad:Number)
 
 **description**
 y축 방향으로 행렬을 회전 시킨 행렬을 반환
 
 **param**
 
-1. out : 결과값을 반영할 매트릭스.
-2. matrix : 회전시킬 매트릭스 솟스.
-3. radian : 회전각
+1. rad : 회전 라디안 값
+
+**return**
+
+this
 
 **sample**
 ```javascript
-var out = Matrix.create()
-Matrix.rotateY(out,out,10*Math.PI/180)
+var matrix = new Matrix()
+matrix.matRotateY(0.1)
 ```
 
 [top](#)
-## rotateZ(out,matrix,radian:number)
+## matRotateZ(rad:Number)
 
 **description**
-Z축 방향으로 행렬을 회전 시킨 행렬을 반환
+z축 방향으로 행렬을 회전 시킨 행렬을 반환
 
 **param**
 
-1. out : 결과값을 반영할 매트릭스.
-2. matrix : 회전시킬 매트릭스 솟스.
-3. radian : 회전각
+1. rad : 회전 라디안 값
+
+**return**
+
+this
 
 **sample**
 ```javascript
-var out = Matrix.create()
-Matrix.rotateZ(out,out,10*Math.PI/180)
+var matrix = new Matrix()
+matrix.matRotateZ(0.1)
 ```
 
 [top](#)
-## perspective(out,fovy:number,aspect,near,far)
+## matRotate(rad:Number, axis:Array[x,y,z])
 
 **description**
-퍼스펙티브 행렬을 반환
+axis를 기준으로 한 증분회전
 
 **param**
 
-1. out : 결과값을 반영할 매트릭스.
-2. fovy : Vertical field of view : radians
-3. aspect : width/height
-4. near : 절단면의 최소z (0<값)
-5. far : 절단면의 최대z
+1. rad : 회전 라디안 값
+2. axis : 기준축
+
+**return**
+
+this
 
 **sample**
 ```javascript
-var out = Matrix.create()
-Matrix.perspective(out, 55*Math.PI/180, 1024/768, 0.1, 1000)
-      
+var matrix = new Matrix()
+matrix.matRotate(0.1,[1,2,3])
+```
+
+[top](#)
+## matPerspective(fov:number,aspect::number,near::number,far:number)
+
+**description**
+퍼스펙티브 행렬을 생성
+
+**return**
+
+this
+
+**param**
+
+1. fov : fov
+2. aspect : width/height
+3. near : 절단면의 최소z (0<값)
+4. far : 절단면의 최대z
+
+**sample**
+```javascript
+var matrix = new Matrix()
+matrix.matPerspective(45, 2/1,0.1,100000)
+```
+
+[top](#)
+## matLookAt(eye:Array[x,y,z],center:Array[x,y,z],up:Array[x,y,z])
+
+**description**
+eye 벡터가 center 벡터를 바라보는 회전 행렬 생성
+
+**param**
+
+1. eye : 대상객체의 포지션
+2. center : 바라볼 포지션
+3. up : 업벡터
+
+
+**return**
+
+this
+
+**sample**
+```javascript
+var matrix = new Matrix()
+matrix.matLookAt([100,100,100],[0,0,0],[0,1,0])
 ```
 
 [top](#)
