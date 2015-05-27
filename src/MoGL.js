@@ -91,8 +91,8 @@ var MoGL = (function(){
 			prevMethod[prevMethod.length] = errorMethod;
 			errorMethod = 'constructor';
 			if( arg0 === isSuperChain ){
-				parent.apply( this, arguments[1] ),
-				child.apply( this, arguments[1] );
+				parent.call( this, isSuperChain, arguments[1] ),
+				child.call( this, isSuperChain, arguments[1] );
 			}else if( this instanceof cls ){
 				if( arg0 === isFactory ){
 					arg = arguments[1];
@@ -121,7 +121,7 @@ var MoGL = (function(){
 		if( 'name' in child ){
 			value.value = child.name;
 		}else{
-			key = child.toString(), 
+			key = child.toString(),
 			value.value = key.substring( key.indexOf('function') + 8, key.indexOf('(') ).trim();
 		}
 		Object.defineProperty( newProto, 'className', value );
