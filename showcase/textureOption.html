@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>Texture Option Test</title>
+    <meta charset="utf-8"/>
+    <meta property="og:title" content="Texture Option Test"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
+    <script type="text/javascript" src="dat.gui.min.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute;
+        }
+    </style>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Primitive.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="../src/World.js"></script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="FPS">
+    Current FPS: <span id="currentFPS"></span>
+    Average FPS: <span id="averageFPS"></span>
+</div>
+
+<script>
+    'use strict';
+
+    var world = new World('canvas');
+    var scene = new Scene();
+
+    var divCurrentFPS = document.getElementById('currentFPS');
+    var divAverageFPS = document.getElementById('averageFPS');
+    var prevTime = 0;
+
+    world.addScene('scene', scene);
+
+    scene.addChild('camera', new Camera());
+    scene.getChild('camera').setBackgroundColor('#fff')
+    scene.addMaterial('material', new Material());
+    scene.addMaterial('materialZoomout', new Material());
+    scene.addMaterial('materialZoomIn', new Material());
+    scene.addMaterial('materialCrop', new Material());
+    scene.addMaterial('materialAddSpace', new Material());
+
+    scene.addTexture('textureZoomout', 'monkey/Suzanne.jpg', Texture.zoomIn);
+    scene.addTexture('textureZoomIn', 'monkey/Suzanne.jpg', Texture.zoomOut);
+    scene.addTexture('textureCrop', 'monkey/Suzanne.jpg', Texture.crop);
+    scene.addTexture('textureAddSpace', 'monkey/Suzanne.jpg', Texture.addSpace);
+
+    scene.getMaterial('materialZoomout').addTexture(Texture.diffuse, 'textureZoomout');
+    scene.getMaterial('materialZoomIn').addTexture(Texture.diffuse, 'textureZoomIn');
+    scene.getMaterial('materialCrop').addTexture(Texture.diffuse, 'textureCrop');
+    scene.getMaterial('materialAddSpace').addTexture(Texture.diffuse, 'textureAddSpace');
+
+    world.addRender('scene', 'camera');
+
+    scene.addGeometry('rect', new Geometry(
+                    [
+                        1.0, 1.0, 0.0, 0.0, 0.0,
+                        -1.0, 1.0, 0.0, 1.0, 0.0,
+                        1.0, -1.0, 0.0, 0.0, 1.0,
+                        -1.0, -1.0, 0.0, 1.0, 1.0
+                    ],
+                    [
+                        0, 1, 2, 1, 2, 3
+                    ],
+                    [
+                        Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v
+                    ]
+            )
+    )
+
+
+    var meshZoomout = new Mesh('rect', 'materialZoomout')
+    var meshZoomIn = new Mesh('rect', 'materialZoomIn')
+    var meshCrop = new Mesh('rect', 'materialCrop')
+    var meshAddSpace = new Mesh('rect', 'materialAddSpace')
+    var mesh = new Mesh('rect', 'material')
+
+
+    scene.addChild('meshZoomout',meshZoomout)
+    scene.addChild('meshZoomIn',meshZoomIn)
+    scene.addChild('mesh',mesh)
+    scene.addChild('meshCrop',meshCrop)
+    scene.addChild('meshAddSpace',meshAddSpace)
+
+    meshZoomout.x = -5
+    meshZoomIn.x = -2.5
+    mesh.x = 0
+    meshCrop.x = 2.5
+    meshAddSpace.x = 5
+
+    var sum = 0, count = 1;
+    function render(currTime) {
+        var currentFPS = 1000 / ( currTime - prevTime );
+        prevTime = currTime;
+        count++
+        divCurrentFPS.textContent = currentFPS.toFixed(2);
+        divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
+        world.render();
+        requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+
+</script>
+</body>
+</html>

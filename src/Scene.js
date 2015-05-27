@@ -451,11 +451,24 @@ var Scene = (function () {
 			//TODO 이걸 인자타입에 따라 다르게 적용하면되겠군
 			while (img.width > tw) tw *= 2;
 			while (img.height > th) th *= 2;
-			console.log('텍스쳐크기 자동변환',img.width, img.height, '--->', tw, th),
+			if (resize == Texture.zoomOut) {
+				if (img.width < tw) tw /= 2
+				if (img.height < th) th /= 2
+			} else if (resize == Texture.zoomIn) {}
+			var dw = tw, dh = th;
 			textureCVS.width = tw,
 			textureCVS.height = th,
-			textureCTX.clearRect(0, 0, tw, th),
-			textureCTX.drawImage(img, 0, 0, tw, th),
+			textureCTX.clearRect(0, 0, tw, th)
+			if (resize == Texture.crop) {
+				if (img.width < tw) dw = tw / 2
+				if (img.height < th) dh = th / 2
+				textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, dw, dh)
+			} else if (resize == Texture.addSpace) {
+				textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, tw, th)
+			} else {
+				textureCTX.drawImage(img, 0, 0, dw, dh)
+			}
+			console.log(resize,'텍스쳐크기 자동변환', img.width, img.height, '--->', dw, dh),
 			console.log(textureCVS.toDataURL()),
 			img2.src = textureCVS.toDataURL()
 		}
