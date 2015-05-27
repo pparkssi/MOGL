@@ -21,7 +21,7 @@ var Mesh = (function () {
         this._material = material,
         this._scene = null,
         this._parent = null,
-        this.rotateX = 0, this.rotateY = 1, this.rotateZ = 0,
+        this.rotateX = 0, this.rotateY = 0, this.rotateZ = 0,
         this.scaleX = 1, this.scaleY = 1, this.scaleZ = 1,
         this.x = 0, this.y = 0, this.z = 0
     },
