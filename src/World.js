@@ -171,7 +171,7 @@ var World = (function () {
                     tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0;
                     gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                     if(tMaterial._wireFrame) {
-                        tProgram = scene._glPROGRAMs['color'],
+                        tProgram = scene._glPROGRAMs['wireFrame'],
                         gl.useProgram(tProgram),
                         tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
@@ -251,10 +251,6 @@ var World = (function () {
         if (!tScene) this.error(1);
         else if (!tScene.isAlive) this.error(1);
         if (tScene) {
-            console.log(tScene)
-            console.log(cameraID)
-            console.log(tScene.getChild)
-            console.log(tScene.getChild(cameraID))
             if (!tScene.getChild(cameraID)) this.error(2);
             else if (!tScene.getChild(cameraID).isAlive) this.error(2);
         }

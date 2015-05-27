@@ -10,8 +10,7 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <script type="text/javascript" src="dat.gui.min.js"></script>
     <style>
         body {
@@ -69,7 +68,7 @@
 
         scene.addChild('camera', new Camera());
         scene.addMaterial('material', new Material());
-        scene.addTexture('texture', 'monkey/Suzanne.jpg');
+        scene.addTexture('texture', 'monkey/Suzanne.jpg',Texture.crop);
         scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
         scene.getMaterial('material').setShading(Shading.phong)
 //        scene.getMaterial('material').setShading(Shading.gouraud)
@@ -202,7 +201,6 @@
 
 
             requestAnimationFrame(render);
-            console.log(world._gl)
         }
 
 
