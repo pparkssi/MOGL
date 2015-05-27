@@ -59,22 +59,7 @@ var Material = (function () {
         console.log('확인', this['_' + type]);
         return this;
     },
-    //    fn.removeTexture = function removeTexture(type,textureID){ 
-    //        console.log('지울텍스쳐',type,textureID)
-    //        console.log(this)
-    //        var typeList = this['_' + type].__indexList
-    //        var i = typeList.length
-    //        while (i--) {
-    //            if (typeList[i].id == textureID) {
-    //                typeList.splice(i, 1)
-    //                break
-    //            }
-    //        }
-    //        delete this._textures[textureID]
-    //        console.log('확인', this['_' + type])
-    //        return this
-    //    },
-    fn.setBackgroundColor = function setBackgroundColor(){ 
+    fn.setBackgroundColor = function setBackgroundColor(){
         var t0 = arguments[0], t1, ta;
         if (arguments.length == 1) {
             if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7);

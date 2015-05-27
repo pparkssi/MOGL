@@ -12,7 +12,6 @@ var Camera = (function () {
     Camera = function Camera() {
         this._cvs=null,
         this._renderArea = null,
-        this._updateRenderArea = 1,
         this._geometry = new Geometry([], []),
         this._material = new Material(),
         this._r = 0,
@@ -59,7 +58,7 @@ var Camera = (function () {
             this._pixelMatrix._rowData[12] = -1
             this._pixelMatrix._rowData[13] = 1
         }else this._pixelMatrix.matPerspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far);
-        return this._pixelMatrix;
+        return this;
     },
     fn.getRenderArea = function getRenderArea(){
         return this._renderArea;
@@ -141,7 +140,6 @@ var Camera = (function () {
     },
     fn.setRenderArea = function setRenderArea(x,y,w,h){
         var tw, th;
-        this._updateRenderArea = 1,
         tw = this._cvs.width,
         th = this._cvs.height,
         console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
