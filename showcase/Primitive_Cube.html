@@ -43,13 +43,13 @@
 <script src="http://js.bsapi.co/test/"></script>
 <script>
 </script>
-<canvas id='geodesic'></canvas>
+<canvas id='cube1_1'></canvas>
 <script>
 
-    var world = new World('geodesic')
+    var world = new World('cube1_1')
     var scene = new Scene()
     var camera = new Camera()
-    var testMat = new Material('#ffffff');
+    var testMat = new Material('#222');
 
     world.addScene('scene', scene);
     scene.addChild('camera', camera);
@@ -57,13 +57,42 @@
     scene.addTexture('texture', '../asset/geodesicTest.jpg');
     testMat.addTexture(Texture.diffuse, 'texture')
 
-    var geodesic = Primitive.geodesic()
-    var geodesicMesh = new Mesh(geodesic, testMat);
-    scene.addChild('geodesicMesh', geodesicMesh);
+    var cube1_1 = Primitive.cube()
+    var cube2_2 = Primitive.cube(2, 2, 2)
+    var cube2_3 = Primitive.cube(3, 3, 3)
+    var cube10_10 = Primitive.cube(10, 10, 10)
 
+    var cube1_1Mesh = new Mesh(cube1_1, testMat);
+    var cube2_2Mesh = new Mesh(cube2_2, testMat);
+    var cube2_3Mesh = new Mesh(cube2_3, testMat);
+    var cube10_10Mesh = new Mesh(cube10_10, testMat);
+
+    testMat.setWireFrame(1)
+    scene.addChild('cube1_1Mesh', cube1_1Mesh);
+    scene.addChild('cube2_2Mesh', cube2_2Mesh);
+    scene.addChild('cube2_3Mesh', cube2_3Mesh);
+    scene.addChild('cube10_10Mesh', cube10_10Mesh);
+
+    cube1_1Mesh.rotateX = Math.PI / 2
+    cube2_2Mesh.rotateX = Math.PI / 2
+    cube2_3Mesh.rotateX = Math.PI / 2
+    cube10_10Mesh.rotateX = Math.PI / 2
+
+    cube1_1Mesh.x = -3
+    cube2_2Mesh.x = -1
+    cube2_3Mesh.x = 1
+    cube10_10Mesh.x = 3
 
     setInterval(function () {
-        geodesicMesh.rotateY += 0.01
+        cube1_1Mesh.rotateZ += 0.01
+        cube2_2Mesh.rotateZ += 0.01
+        cube2_3Mesh.rotateZ += 0.01
+        cube10_10Mesh.rotateZ += 0.01
+
+        cube1_1Mesh.rotateY += 0.01
+        cube2_2Mesh.rotateY += 0.01
+        cube2_3Mesh.rotateY += 0.01
+        cube10_10Mesh.rotateY += 0.01
         world.render();
     }, 1000 / 60);
 
@@ -72,7 +101,7 @@
     // UI
     /////////////////////////////////////////////
     var shadingParams = {
-        WireFrame : false,
+        WireFrame: true,
         color: function () {
             testMat.removeTexture('texture');
             testMat.setShading(Shading.none)
@@ -108,7 +137,7 @@
     shading.add(shadingParams, 'PhongColor');
     shading.add(shadingParams, 'GouraudTextrue');
     shading.add(shadingParams, 'PhongTextrue');
-    shading.add(shadingParams, 'WireFrame').onChange(function(){
+    shading.add(shadingParams, 'WireFrame').onChange(function () {
         testMat.setWireFrame(shadingParams.WireFrame)
     });
 </script>
