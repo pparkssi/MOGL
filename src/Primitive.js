@@ -27,10 +27,10 @@ var Primitive = (function () {
                 for (j = 0; j <= _segmentsH; j++) {
                     // front
                     vs[vidx++] = outer_pos,vs[vidx++] = -hh + j*dh,vs[vidx++] = -hd,
-                    vs[vidx++] = ( tl0u + i*du ),vs[vidx++] = ( tl0v + (v_tile_dim - j*dv)),
+                    vs[vidx++] = 1-( tl0u + i*du ),vs[vidx++] = ( tl0v + (v_tile_dim - j*dv)),
                     // back
                     vs[vidx++] = outer_pos, vs[vidx++] = -hh + j * dh, vs[vidx++] = hd,
-                    vs[vidx++] = ( tl1u + (u_tile_dim - i * du)), vs[vidx++] = ( tl1v + (v_tile_dim - j * dv))
+                    vs[vidx++] = 1-( tl1u + (u_tile_dim - i * du)), vs[vidx++] = ( tl1v + (v_tile_dim - j * dv))
                     if (i && j) tl = 2 * ((i - 1) * (_segmentsH + 1) + (j - 1)), tr = 2 * (i * (_segmentsH + 1) + (j - 1)), bl = tl + 2, br = tr + 2, is[fidx++] = tl, is[fidx++] = bl, is[fidx++] = br, is[fidx++] = tl, is[fidx++] = br, is[fidx++] = tr, is[fidx++] = tr + 1, is[fidx++] = br + 1, is[fidx++] = bl + 1, is[fidx++] = tr + 1, is[fidx++] = bl + 1, is[fidx++] = tl + 1;
                 }
             }
@@ -40,10 +40,10 @@ var Primitive = (function () {
                 for (j = 0; j <= _segmentsD; j++) {
                     // top
                     vs[vidx++] = outer_pos, vs[vidx++] = hh, vs[vidx++] = -hd + j * dd,
-                    vs[vidx++] = ( tl0u + i * du), vs[vidx++] = ( tl0v + (v_tile_dim - j * dv)),
+                    vs[vidx++] = 1-( tl0u + i * du), vs[vidx++] = ( tl0v + (v_tile_dim - j * dv)),
                     // bottom
                     vs[vidx++] = outer_pos, vs[vidx++] = -hh, vs[vidx++] = -hd + j * dd,
-                    vs[vidx++] = ( tl1u + i * du), vs[vidx++] = ( tl1v + j * dv)
+                    vs[vidx++] = 1-( tl1u + i * du), vs[vidx++] = ( tl1v + j * dv)
                     if (i && j) tl = inc + 2 * ((i - 1) * (_segmentsD + 1) + (j - 1)), tr = inc + 2 * (i * (_segmentsD + 1) + (j - 1)), bl = tl + 2, br = tr + 2, is[fidx++] = tl, is[fidx++] = bl, is[fidx++] = br, is[fidx++] = tl, is[fidx++] = br, is[fidx++] = tr, is[fidx++] = tr + 1, is[fidx++] = br + 1, is[fidx++] = bl + 1, is[fidx++] = tr + 1, is[fidx++] = bl + 1, is[fidx++] = tl + 1
                 }
             }
@@ -53,10 +53,10 @@ var Primitive = (function () {
                 for (j = 0; j <= _segmentsH; j++) {
                     // left
                     vs[vidx++] = -hw, vs[vidx++] = -hh + j * dh, vs[vidx++] = outer_pos,
-                    vs[vidx++] = ( tl0u + i*du),vs[vidx++] = ( tl0v + (v_tile_dim - j*dv))
+                    vs[vidx++] = 1-( tl0u + i*du),vs[vidx++] = ( tl0v + (v_tile_dim - j*dv))
                     // right
                     vs[vidx++] = hw, vs[vidx++] = -hh + j * dh, vs[vidx++] = outer_pos;
-                    vs[vidx++] = ( tl1u + (u_tile_dim - i * du)), vs[vidx++] = ( tl1v + (v_tile_dim - j * dv))
+                    vs[vidx++] = 1-( tl1u + (u_tile_dim - i * du)), vs[vidx++] = ( tl1v + (v_tile_dim - j * dv))
                     if (i && j) tl = inc + 2 * ((i - 1) * (_segmentsH + 1) + (j - 1)), tr = inc + 2 * (i * (_segmentsH + 1) + (j - 1)), bl = tl + 2, br = tr + 2, is[fidx++] = tl, is[fidx++] = bl, is[fidx++] = br, is[fidx++] = tl, is[fidx++] = br, is[fidx++] = tr, is[fidx++] = tr + 1, is[fidx++] = br + 1, is[fidx++] = bl + 1, is[fidx++] = tr + 1, is[fidx++] = bl + 1, is[fidx++] = tl + 1
                 }
             }
@@ -85,12 +85,12 @@ var Primitive = (function () {
             for (i = 0; i < hnLat; i++) {
                 nLon = 4 * (i + 1); //경도방향 꼭지점수 4, 8, 12, 16, 20...
                 dLon = 360 / nLon * D2R, lat = -HPI + (i + 1) * dLat, v = (HPI + lat) / PI, sinLat = mS(lat), cosLat = mC(lat),z = radius * sinLat
-                for (j = 0; j <= nLon; j++) lon = j * dLon, sinLon = mS(lon), cosLon = mC(lon), x = radius * cosLat * cosLon, y = radius * cosLat * sinLon, u = lon / TPI, yUp ? _vertices.push(x, -z, y, u, v) : _vertices.push(x, y, z, u, v);
+                for (j = 0; j <= nLon; j++) lon = j * dLon, sinLon = mS(lon), cosLon = mC(lon), x = radius * cosLat * cosLon, y = radius * cosLat * sinLon, u = 1-lon / TPI, yUp ? _vertices.push(x, -z, y, u, v) : _vertices.push(x, y, z, u, v);
             }
             //latitude 0 -> 90
             for (i=1; i < hnLat; i++) {
                 nLon = 4 * (hnLat - i), dLon = 360 / nLon * D2R, lat = dLat * i, v = (HPI + lat) / PI, sinLat = mS(lat), cosLat = mC(lat), z = radius * sinLat
-                for (j = 0; j <= nLon; j++) lon = j * dLon, sinLon = mS(lon), cosLon = mC(lon), x = radius * cosLat * cosLon, y = radius * cosLat * sinLon, u = lon / TPI, yUp ? _vertices.push(x, -z, y, u, v) : _vertices.push(x, y, z, u, v);
+                for (j = 0; j <= nLon; j++) lon = j * dLon, sinLon = mS(lon), cosLon = mC(lon), x = radius * cosLat * cosLon, y = radius * cosLat * sinLon, u = 1-lon / TPI, yUp ? _vertices.push(x, -z, y, u, v) : _vertices.push(x, y, z, u, v);
             }
             x = 0, y = 0, z = radius, yUp ? _vertices.push(x, -z, y, u, v) : _vertices.push(x, y, z, u, v);
             var k, pt0, pt1, pt2, u_idx_start, u_idx_end, u_idx, l_idx_start, l_idx_end, l_idx, isUp, tris, triIdx
@@ -149,7 +149,7 @@ var Primitive = (function () {
                     x = (xi / _segmentsW - .5), //*_width;
                     y = (yi / _segmentsH - .5), //*_height;
                     vs[index++] = x, vs[index++] = 0, vs[index++] = y, // x,y,z
-                    vs[index++] = (xi / _segmentsW), vs[index++] = (1 - yi / _segmentsH) // u,v
+                    vs[index++] = (xi / _segmentsW), vs[index++] = yi / _segmentsH // u,v
                     if (xi != _segmentsW && yi != _segmentsH) {
                         base = xi + yi * tw;
                         is[numIndices++] = base , is[numIndices++] = (base + tw) , is[numIndices++] = (base + tw + 1) , is[numIndices++] = base , is[numIndices++] = (base + tw + 1) , is[numIndices++] = (base + 1)
@@ -168,30 +168,35 @@ var Primitive = (function () {
             return result
         },
         sphere: function sphere(/*split*/) {
-            var vs, is, latitudeBands, longitudeBands, radius;
-            var theta, sinTheta, cosTheta;
-            var phi, sinPhi, cosPhi;
-            var latNumber,longNumber
-            var x, y, z, u,v;
-            vs = [], is = [],
-            latitudeBands = 8, longitudeBands = 8, radius = 0.5;
-            for (latNumber = 0; latNumber <= latitudeBands; ++latNumber) {
-                theta = latNumber * Math.PI / latitudeBands, sinTheta = mS(theta), cosTheta = mC(theta);
-                for (longNumber = 0; longNumber <= longitudeBands; ++longNumber) {
-                    phi = longNumber * 1 * Math.PI / longitudeBands, sinPhi = mS(phi), cosPhi = mC(phi);
-                    x = cosPhi * sinTheta,y = cosTheta,z = sinPhi * sinTheta,
-                    u = 1 - longNumber / longitudeBands,v = 1 - latNumber / latitudeBands,
-                    vs.push(radius * x, radius * y, radius * z,u, v);
+            var vs = [];
+            var is = [];
+            var latitudeBands = 8;
+            var longitudeBands = 8;
+            var radius = 1.0;
+            for (var latNumber = 0; latNumber <= latitudeBands; ++latNumber) {
+                var theta = latNumber * Math.PI / latitudeBands;
+                var sinTheta = mS(theta);
+                var cosTheta = mC(theta);
+                for (var longNumber = 0; longNumber <= longitudeBands; ++longNumber) {
+                    var phi = longNumber * 2 * Math.PI / longitudeBands;
+                    var sinPhi = mS(phi);
+                    var cosPhi = mC(phi);
+
+                    var x = cosPhi * sinTheta;
+                    var y = cosTheta;
+                    var z = sinPhi * sinTheta;
+                    var u = 1 - longNumber / longitudeBands;
+                    var v = 1 - latNumber / latitudeBands;
+                    vs.push(radius * x, radius * y, radius * z, u, v);
                 }
             }
             for (latNumber = 0; latNumber < latitudeBands; ++latNumber) {
-                for (longNumber = 0; longNumber < longitudeBands; ++ longNumber) {
+                for (longNumber = 0; longNumber < longitudeBands; ++longNumber) {
                     var first = latNumber * (longitudeBands + 1) + longNumber;
                     var second = first + longitudeBands + 1;
                     is.push(second, first, first + 1, second + 1, second, first + 1);
                 }
             }
-
             var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
             result._key = 'sphere_' + ( arguments[0] || 1)
             return result

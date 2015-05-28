@@ -26,7 +26,7 @@ var Camera = (function () {
         this._fog = null,
         this._antialias = false,
         this._pixelMatrix = Matrix(),
-        this.z =-10,
+        this.z =10,
         this._mode = '3d'
         this.lookAt(0,0,0);
 

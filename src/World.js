@@ -95,7 +95,7 @@ var World = (function () {
                     tIBO = scene._glIBOs[tItem._geometry._key],
                     tMaterial = tItem._material,
                     tDiffuseList = tMaterial._diffuse;
-                    var dLite = [0,1,1], useNormalBuffer = 0;
+                    var dLite = [0,-0.5,-1], useNormalBuffer = 0;
                     if(tDiffuseList.__indexList.length == 0){
                         if(tMaterial._shading.type == 'none'){
                             tProgram=scene._glPROGRAMs['color'];
@@ -164,7 +164,7 @@ var World = (function () {
                     }
                     f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ;
                     gl.uniform3fv(tProgram.uRotate, f3),
-                    f3[0] = -tItem.x,f3[1] = -tItem.y,f3[2] = tItem.z,
+                    f3[0] = tItem.x,f3[1] = tItem.y,f3[2] = tItem.z,
                     gl.uniform3fv(tProgram.uPosition, f3),
                     f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ,
                     gl.uniform3fv(tProgram.uScale, f3),
@@ -178,7 +178,7 @@ var World = (function () {
                         tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                         f3[0] = tItem.rotateX, f3[1] = tItem.rotateY, f3[2] = tItem.rotateZ,
                         gl.uniform3fv(tProgram.uRotate, f3),
-                        f3[0] = -tItem.x, f3[1] = -tItem.y, f3[2] = tItem.z,
+                        f3[0] = tItem.x, f3[1] = tItem.y, f3[2] = tItem.z,
                         gl.uniform3fv(tProgram.uPosition, f3),
                         f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                         gl.uniform3fv(tProgram.uScale, f3),
@@ -205,9 +205,9 @@ var World = (function () {
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            tVBO = scene._glVBOs['rect'],
-            tUVBO = scene._glUVBOs['rect'],
-            tIBO = scene._glIBOs['rect'],
+            tVBO = scene._glVBOs['_FRAMERECT_'],
+            tUVBO = scene._glUVBOs['_FRAMERECT_'],
+            tIBO = scene._glIBOs['_FRAMERECT_'],
             tProgram = scene._glPROGRAMs['bitmap'];
             if (!tVBO) return;
             gl.useProgram(tProgram);

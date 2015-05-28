@@ -68,7 +68,7 @@
 
         scene.addChild('camera', new Camera());
         scene.addMaterial('material', new Material());
-        scene.addTexture('texture', 'monkey/Suzanne.jpg',Texture.addSpace);
+        scene.addTexture('texture', 'monkey/Suzanne.jpg');
         scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
         scene.getMaterial('material').setShading(Shading.phong)
 //        scene.getMaterial('material').setShading(Shading.gouraud)
