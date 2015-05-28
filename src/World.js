@@ -142,6 +142,9 @@ var World = (function () {
                             gl.useProgram(tProgram);
                             useNormalBuffer = 1;
                         }else if(tMaterial._shading.type == 'blinn'){
+                            tProgram=scene._glPROGRAMs['bitmapBlinn'];
+                            gl.useProgram(tProgram);
+                            useNormalBuffer = 1;
                         }
                         if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
 

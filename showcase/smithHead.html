@@ -109,8 +109,22 @@
             mesh.scaleZ = 10;
             scene.addChild('head', mesh);
 
-            mesh.getMaterial().setShading(Shading.phong);
+            var mesh2 = new Mesh('geometry', 'material');
+            mesh2.scaleX = 10;
+            mesh2.scaleY = 10;
+            mesh2.scaleZ = 10;
+            scene.addChild('head2', mesh2);
 
+            mesh.x = -3
+            mesh2.x = 3
+            mesh.y = -2
+            mesh2.y = -2
+
+            mesh.getMaterial().setShading(Shading.phong);
+            mesh2.getMaterial().setShading(Shading.blinn);
+
+            mesh.getMaterial().setLambert(1.5)
+            mesh2.getMaterial().setLambert(1.5)
                       var sum = 0, count = 1;
 
             function render(currTime) {
@@ -120,7 +134,8 @@
                 divCurrentFPS.textContent = currentFPS.toFixed(2);
                 divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed(2);
 
-                mesh.rotateY -= 0.02;
+                mesh.rotateY -= 0.01;
+                mesh2.rotateY -= 0.01;
 
                 world.render();
 

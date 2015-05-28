@@ -165,7 +165,7 @@
             mesh4.y = 1
             scene.addChild('monkey4', mesh4);
             mesh4.getMaterial().setShading(Shading.gouraud)
-            mesh4.getMaterial().setLambert(1)
+            mesh4.getMaterial().setLambert(1.5)
 
 
             var mesh5 = new Mesh('geometry', 'material5');
@@ -174,14 +174,14 @@
             mesh5.y = 1
             scene.addChild('monkey5', mesh5);
             mesh5.getMaterial().setShading(Shading.phong)
-            mesh5.getMaterial().setLambert(1)
+            mesh5.getMaterial().setLambert(1.5)
 
             var mesh6 = new Mesh('geometry', 'material6');
             mesh6.x =-3
             mesh6.y = 1
             scene.addChild('monkey6', mesh6);
-            mesh6.getMaterial().setShading(Shading.phong)
-            mesh6.getMaterial().setLambert(3)
+            mesh6.getMaterial().setShading(Shading.blinn)
+            mesh6.getMaterial().setLambert(1.5)
 
 
             scene.getChild('camera').setAntialias(0);

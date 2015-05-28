@@ -92,7 +92,7 @@ var Scene = (function () {
 			' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			' vec3 LD = normalize(uDLite);\n' +
 			' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
-			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.05,1.0)),1.0);\n' +
+			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.1,1.0)),1.0);\n' +
 			' vUV = aUV;'
 			]
 		}
@@ -116,7 +116,7 @@ var Scene = (function () {
 			' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			' vec3 LD = normalize(uDLite);\n' +
 			' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
-			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.05,1.0)),1.0);\n' +
+			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.1,1.0)),1.0);\n' +
 			' vColor = uColor;'
 			]
 		}
@@ -158,7 +158,7 @@ var Scene = (function () {
 			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
-			'float lambertian = max(dot(lightDir,normal), 0.05)*uLambert;\n' +
+			'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
 			'float specular = 0.0;\n' +
 
 			'if(lambertian > 0.0) {\n' +
@@ -177,7 +177,7 @@ var Scene = (function () {
 			main: ['' +
 			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
 			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
+			'vPosition = vec3(uCameraMatrix*mv * vec4(aVertexPosition, 1.0));\n' +
 			'vNormal = vec3(mv * vec4(aVertexNormal, 0.0));\n' +
 			'vColor = uColor;'
 			]
@@ -197,7 +197,7 @@ var Scene = (function () {
 			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
-			'float lambertian = max(dot(lightDir,normal), 0.0)*uLambert;\n' +
+			'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
 			'float specular = 0.0;\n' +
 
 			'vec3 src = vColor.rgb;\n'+
@@ -243,7 +243,7 @@ var Scene = (function () {
 			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
-			'float lambertian = max(dot(lightDir,normal), 0.05)*uLambert;\n' +
+			'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
 			'float specular = 0.0;\n' +
 
 			'if(lambertian > 0.0) {\n' +
@@ -251,6 +251,46 @@ var Scene = (function () {
 			'   specular = pow(specAngle, 4.0);\n' +
 			'}\n' +
 			'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
+			'gl_FragColor.a = 1.0;'
+			]
+		}
+		var bitmapVertexShaderBlinn = {
+			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
+			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+			varyings: ['vec2 vUV','vec3 vNormal', 'vec3 vPosition'],
+			function: [VertexShader.baseFunction],
+			main: ['' +
+			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			'vPosition = vec3(uCameraMatrix*mv * vec4(aVertexPosition, 1.0));\n' +
+			'vNormal = vec3(mv * vec4(aVertexNormal, 0.0));\n' +
+			'vUV = aUV;'
+			]
+		}
+		var bitmapFragmentShaderBlinn = {
+			precision: 'mediump float',
+			uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
+			varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
+			function: [],
+			main: ['' +
+			'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
+			'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
+			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
+
+			'vec3 normal = normalize(vNormal);\n' +
+			'vec3 lightDir = normalize(-uDLite);\n' +
+
+			'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
+			'float specular = 0.0;\n' +
+
+			'vec3 viewDir = normalize(-vPosition);\n' +
+
+			'if(lambertian > 0.0) {\n' +
+			'	vec3 halfDir = normalize(lightDir + viewDir);\n' +
+			'	float specAngle = max(dot(halfDir, normal), 0.0);\n' +
+			'	specular = pow(specAngle, 100.0);\n' +
+			'}\n' +
+			'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
 			'gl_FragColor.a = 1.0;'
 			]
 		}
@@ -271,6 +311,8 @@ var Scene = (function () {
 		this.addFragmentShader('colorToon', toonFragmentShaderPhong);
 		this.addVertexShader('bitmapPhong', bitmapVertexShaderPhong),
 		this.addFragmentShader('bitmapPhong', bitmapFragmentShaderPhong);
+		this.addVertexShader('bitmapBlinn', bitmapVertexShaderBlinn),
+		this.addFragmentShader('bitmapBlinn', bitmapFragmentShaderBlinn);
 	}
 	/////////////////////////////////////////////////////////////////
 	var makeVBO = function makeVBO(self, name, data, stride) {
