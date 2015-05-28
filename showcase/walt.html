@@ -92,7 +92,7 @@
             scene.addGeometry('geometry', new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z]));
 
             var mesh = new Mesh('geometry', 'material');
-            mesh.y = 2;
+            mesh.y -= 2;
             mesh.scaleX = 0.08;
             mesh.scaleY = 0.08;
             mesh.scaleZ = 0.08;
