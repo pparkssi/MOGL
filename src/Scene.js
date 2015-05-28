@@ -288,7 +288,7 @@ var Scene = (function () {
 			'if(lambertian > 0.0) {\n' +
 			'	vec3 halfDir = normalize(lightDir + viewDir);\n' +
 			'	float specAngle = max(dot(halfDir, normal), 0.0);\n' +
-			'	specular = pow(specAngle, 100.0);\n' +
+			'	specular = pow(specAngle, 16.0);\n' +
 			'}\n' +
 			'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
 			'gl_FragColor.a = 1.0;'
