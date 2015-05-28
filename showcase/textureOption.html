@@ -84,41 +84,30 @@
 
     world.addRender('scene', 'camera');
 
-    scene.addGeometry('rect', new Geometry(
-                    [
-                        1.0, 1.0, 0.0, 0.0, 0.0,
-                        -1.0, 1.0, 0.0, 1.0, 0.0,
-                        1.0, -1.0, 0.0, 0.0, 1.0,
-                        -1.0, -1.0, 0.0, 1.0, 1.0
-                    ],
-                    [
-                        0, 1, 2, 1, 2, 3
-                    ],
-                    [
-                        Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v
-                    ]
-            )
-    )
 
+    var meshZoomout = new Mesh(Primitive.plane(), 'materialZoomout')
+    var meshZoomIn = new Mesh(Primitive.plane(), 'materialZoomIn')
+    var meshCrop = new Mesh(Primitive.plane(), 'materialCrop')
+    var meshAddSpace = new Mesh(Primitive.plane(), 'materialAddSpace')
+    var mesh = new Mesh(Primitive.plane(), 'material')
 
-    var meshZoomout = new Mesh('rect', 'materialZoomout')
-    var meshZoomIn = new Mesh('rect', 'materialZoomIn')
-    var meshCrop = new Mesh('rect', 'materialCrop')
-    var meshAddSpace = new Mesh('rect', 'materialAddSpace')
-    var mesh = new Mesh('rect', 'material')
+    meshZoomout.rotateX = Math.PI/2
+    meshZoomIn.rotateX = Math.PI/2
+    meshCrop.rotateX = Math.PI/2
+    meshAddSpace.rotateX = Math.PI/2
+    mesh.rotateX = Math.PI/2
 
+    scene.addChild('meshZoomout', meshZoomout)
+    scene.addChild('meshZoomIn', meshZoomIn)
+    scene.addChild('mesh', mesh)
+    scene.addChild('meshCrop', meshCrop)
+    scene.addChild('meshAddSpace', meshAddSpace)
 
-    scene.addChild('meshZoomout',meshZoomout)
-    scene.addChild('meshZoomIn',meshZoomIn)
-    scene.addChild('mesh',mesh)
-    scene.addChild('meshCrop',meshCrop)
-    scene.addChild('meshAddSpace',meshAddSpace)
-
-    meshZoomout.x = -5
-    meshZoomIn.x = -2.5
+    meshZoomout.x = -2.2
+    meshZoomIn.x = -1.1
     mesh.x = 0
-    meshCrop.x = 2.5
-    meshAddSpace.x = 5
+    meshCrop.x = 1.1
+    meshAddSpace.x = 2.2
 
     var sum = 0, count = 1;
     function render(currTime) {
