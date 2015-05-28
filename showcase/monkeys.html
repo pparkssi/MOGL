@@ -222,15 +222,20 @@
                 testMat.removeTexture('texture');
                 testMat.setShading(Shading.gouraud)
             },
-            GouraudTextrue: function () {
+            GouraudTexture: function () {
                 testMat.removeTexture('texture');
                 testMat.addTexture(Texture.diffuse, 'texture');
                 testMat.setShading(Shading.gouraud)
             },
-            PhongTextrue: function () {
+            PhongTexture: function () {
                 testMat.removeTexture('texture');
                 testMat.addTexture(Texture.diffuse, 'texture');
                 testMat.setShading(Shading.phong)
+            },
+            BlinnTexture: function () {
+                testMat.removeTexture('texture');
+                testMat.addTexture(Texture.diffuse, 'texture');
+                testMat.setShading(Shading.blinn)
             }
         };
 
@@ -239,8 +244,9 @@
         gui.add(params, 'toon');
         gui.add(params, 'GouraudColor');
         gui.add(params, 'PhongColor');
-        gui.add(params, 'GouraudTextrue');
-        gui.add(params, 'PhongTextrue');
+        gui.add(params, 'GouraudTexture');
+        gui.add(params, 'PhongTexture');
+        gui.add(params, 'BlinnTexture');
     })(this);
 
 
