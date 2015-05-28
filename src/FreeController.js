@@ -47,10 +47,10 @@ var FreeController = (function () {
 
         speed = this._speed*0.001
 
-        if (downKey[KeyBoard.Q]) updateRotateY = 0.01 * speed
-        if (downKey[KeyBoard.E]) updateRotateY = -0.01 * speed
-        if (downKey[KeyBoard.T]) updateRotateX = 0.01 * speed
-        if (downKey[KeyBoard.G]) updateRotateX = -0.01 * speed
+        if (downKey[KeyBoard.Q]) updateRotateY = -0.01 * speed
+        if (downKey[KeyBoard.E]) updateRotateY = 0.01 * speed
+        if (downKey[KeyBoard.T]) updateRotateX = -0.01 * speed
+        if (downKey[KeyBoard.G]) updateRotateX = 0.01 * speed
 
 
         this._displacement[0] = right ? -speed : (left ? speed : 0),

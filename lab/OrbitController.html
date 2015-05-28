@@ -50,14 +50,14 @@
     world.addScene('scene', scene)
     scene.addChild('camera', camera)
 
-    scene.addTexture('texture', '../showcase/monkey/Suzanne.jpg');
+//    scene.addTexture('texture', '../showcase/monkey/Suzanne.jpg');
 
     var material = new Material()
-    material.addTexture(Texture.diffuse, 'texture')
+//    material.addTexture(Texture.diffuse, 'texture')
     material.setShading(Shading.phong)
 
     for (var i = 0; i < 250; i++) {
-        var a = new Mesh(Primitive.sphere(32), material)
+        var a = new Mesh(Primitive.geodesic(32), material)
         scene.addChild('test' + i, a)
         a.x = Math.random() * 50 - 25
         a.y = Math.random() * 50 - 25

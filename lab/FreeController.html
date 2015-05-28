@@ -70,7 +70,7 @@
     material.setLambert(2)
 
     for (var i = 0; i < 500; i++) {
-        var a = new Mesh(Primitive.sphere(32), material)
+        var a = new Mesh(Primitive.geodesic(), material)
         scene.addChild('test' + i, a)
         a.x = Math.random() * 50 - 25
         a.y = Math.random() * 50 - 25
