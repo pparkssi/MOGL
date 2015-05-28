@@ -168,30 +168,35 @@ var Primitive = (function () {
             return result
         },
         sphere: function sphere(/*split*/) {
-            var vs, is, latitudeBands, longitudeBands, radius;
-            var theta, sinTheta, cosTheta;
-            var phi, sinPhi, cosPhi;
-            var latNumber,longNumber
-            var x, y, z, u,v;
-            vs = [], is = [],
-            latitudeBands = 8, longitudeBands = 8, radius = 0.5;
-            for (latNumber = 0; latNumber <= latitudeBands; ++latNumber) {
-                theta = latNumber * Math.PI / latitudeBands, sinTheta = mS(theta), cosTheta = mC(theta);
-                for (longNumber = 0; longNumber <= longitudeBands; ++longNumber) {
-                    phi = longNumber * 1 * Math.PI / longitudeBands, sinPhi = mS(phi), cosPhi = mC(phi);
-                    x = cosPhi * sinTheta,y = cosTheta,z = sinPhi * sinTheta,
-                    u = 1 - longNumber / longitudeBands,v = 1 - latNumber / latitudeBands,
-                    vs.push(radius * x, radius * y, radius * z,u, v);
+            var vs = [];
+            var is = [];
+            var latitudeBands = 8;
+            var longitudeBands = 8;
+            var radius = 1.0;
+            for (var latNumber = 0; latNumber <= latitudeBands; ++latNumber) {
+                var theta = latNumber * Math.PI / latitudeBands;
+                var sinTheta = mS(theta);
+                var cosTheta = mC(theta);
+                for (var longNumber = 0; longNumber <= longitudeBands; ++longNumber) {
+                    var phi = longNumber * 2 * Math.PI / longitudeBands;
+                    var sinPhi = mS(phi);
+                    var cosPhi = mC(phi);
+
+                    var x = cosPhi * sinTheta;
+                    var y = cosTheta;
+                    var z = sinPhi * sinTheta;
+                    var u = 1 - longNumber / longitudeBands;
+                    var v = 1 - latNumber / latitudeBands;
+                    vs.push(radius * x, radius * y, radius * z, u, v);
                 }
             }
             for (latNumber = 0; latNumber < latitudeBands; ++latNumber) {
-                for (longNumber = 0; longNumber < longitudeBands; ++ longNumber) {
+                for (longNumber = 0; longNumber < longitudeBands; ++longNumber) {
                     var first = latNumber * (longitudeBands + 1) + longNumber;
                     var second = first + longitudeBands + 1;
                     is.push(second, first, first + 1, second + 1, second, first + 1);
                 }
             }
-
             var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
             result._key = 'sphere_' + ( arguments[0] || 1)
             return result

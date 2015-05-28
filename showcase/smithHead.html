@@ -4,7 +4,8 @@
     <title>LeePerrySmith</title>
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <style>
         body {
             background-color: #000;
@@ -51,18 +52,17 @@
         var scene = new Scene();
 
 
-        var divCurrentFPS = document.getElementById( 'currentFPS' );
-        var divAverageFPS = document.getElementById( 'averageFPS' );
+        var divCurrentFPS = document.getElementById('currentFPS');
+        var divAverageFPS = document.getElementById('averageFPS');
         var prevTime = 0;
 
         world.addScene('scene', scene);
 
-        console.log()
 
         scene.addChild('camera', new Camera());
         scene.addMaterial('material', new Material());
         scene.addTexture('texture', 'smithHead/Map-COL.jpg');
-        scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
+        scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
 
         world.addRender('scene', 'camera');
 
@@ -82,9 +82,9 @@
 
             var vertexBuffer = [], indexBuffer = [], uvArray = [], i, j, fv = 0, uvSize = uvs.length;
 
-            faces.forEach(function(v){
-                v.forEach(function(vv){
-                    if( fv < uvSize )
+            faces.forEach(function (v) {
+                v.forEach(function (vv) {
+                    if (fv < uvSize)
                         uvArray[vv] = uvs[fv];
                     fv++;
                 })
@@ -92,7 +92,7 @@
 
 
             for (i = 0, j = vertices.length; i < j; i++) {
-                vertexBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2], uvArray[i][0], 1.0-uvArray[i][1]);
+                vertexBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2], uvArray[i][0], 1.0 - uvArray[i][1]);
             }
 
             for (i = 0, j = faces.length; i < j; i++) {
@@ -109,26 +109,28 @@
             mesh.scaleZ = 10;
             scene.addChild('head', mesh);
 
-            mesh.getMaterial().setShading(Shading.gouraud);
+            mesh.getMaterial().setShading(Shading.phong);
 
+            mesh.x = 3
+            mesh.y = 3
 
             var sum = 0, count = 1;
 
-            function render( currTime ) {
+            function render(currTime) {
                 var currentFPS = 1000 / ( currTime - prevTime );
                 prevTime = currTime;
 
-                divCurrentFPS.textContent = currentFPS.toFixed( 2 );
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
+                divCurrentFPS.textContent = currentFPS.toFixed(2);
+                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed(2);
 
                 mesh.rotateY -= 0.02;
 
                 world.render();
 
-                requestAnimationFrame( render );
+                requestAnimationFrame(render);
             }
 
-            requestAnimationFrame( render );
+            requestAnimationFrame(render);
         }
     })(this);
 </script>
