@@ -95,7 +95,7 @@ var World = (function () {
                     tIBO = scene._glIBOs[tItem._geometry._key],
                     tMaterial = tItem._material,
                     tDiffuseList = tMaterial._diffuse;
-                    var dLite = [0,-0.5,-1], useNormalBuffer = 0;
+                    var dLite = [0,-1,-1], useNormalBuffer = 0;
                     if(tDiffuseList.__indexList.length == 0){
                         if(tMaterial._shading.type == 'none'){
                             tProgram=scene._glPROGRAMs['color'];
