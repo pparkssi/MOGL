@@ -537,10 +537,20 @@ var Scene = (function () {
 				}
 			}
 		}
-		if (!this._glVBOs['rect']) {
-			this._glVBOs['rect'] = makeVBO(this, 'rect', [-1, -1, 0.0, 1, -1, 0.0, 1, 1, 0.0, -1, 1, 0.0], 3),
-			this._glUVBOs['rect'] = makeUVBO(this, 'rect', [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0], 2),
-			this._glIBOs['rect'] = makeIBO(this, 'rect', [0, 1, 2, 0, 2, 3], 1)
+		if (!this._glVBOs['_FRAMERECT_']) {
+			this._glVBOs['_FRAMERECT_'] = makeVBO(this, '_FRAMERECT_', [
+				-1.0, 1.0, 0.0,
+				1.0, 1.0, 0.0,
+				-1.0, -1.0, 0.0,
+				1.0, -1.0, 0.0
+			], 3),
+			this._glUVBOs['_FRAMERECT_'] = makeUVBO(this, '_FRAMERECT_', [
+				0.0, 0.0,
+				1.0, 0.0,
+				0.0, 1.0,
+				1.0, 1.0
+			], 2),
+			this._glIBOs['_FRAMERECT_'] = makeIBO(this, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1)
 		}
 		for (k in this._cameras) {
 			var camera = this._cameras[k];
@@ -563,7 +573,7 @@ var Scene = (function () {
 		//console.log('this._textures :', this._textures),
 		//console.log('this._vertexShaders :', this._vertexShaders),
 		//console.log('this._fragmentShaders :', this._fragmentShaders),
-		//console.log('this._glFREAMBUFFERs :', this._glFREAMBUFFERs),
+		console.log('this._glFREAMBUFFERs :', this._glFREAMBUFFERs),
 		//console.log('////////////////////////////////////////////'),
 		this._update = 0
 	},

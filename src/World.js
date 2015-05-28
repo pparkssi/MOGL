@@ -205,9 +205,9 @@ var World = (function () {
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            tVBO = scene._glVBOs['rect'],
-            tUVBO = scene._glUVBOs['rect'],
-            tIBO = scene._glIBOs['rect'],
+            tVBO = scene._glVBOs['_FRAMERECT_'],
+            tUVBO = scene._glUVBOs['_FRAMERECT_'],
+            tIBO = scene._glIBOs['_FRAMERECT_'],
             tProgram = scene._glPROGRAMs['bitmap'];
             if (!tVBO) return;
             gl.useProgram(tProgram);
