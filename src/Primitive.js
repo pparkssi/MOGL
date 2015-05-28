@@ -6,11 +6,63 @@ var Primitive = (function () {
     var mS = Math.sin, mC = Math.cos, PI = Math.PI, RADIAN = PI / 180, mSqt = Math.sqrt, D2R = Math.PI / 180, R2D = 180 / Math.PI, TPI = Math.PI * 2, HPI = Math.PI / 2
     return {
         cube: function cube(/*splitX, splitY, splitZ*/) {
-            // TODO 내장된 Geometry. 각 정육면체 구조를 생성함.
-            // TODO ?splitX, splitY, splitZ - 각 면당 분할할 수. 생략시 1로 지정됨.
-            // TODO scene.addChild( 'cube1', new Mesh( Primitive.cube( 2, 3, 1 ), new Material() );
-            var result
-            return result // TODO  어떤 지오메트리를 넘겨주는군
+            var _segmentsW,_segmentsH,_segmentsD;
+            var vs,is;
+            var tl, tr, bl, br, i, j, inc = 0;
+            var vidx, fidx; // is
+            var hw, hh, hd; // halves
+            var dw, dh, dd; // deltas
+            var outer_pos;
+            var u_tile_dim, v_tile_dim, u_tile_step, v_tile_step;
+            var tl0u, tl0v, tl1u, tl1v,du, dv;
+            _segmentsW = arguments[0] || 1, _segmentsH = arguments[1] || 1, _segmentsD = arguments[2] || 1,
+            vs = [],is = [],
+            vidx = 0, fidx = 0,// is
+            hw = 1 / 2, hh = 1 / 2, hd = 1 / 2,// half cube dimensions
+            dw = 1 / _segmentsW, dh = 1 / _segmentsH, dd = 1 / _segmentsD,// Segment dimensions
+            u_tile_dim = 1, v_tile_dim = 1, u_tile_step = 0, v_tile_step = 0;
+            tl0u = u_tile_step, tl0v = v_tile_step, tl1u = 2 * u_tile_step, tl1v = 0, du = u_tile_dim / _segmentsW, dv = v_tile_dim / _segmentsH;
+            for (i = 0; i <= _segmentsW; i++) {
+                outer_pos = -hw + i*dw;
+                for (j = 0; j <= _segmentsH; j++) {
+                    // front
+                    vs[vidx++] = outer_pos,vs[vidx++] = -hh + j*dh,vs[vidx++] = -hd,
+                    vs[vidx++] = ( tl0u + i*du ),vs[vidx++] = ( tl0v + (v_tile_dim - j*dv)),
+                    // back
+                    vs[vidx++] = outer_pos, vs[vidx++] = -hh + j * dh, vs[vidx++] = hd,
+                    vs[vidx++] = ( tl1u + (u_tile_dim - i * du)), vs[vidx++] = ( tl1v + (v_tile_dim - j * dv))
+                    if (i && j) tl = 2 * ((i - 1) * (_segmentsH + 1) + (j - 1)), tr = 2 * (i * (_segmentsH + 1) + (j - 1)), bl = tl + 2, br = tr + 2, is[fidx++] = tl, is[fidx++] = bl, is[fidx++] = br, is[fidx++] = tl, is[fidx++] = br, is[fidx++] = tr, is[fidx++] = tr + 1, is[fidx++] = br + 1, is[fidx++] = bl + 1, is[fidx++] = tr + 1, is[fidx++] = bl + 1, is[fidx++] = tl + 1;
+                }
+            }
+            inc += 2 * (_segmentsW + 1) * (_segmentsH + 1), tl0u = u_tile_step, tl0v = 0, tl1u = 0, tl1v = 0, du = u_tile_dim / _segmentsW, dv = v_tile_dim / _segmentsD;
+            for (i = 0; i <= _segmentsW; i++) {
+                outer_pos = -hw + i*dw;
+                for (j = 0; j <= _segmentsD; j++) {
+                    // top
+                    vs[vidx++] = outer_pos, vs[vidx++] = hh, vs[vidx++] = -hd + j * dd,
+                    vs[vidx++] = ( tl0u + i * du), vs[vidx++] = ( tl0v + (v_tile_dim - j * dv)),
+                    // bottom
+                    vs[vidx++] = outer_pos, vs[vidx++] = -hh, vs[vidx++] = -hd + j * dd,
+                    vs[vidx++] = ( tl1u + i * du), vs[vidx++] = ( tl1v + j * dv)
+                    if (i && j) tl = inc + 2 * ((i - 1) * (_segmentsD + 1) + (j - 1)), tr = inc + 2 * (i * (_segmentsD + 1) + (j - 1)), bl = tl + 2, br = tr + 2, is[fidx++] = tl, is[fidx++] = bl, is[fidx++] = br, is[fidx++] = tl, is[fidx++] = br, is[fidx++] = tr, is[fidx++] = tr + 1, is[fidx++] = br + 1, is[fidx++] = bl + 1, is[fidx++] = tr + 1, is[fidx++] = bl + 1, is[fidx++] = tl + 1
+                }
+            }
+            inc += 2 * (_segmentsW + 1) * (_segmentsD + 1), tl0u = 0, tl0v = v_tile_step, tl1u = 2 * u_tile_step, tl1v = v_tile_step, du = u_tile_dim / _segmentsD, dv = v_tile_dim / _segmentsH;
+            for (i = 0; i <= _segmentsD; i++) {
+                outer_pos = hd - i*dd;
+                for (j = 0; j <= _segmentsH; j++) {
+                    // left
+                    vs[vidx++] = -hw, vs[vidx++] = -hh + j * dh, vs[vidx++] = outer_pos,
+                    vs[vidx++] = ( tl0u + i*du),vs[vidx++] = ( tl0v + (v_tile_dim - j*dv))
+                    // right
+                    vs[vidx++] = hw, vs[vidx++] = -hh + j * dh, vs[vidx++] = outer_pos;
+                    vs[vidx++] = ( tl1u + (u_tile_dim - i * du)), vs[vidx++] = ( tl1v + (v_tile_dim - j * dv))
+                    if (i && j) tl = inc + 2 * ((i - 1) * (_segmentsH + 1) + (j - 1)), tr = inc + 2 * (i * (_segmentsH + 1) + (j - 1)), bl = tl + 2, br = tr + 2, is[fidx++] = tl, is[fidx++] = bl, is[fidx++] = br, is[fidx++] = tl, is[fidx++] = br, is[fidx++] = tr, is[fidx++] = tr + 1, is[fidx++] = br + 1, is[fidx++] = bl + 1, is[fidx++] = tr + 1, is[fidx++] = bl + 1, is[fidx++] = tl + 1
+                }
+            }
+            var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+            result._key = 'cube' + ( arguments[0] || 1) + '_' + (arguments[1] || 1)
+            return result
         },
         geodesic: function geodesic(/*split*/) {
             // TODO 내장된 Geometry. 극점에서 폴리곤이 몰리지 않도록 Geodesic 형태로 생성되는 구의 구조.
@@ -116,42 +168,31 @@ var Primitive = (function () {
             return result
         },
         sphere: function sphere(/*split*/) {
-            // TODO 헉!! 노말도 계산해서 넘겨야되!!!
-            var vertices = [];
-            var indices = [];
-
-            var latitudeBands = 8;
-            var longitudeBands = 8;
-            var radius = 0.5;
-
-            for (var latNumber = 0; latNumber <= latitudeBands; ++latNumber) {
-                var theta = latNumber * Math.PI / latitudeBands;
-                var sinTheta = mS(theta);
-                var cosTheta = mC(theta);
-
-                for (var longNumber = 0; longNumber <= longitudeBands; ++ longNumber) {
-                    var phi = longNumber * 2 * Math.PI / longitudeBands;
-                    var sinPhi = mS(phi);
-                    var cosPhi = mC(phi);
-
-                    var x = cosPhi * sinTheta;
-                    var y = cosTheta;
-                    var z = sinPhi * sinTheta;
-                    var u = 1 - longNumber / longitudeBands;
-                    var v = 1 - latNumber / latitudeBands;
-                    vertices.push(radius * x, radius * y, radius * z,u, v);
+            var vs, is, latitudeBands, longitudeBands, radius;
+            var theta, sinTheta, cosTheta;
+            var phi, sinPhi, cosPhi;
+            var latNumber,longNumber
+            var x, y, z, u,v;
+            vs = [], is = [],
+            latitudeBands = 8, longitudeBands = 8, radius = 0.5;
+            for (latNumber = 0; latNumber <= latitudeBands; ++latNumber) {
+                theta = latNumber * Math.PI / latitudeBands, sinTheta = mS(theta), cosTheta = mC(theta);
+                for (longNumber = 0; longNumber <= longitudeBands; ++longNumber) {
+                    phi = longNumber * 1 * Math.PI / longitudeBands, sinPhi = mS(phi), cosPhi = mC(phi);
+                    x = cosPhi * sinTheta,y = cosTheta,z = sinPhi * sinTheta,
+                    u = 1 - longNumber / longitudeBands,v = 1 - latNumber / latitudeBands,
+                    vs.push(radius * x, radius * y, radius * z,u, v);
                 }
             }
-
             for (latNumber = 0; latNumber < latitudeBands; ++latNumber) {
                 for (longNumber = 0; longNumber < longitudeBands; ++ longNumber) {
                     var first = latNumber * (longitudeBands + 1) + longNumber;
                     var second = first + longitudeBands + 1;
-                    indices.push(second, first, first + 1, second + 1, second, first + 1);
+                    is.push(second, first, first + 1, second + 1, second, first + 1);
                 }
             }
 
-            var result = new Geometry(vertices, indices, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+            var result = new Geometry(vs, is, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
             result._key = 'sphere_' + ( arguments[0] || 1)
             return result
         },
