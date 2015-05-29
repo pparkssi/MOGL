@@ -21,6 +21,7 @@
   "ignore": [
     "tutorial/",
     "doc/",
+    "src/",
     "COMMITTING.md",
     "CONTRIBUTING.md",
     "GETTING-STARTED.md"
