@@ -71,7 +71,7 @@ var MoGL = (function() {
         target = listener[this];
         if (!target[ev]) target[ev] = [];
         target = target[ev];
-        if (target.indexOf(f) > -1) target[target.length] = f;
+        if (target.indexOf(f) == -1) target[target.length] = f;
     },
     fn.removeEventListener = function(ev, f) {
         var target, i;
@@ -92,6 +92,7 @@ var MoGL = (function() {
                 target[i].call(this);
             }
         }
+        console.log(listener[this])
     },
     Object.defineProperty(fn, 'id', { //id처리기
         get:function idGet() {return this._id;},
