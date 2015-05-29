@@ -6,6 +6,7 @@
 
 **method**
 
+* [addAction](#)
 * [getAntialias](#getantialias)
 * [getBackgroundColor](#getbackgroundcolor)
 * [getClipPlane](#getclipplane)
