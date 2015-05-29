@@ -16,7 +16,7 @@ var World = (function () {
 		preserveDrawingBuffer:false
 	},
 	getGL = function(canvas){
-		var gl, keys, i, ext;
+		var gl, keys, i;
 		if(glContext){
 			gl = canvas.getContext(glContext, glSetting);
 		}else{
@@ -27,21 +27,16 @@ var World = (function () {
 					break;
 				}
 			}
-			/* 뭔데?
-			ext = gl.getExtension("OES_element_index_uint");
-			if (!ext) alert('no! OES_element_index_uint');
-			*/
 		}
 		return gl;
 	};
-	var renderList = {}, sceneList = {}, autoSizer = {}, actions = {};
+	var renderList = {}, sceneList = {}, cvsList ={}, glList = {},autoSizer = {}, actions = {};
 	
     World = function World(id) {
-        var keys, i,ext,self = this;
         if(!id) this.error(0);
-        this._cvs = document.getElementById(id);
-        if (!this._cvs) this.error(1);
-        if (this._gl = getGL(this._cvs) ) {
+        cvsList[this] = document.getElementById(id);
+        if (!cvsList[this]) this.error(1);
+        if (glList[this] = getGL(cvsList[this]) ) {
             renderList[this] = [],
             sceneList[this] = {},
 			autoSizer[this] = null,
@@ -55,7 +50,7 @@ var World = (function () {
 		var canvas, scenes;
 		if( isAutoSize ){
 			if( !this._autoSizer ){
-				canvas = this._cvs,
+				canvas = cvsList[this] ,
 				scenes = sceneList[this],
 				autoSizer[this] = function(){
 					//this._pixelRatio = parseFloat(width)/parseFloat(height) > 1 ? window.devicePixelRatio : 1
@@ -81,6 +76,53 @@ var World = (function () {
 		}
 		return this;
     },
+    fn.addScene = function addScene(scene) {
+        var uuid;
+        if (!(scene instanceof Scene )) this.error(1);
+        uuid = scene.toString();
+        if (sceneList[uuid]) this.error(0);
+        sceneList[uuid] = scene, scene._gl = glList[this] , scene._cvs = cvsList[this] ;
+        //scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
+        //이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
+        return this;
+    },
+    fn.getScene = function getScene(sceneID) {
+        var k
+        if( typeof sceneID === 'undefined' ) return null;
+        for(k in sceneList){
+            if(sceneList[k].id == sceneID){
+                return sceneList[k];
+            }
+        }
+        return null;
+    },
+    /*
+     fn.removeRender = function removeRender(sceneID, cameraID) {
+     var tList = this._renderList, i, len;
+     var sTest = 0, cTest = 0;
+     if (!this._sceneList[sceneID])  this.error(0);
+     if (!this._sceneList[sceneID]._cameras[cameraID]) console.log('2222222222222222222222222'), this.error(1);
+     for (i = 0, len = tList.length; i < len; i++) {
+     if (tList[i].uuid.indexOf(sceneID) > -1) sTest = 1;
+     if (tList[i].uuid.indexOf(cameraID) > -1) cTest = 1;
+     }
+     if (!sTest)  this.error(2);
+     if (!cTest)  this.error(3);
+     for (i = 0, len = tList.length; i < len; i++) if (tList[i] && tList[i].uuid == sceneID + '_' + cameraID) tList.splice(i, 1);
+     return this;
+     },
+     */
+    fn.removeScene = function removeScene(sceneID) {
+        var k
+        if( typeof sceneID === 'undefined' ) return null;
+        for(k in sceneList){
+            if(sceneList[k].id == sceneID){
+                delete sceneList[k]
+                return this
+            }
+        }
+        this.error('0')
+    };
 	fn.addAction = function addAction( action, id ){
 		this._actions[this._actions.length] = {id:id || MoGL.functionName(action), action:action};
 		return this;
@@ -290,9 +332,9 @@ var World = (function () {
             }
         }
         //gl.finish();
-    },
+    }
 	/*
-    fn.addRender = function addRender(sceneID, cameraID, index) { 
+    fn.addRender = function addRender(sceneID, cameraID, index) {
         var uuid, tScene, tList,
             i,len,temp;
         uuid = sceneID + '_' + cameraID,
@@ -318,40 +360,5 @@ var World = (function () {
         return this;
     },
 	*/
-    fn.addScene = function addScene(sceneID, scene) { 
-        if (this._sceneList[sceneID]) this.error(0);
-        if (!(scene instanceof Scene )) this.error(1);
-        this._sceneList[sceneID] = scene, scene._gl = this._gl, scene._cvs = this._cvs;
-		//scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
-		//이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
-        return this;
-    },
-    fn.getScene = function getScene(sceneID) { 
-        if( typeof sceneID === 'undefined' ) this.error(0);
-        return this._sceneList[sceneID] ? this._sceneList[sceneID] : null;
-    },
-	/*
-    fn.removeRender = function removeRender(sceneID, cameraID) { 
-        var tList = this._renderList, i, len;
-        var sTest = 0, cTest = 0;
-        if (!this._sceneList[sceneID])  this.error(0);
-        if (!this._sceneList[sceneID]._cameras[cameraID]) console.log('2222222222222222222222222'), this.error(1);
-        for (i = 0, len = tList.length; i < len; i++) {
-            if (tList[i].uuid.indexOf(sceneID) > -1) sTest = 1;
-            if (tList[i].uuid.indexOf(cameraID) > -1) cTest = 1;
-        }
-        if (!sTest)  this.error(2);
-        if (!cTest)  this.error(3);
-        for (i = 0, len = tList.length; i < len; i++) if (tList[i] && tList[i].uuid == sceneID + '_' + cameraID) tList.splice(i, 1);
-        return this;
-    },
-	*/
-    fn.removeScene = function removeScene(sceneID) { 
-        this._sceneList[sceneID] ? 0 : this.error(0),
-        this._sceneList[sceneID]._gl = this._gl,
-        delete this._sceneList[sceneID];
-		//삭제할때 알아서 카메라들도 삭제
-        return this;
-    };
     return MoGL.ext(World, MoGL);
 })();
