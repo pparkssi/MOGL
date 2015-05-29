@@ -30,7 +30,7 @@ var World = (function () {
 		}
 		return gl;
 	};
-	var renderList = {}, sceneList = {}, cvsList ={}, glList = {},autoSizer = {}, actions = {};
+    var renderList = {}, sceneList = [], cvsList = {}, glList = {}, autoSizer = {}, actions = {}, renderer = {};
 	
     World = function World(id) {
         if(!id) this.error(0);
@@ -96,6 +96,26 @@ var World = (function () {
         }
         return null;
     },
+    fn.getRenderer = function(isRequestAnimationFrame){
+        var uuid = this.toString(), self;
+        if (!renderer[uuid]) {
+            // 없으니까 생성
+            renderer[uuid] = {}
+        }
+        if (isRequestAnimationFrame) {
+            if (renderer[uuid][1]) return renderer[uuid][1]
+            else {
+                self = this;
+                return renderer[uuid][1] = function () {
+                    self.render();
+                    requestAnimationFrame(renderer[uuid][1]);
+                }
+            }
+        } else {
+            if (renderer[uuid][0]) return renderer[uuid][0]
+            else return renderer[uuid][0] = this.render.bind(this)
+        }
+    }
     /*
      fn.removeRender = function removeRender(sceneID, cameraID) {
      var tList = this._renderList, i, len;
@@ -123,21 +143,23 @@ var World = (function () {
         }
         this.error('0')
     };
-	fn.addAction = function addAction( action, id ){
-		this._actions[this._actions.length] = {id:id || MoGL.functionName(action), action:action};
-		return this;
-	},
-	fn.removeAction = function addAction( action ){
-		var arr, i, j;
-		arr = this._actions, i = arr.length;
-		while(i--){
-			if( arr[i][0] == action || arr[i][1] == action ){
-				arr.splice( i, 1 );
-			}
-		}
-		return this;
-	},
+	//fn.addAction = function addAction( action, id ){
+	//	this._actions[this._actions.length] = {id:id || MoGL.functionName(action), action:action};
+	//	return this;
+	//},
+	//fn.removeAction = function addAction( action ){
+	//	var arr, i, j;
+	//	arr = this._actions, i = arr.length;
+	//	while(i--){
+	//		if( arr[i][0] == action || arr[i][1] == action ){
+	//			arr.splice( i, 1 );
+	//		}
+	//	}
+	//	return this;
+	//},
     fn.render = function render() {
+        console.log('렌더실행')
+        return
         var action, i, j, k, len, tList;
         var scene,camera,gl,children;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;

@@ -76,6 +76,7 @@
     )
 
     world = new World('canvasTest');
+    world.setAutoSize(1)
     var testScene = Scene()
     var testScene2 = Scene().setId('redcamel')
     bsTest('addScene,getScene',
@@ -113,6 +114,13 @@
                 return world.getScene('redcamel')
             }, testScene2
     )
+//    world.getRenderer()
+//    world.getRenderer()
+//    world.getRenderer()
+    world.getRenderer(1)
+    world.getRenderer(1)
+    world.getRenderer(1)
+    setInterval(world.getRenderer())
 </script>
 </body>
 </html>
