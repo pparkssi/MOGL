@@ -131,6 +131,7 @@ var World = (function () {
         var uuid = this.toString();
         if (!started[uuid]) started[uuid] = 1;
         else started[uuid] = 1;
+        // TODO 아예 이것도 중복이아니라..전역적으로 관리해야될것 같은데?
         requestAnimationFrame(this.getRenderer(1))
         return this;
     },
