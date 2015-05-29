@@ -35,92 +35,94 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-//    var world = new World('canvasTest');
-//    var resultTemp
-//    bsTest('World 0.3 New',
-//            function () {
-//                // MoGL 객체의 uuid는 MoGL객체.toString() 과 같다
-//                return world.uuid
-//            }, world.toString(),
-//            function () {
-//                //'World.constructor:0' - 캔버스 아이디가 없을때
-//                resultTemp = 1
-//                try {
-//                    new World();
-//                } catch (e) {
-//                    resultTemp = 0
-//                }
-//                return resultTemp
-//            }, 0,
-//            function () {
-//                //'World.constructor:1' - 존재하지않는 Dom id일때
-//                resultTemp = 1
-//                try {
-//                    new World('noID');
-//                } catch (e) {
-//                    resultTemp = 0
-//                }
-//                return resultTemp
-//            }, 0,
-//            function () {
-//                //'World.constructor:2' - GLcontext생성 실패
-//                // 이건어찌 테스트하지?
-//                //                resultTemp = 1
-//                //                try {
-//                //                    new World('noID');
-//                //                } catch (e) {
-//                //                    resultTemp = e.toString()
-//                //                }
-//                return 0
-//            }, 0
-//    )
-//
-//    world = new World('canvasTest');
-//    world.setAutoSize(1)
-//    var testScene = Scene()
-//    var testScene2 = Scene().setId('redcamel')
-//    bsTest('addScene,getScene',
-//            function () {
-//                // id로 등록된 씬 확인
-//                world.addScene(testScene);
-//                return world.getScene('wantNull')
-//            }, null,
-//            function () {
-//                // id로 등록된 씬 확인
-//                world.addScene(testScene2);
-//                return world.getScene(testScene2.id).id
-//            }, testScene2.id,
-//            function () {
-//                // id를 바꾸고 난뒤에도 찾아져야겠지!
-//                testScene2.setId('changeID')
-//                return world.getScene(testScene2.id).id
-//            }, 'changeID'
-//    )
-    world = new World('canvasTest');
-//    testScene2 = Scene().setId('redcamel')
-//    bsTest('removeScene',
-//            function () {
-//                // 아이디로 삭제후 다시 찾아봄
-//                world.addScene(testScene2)
-//                world.removeScene('redcamel')
-//                return world.getScene('redcamel')
-//            }, null,
-//            function () {
-//                return world.getScene('redcamel')
-//            }, null,
-//            function () {
-//                // 없는게 확인되었으니 같은 씬을 등록해도 통과해야함
-//                world.addScene(testScene2)
-//                return world.getScene('redcamel')
-//            }, testScene2
-//    )
-//    world.getRenderer()
-//    world.getRenderer()
-    world.getRenderer()
-    world.getRenderer(1)
-//    world.getRenderer(1)
-//    world.getRenderer(1)
+    var world = new World('canvasTest');
+    var resultTemp
+    bsTest('World 0.3 New',
+            function () {
+                // MoGL 객체의 uuid는 MoGL객체.toString() 과 같다
+                return world.uuid
+            }, world.toString(),
+            function () {
+                //'World.constructor:0' - 캔버스 아이디가 없을때
+                resultTemp = 1
+                try {
+                    new World();
+                } catch (e) {
+                    resultTemp = 0
+                }
+                return resultTemp
+            }, 0,
+            function () {
+                //'World.constructor:1' - 존재하지않는 Dom id일때
+                resultTemp = 1
+                try {
+                    new World('noID');
+                } catch (e) {
+                    resultTemp = 0
+                }
+                return resultTemp
+            }, 0,
+            function () {
+                //'World.constructor:2' - GLcontext생성 실패
+                // 이건어찌 테스트하지?
+                //                resultTemp = 1
+                //                try {
+                //                    new World('noID');
+                //                } catch (e) {
+                //                    resultTemp = e.toString()
+                //                }
+                return 0
+            }, 0
+    )
 
+    world = new World('canvasTest');
+    world.setAutoSize(1)
+    var testScene = Scene()
+    var testScene2 = Scene().setId('redcamel')
+    bsTest('addScene,getScene',
+            function () {
+                // id로 등록된 씬 확인
+                world.addScene(testScene);
+                return world.getScene('wantNull')
+            }, null,
+            function () {
+                // id로 등록된 씬 확인
+                world.addScene(testScene2);
+                return world.getScene(testScene2.id).id
+            }, testScene2.id,
+            function () {
+                // id를 바꾸고 난뒤에도 찾아져야겠지!
+                testScene2.setId('changeID')
+                return world.getScene(testScene2.id).id
+            }, 'changeID'
+    )
+    world = new World('canvasTest');
+    testScene2 = Scene().setId('redcamel')
+    bsTest('removeScene',
+            function () {
+                // 아이디로 삭제후 다시 찾아봄
+                world.addScene(testScene2)
+                world.removeScene('redcamel')
+                return world.getScene('redcamel')
+            }, null,
+            function () {
+                return world.getScene('redcamel')
+            }, null,
+            function () {
+                // 없는게 확인되었으니 같은 씬을 등록해도 통과해야함
+                world.addScene(testScene2)
+                return world.getScene('redcamel')
+            }, testScene2
+    )
+//    world.getRenderer()
+//    world.getRenderer()
+//    world.getRenderer()
+//    world.getRenderer(1)
+    //    world.getRenderer(1)
+    //    world.getRenderer(1)
+
+
+    testScene2.addChild('testCamera',new Camera)
 
     world.addEventListener(World.renderBefore, function () {
         console.log('렌더전에 실행되자~~')
@@ -134,8 +136,8 @@
     world.addEventListener(World.renderAfter, function () {
         console.log('렌더후에 실행되자~~')
     })
-//        world.getRenderer()()
-    setInterval(world.getRenderer(), 16)
+    //        world.getRenderer()()
+    setInterval(world.getRenderer(), 300)
 </script>
 </body>
 </html>

@@ -120,7 +120,7 @@ var World = (function () {
             else{
                 renderList[uuid][0] = function () {
                     self.dispatch(World.renderBefore)
-                    renderList[uuid][0] = self.render
+                    renderList[uuid][0] = self.render()
                     self.dispatch(World.renderAfter)
                 }
                 return renderList[uuid][0]
@@ -152,9 +152,13 @@ var World = (function () {
         this.error('0')
     },
     fn.render = function render() {
-        var i, j, k,len;
+        var i, j, k,k2,len;
         for (k in sceneList) {
             console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
+            var cameraList = sceneList[k]._cameras
+            for (k2 in cameraList) {
+                console.log(k2,cameraList[k2])
+            }
         }
 
 		return
