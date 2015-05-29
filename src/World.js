@@ -118,12 +118,12 @@ var World = (function () {
         } else {
             if (renderList[uuid][0]) return renderList[uuid][0]
             else{
-                renderList[uuid][0] = this.render.bind(this)
-                return function(){
+                renderList[uuid][0] = function () {
                     self.dispatch(World.renderBefore)
                     renderList[uuid][0] = self.render
                     self.dispatch(World.renderAfter)
                 }
+                return renderList[uuid][0]
             }
         }
     },
