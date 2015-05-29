@@ -30,7 +30,7 @@ var World = (function () {
 		}
 		return gl;
 	};
-    var renderList = {}, sceneList = [], cvsList = {}, glList = {}, autoSizer = {}, actions = {}, started ={};
+    var renderList = {}, sceneList = [], cvsList = {}, glList = {}, autoSizer = {}, started ={};
 	
     World = function World(id) {
         if(!id) this.error(0);
@@ -39,12 +39,13 @@ var World = (function () {
         if (glList[this] = getGL(cvsList[this]) ) {
             renderList[this] = [],
             sceneList[this] = {},
-			autoSizer[this] = null,
-			actions[this] = [];
+			autoSizer[this] = null;
 		}else{
 			this.error(2);
 		}
     },
+    World.renderBefore ='WORLD_RENDER_BEFORE',
+    World.renderAfter = 'WORLD_RENDER_AFTER',
     fn = World.prototype,
     fn.setAutoSize = function setAutoSize( isAutoSize ){
 		var canvas, scenes;
@@ -102,18 +103,28 @@ var World = (function () {
             // 없으니까 생성
             renderList[uuid] = {}
         }
+        self = this;
         if (isRequestAnimationFrame) {
             if (renderList[uuid][1]) return renderList[uuid][1]
             else {
-                self = this;
+
                 return renderList[uuid][1] = function () {
+                    self.dispatch(World.renderBefore)
                     self.render();
+                    self.dispatch(World.renderAfter)
                     requestAnimationFrame(renderList[uuid][1]);
                 }
             }
         } else {
             if (renderList[uuid][0]) return renderList[uuid][0]
-            else return renderList[uuid][0] = this.render.bind(this)
+            else{
+                renderList[uuid][0] = this.render.bind(this)
+                return function(){
+                    self.dispatch(World.renderBefore)
+                    renderList[uuid][0] = self.render
+                    self.dispatch(World.renderAfter)
+                }
+            }
         }
     },
     fn.start = function start(){
@@ -127,23 +138,7 @@ var World = (function () {
         var uuid = this.toString();
         started[uuid] = 0;
         return this;
-    }
-    /*
-     fn.removeRender = function removeRender(sceneID, cameraID) {
-     var tList = this._renderList, i, len;
-     var sTest = 0, cTest = 0;
-     if (!this._sceneList[sceneID])  this.error(0);
-     if (!this._sceneList[sceneID]._cameras[cameraID]) console.log('2222222222222222222222222'), this.error(1);
-     for (i = 0, len = tList.length; i < len; i++) {
-     if (tList[i].uuid.indexOf(sceneID) > -1) sTest = 1;
-     if (tList[i].uuid.indexOf(cameraID) > -1) cTest = 1;
-     }
-     if (!sTest)  this.error(2);
-     if (!cTest)  this.error(3);
-     for (i = 0, len = tList.length; i < len; i++) if (tList[i] && tList[i].uuid == sceneID + '_' + cameraID) tList.splice(i, 1);
-     return this;
-     },
-     */
+    },
     fn.removeScene = function removeScene(sceneID) {
         var k
         if( typeof sceneID === 'undefined' ) return null;
@@ -154,30 +149,18 @@ var World = (function () {
             }
         }
         this.error('0')
-    };
-	//fn.addAction = function addAction( action, id ){
-	//	this._actions[this._actions.length] = {id:id || MoGL.functionName(action), action:action};
-	//	return this;
-	//},
-	//fn.removeAction = function addAction( action ){
-	//	var arr, i, j;
-	//	arr = this._actions, i = arr.length;
-	//	while(i--){
-	//		if( arr[i][0] == action || arr[i][1] == action ){
-	//			arr.splice( i, 1 );
-	//		}
-	//	}
-	//	return this;
-	//},
+    },
     fn.render = function render() {
-        console.log('렌더실행')
-        return
-        var action, i, j, k, len, tList;
+        var i, j, k,len;
+        for (k in sceneList) {
+            console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
+        }
+
+		return
+        var i, j, k, len, tList;
         var scene,camera,gl,children;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;
         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram;
-		
-		for (action = this._actions, i = 0, j = action.length ; i < j ; i++ ) action[i][1].call(this);
         for (tList = this._renderList, i = 0, len = tList.length; i < len; i++) {
             //console.log(tList[i],'렌더')
             if (tList[i].scene._update) tList[i].scene.update();
