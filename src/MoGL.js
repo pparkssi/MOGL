@@ -76,6 +76,11 @@ var MoGL = (function(){
 	MoGL.error = function error( cls, method, id ){ //error
 		throw new Error( cls + '.' + method + ':' + id );
 	},
+	MoGL.functionName = function(f){
+		if( 'name' in f ) return f.name;
+		f = f.toString();
+		return f.substring( f.indexOf('function') + 8, f.indexOf('(') ).trim();
+	},
 	//parent클래스를 상속하는 자식클래스를 만들어냄.
 	MoGL.ext = function ext( child, parent ){
 		var cls, oldProto, newProto, key;
@@ -118,12 +123,7 @@ var MoGL = (function(){
 		for( key in child ) if( child.hasOwnProperty(key) ) cls[key] = child[key];
 		value.value = cls.uuid = uuid++,
 		Object.defineProperty( newProto, 'classId', value );
-		if( 'name' in child ){
-			value.value = child.name;
-		}else{
-			key = child.toString(),
-			value.value = key.substring( key.indexOf('function') + 8, key.indexOf('(') ).trim();
-		}
+		value.value = MoGL.functionName(child);
 		Object.defineProperty( newProto, 'className', value );
 		if( !( cls.uuid in counter ) ) counter[cls.uuid] = 0;
 		//새롭게 프로토타입을 정의함

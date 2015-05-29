@@ -6,58 +6,101 @@
  * 메서드체이닝을 위해 대부분의 함수는 자신을 반환함.
  */
 var World = (function () {
-    var World, fn, rectMatrix = Matrix(), f3 = new Float32Array(3),f4 = new Float32Array(4);
+    var getGL, glSetting,glContext, World, fn, rectMatrix = Matrix(), f3 = new Float32Array(3),f4 = new Float32Array(4);
+	glSetting = {
+		alpha: true,
+		depth: true,
+		stencil:false,
+		antialias: true,
+		premultipliedAlpha:true,
+		preserveDrawingBuffer:false
+	},
+	getGL = function(canvas){
+		var gl, keys, i, ext;
+		if(glContext){
+			gl = canvas.getContext(glContext, glSetting);
+		}else{
+			keys = 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length;
+			while (i--) {
+				if (gl = canvas.getContext(keys[i], glSetting)) {
+					glContext = keys[i];
+					break;
+				}
+			}
+			/* 뭔데?
+			ext = gl.getExtension("OES_element_index_uint");
+			if (!ext) alert('no! OES_element_index_uint');
+			*/
+		}
+		return gl;
+	};
     World = function World(id) {
         var keys, i,ext,self = this;
-        if (!id) this.error( 0);
+        if(!id) this.error(0);
         this._cvs = document.getElementById(id);
         if (!this._cvs) this.error(1);
-
-        this.setViewport()
-        window.addEventListener('resize',function(){
-            self.setViewport()
-
-        })
-
-        this._renderList = [],
-        this._sceneList = {},
-        this.LOOP = {},
-
-        keys = 'experimental-webgl,webgl,webkit-3d,moz-webgl,3d'.split(','), i = keys.length;
-        while (i--) if (this._gl = this._cvs.getContext(keys[i], {
-                alpha: true,
-                depth: true,
-                stencil:false,
-                antialias: true,
-                premultipliedAlpha:true,
-                preserveDrawingBuffer:false
-            })) break;
-        ext = this._gl.getExtension("OES_element_index_uint");
-        if (!ext) alert('no! OES_element_index_uint');
-        console.log(this._gl ? id + ' : MoGL 초기화 성공!' : console.log(id + ' : MoGL 초기화 실패!!'));
+        if (this._gl = getGL(this._cvs) ) {
+            this._renderList = [],
+            this._sceneList = {},
+			this._autoSizer = null,
+			this._actions = [];
+		}else{
+			this.error(2);
+		}
     },
     fn = World.prototype,
-    fn.setViewport = function(){
-        //this._pixelRatio = parseFloat(width)/parseFloat(height) > 1 ? window.devicePixelRatio : 1
-        var self = this;
-        var width = window.innerWidth;
-        var height = window.innerHeight;
-        this._pixelRatio = window.devicePixelRatio;
-        this._cvs.width = width * this._pixelRatio;
-        this._cvs.height = height * this._pixelRatio;
-        this._cvs.style.width = width + 'px';
-        this._cvs.style.height = height + 'px';
-        for(var k in self._sceneList) {
-            self._sceneList[k]._update = 1
-        }
+    fn.setAutoSize = function setAutoSize( isAutoSize ){
+		var canvas, scenes;
+		if( isAutoSize ){
+			if( !this._autoSizer ){
+				canvas = this._cvs,
+				scenes = this._sceneList,
+				this._autoSizer = function(){
+					//this._pixelRatio = parseFloat(width)/parseFloat(height) > 1 ? window.devicePixelRatio : 1
+					var width, height, pixelRatio, k;
+					width = window.innerWidth,
+					height = window.innerHeight,
+					pixelRatio = window.devicePixelRatio,
+					canvas.width = width * pixelRatio,
+					canvas.height = height * pixelRatio,
+					canvas.style.width = width + 'px',
+					canvas.style.height = height + 'px';
+					for(k in scenes) {
+						scenes[k]._update = 1
+					}
+				};
+			}
+			window.addEventListener( 'resize', this._autoSizer ),
+			window.addEventListener( 'orientationchange', this._autoSizer );
+			this._autoSizer();
+		}else if(this._autoSizer) {
+			window.removeEventListener( 'resize', this._autoSizer ),
+			window.removeEventListener( 'orientationchange', this._autoSizer );
+		}
+		return this;
     },
+	fn.addAction = function addAction( action, id ){
+		this._actions[this._actions.length] = {id:id || MoGL.functionName(action), action:action};
+		return this;
+	},
+	fn.removeAction = function addAction( action ){
+		var arr, i, j;
+		arr = this._actions, i = arr.length;
+		while(i--){
+			if( arr[i][0] == action || arr[i][1] == action ){
+				arr.splice( i, 1 );
+			}
+		}
+		return this;
+	},
     fn.render = function render() {
-        var i, k, len, tList = this._renderList;
+        var action, i, j, k, len, tList;
         var scene,camera,gl,children;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;
         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram;
-        for (k in this.LOOP)  this.LOOP[k]()
-        for (i = 0, len = tList.length; i < len; i++) {
+		
+		for (action = this._actions, i = 0, j = action.length ; i < j ; i++ ) action[i][1].call(this);
+        for (tList = this._renderList, i = 0, len = tList.length; i < len; i++) {
             //console.log(tList[i],'렌더')
             if (tList[i].scene._update) tList[i].scene.update();
             //console.log('카메라렌더',tList[i].sceneID,tList[i].cameraID, '실제 Scene : ',tList[i].scene)
@@ -246,6 +289,7 @@ var World = (function () {
         }
         //gl.finish();
     },
+	/*
     fn.addRender = function addRender(sceneID, cameraID, index) { 
         var uuid, tScene, tList,
             i,len,temp;
@@ -271,16 +315,20 @@ var World = (function () {
         else tList.push(temp);
         return this;
     },
+	*/
     fn.addScene = function addScene(sceneID, scene) { 
         if (this._sceneList[sceneID]) this.error(0);
         if (!(scene instanceof Scene )) this.error(1);
         this._sceneList[sceneID] = scene, scene._gl = this._gl, scene._cvs = this._cvs;
+		//scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
+		//이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
         return this;
     },
     fn.getScene = function getScene(sceneID) { 
         if( typeof sceneID === 'undefined' ) this.error(0);
         return this._sceneList[sceneID] ? this._sceneList[sceneID] : null;
     },
+	/*
     fn.removeRender = function removeRender(sceneID, cameraID) { 
         var tList = this._renderList, i, len;
         var sTest = 0, cTest = 0;
@@ -295,10 +343,12 @@ var World = (function () {
         for (i = 0, len = tList.length; i < len; i++) if (tList[i] && tList[i].uuid == sceneID + '_' + cameraID) tList.splice(i, 1);
         return this;
     },
+	*/
     fn.removeScene = function removeScene(sceneID) { 
         this._sceneList[sceneID] ? 0 : this.error(0),
         this._sceneList[sceneID]._gl = this._gl,
         delete this._sceneList[sceneID];
+		//삭제할때 알아서 카메라들도 삭제
         return this;
     };
     return MoGL.ext(World, MoGL);
