@@ -3,11 +3,14 @@
 
 **method**
 
-* [addRender](#addrender-sceneidstring-cameraidstring-indexint--)
 * [addScene](#addscene-idstring-scenescene-)
+* [getRenderer](#)
 * [getScene](#getscene-idstring-)
-* [removeRender](#removerender-sceneidstring-cameraidstring--)
+* [isAutoSize](#)
 * [removeScene](#removescene-idstring-)
+* [render](#)
+* [start](#)
+* [stop](#)
 
 [top](#)
 ## Constructor
@@ -19,8 +22,7 @@ World('canvasID')
 **description**
 
 World는 MoGL의 기본 시작객체로 내부에 다수의 [Scene](Scene.md)을 소유할 수 있으며, 실제 렌더링되는 대상임.
-또한 World의 인스턴스는 rendering함수 그 자체이기도 함.
-* 메서드체이닝을 위해 대부분의 함수는 자신을 반환함.
+
 
 **exception**
 
@@ -37,50 +39,14 @@ World는 MoGL의 기본 시작객체로 내부에 다수의 [Scene](Scene.md)을
 var world = new World('canvasID1');
 
 //애니메이션 루프에 인스턴스를 넣는다.
-requestAnimationFrame( world );
+requestAnimationFrame( world.getRenderer() );
 
 //팩토리함수로도 작동
 var world2 = World('canvasID2');
 ```
 
 [top](#)
-## addRender( sceneId:string, cameraId:string[, index:int]  )
-
-**description**
-
-실제 그려질 대상을 추가함. 다수 등록 가능.
-
-**param**
-
-1. sceneId:string - 그려질 대상 [Scene](Scene.md)의 등록시 id.
-2. cameraId:string - 해당 [Scene](Scene.md)내의 카메라 등록시 id.
-3. ?index:int - 그려질 순서. 생략하면 마지막 index + 1로 설정됨.
-
-**exception**
-
-* 'World.addRender:0' - 이미 등록된 id.
-* 'World.addRender:1' - 존재하지 않는 [Scene](Scene.md)의 id.
-* 'World.addRender:2' - 존재하지 않은 [Camera](Camera.md)의 id.
-
-**return**
-
-this - 메서드체이닝을 위해 자신을 반환함.
-
-**sample**
-
-```javascript
-// Scene과 Camara생성 및 등록
-var lobby = Scene();
-lobby.addChild( 'cam1', new Camera() );
-
-// Scene 등록 및 렌더대상 등록
-var world = World('canvasID');
-world.addScene( 'lobby', lobby );
-world.addRender( 'lobby', 'cam1' );
-```
-
-[top](#)
-## addScene( sceneId:string, scene:Scene )
+## addScene( scene:Scene )
 
 **description**
 
@@ -88,12 +54,11 @@ world.addRender( 'lobby', 'cam1' );
 
 **param**
 
-1. sceneId:string - removeScene, getScene 등에서 사용할 id
-2. scene:[Scene](Scene.md) - [Scene](Scene.md)의 인스턴스
+1. scene:[Scene](Scene.md) - [Scene](Scene.md)의 인스턴스
 
 **exception**
 
-* 'World.addScene:0' - 이미 등록된 id.
+* 'World.addScene:0' - 이미 등록된 Scene.
 * 'World.addScene:1' - [Scene](Scene.md)이 아닌 객체를 지정한 경우.
 
 **return**
@@ -104,8 +69,39 @@ this - 메서드체이닝을 위해 자신을 반환함.
 
 ```javascript
 var world = new World('canvasID');
-world.addScene( 'lobby', new Scene() );
-world.addScene( 'room', Scene() );
+world.addScene( Scene().setId('lobby') );
+world.addScene( Scene().setId('room') );
+```
+
+[top](#)
+## getRenderer( isRequestAnimationFrame:boolean )
+
+**description**
+
+setInterval이나 requestAnimationFrame에서 사용될 렌더링 함수를 얻음.
+실제로는 본인과 바인딩된 render함수를 반환하고 한 번 반환한 이후는 캐쉬로 잡아둠.
+
+**param**
+
+1. isRequestAnimationFrame:boolean - 애니메이션프레임용으로 반환하는 경우는 내부에서 다시 requestAnimationFrame을 호출하는 기능이 추가됨.
+
+**exception**
+
+없음.
+
+**return**
+
+function - this.render.bind(this) 형태로 본인과 바인딩된 함수를 반환함.
+
+**sample**
+
+```javascript
+var world = new World('canvasID');
+world.addScene( Scene().setId('lobby') );
+//인터벌용
+setInterval( world.getRenderer() );
+//raf용
+requestAnimationFrame( world.getRenderer(true) );
 ```
 
 [top](#)
@@ -117,7 +113,7 @@ sceneId에 해당되는 [Scene](Scene.md)을 얻음.
 
 **param**
 
-1. sceneId:string - 등록시 사용한 sceneId. 없으면 null을 반환함.
+1. sceneId:string - 등록시 scene의 id. 없으면 null을 반환함.
 
 **return**
 
@@ -127,29 +123,26 @@ sceneId에 해당되는 [Scene](Scene.md)을 얻음.
 
 ```javascript
 var world = new World('canvasID');
-world.addScene( 'lobby', new Scene() );
+world.addScene( new Scene().setId('lobby') );
 var lobby = world.getScene( 'lobby' );
 ```
 
 [top](#)
-## removeRender( sceneId:string, cameraId:string  )
+## isAutoSize( isAutoSize:boolean )
 
 **description**
 
-해당 대상을 렌더링 대상에서 제외함.
+world에 지정된 canvas요소에 대해 viewport에 대한 자동 크기 조정을 해주는지 여부.
+* 생성시 기본값은 false임.
 
 **param**
 
-1. sceneId:string - 그려질 대상 [Scene](Scene.md)의 등록시 sceneId.
-2. cameraId:string - 해당 [Scene](Scene.md) 내의 카메라 등록시 cameraId.
+1. isAutoSize:boolean - 자동으로 캔버스의 크기를 조정하는지에 대한 여부.
 
 **exception**
 
-* 'World.removeRender:0' - id에 해당되는 [Scene](Scene.md)이 존재하지 않음.
-* 'World.removeRender:1' - id에 해당되는 [Camera](Camera.md)가 [Scene](Scene.md) 내에 존재하지 않음.
-* 'World.removeRender:2' - id에 해당되는 [Scene](Scene.md)가 렌더리스트에 존재하지 않음.
-* 'World.removeRender:3' - id에 해당되는 [Camera](Camera.md)가 렌더리스트에 존재하지 않음.
-* 
+없음.
+
 **return**
 
 this - 메서드체이닝을 위해 자신을 반환함.
@@ -157,17 +150,8 @@ this - 메서드체이닝을 위해 자신을 반환함.
 **sample**
 
 ```javascript
-// Scene과 Camara생성 및 등록
-var lobby = new Scene();
-lobby.addChild( 'cam1', new Camera() );
-
-// Scene 등록 및 렌더대상 등록
 var world = new World('canvasID');
-world.addScene( 'lobby', lobby );
-world.addRender( 'lobby', 'cam1' );
-
-// 렌더대상에서 제외
-world.removeRender( 'lobby', 'cam1' );
+world.isAutoSize(true);
 ```
 
 [top](#)
@@ -180,12 +164,12 @@ world.removeRender( 'lobby', 'cam1' );
 
 **param**
 
-1. sceneId:string - removeScene, getScene 등에서 사용할 sceneId
+1. sceneId:string - [Scene](Scene.md)객체에 정의된 id.
 
 **exception**
 
 * 'World.removeScene:0' - id에 해당되는 [Scene](Scene.md)이 존재하지 않음.
-* 
+
 **return**
 
 this - 메서드체이닝을 위해 자신을 반환함.
@@ -195,17 +179,100 @@ this - 메서드체이닝을 위해 자신을 반환함.
 ```javascript
 // Scene과 Camara생성 및 등록
 var lobby = new Scene();
-lobby.addChild( 'cam1', Camera() );
+lobby.addChild( Camera() );
 
-// Scene 등록 및 렌더대상 등록
+// Scene 등록
 var world = new World('canvasID');
-world.addScene( 'lobby', lobby );
-world.addRender( 'lobby', 'cam1' );
+world.addScene( lobby.setId('lobby') );
 
 // Scene 제거
 world.removeScene( 'lobby' );
-// 해당 렌더가 이미 제거되어있음
-world.removeRender( 'lobby', 'cam1' ) === false
+```
+[top](#)
+## render()
+
+**description**
+
+현재 화면을 그림.
+
+**param**
+
+없음.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+// Scene과 Camara생성 및 등록
+var lobby = new Scene();
+lobby.addChild( Camera() );
+
+// Scene 등록
+var world = new World('canvasID');
+world.addScene( lobby.setId('lobby') );
+
+// 실제 출력
+world.render();
+```
+
+[top](#)
+## start()
+
+**description**
+
+requestAnimationFrame을 이용해 자동으로 render를 호출함.
+
+**param**
+
+없음.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var world = new World('canvasID');
+world.start();
+```
+
+[top](#)
+## stop()
+
+**description**
+
+start시킨 자동 render를 정지함.
+
+**param**
+
+없음.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var world = new World('canvasID');
+world.start();
+world.stop();
 ```
 
 [top](#)
