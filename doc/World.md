@@ -255,7 +255,7 @@ world.render();
 ```
 
 [top](#)
-## isAutoSize( isAutoSize:boolean )
+## setAutoSize( isAutoSize:boolean )
 
 **description**
 
