@@ -30,7 +30,7 @@ var World = (function () {
 		}
 		return gl;
 	};
-    var renderList = {}, sceneList = [], cvsList = {}, glList = {}, autoSizer = {}, actions = {}, renderer = {};
+    var renderList = {}, sceneList = [], cvsList = {}, glList = {}, autoSizer = {}, actions = {}, started ={};
 	
     World = function World(id) {
         if(!id) this.error(0);
@@ -98,23 +98,35 @@ var World = (function () {
     },
     fn.getRenderer = function(isRequestAnimationFrame){
         var uuid = this.toString(), self;
-        if (!renderer[uuid]) {
+        if (!renderList[uuid]) {
             // 없으니까 생성
-            renderer[uuid] = {}
+            renderList[uuid] = {}
         }
         if (isRequestAnimationFrame) {
-            if (renderer[uuid][1]) return renderer[uuid][1]
+            if (renderList[uuid][1]) return renderList[uuid][1]
             else {
                 self = this;
-                return renderer[uuid][1] = function () {
+                return renderList[uuid][1] = function () {
                     self.render();
-                    requestAnimationFrame(renderer[uuid][1]);
+                    requestAnimationFrame(renderList[uuid][1]);
                 }
             }
         } else {
-            if (renderer[uuid][0]) return renderer[uuid][0]
-            else return renderer[uuid][0] = this.render.bind(this)
+            if (renderList[uuid][0]) return renderList[uuid][0]
+            else return renderList[uuid][0] = this.render.bind(this)
         }
+    },
+    fn.start = function start(){
+        var uuid = this.toString();
+        if (!started[uuid]) started[uuid] = 1;
+        else started[uuid] = 1;
+        requestAnimationFrame(this.getRenderer(1))
+        return this;
+    },
+    fn.stop = function stop(){
+        var uuid = this.toString();
+        started[uuid] = 0;
+        return this;
     }
     /*
      fn.removeRender = function removeRender(sceneID, cameraID) {
