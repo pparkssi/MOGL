@@ -7,10 +7,10 @@
 * [addScene](#addscene-scenescene-)
 * [getRenderer](#getrenderer-isrequestanimationframeboolean-)
 * [getScene](#getscene-sceneidstring-)
-* [isAutoSize](#isautosize-isautosizeboolean-)
 * [removeAction](#removeaction-actionfunction-)
 * [removeScene](#removescene-sceneidstring-)
 * [render](#render)
+* [setAutoSize](#setautosize-isautosizeboolean-)
 * [start](#start)
 * [stop](#stop)
 
@@ -158,33 +158,6 @@ var lobby = world.getScene( 'lobby' );
 ```
 
 [top](#)
-## isAutoSize( isAutoSize:boolean )
-
-**description**
-
-world에 지정된 canvas요소에 대해 viewport에 대한 자동 크기 조정을 해주는지 여부.
-* 생성시 기본값은 false임.
-
-**param**
-
-1. isAutoSize:boolean - 자동으로 캔버스의 크기를 조정하는지에 대한 여부.
-
-**exception**
-
-없음.
-
-**return**
-
-this - 메서드체이닝을 위해 자신을 반환함.
-
-**sample**
-
-```javascript
-var world = new World('canvasID');
-world.isAutoSize(true);
-```
-
-[top](#)
 ## removeAction( action:function )
 └removeAction( id:string )
 
@@ -279,6 +252,33 @@ world.addScene( lobby.setId('lobby') );
 
 // 실제 출력
 world.render();
+```
+
+[top](#)
+## isAutoSize( isAutoSize:boolean )
+
+**description**
+
+world에 지정된 canvas요소에 대해 viewport에 대한 자동 크기 조정을 해주는지 여부.
+* 생성시 기본값은 false임.
+
+**param**
+
+1. isAutoSize:boolean - 자동으로 캔버스의 크기를 조정하는지에 대한 여부.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var world = new World('canvasID');
+world.isAutoSize(true);
 ```
 
 [top](#)
