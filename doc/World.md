@@ -3,10 +3,12 @@
 
 **method**
 
+* [addAction](#addaction-actionfunction-idstring-)
 * [addScene](#addscene-scenescene-)
 * [getRenderer](#getrenderer-isrequestanimationframeboolean-)
 * [getScene](#getscene-sceneidstring-)
 * [isAutoSize](#isautosize-isautosizeboolean-)
+* [removeAction](#removeaction-actionfunction-)
 * [removeScene](#removescene-sceneidstring-)
 * [render](#render)
 * [start](#start)
@@ -43,6 +45,34 @@ requestAnimationFrame( world.getRenderer() );
 
 //팩토리함수로도 작동
 var world2 = World('canvasID2');
+```
+
+[top](#)
+## addAction( action:function[, id:string] )
+
+**description**
+
+렌더링이 일어나기전 실행될 액션함수를 등록함.
+
+**param**
+
+1. action:function - 렌더시마다 선행되어 실행될 함수. id인자를 생략하는 경우 기명함수의 name속성을 통해 삭제함.
+2. ?id:string  - 삭제시 사용할 id.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var world = new World('canvasID');
+world.addAction( function act1(){console.log('render');} );
+world.removeAction( 'act1' );
 ```
 
 [top](#)
@@ -152,6 +182,35 @@ this - 메서드체이닝을 위해 자신을 반환함.
 ```javascript
 var world = new World('canvasID');
 world.isAutoSize(true);
+```
+
+[top](#)
+## removeAction( action:function )
+└removeAction( id:string )
+
+**description**
+
+렌더링이 일어나기전 실행될 액션함수를 등록함.
+
+**param**
+
+1. action:function - addAction을 통해 지정된 함수.
+2. id:string  - addAction에서 등록시 지정한 id를 우선적으로 찾은 뒤 없는 경우 함수의 name속성과 일치하는 모든 함수를 제거함.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var world = new World('canvasID');
+world.addAction( function act1(){console.log('render');} );
+world.removeAction( 'act1' );
 ```
 
 [top](#)
