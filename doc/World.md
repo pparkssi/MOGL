@@ -3,14 +3,14 @@
 
 **method**
 
-* [addScene](#addscene-idstring-scenescene-)
-* [getRenderer](#)
-* [getScene](#getscene-idstring-)
-* [isAutoSize](#)
-* [removeScene](#removescene-idstring-)
-* [render](#)
-* [start](#)
-* [stop](#)
+* [addScene](#addscene-scenescene-)
+* [getRenderer](#getrenderer-isrequestanimationframeboolean-)
+* [getScene](#getscene-sceneidstring-)
+* [isAutoSize](#isautosize-isautosizeboolean-)
+* [removeScene](#removescene-sceneidstring-)
+* [render](#render)
+* [start](#start)
+* [stop](#stop)
 
 [top](#)
 ## Constructor
