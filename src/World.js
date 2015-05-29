@@ -34,16 +34,18 @@ var World = (function () {
 		}
 		return gl;
 	};
+	var renderList = {}, sceneList = {}, autoSizer = {}, actions = {};
+	
     World = function World(id) {
         var keys, i,ext,self = this;
         if(!id) this.error(0);
         this._cvs = document.getElementById(id);
         if (!this._cvs) this.error(1);
         if (this._gl = getGL(this._cvs) ) {
-            this._renderList = [],
-            this._sceneList = {},
-			this._autoSizer = null,
-			this._actions = [];
+            renderList[this] = [],
+            sceneList[this] = {},
+			autoSizer[this] = null,
+			actions[this] = [];
 		}else{
 			this.error(2);
 		}
@@ -54,8 +56,8 @@ var World = (function () {
 		if( isAutoSize ){
 			if( !this._autoSizer ){
 				canvas = this._cvs,
-				scenes = this._sceneList,
-				this._autoSizer = function(){
+				scenes = sceneList[this],
+				autoSizer[this] = function(){
 					//this._pixelRatio = parseFloat(width)/parseFloat(height) > 1 ? window.devicePixelRatio : 1
 					var width, height, pixelRatio, k;
 					width = window.innerWidth,
@@ -70,12 +72,12 @@ var World = (function () {
 					}
 				};
 			}
-			window.addEventListener( 'resize', this._autoSizer ),
-			window.addEventListener( 'orientationchange', this._autoSizer );
-			this._autoSizer();
-		}else if(this._autoSizer) {
-			window.removeEventListener( 'resize', this._autoSizer ),
-			window.removeEventListener( 'orientationchange', this._autoSizer );
+			window.addEventListener( 'resize', autoSizer[this] ),
+			window.addEventListener( 'orientationchange', autoSizer[this] );
+			autoSizer[this]();
+		}else if(autoSizer[this]) {
+			window.removeEventListener( 'resize', autoSizer[this] ),
+			window.removeEventListener( 'orientationchange', autoSizer[this] );
 		}
 		return this;
     },

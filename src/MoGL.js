@@ -60,6 +60,9 @@ var MoGL = (function(){
 		this.id = v;
 		return this;
 	}),
+	fn.toString = function(){
+		return this.uuid;
+	},
 	Object.defineProperty( fn, 'id', { //id처리기
 		get:function idGet(){return this._id;},
 		set:function idSet(v){this._id = v;}
