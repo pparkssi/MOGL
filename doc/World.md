@@ -42,7 +42,7 @@ World는 MoGL의 기본 시작객체로 내부에 다수의 [Scene](Scene.md)을
 var world = new World('canvasID1');
 
 //애니메이션 루프에 인스턴스를 넣는다.
-requestAnimationFrame( world.getRenderer() );
+requestAnimationFrame( world.getRenderer(true) );
 
 //팩토리함수로도 작동
 var world2 = World('canvasID2');
