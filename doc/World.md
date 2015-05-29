@@ -3,12 +3,12 @@
 
 **method**
 
-* [addAction](#)
+* [addAction](#addaction-actionfunction-idstring-)
 * [addScene](#addscene-scenescene-)
 * [getRenderer](#getrenderer-isrequestanimationframeboolean-)
 * [getScene](#getscene-sceneidstring-)
 * [isAutoSize](#isautosize-isautosizeboolean-)
-* [removeAction](#)
+* [removeAction](#removeaction-actionfunction-)
 * [removeScene](#removescene-sceneidstring-)
 * [render](#render)
 * [start](#start)
