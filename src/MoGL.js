@@ -97,25 +97,25 @@ var MoGL = (function() {
         get:function idGet() {return this._id;},
         set:function idSet(v) {this._id = v;}
     }),
-	Object.freeze(fn);
-	//인스턴스의 갯수를 알아냄
-	MoGL.count = function count(cls) {
+    Object.freeze(fn);
+    //인스턴스의 갯수를 알아냄
+    MoGL.count = function count(cls) {
         if ( typeof cls == 'function' ) {
             return counter[cls.uuid];
         } else {
             return totalCount;
         }
-	},
-	MoGL.error = function error(cls, method, id) { //error
+    },
+    MoGL.error = function error(cls, method, id) { //error
         throw new Error(cls + '.' + method + ':' + id);
-	},
-	MoGL.functionName = function(f){
+    },
+    MoGL.functionName = function(f){
         if ('name' in f) return f.name;
         f = f.toString();
         return f.substring(f.indexOf('function') + 8, f.indexOf('(')).trim();
-	},
-	//parent클래스를 상속하는 자식클래스를 만들어냄.
-	MoGL.ext = function ext(child, parent) {
+    },
+    //parent클래스를 상속하는 자식클래스를 만들어냄.
+    MoGL.ext = function ext(child, parent) {
         var cls, oldProto, newProto, key;
         //부모검사
         if (!parent) {
@@ -165,6 +165,6 @@ var MoGL = (function() {
         Object.freeze(cls),
         Object.seal(newProto);
         return cls;
-	};
-	return MoGL;
+    };
+    return MoGL;
 })();
