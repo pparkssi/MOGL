@@ -161,7 +161,7 @@ var World = (function () {
         cvs = cvsList[this]
         tSceneList = sceneList[this]
         for (k in tSceneList) {
-            console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
+            //console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
             scene = tSceneList[k]
             if (scene._update) scene.update();
             cameraList = tSceneList[k]._cameras
