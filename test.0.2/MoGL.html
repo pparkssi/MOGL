@@ -17,6 +17,7 @@
 <script src="lib/mogl.min.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
+    MoGL.globalization();
 	var parent = function( a, b ){
 		this.a = a;
 		this.b = b;
@@ -105,8 +106,8 @@
 				}catch(e){
 					test = e.toString();
 				}
-				return test.indexOf( 'test.method:3' ) > -1;
-			}, true
+				return test;
+			}, 'Error: test.method:3'
 	);
 
 	var instance3 = child(7, 8, 9);
@@ -134,8 +135,8 @@
 				}catch(e){
 					test = e.toString();
 				}
-				return test.indexOf( 'MoGL.ext:0' ) > -1
-			}, true,
+				return test;
+			}, 'Error: MoGL.ext:0',
 			function(){
 				var Parent = function(){}, Child = function(){}, parent, child;
 
@@ -148,6 +149,19 @@
 				return parent.constructor === MoGL && child.constructor === MoGL;
 			}, true
 	);
+
+    bsTest( 'isAlive',
+            function(){
+                var lobby = new Scene(), test;
+                lobby.destroy();
+                try{
+                    MoGL.isAlive( lobby );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Destroyed Object:[object Object]'
+    );
 
 </script>
 </body>

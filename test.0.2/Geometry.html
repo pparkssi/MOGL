@@ -13,13 +13,14 @@
 </head>
 <body>
 <img src="../src/ohno.png">
-
+<canvas id="canvas" height="10" style="position: absolute"></canvas>
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
 <script src="lib/mogl.min.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
+    MoGL.globalization();
     var vData, iData;
     //vertexBuffer
     vData = [
@@ -224,6 +225,89 @@
                 sample.addVertexShader('bb')
                 return sample._vertexShaders['bb']
             }, 'bb'
+    );
+
+    bsTest( 'NEW TEST' );
+
+    bsTest( 'constructor',
+            function(){
+                var geo, test;
+                try{
+                    geo = new Geometry();
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Geometry.constructor:0',
+            function(){
+                var geo, test;
+                try{
+                    geo = new Geometry(
+                            [1,0,0, 0,0,1, 0,1,1,
+                            1,0,0, 0,0,1, 0,1,1,
+                            1,0,0, 0,0,1, 0,1,1]);
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Geometry.constructor:1',
+            function(){
+                var geo, test;
+                try{
+                    geo = new Geometry(
+                            [1,0,0, 0,0,1, 0,1,1,
+                            1,0,0, 0,0,1, 0,1,1,
+                            1,0,0, 0,0,1, 0,1,1],
+                            [0,1,2, 2,3,4, 4,5,6],
+                            [Geometry.x, Geometry.y]
+                    );
+                }catch(e){
+                    test = e.toString();
+                }
+                return test;
+            }, 'Error: Geometry.constructor:2',
+            function(){
+                var cube = new Geometry(
+                        [1,0,0, 0,0,1, 0,1,1,
+                        1,0,0, 0,0,1, 0,1,1,
+                        1,0,0, 0,0,1, 0,1,1],
+
+                        [0,1,2, 2,3,4, 4,5,6],
+
+                        [Geometry.x, Geometry.y, Geometry.z]
+                );
+
+                return cube.getVertexCount();
+            }, 9
+    );
+
+    bsTest( 'addVertexShader',
+            function(){
+                var world = new World( 'canvas' );
+                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby');
+                lobby.addVertexShader( 'waffle', '' );
+                var cube = lobby.addGeometry( 'cube', new Geometry( vData, iData ) );
+                cube.addVertexShader( 'waffle' );
+                return cube._vertexShaders.hasOwnProperty( 'waffle' );
+            }, true,
+            function(){
+                var sample = new Geometry( vData, iData );
+                sample.addVertexShader('aaa');
+                return sample._vertexShaders.hasOwnProperty( 'aaa' );
+            }, true
+    );
+
+    bsTest( 'removeVertexShader',
+            function(){
+                var sample = new Geometry( vData, iData );
+                sample.addVertexShader( 'aaa' ).removeVertexShader( 'aaa' );
+                return sample._vertexShaders.hasOwnProperty( 'aaa' );
+            }, false,
+            function(){
+                var sample = new Geometry( vData, iData );
+                sample.removeVertexShader( 'aaa' );
+                return sample._vertexShaders.hasOwnProperty( 'aaa' );
+            }, false
     );
 </script>
 <div></div>

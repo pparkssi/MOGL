@@ -21,6 +21,7 @@
 <script src="lib/mogl.min.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
+    MoGL.globalization();
     var testMaterial1 = new Material('#000');
     var testMaterial2 = new Material('#000000');
     var testMaterial3 = new Material('#ffffff0.8');
@@ -337,15 +338,18 @@
 
                 lobby.addTexture( 'floor1', document.getElementById('img0') );
                 lobby.addTexture( 'floor2', document.getElementById('img0') );
+                lobby.addTexture( 'floor3', document.getElementById('img0') );
 
                 var mat1 = lobby.addMaterial( 'floor1', new Material()).getMaterial('floor1');
                 mat1.addTexture( Texture.diffuse, 'floor1', 3 );
-                mat1.addTexture( Texture.diffuse, 'floor2', 1 );
-
+                mat1.addTexture( Texture.diffuse, 'floor2', 0 );
+                mat1.addTexture( Texture.diffuse, 'floor3', 0 );
+                console.log('!!!!!!!!!!!!!!!!!!')
+                console.log('!!!!!!!!!!!!!!!!!!')
                 console.log(mat1['_' + Texture.diffuse].__indexList);
 
                 return mat1['_' + Texture.diffuse].__indexList.map(function( v ){ return v.id }).join(',');
-            }, 'floor2,floor1',
+            }, 'floor3,floor2,floor1',
             function(){
                 var world = new World( 'canvas' );
                 var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby' );
