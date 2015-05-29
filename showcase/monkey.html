@@ -10,7 +10,8 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <style>
         body {
             background-color: #000;
@@ -57,14 +58,14 @@
         var scene = new Scene();
 
 
-        var divCurrentFPS = document.getElementById( 'currentFPS' );
-        var divAverageFPS = document.getElementById( 'averageFPS' );
+        var divCurrentFPS = document.getElementById('currentFPS');
+        var divAverageFPS = document.getElementById('averageFPS');
         var prevTime = 0;
 
-        world.addScene('scene', scene);
+        world.addScene( scene);
 
         scene.addChild('camera', new Camera());
-        scene.addMaterial('material', new Material(1,1,1,0.5));
+        scene.addMaterial('material', new Material(1, 1, 1, 0.5));
         scene.addMaterial('material2', new Material());
         scene.addMaterial('material3', new Material());
         scene.addMaterial('material4', new Material());
@@ -74,14 +75,9 @@
 //        scene.getMaterial('material').addTexture(Texture.diffuse,'texture');
 //        scene.getMaterial('material2').addTexture(Texture.diffuse,'texture');
 //        scene.getMaterial('material3').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material4').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material5').addTexture(Texture.diffuse,'texture');
-        scene.getMaterial('material6').addTexture(Texture.diffuse,'texture');
-
-
-
-
-        world.addRender('scene', 'camera');
+        scene.getMaterial('material4').addTexture(Texture.diffuse, 'texture');
+        scene.getMaterial('material5').addTexture(Texture.diffuse, 'texture');
+        scene.getMaterial('material6').addTexture(Texture.diffuse, 'texture');
 
 
         var xmlhttp = new XMLHttpRequest();
@@ -141,7 +137,7 @@
             scene.addGeometry('geometry', new Geometry(vertex, index, [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ, Vertex.u, Vertex.v]));
 
             var mesh = new Mesh('geometry', 'material');
-            mesh.z =-5
+            mesh.z = -5
             mesh.x = -3
             mesh.y = -1
             scene.addChild('monkey', mesh);
@@ -177,7 +173,7 @@
             mesh5.getMaterial().setLambert(1.5)
 
             var mesh6 = new Mesh('geometry', 'material6');
-            mesh6.x =-3
+            mesh6.x = -3
             mesh6.y = 1
             scene.addChild('monkey6', mesh6);
             mesh6.getMaterial().setShading(Shading.blinn)
@@ -187,13 +183,7 @@
             scene.getChild('camera').setAntialias(0);
 
             var sum = 0, count = 1;
-
-            function render( currTime ) {
-                var currentFPS = 1000 / ( currTime - prevTime );
-                prevTime = currTime;
-
-                divCurrentFPS.textContent = currentFPS.toFixed( 2 );
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed( 2 );
+            world.addEventListener(World.renderAfter,function(){
 
                 mesh.rotateY -= 0.02;
                 mesh2.rotateY -= 0.02;
@@ -202,12 +192,12 @@
                 mesh5.rotateY -= 0.02;
                 mesh6.rotateY -= 0.02;
 
-                world.render();
+            })
 
-                requestAnimationFrame( render );
-            }
+            world.start()
+            world.setAutoSize(1)
 
-            requestAnimationFrame( render );
+
         }
     })(this);
 </script>
