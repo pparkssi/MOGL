@@ -58,6 +58,10 @@ var matrix2 = Matrix() // 팩토리로도 생성가능!
 
 없음
 
+**return**
+
+this
+
 **sample**
 ```javascript
 var matrix = new Matrix()
@@ -82,7 +86,7 @@ matrix를 복제
 **sample**
 ```javascript
 var matrix = new Matrix()
-var cloneMatrix = matrix.matClone()
+var cloneMatrix = matrix.matClone() // 새로운 행렬 객체가 반환!
 ```
 
 [top](#)
@@ -104,30 +108,7 @@ this
 ```javascript
 var mat1 = new Matrix()
 var mat2 = new Matrix()
-mat2= mat1.clone(mat2)
-// mat2의 _rowData에 mat1의 _rowData가 복제
-```
-
-[top](#)
-
-## matIdentity()
-
-**description**
-
-자신읜 _rowData를 초기화
-
-**param**
-
-없음
-
-**return**
-
-this
-
-**sample**
-```javascript
-var matrix = new Matrix(
-mat1.matIdentity()
+mat1.copy(mat2) // mat1의 _rowData가 mat2 _rowData에 적용, mat1이 반환!
 ```
 
 [top](#)
@@ -148,7 +129,7 @@ this
 ```javascript
 var matrix1 = new Matrix()
 var matrix2 = new Matrix()
-matrix1.matMultiply(matrix2)
+matrix1.matMultiply(matrix2) // matrix1에 곰셈결과가 반영된체 반환
 ```
 
 [top](#)
@@ -170,7 +151,7 @@ this
 **sample**
 ```javascript
 var matrix = new Matrix()
-matrix.matTranslate(10,20,30)
+matrix.matTranslate(10,20,30) // matrix에 결과값이 반영된체 반환
 ```
 
 [top](#)
@@ -192,7 +173,7 @@ this
 **sample**
 ```javascript
 var matrix = new Matrix()
-matrix.matScale(10,20,30)
+matrix.matScale(10,20,30) // matrix에 결과값이 반영된체 반환
 ```
 
 [top](#)
@@ -212,7 +193,7 @@ this
 **sample**
 ```javascript
 var matrix = new Matrix()
-matrix.matRotateX(0.1)
+matrix.matRotateX(0.1) // matrix에 결과값이 반영된체 반환
 ```
 
 [top](#)
@@ -232,7 +213,7 @@ this
 **sample**
 ```javascript
 var matrix = new Matrix()
-matrix.matRotateY(0.1)
+matrix.matRotateY(0.1) // matrix에 결과값이 반영된체 반환
 ```
 
 [top](#)
@@ -252,7 +233,7 @@ this
 **sample**
 ```javascript
 var matrix = new Matrix()
-matrix.matRotateZ(0.1)
+matrix.matRotateZ(0.1) // matrix에 결과값이 반영된체 반환
 ```
 
 [top](#)
@@ -273,7 +254,7 @@ this
 **sample**
 ```javascript
 var matrix = new Matrix()
-matrix.matRotate(0.1,[1,2,3])
+matrix.matRotate(0.1,[1,2,3]) // matrix에 결과값이 반영된체 반환
 ```
 
 [top](#)
@@ -296,7 +277,7 @@ this
 **sample**
 ```javascript
 var matrix = new Matrix()
-matrix.matPerspective(45, 2/1,0.1,100000)
+matrix.matPerspective(45, 2/1,0.1,100000) // matrix에 결과값이 반영된체 반환
 ```
 
 [top](#)
@@ -319,7 +300,7 @@ this
 **sample**
 ```javascript
 var matrix = new Matrix()
-matrix.matLookAt([100,100,100],[0,0,0],[0,1,0])
+matrix.matLookAt([100,100,100],[0,0,0],[0,1,0]) // matrix에 결과값이 반영된체 반환
 ```
 
 [top](#)
