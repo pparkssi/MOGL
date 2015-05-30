@@ -3,58 +3,11 @@ var Matrix = (function () {
     var GLMAT_EPSILON = 0.000001;
     var temp = new Float32Array(16)
     var SQRT = Math.sqrt, SIN = Math.sin, COS = Math.cos, ABS = Math.abs;
-    var vec3 = {};
     Matrix = function Matrix() {
         this._rowData = new Float32Array(16)
         this.matIdentity()
     }
-    vec3.add = function add(out, a, b) {
-        return out[0] = a[0] + b[0], out[1] = a[1] + b[1], out[2] = a[2] + b[2], out;
-    },
-    vec3.subtract = function subtract(out, a, b) {
-        return out[0] = a[0] - b[0], out[1] = a[1] - b[1], out[2] = a[2] - b[2], out;
-    },
-    vec3.scaleBy = function scaleBy(out, a, b) {
-        return out[0] = a[0] * b, out[1] = a[1] * b, out[2] = a[2] * b, out;
-    },
-    vec3.distance = function distance(a, b) {
-        var x = b[0] - a[0], y = b[1] - a[1], z = b[2] - a[2];
-        return SQRT(x * x + y * y + z * z);
-    },
-    vec3.negate = function negate(out, a) {
-        return out[0] = -a[0], out[1] = -a[1], out[2] = -a[2], out;
-    },
-    /*
-         단위벡터화
-     */
-    vec3.normalize = function normalize(out, a) {
-        var x = a[0], y = a[1], z = a[2];
-        var len = x * x + y * y + z * z;
-        if (len > 0) len = 1 / SQRT(len), out[0] = a[0] * len, out[1] = a[1] * len, out[2] = a[2] * len;
-        return out;
-    },
-    /*
-        내적
-     */
-    vec3.dot = function (a, b) {
-        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-    },
-    /*
-        두벡터에 수직인 벡터
-     */
-    vec3.cross = function(out, a, b) {
-        var ax = a[0], ay = a[1], az = a[2],bx = b[0], by = b[1], bz = b[2];
-        return out[0] = ay * bz - az * by, out[1] = az * bx - ax * bz, out[2] = ax * by - ay * bx, out;
-    },
     fn = Matrix.prototype,
-    fn.vecAdd = vec3.add,
-    fn.vecSubtract = vec3.subtract,
-    fn.vecScaleBy = vec3.scaleBy,
-    fn.vecDistance = vec3.distance,
-    fn.vecNegate = vec3.negate,
-    fn.vecNormalize = vec3.normalize,
-    fn.vecDot = vec3.dot,
-    fn.vecCross = vec3.cross,
     /*
      return this
      */
@@ -85,23 +38,23 @@ var Matrix = (function () {
         t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3], t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7], t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11], t[12] = a[12], t[13] = a[13], t[14] = a[14], t[15] = a[15];
         return this;
     },
-    /*
-     현재 행렬을 반전
-     return this
-     */
-    fn.matInvert = function matInvert() {
-        //TODO 이건문제가좀 있군?
-        console.log('matInvert는 점검이 필요함')
-        return this;
-    },
-    /*
-     현재 행렬을 전치
-     return this
-     */
-    fn.matTranspose = function matTranspose(t) {
-        console.log('matTranspose는 점검이 필요함')
-         return this;
-    };
+    ///*
+    // 현재 행렬을 반전
+    // return this
+    // */
+    //fn.matInvert = function matInvert() {
+    //    //TODO 이건문제가좀 있군?
+    //    console.log('matInvert는 점검이 필요함')
+    //    return this;
+    //},
+    ///*
+    // 현재 행렬을 전치
+    // return this
+    // */
+    //fn.matTranspose = function matTranspose(t) {
+    //    console.log('matTranspose는 점검이 필요함')
+    //     return this;
+    //};
     /*
      현재 행렬과 입력된 행렬의 곱
      return this
