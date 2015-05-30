@@ -23,7 +23,7 @@ var Vector = (function () {
      */
     fn.addXYZ = function addXYZ(x,y,z) {
         var a = this._rowData;
-        a[0] +=  x, a[1] += y, a[2] += z;
+        a[0] += (x || 0), a[1] += (y || 0), a[2] += (z || 0);
         return this;
     },
     /*
@@ -38,9 +38,9 @@ var Vector = (function () {
     /*
      현재 Vector 객체의 x, y 및 z 요소 값을 다른 인자 x, y ,z 요소 값에서 뺍니다.
      */
-    fn.subtractXYZ = function subtract(x,y,z) {
+    fn.subtractXYZ = function subtractXYZ(x,y,z) {
         var a = this._rowData;
-        a[0] -= x, a[1] -= y, a[2] -= z;
+        a[0] -= (x || 0), a[1] -= (y || 0), a[2] -= (z || 0);
         return this;
     },
     /*
