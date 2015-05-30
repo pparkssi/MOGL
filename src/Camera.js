@@ -135,10 +135,6 @@ var Camera = (function () {
         this._mode = '3d';
         return this;
     },
-    fn.setProjectionMatrix = function setProjectionMatrix(matrix){
-        //TODO 이거 없애버림...
-        return this;
-    },
     fn.setRenderArea = function setRenderArea(x,y,w,h){
         var tw, th;
         tw = this._cvs.width,

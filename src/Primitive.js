@@ -66,8 +66,8 @@ var Primitive = (function () {
         },
         geodesic: function geodesic(/*split*/) {
             var radius = 0.5, fractures = arguments[0] || 30, yUp = true;
-            var hnLat = fractures ; //위도 방향 쪼갠수/2
-            var nLat = hnLat; //위도 방향 쪼갠수
+            var hnLat = fractures; //위도 방향 쪼갠수/2
+            var nLat = 2*hnLat; //위도 방향 쪼갠수
             var nLon; //위도에 대한 경도 방향 쪼갠수 
             var lon; //경도 (단위:라디안)
             var lat; //위도(단위:라디안)
