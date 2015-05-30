@@ -183,7 +183,6 @@ var Scene = (function () {
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
 			'vNormal = vec3(mv * vec4(-aVertexNormal, 0.0));\n' +
 
-
 			'vColor = uColor;'
 			]
 		}
@@ -193,7 +192,7 @@ var Scene = (function () {
 			varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
 			function: [],
 			main: ['' +
-			'vec3 ambientColor = vec3(0.1, 0.1, 0.1);\n' +
+			'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
 			'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
 			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
@@ -240,10 +239,9 @@ var Scene = (function () {
 			varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
 			function: [],
 			main: ['' +
-			'vec3 ambientColor = vec3(0.1, 0.1, 0.1);\n' +
+			'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
 			'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
 			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
-
 
 			'vec3 normal = (vNormal);\n' +
 			'vec3 lightDir = normalize(uDLite);\n' +
@@ -280,7 +278,7 @@ var Scene = (function () {
 			varyings: ['vec2 vUV', 'vec3 vNormal', 'vec3 vPosition'],
 			function: [],
 			main: ['' +
-			'vec3 ambientColor = vec3(0.1, 0.1, 0.1);\n' +
+			'vec3 ambientColor = vec3(0.0, 0.0, 0.0);\n' +
 			'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
 			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
