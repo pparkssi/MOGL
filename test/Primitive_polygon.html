@@ -117,41 +117,6 @@
 </script>
 <canvas id='polygon' width=500 height=500></canvas>
 <script>
-//    (function() {
-//        var world = new World('polygon'),
-//                scene = new Scene(),
-//                camera = new Camera(),
-//                solidWhite = new Material('#ffffff');
-//
-//        world.addScene('scene', scene);
-//        scene.addChild('camera', camera);
-//        world.addRender('scene', 'camera');
-//        // scene.addMaterial('bitmapMat', new Material());
-//        scene.addTexture('texture1', '../asset/honey1.png');
-//        // scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1');
-//
-//        var setMesh = function(n) {
-//            var polygon = Primitive.polygon(n, 2),
-//            // newMesh = new Mesh(polygon, solidWhite);
-//                    newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, 'texture1'));
-//
-//            scene.removeChild('polygon' + Math.max(3, n - 1));
-//            scene.addChild('polygon' + n, newMesh);
-//        };
-//
-//        var start = 3, end = 15,
-//                intervalId;
-//
-//        intervalId = setInterval( function() {
-//            if (start < end) {
-//                setMesh(start++);
-//                world.render();
-//            }
-//        }, 300);
-//        if (start == end)
-//            clearInterval(intervalId);
-//    }());
-
     (function() {
         var world = new World('polygon'),
                 scene = new Scene(),
