@@ -53,9 +53,9 @@
         glcontents.height = _win.innerHeight;
 
         var world = new World("glcontents");
-        var scene = new Scene();
+        var scene = new Scene().setId("scene1");
         var camera = new Camera();
-        world.addScene('scene1', scene);
+        world.addScene(scene);
 
         scene.addChild("camera1", camera);
 
@@ -64,7 +64,6 @@
 
         scene.getMaterial("m_sphere").addTexture(Texture.diffuse, "earth");
 
-        world.addRender("scene1", "camera1");
 
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("get", "sphere100_20_20.txt", true);
@@ -96,7 +95,9 @@
             // FPS
             var sum = 0, count = 1;
 
+            prevTime = +(new Date);
             function render(currTime) {
+                currTime = +(new Date)
                 var currentFPS = 1000 / ( currTime - prevTime );
                 prevTime = currTime;
                 divCurrentFPS.textContent = currentFPS.toFixed(2);
@@ -116,11 +117,9 @@
 
                 scene.getChild('camera1').lookAt(0, 0, 0);
 
-                world.render();
-                requestAnimationFrame(render);
             }
-
-            requestAnimationFrame(render);
+            world.addEventListener(World.renderAfter, render);
+            world.start();
         }
     })(window, 500);
 

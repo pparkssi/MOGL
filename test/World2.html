@@ -136,9 +136,44 @@
     world.addEventListener(World.renderAfter, function () {
         console.log('렌더후에 실행되자~~')
     })
-//    world.render()
-//            world.getRenderer()()
-//    setInterval(world.getRenderer(), 300)
+    //    world.render()
+    //            world.getRenderer()()
+    //    setInterval(world.getRenderer(), 300)
+
+    var result_str = "";
+    function before_fn() {
+        result_str += "_renderBefore2";
+    }
+    bsTest('eventListener - renderBefore, renderAfter',
+            function(){             // before anonymous fn
+                world.addEventListener(World.renderBefore, function () {
+                    result_str += "_renderBefore";
+                });
+                result_str = "start";
+                world.render();
+                result_str += "_end";
+                return result_str.indexOf("start_renderBefore_end") > -1;
+            }, true,
+            function(){              // before fn
+                world.addEventListener(World.renderBefore, before_fn);
+                result_str = "start";
+                world.render();
+                result_str += "_end";
+                return result_str.indexOf("start_renderBefore_renderBefore2_end") > -1;
+            }, true,
+            function(){             // after anonymous fn
+                world.addEventListener(World.renderAfter, function () {
+                    result_str += "_renderAfter"
+                });
+                result_str = "start";
+                world.render();
+                result_str += "_end";
+                return result_str.indexOf("start_renderBefore_renderBefore2_renderAfter_end") > -1;
+            }, true
+    );
+
+
+
 </script>
 </body>
 </html>
