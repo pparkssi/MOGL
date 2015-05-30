@@ -38,7 +38,7 @@ var World = (function () {
         if (!cvsList[this]) this.error(1);
         if (glList[this] = getGL(cvsList[this]) ) {
             renderList[this] = {},
-            sceneList[this] = {},
+            sceneList[this] = [],
 			autoSizer[this] = null;
 		}else{
 			this.error(2);
@@ -78,21 +78,28 @@ var World = (function () {
 		return this;
     },
     fn.addScene = function addScene(scene) {
-        var uuid;
+        var tSceneList, i,uuid;
+        tSceneList = sceneList[this], i = tSceneList.length;
         if (!(scene instanceof Scene )) this.error(1);
-        uuid = scene.toString();
-        if (sceneList[this][uuid]) this.error(0);
-        sceneList[this][uuid] = scene, scene._gl = glList[this] , scene._cvs = cvsList[this] ;
+        uuid = scene.uuid
+        while(i--){
+            if (tSceneList[i].uuid == uuid) this.error(0);
+        }
+        tSceneList.push(scene),
+        scene._gl = glList[this],
+        scene._cvs = cvsList[this];
         //scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
         //이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
         return this;
     },
     fn.getScene = function getScene(sceneID) {
-        var k
-        if( typeof sceneID === 'undefined' ) return null;
-        for(k in sceneList[this]){
-            if(sceneList[this][k].id == sceneID){
-                return sceneList[this][k];
+        var i, tSceneList;
+        tSceneList = sceneList[this],
+        i = tSceneList.length;
+        if (typeof sceneID === 'undefined') return null;
+        while (i--) {
+            if (tSceneList[i].id == sceneID) {
+                return tSceneList[i];
             }
         }
         return null;
@@ -141,33 +148,36 @@ var World = (function () {
         return this;
     },
     fn.removeScene = function removeScene(sceneID) {
-        var k
+        var i, tSceneList;
+        tSceneList = sceneList[this],
+        i = tSceneList.length;
         if( typeof sceneID === 'undefined' ) return null;
-        for(k in sceneList[this]){
-            if(sceneList[this][k].id == sceneID){
-                delete sceneList[this][k]
+        while(i--){
+            if(tSceneList[i].id == sceneID){
+                tSceneList.splice(i,1)
+                console.log(sceneList)
                 return this
             }
         }
+
         this.error('0')
     },
     fn.render = function render() {
-        var i, j, k,k2,len=0;
+        var i, j, k,len=0;
         var scene,tSceneList,cameraList,camera,gl,children,cvs;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;
         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram;
-        cvs = cvsList[this]
-        tSceneList = sceneList[this]
-        for (k in tSceneList) {
+        cvs = cvsList[this],
+        tSceneList = sceneList[this],
+        i = tSceneList.length
+        while(i--){
             //console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
-            scene = tSceneList[k]
+            scene = tSceneList[i]
             if (scene._update) scene.update();
-            cameraList = tSceneList[k]._cameras
-            for (k2 in cameraList) {
-                len++
-            }
-            for (k2 in cameraList) {
-                camera = cameraList[k2]
+            cameraList = scene._cameras
+            for (k in cameraList) len++
+            for (k in cameraList) {
+                camera = cameraList[k]
                 if(camera._visible){
                     gl = scene._gl;
                     if(len > 1) {
@@ -334,8 +344,8 @@ var World = (function () {
             for (k in tSceneList) {
                 scene = tSceneList[k]
                 cameraList = scene._cameras
-                for (k2 in cameraList) {
-                    camera = cameraList[k2]
+                for (k in cameraList) {
+                    camera = cameraList[k]
                     if (camera._visible) {
                         tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
                         f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 , f3[2] = 0;
