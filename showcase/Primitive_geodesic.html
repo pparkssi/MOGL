@@ -51,9 +51,9 @@
     var camera = new Camera()
     var testMat = new Material('#ffffff');
 
-    world.addScene('scene', scene);
+    world.setAutoSize(1)
+    world.addScene(scene);
     scene.addChild('camera', camera);
-    world.addRender('scene', 'camera');
     scene.addTexture('texture', '../asset/geodesicTest.jpg');
     testMat.addTexture(Texture.diffuse, 'texture')
 
@@ -61,18 +61,17 @@
     var geodesicMesh = new Mesh(geodesic, testMat);
     scene.addChild('geodesicMesh', geodesicMesh);
 
-
-    setInterval(function () {
-        geodesicMesh.rotateY += 0.01
-        world.render();
-    }, 1000 / 60);
+    world.addEventListener(World.renderBefore,function(){
+        geodesicMesh.rotateY -= 0.01;
+    })
+    world.start()
 
 
     /////////////////////////////////////////////
     // UI
     /////////////////////////////////////////////
     var shadingParams = {
-        WireFrame : false,
+        WireFrame: false,
         color: function () {
             testMat.removeTexture('texture');
             testMat.setShading(Shading.none)
@@ -108,7 +107,7 @@
     shading.add(shadingParams, 'PhongColor');
     shading.add(shadingParams, 'GouraudTextrue');
     shading.add(shadingParams, 'PhongTextrue');
-    shading.add(shadingParams, 'WireFrame').onChange(function(){
+    shading.add(shadingParams, 'WireFrame').onChange(function () {
         testMat.setWireFrame(shadingParams.WireFrame)
     });
 </script>

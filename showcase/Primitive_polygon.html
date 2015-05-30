@@ -40,41 +40,34 @@
 <script src="../src/World.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-    (function () {
-        var world = new World('polygon2'),
-                scene = new Scene(),
-                camera = new Camera(),
-                solidWhite = new Material('#ffffff');
 
-        world.addScene('scene', scene);
-        scene.addChild('camera', camera);
-        world.addRender('scene', 'camera');
-        // scene.addMaterial('bitmapMat', new Material());
-        scene.addTexture('texture1', '../asset/honey1.png');
-        // scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1');
+    var world = new World('polygon2'), scene = new Scene(), camera = new Camera()
+    world.addScene(scene);
+    scene.addChild('camera', camera);
+    scene.addTexture('texture1', '../asset/honey1.png');
+    world.setAutoSize(1)
 
+    var prevN = 3
+    var setMesh = function (n) {
+        var polygon, newMesh;
+        polygon = Primitive.polygon(n),
+                newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, 'texture1').setWireFrame(1));
+        scene.removeChild('polygon' + prevN);
+        scene.addChild('polygon' + n, newMesh);
+        prevN = n
+        newMesh.z = -5
+    };
 
-        var prevN = 3
-        var setMesh = function (n) {
-            var polygon = Primitive.polygon(n),
-            // newMesh = new Mesh(polygon, solidWhite);
-                    newMesh = new Mesh(polygon, new Material().addTexture(Texture.diffuse, 'texture1').setWireFrame(1));
-            scene.removeChild('polygon' + prevN);
-            scene.addChild('polygon' + n, newMesh);
-            prevN = n
-            newMesh.z = -5
-        };
-
-        var start = 3, end = 30, intervalId;
+    var start = 3, end = 30, intervalId;
+    setMesh(start++);
+    world.render();
+    setInterval(function () {
+        if (start > end) start = 3
         setMesh(start++);
         world.render();
-        setInterval(function () {
-            if (start > end) start = 3
-            setMesh(start++);
-            world.render();
-        }, 32);
+    }, 32);
 
-    }());
+
 </script>
 </body>
 </html>

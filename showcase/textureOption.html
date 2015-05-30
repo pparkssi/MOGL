@@ -47,22 +47,14 @@
 </head>
 <body>
 <canvas id="canvas"></canvas>
-<div class="FPS">
-    Current FPS: <span id="currentFPS"></span>
-    Average FPS: <span id="averageFPS"></span>
-</div>
-
 <script>
     'use strict';
 
     var world = new World('canvas');
     var scene = new Scene();
 
-    var divCurrentFPS = document.getElementById('currentFPS');
-    var divAverageFPS = document.getElementById('averageFPS');
-    var prevTime = 0;
-
-    world.addScene('scene', scene);
+    world.setAutoSize(1)
+    world.addScene(scene);
 
     scene.addChild('camera', new Camera());
     scene.getChild('camera').setBackgroundColor('#fff')
@@ -82,8 +74,6 @@
     scene.getMaterial('materialCrop').addTexture(Texture.diffuse, 'textureCrop');
     scene.getMaterial('materialAddSpace').addTexture(Texture.diffuse, 'textureAddSpace');
 
-    world.addRender('scene', 'camera');
-
 
     var meshZoomout = new Mesh(Primitive.plane(), 'materialZoomout')
     var meshZoomIn = new Mesh(Primitive.plane(), 'materialZoomIn')
@@ -91,11 +81,11 @@
     var meshAddSpace = new Mesh(Primitive.plane(), 'materialAddSpace')
     var mesh = new Mesh(Primitive.plane(), 'material')
 
-    meshZoomout.rotateX = Math.PI/2
-    meshZoomIn.rotateX = Math.PI/2
-    meshCrop.rotateX = Math.PI/2
-    meshAddSpace.rotateX = Math.PI/2
-    mesh.rotateX = Math.PI/2
+    meshZoomout.rotateX = Math.PI / 2
+    meshZoomIn.rotateX = Math.PI / 2
+    meshCrop.rotateX = Math.PI / 2
+    meshAddSpace.rotateX = Math.PI / 2
+    mesh.rotateX = Math.PI / 2
 
     scene.addChild('meshZoomout', meshZoomout)
     scene.addChild('meshZoomIn', meshZoomIn)
@@ -109,17 +99,7 @@
     meshCrop.x = 1.1
     meshAddSpace.x = 2.2
 
-    var sum = 0, count = 1;
-    function render(currTime) {
-        var currentFPS = 1000 / ( currTime - prevTime );
-        prevTime = currTime;
-        count++
-        divCurrentFPS.textContent = currentFPS.toFixed(2);
-        divAverageFPS.textContent = ( ( sum += currentFPS ) / count ).toFixed(2);
-        world.render();
-        requestAnimationFrame(render);
-    }
-    requestAnimationFrame(render);
+    world.start()
 
 </script>
 </body>
