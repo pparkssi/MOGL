@@ -51,9 +51,9 @@
     var camera = new Camera()
     var testMat = new Material('#222');
 
-    world.addScene('scene', scene);
+    world.setAutoSize(1)
+    world.addScene(scene);
     scene.addChild('camera', camera);
-    world.addRender('scene', 'camera');
     scene.addTexture('texture', '../asset/geodesicTest.jpg');
     testMat.addTexture(Texture.diffuse, 'texture')
 
@@ -82,19 +82,6 @@
     plane2_2Mesh.x = -1
     plane2_3Mesh.x = 1
     plane10_10Mesh.x = 3
-
-    setInterval(function () {
-//        plane1_1Mesh.rotateZ += 0.01
-//        plane2_2Mesh.rotateZ += 0.01
-//        plane2_3Mesh.rotateZ += 0.01
-//        plane10_10Mesh.rotateZ += 0.01
-//
-//        plane1_1Mesh.rotateY += 0.01
-//        plane2_2Mesh.rotateY += 0.01
-//        plane2_3Mesh.rotateY += 0.01
-//        plane10_10Mesh.rotateY += 0.01
-        world.render();
-    }, 1000 / 60);
 
 
     /////////////////////////////////////////////
@@ -140,6 +127,8 @@
     shading.add(shadingParams, 'WireFrame').onChange(function () {
         testMat.setWireFrame(shadingParams.WireFrame)
     });
+
+    world.start()
 </script>
 <hr/>
 

@@ -40,13 +40,10 @@
     var camera = new Camera();
     var camera2 = Camera();
 
-    w.addScene('scene1', scene1);
+    w.addScene(scene1);
+    w.setAutoSize(1)
     scene1.addChild('camera1', camera);
-    scene1._update = 1;
-    scene1.update();
-//    console.log(scene1.getChild('camera1'));
 
-    w.addRender('scene1', 'camera1');
 
     bsTest('new', function () {
                 // 일반 new - new Camera()

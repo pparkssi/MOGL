@@ -37,7 +37,7 @@ var World = (function () {
         cvsList[this] = document.getElementById(id);
         if (!cvsList[this]) this.error(1);
         if (glList[this] = getGL(cvsList[this]) ) {
-            renderList[this] = [],
+            renderList[this] = {},
             sceneList[this] = {},
 			autoSizer[this] = null;
 		}else{
@@ -152,12 +152,10 @@ var World = (function () {
         this.error('0')
     },
     fn.render = function render() {
-        var i, j, k,k2,len;
+        var i, j, k,k2,len=0;
         var scene,tSceneList,cameraList,camera,gl,children,cvs;
-
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;
         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram;
-
         cvs = cvsList[this]
         tSceneList = sceneList[this]
         for (k in tSceneList) {
@@ -165,6 +163,9 @@ var World = (function () {
             scene = tSceneList[k]
             if (scene._update) scene.update();
             cameraList = tSceneList[k]._cameras
+            for (k2 in cameraList) {
+                len++
+            }
             for (k2 in cameraList) {
                 camera = cameraList[k2]
                 if(camera._visible){
@@ -303,22 +304,9 @@ var World = (function () {
                 }
             }
         }
-		return
-        var i, j, k, len, tList;
-
-
-        for (tList = this._renderList, i = 0, len = tList.length; i < len; i++) {
-            //console.log(tList[i],'렌더')
-            if (tList[i].scene._update) tList[i].scene.update();
-            //console.log('카메라렌더',tList[i].sceneID,tList[i].cameraID, '실제 Scene : ',tList[i].scene)
-            scene = tList[i].scene,
-            camera = scene.getChild(tList[i].cameraID);
-
-        }
-        ////
         // 프레임버퍼를 모아서 찍어!!!
         if(len > 1){
-            gl.viewport(0, 0, this._cvs.width, this._cvs.height);
+            gl.viewport(0, 0, cvs.width, cvs.height);
             gl.clearColor(0, 0, 0, 1);
             //gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL)
             gl.disable(gl.DEPTH_TEST);
@@ -332,11 +320,10 @@ var World = (function () {
             if (!tVBO) return;
             gl.useProgram(tProgram);
             gl.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
-                2 / this._cvs.clientWidth, 0, 0, 0,
-                0, -2 / this._cvs.clientHeight, 0, 0,
+                2 / cvs.clientWidth, 0, 0, 0,
+                0, -2 / cvs.clientHeight, 0, 0,
                 0, 0, 0, 0,
                 -1, 1, 0, 1
-
             ]);
             gl.bindBuffer(gl.ARRAY_BUFFER, tVBO),
             gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0),
@@ -344,51 +331,28 @@ var World = (function () {
             gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0),
             gl.uniform3fv(tProgram.uRotate, [0, 0, 0]);
             gl.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix._rowData);
-            for (i = 0, len = tList.length; i < len; i++) {
-                scene = tList[i].scene,
-                camera = scene.getChild(tList[i].cameraID)
-                if (camera._visible) {
-                    tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
-                    f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 , f3[2] = 0;
-                    gl.uniform3fv(tProgram.uPosition, f3),
-                    f3[0] = tFrameBuffer.width / 2, f3[1] = tFrameBuffer.height / 2, f3[2] = 1,
-                    gl.uniform3fv(tProgram.uScale, f3),
-                    gl.activeTexture(gl.TEXTURE0),
-                    gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture),
-                    gl.uniform1i(tProgram.uSampler, 0),
-                    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
-                    gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0);
+            for (k in tSceneList) {
+                scene = tSceneList[k]
+                cameraList = scene._cameras
+                for (k2 in cameraList) {
+                    camera = cameraList[k2]
+                    if (camera._visible) {
+                        tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
+                        f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 , f3[2] = 0;
+                        gl.uniform3fv(tProgram.uPosition, f3),
+                        f3[0] = tFrameBuffer.width / 2, f3[1] = tFrameBuffer.height / 2, f3[2] = 1,
+                        gl.uniform3fv(tProgram.uScale, f3),
+                        gl.activeTexture(gl.TEXTURE0),
+                        gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture),
+                        gl.uniform1i(tProgram.uSampler, 0),
+                        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO),
+                        gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0);
+                    }
                 }
             }
         }
+		return
         //gl.finish();
     }
-	/*
-    fn.addRender = function addRender(sceneID, cameraID, index) {
-        var uuid, tScene, tList,
-            i,len,temp;
-        uuid = sceneID + '_' + cameraID,
-        tScene = this._sceneList[sceneID],
-        tList = this._renderList;
-        for (i = 0, len = tList.length; i < len; i++) if (tList[i].uuid == uuid) this.error(0);
-        if (!tScene) this.error(1);
-        else if (!tScene.isAlive) this.error(1);
-        if (tScene) {
-            if (!tScene.getChild(cameraID)) this.error(2);
-            else if (!tScene.getChild(cameraID).isAlive) this.error(2);
-        }
-        temp = {
-            uuid: uuid,
-            sceneID: sceneID,
-            cameraID: cameraID,
-            scene: tScene,
-            camera: tScene.getChild(cameraID)
-        };
-        tScene._update = 1;
-        if (index) tList[index] = temp;
-        else tList.push(temp);
-        return this;
-    },
-	*/
     return MoGL.ext(World, MoGL);
 })();

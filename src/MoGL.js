@@ -92,7 +92,6 @@ var MoGL = (function() {
                 target[i].call(this);
             }
         }
-        console.log(listener[this])
     },
     Object.defineProperty(fn, 'id', { //id처리기
         get:function idGet() {return this._id;},

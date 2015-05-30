@@ -51,9 +51,9 @@
     var camera = new Camera()
     var testMat = new Material('#222');
 
-    world.addScene('scene', scene);
+    world.addScene(scene);
+    world.setAutoSize(1)
     scene.addChild('camera', camera);
-    world.addRender('scene', 'camera');
     scene.addTexture('texture', '../asset/geodesicTest.jpg');
     testMat.addTexture(Texture.diffuse, 'texture')
 
@@ -83,7 +83,8 @@
     cube2_3Mesh.x = 1
     cube10_10Mesh.x = 3
 
-    setInterval(function () {
+
+    world.addEventListener(World.renderBefore,function(){
         cube1_1Mesh.rotateZ += 0.01
         cube2_2Mesh.rotateZ += 0.01
         cube2_3Mesh.rotateZ += 0.01
@@ -93,8 +94,9 @@
         cube2_2Mesh.rotateY += 0.01
         cube2_3Mesh.rotateY += 0.01
         cube10_10Mesh.rotateY += 0.01
-        world.render();
-    }, 1000 / 60);
+    })
+
+    world.start()
 
 
     /////////////////////////////////////////////
