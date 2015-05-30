@@ -200,7 +200,7 @@ var World = (function () {
                             tIBO = scene._glIBOs[tItem._geometry._key],
                             tMaterial = tItem._material,
                             tDiffuseList = tMaterial._diffuse;
-                        var dLite = [-2,-1,-1], useNormalBuffer = 0;
+                        var dLite = [0,-1,-1], useNormalBuffer = 0;
                         if(tDiffuseList.__indexList.length == 0){
                             if(tMaterial._shading.type == 'none'){
                                 tProgram=scene._glPROGRAMs['color'];
@@ -215,13 +215,11 @@ var World = (function () {
                                 tProgram = scene._glPROGRAMs['colorGouraud'];
                                 gl.useProgram(tProgram);
                                 useNormalBuffer = 1;
-                                console.log('여기')
                             }
                             else if(tMaterial._shading.type=='phong'){
                                 tProgram=scene._glPROGRAMs['colorPhong'];
                                 gl.useProgram(tProgram);
                                 useNormalBuffer = 1;
-                                console.log('여기2')
                             }
                             if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
 
