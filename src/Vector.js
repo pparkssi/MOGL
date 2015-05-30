@@ -7,89 +7,88 @@ var Vector = (function () {
     Vector = function Vector() {
         this._rowData = new Float32Array([0, 0, 0])
     },
-    fn = Vector.prototype,
-    /*
-     ÇöÀç Vector °´Ã¼ÀÇ x, y ¹× z ¿ä¼Ò °ª¿¡ ´ë»ó °´Ã¼ÀÇ x,y,z°ªÀ» ´õÇÕ´Ï´Ù.
-     */
-    fn.add = function add(b) {
-        var a = this;
-        a[0] = a[0] + b[0], a[1] = a[1] + b[1], a[2] = a[2] + b[2], a;
-        return this;
-    },
-    /*
-     ÇöÀç Vector °´Ã¼ÀÇ x, y ¹× z ¿ä¼Ò °ª¿¡ ÀÎÀÚ x,y,z°ªÀ» ´õÇÕ´Ï´Ù.
-     */
-    fn.addXYZ = function addXYZ(x,y,z) {
-        var a = this;
-        a[0] = a[0] + x, a[1] = a[1] + y, a[2] = a[2] + z, a;
-        return this;
-    },
-    /*
-     ÇöÀç Vector °´Ã¼ÀÇ x, y ¹× z ¿ä¼Ò °ªÀ» ´Ù¸¥ Vector °´Ã¼ÀÇ x, y ¹× z ¿ä¼Ò °ª¿¡¼­ »®´Ï´Ù.
-     */
-    fn.subtract = function subtract(b) {
-        var a = this;
-        a[0] = a[0] - b[0], a[1] = a[1] - b[1], a[2] = a[2] - b[2], a;
-        return this
-    },
-    /*
-     ÇöÀç Vector °´Ã¼ÀÇ x, y ¹× z ¿ä¼Ò °ªÀ» ´Ù¸¥ ÀÎÀÚ x, y ,z ¿ä¼Ò °ª¿¡¼­ »®´Ï´Ù.
-     */
-    fn.subtractXYZ = function subtract(x,y,z) {
-        var a = this;
-        a[0] = a[0] - x, a[1] = a[1] - y, a[2] = a[2] - z, a;
-        return this
-    },
-    /*
-     ÇöÀç Vector °´Ã¼ÀÇ Å©±â¸¦ ½ºÄ®¶ó °ª¸¸Å­ Á¶ÀıÇÕ´Ï´Ù.
-     */
-    fn.scaleBy = function scaleBy(b) {
-        var a = this;
-        a[0] = a[0] * b, a[1] = a[1] * b, a[2] = a[2] * b, a;
-        return this
-    },
-    /*
-    ÇöÀç º¤ÅÍ¿Í ´ë»ó º¤ÅÍ °´Ã¼ »çÀÌÀÇ °Å¸®¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-     */
-    fn.distance = function distance(b) {
-        var a = this;
-        var x = b[0] - a[0], y = b[1] - a[1], z = b[2] - a[2];
-        return SQRT(x * x + y * y + z * z);
-    },
-    /*
-     ÇöÀç Vector °´Ã¼¸¦ ¿ª¼ö·Î ¼³Á¤ÇÕ´Ï´Ù.
-     */
-    fn.negate = function negate() {
-        var a = this;
-        a[0] = -a[0], a[1] = -a[1], a[2] = -a[2], a;
-        return this
-    },
-    /*
-     ÇöÀç VectorÀÇ ´ÜÀ§º¤ÅÍÈ­µÈ ±æÀÌÀÔ´Ï´Ù.
-     */
-    fn.normalize = function normalize() {
-        var a = this;
-        var x = a[0], y = a[1], z = a[2];
-        var len = x * x + y * y + z * z;
-        if (len > 0) len = 1 / SQRT(len), a[0] = a[0] * len, a[1] = a[1] * len, a[2] = a[2] * len;
-        return this;
-    },
-    /*
-     ³»Àû°ª ¹İÈ¯
-     */
-    fn.dot = function (b) {
-        var a = this;
-        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-    },
-    /*
-     µÎº¤ÅÍ¿¡ ¼öÁ÷ÀÎ º¤ÅÍ¸¦ ¹İÈ¯
-     */
-    fn.cross = function (b) {
-        var a = this, out = new Vector();
-        var ax = a[0], ay = a[1], az = a[2], bx = b[0], by = b[1], bz = b[2];
-        out[0] = ay * bz - az * by, out[1] = az * bx - ax * bz, out[2] = ax * by - ay * bx;
-        return out
-    }
+        fn = Vector.prototype,
+        /*
+         í˜„ì¬ Vector ê°ì²´ì˜ x, y ë° z ìš”ì†Œ ê°’ì— ëŒ€ìƒ ê°ì²´ì˜ x,y,zê°’ì„ ë”í•©ë‹ˆë‹¤.
+         */
+        fn.add = function add(b) {
+            var a = this;
+            a[0] = a[0] + b[0], a[1] = a[1] + b[1], a[2] = a[2] + b[2], a;
+            return this;
+        },
+        /*
+         í˜„ì¬ Vector ê°ì²´ì˜ x, y ë° z ìš”ì†Œ ê°’ì— ì¸ì x,y,zê°’ì„ ë”í•©ë‹ˆë‹¤.
+         */
+        fn.addXYZ = function addXYZ(x,y,z) {
+            var a = this;
+            a[0] = a[0] + x, a[1] = a[1] + y, a[2] = a[2] + z, a;
+            return this;
+        },
+        /*
+         í˜„ì¬ Vector ê°ì²´ì˜ x, y ë° z ìš”ì†Œ ê°’ì„ ë‹¤ë¥¸ Vector ê°ì²´ì˜ x, y ë° z ìš”ì†Œ ê°’ì—ì„œ ëºë‹ˆë‹¤.
+         */
+        fn.subtract = function subtract(b) {
+            var a = this;
+            a[0] = a[0] - b[0], a[1] = a[1] - b[1], a[2] = a[2] - b[2], a;
+            return this
+        },
+        /*
+         í˜„ì¬ Vector ê°ì²´ì˜ x, y ë° z ìš”ì†Œ ê°’ì„ ë‹¤ë¥¸ ì¸ì x, y ,z ìš”ì†Œ ê°’ì—ì„œ ëºë‹ˆë‹¤.
+         */
+        fn.subtractXYZ = function subtract(x,y,z) {
+            var a = this;
+            a[0] = a[0] - x, a[1] = a[1] - y, a[2] = a[2] - z, a;
+            return this
+        },
+        /*
+         í˜„ì¬ Vector ê°ì²´ì˜ í¬ê¸°ë¥¼ ìŠ¤ì¹¼ë¼ ê°’ë§Œí¼ ì¡°ì ˆí•©ë‹ˆë‹¤.
+         */
+        fn.scaleBy = function scaleBy(b) {
+            var a = this;
+            a[0] = a[0] * b, a[1] = a[1] * b, a[2] = a[2] * b, a;
+            return this
+        },
+        /*
+         í˜„ì¬ ë²¡í„°ì™€ ëŒ€ìƒ ë²¡í„° ê°ì²´ ì‚¬ì´ì˜ ê±°ë¦¬ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+         */
+        fn.distance = function distance(b) {
+            var a = this;
+            var x = b[0] - a[0], y = b[1] - a[1], z = b[2] - a[2];
+            return SQRT(x * x + y * y + z * z);
+        },
+        /*
+         í˜„ì¬ Vector ê°ì²´ë¥¼ ì—­ìˆ˜ë¡œ ì„¤ì •í•©ë‹ˆë‹¤.
+         */
+        fn.negate = function negate() {
+            var a = this;
+            a[0] = -a[0], a[1] = -a[1], a[2] = -a[2], a;
+            return this
+        },
+        /*
+         í˜„ì¬ Vectorì˜ ë‹¨ìœ„ë²¡í„°í™”ëœ ê¸¸ì´ì…ë‹ˆë‹¤.
+         */
+        fn.normalize = function normalize() {
+            var a = this;
+            var x = a[0], y = a[1], z = a[2];
+            var len = x * x + y * y + z * z;
+            if (len > 0) len = 1 / SQRT(len), a[0] = a[0] * len, a[1] = a[1] * len, a[2] = a[2] * len;
+            return this;
+        },
+        /*
+         ë‚´ì ê°’ ë°˜í™˜
+         */
+        fn.dot = function (b) {
+            var a = this;
+            return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+        },
+        /*
+         ë‘ë²¡í„°ì— ìˆ˜ì§ì¸ ë²¡í„°ë¥¼ ë°˜í™˜
+         */
+        fn.cross = function (b) {
+            var a = this, out = new Vector();
+            var ax = a[0], ay = a[1], az = a[2], bx = b[0], by = b[1], bz = b[2];
+            out[0] = ay * bz - az * by, out[1] = az * bx - ax * bz, out[2] = ax * by - ay * bx;
+            return out
+        }
     return MoGL.ext(Vector, Mesh);
 })();
-
