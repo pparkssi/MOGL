@@ -94,12 +94,12 @@ void main(void) {
     bsTest('new',
             function () {
                 scene1 = new Scene(); //일반적은 new방식
-                world.addScene('scene1', scene1)
+                world.addScene(scene1)
                 return scene1.isAlive;
             }, true,
             function () {
                 scene2 = Scene(); //factory함수로도 작동
-                world.addScene('scene2', scene2)
+                world.addScene(scene2)
                 return scene2.isAlive;
             }, true
     );
