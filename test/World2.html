@@ -124,20 +124,21 @@
 
     testScene2.addChild('testCamera',new Camera)
 
-//    world.addEventListener(World.renderBefore, function () {
-//        console.log('렌더전에 실행되자~~')
-//    })
-//    world.addEventListener(World.renderBefore, test2)
-//    //    world.removeEventListener(World.renderBefore, test2)
-//
-//    function test2() {
-//        console.log('렌더전에 실행되자~2~')
-//    }
-//    world.addEventListener(World.renderAfter, function () {
-//        console.log('렌더후에 실행되자~~')
-//    })
-    //        world.getRenderer()()
-    setInterval(world.getRenderer(), 300)
+    world.addEventListener(World.renderBefore, function () {
+        console.log('렌더전에 실행되자~~')
+    })
+    world.addEventListener(World.renderBefore, test2)
+    //    world.removeEventListener(World.renderBefore, test2)
+
+    function test2() {
+        console.log('렌더전에 실행되자~2~')
+    }
+    world.addEventListener(World.renderAfter, function () {
+        console.log('렌더후에 실행되자~~')
+    })
+//    world.render()
+//            world.getRenderer()()
+//    setInterval(world.getRenderer(), 300)
 </script>
 </body>
 </html>
