@@ -607,7 +607,14 @@ var Scene = (function () {
 			var camera = this._cameras[k];
 			camera._cvs = this._cvs
 			if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
-			else camera.setRenderArea(camera._renderArea[0],camera._renderArea[1], camera._renderArea[2], camera._renderArea[3])
+			else {
+				if(camera._cvs['_autoSize']) {
+					var wRatio = camera._renderArea[2]/this._cvs.width
+					var hRatio = camera._renderArea[3]/this._cvs.height
+					camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], this._cvs.width * wRatio, this._cvs.height * hRatio)
+				}
+				else camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], camera._renderArea[2], camera._renderArea[3])
+			}
 			camera.getProjectionMatrix(),
 			makeFrameBuffer(this, camera)
 		}

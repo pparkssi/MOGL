@@ -63,6 +63,7 @@ var World = (function () {
 					canvas.height = height * pixelRatio,
 					canvas.style.width = width + 'px',
 					canvas.style.height = height + 'px';
+                    canvas._autoSize = isAutoSize
 					for(k in scenes) {
 						scenes[k]._update = 1
 					}
@@ -155,7 +156,6 @@ var World = (function () {
                 return this
             }
         }
-
         this.error('0')
     },
     fn.render = function render() {
@@ -180,7 +180,6 @@ var World = (function () {
                     if(len > 1) {
                         tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
                         gl.bindFramebuffer( gl.FRAMEBUFFER,tFrameBuffer);
-                        //TODO 뷰포트가 아닌....이게...프레임에 어떻게 그릴껀지로 가야함..
                         gl.viewport(0,0, tFrameBuffer.width, tFrameBuffer.height);
                     }else{
                         gl.viewport(0, 0, cvs.width, cvs.height);
@@ -242,9 +241,9 @@ var World = (function () {
                                 gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert);
                             }
                             tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
-                                tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                                f4[0] = tMaterial._r,f4[1] = tMaterial._g,f4[2] = tMaterial._b,f4[3] = tMaterial._a,
-                                gl.uniform4fv(tProgram.uColor, f4);
+                            tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                            f4[0] = tMaterial._r,f4[1] = tMaterial._g,f4[2] = tMaterial._b,f4[3] = tMaterial._a,
+                            gl.uniform4fv(tProgram.uColor, f4);
                         }else{
                             if(tMaterial._shading.type == 'none'){
                                 tProgram=scene._glPROGRAMs['bitmap'],
@@ -317,6 +316,7 @@ var World = (function () {
             }
         }
         // 프레임버퍼를 모아서 찍어!!!
+        // TODO 사이즈가 변경될때 프레임 버퍼에 적용이 되야하는데..
         if(len > 1){
             gl.viewport(0, 0, cvs.width, cvs.height);
             gl.clearColor(0, 0, 0, 1);
