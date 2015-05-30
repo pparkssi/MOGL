@@ -6,6 +6,7 @@ var Vector = (function () {
     var SQRT = Math.sqrt, SIN = Math.sin, COS = Math.cos, ABS = Math.abs;
     Vector = function Vector(x, y, z) {
         if(x instanceof Float32Array) this._rowData = x;
+        else if(Array.isArray(x)) this._rowData = new Float32Array(x);
         else this._rowData = new Float32Array([x || 0, y || 0, z || 0]);
     },
     fn = Vector.prototype,
