@@ -65,13 +65,9 @@ var Primitive = (function () {
             return result
         },
         geodesic: function geodesic(/*split*/) {
-            // TODO 내장된 Geometry. 극점에서 폴리곤이 몰리지 않도록 Geodesic 형태로 생성되는 구의 구조.
-            // TODO ?split - 쪼개질 다각형의 갯수. 생략하거나 30이하의 값이 오면 30이 됨.
-            // TODO scene.addChild( 'geo0', new Mesh( Primitive.geodesic(30), new Material() );
-
             var radius = 0.5, fractures = arguments[0] || 30, yUp = true;
-            var hnLat = fractures + 1; //위도 방향 쪼갠수/2
-            var nLat = 2 * hnLat; //위도 방향 쪼갠수
+            var hnLat = fractures ; //위도 방향 쪼갠수/2
+            var nLat = hnLat; //위도 방향 쪼갠수
             var nLon; //위도에 대한 경도 방향 쪼갠수 
             var lon; //경도 (단위:라디안)
             var lat; //위도(단위:라디안)
@@ -128,7 +124,7 @@ var Primitive = (function () {
                 }
             }
             var result = new Geometry(_vertices, _indices, [Vertex.x, Vertex.y, Vertex.z,Vertex.u,Vertex.v])
-            result._key = 'geodesic' + ( arguments[0] || 1) + '_' + (arguments[1] || 1)
+            result._key = 'geodesic' + ( arguments[0] || 1)
             return result
         },
         line: function line(x1, y1, z1, x2, y2, z2 /*,width*/) {

@@ -43,35 +43,37 @@
 <script src="http://js.bsapi.co/test/"></script>
 <script>
 </script>
-<canvas id='cube1_1'></canvas>
+<canvas id='cubeCanvas'></canvas>
 <script>
 
-    var world = new World('cube1_1')
+    var world = new World('cubeCanvas')
     var scene = new Scene()
     var camera = new Camera()
     var testMat = new Material('#222');
 
-    world.addScene(scene);
     world.setAutoSize(1)
+    world.addScene(scene);
     scene.addChild('camera', camera);
     scene.addTexture('texture', '../asset/geodesicTest.jpg');
     testMat.addTexture(Texture.diffuse, 'texture')
 
     var cube1_1 = Primitive.cube()
-    var cube2_2 = Primitive.cube(2, 2, 2)
-    var cube2_3 = Primitive.cube(3, 3, 3)
-    var cube10_10 = Primitive.cube(10, 10, 10)
+    var cube2_2 = Primitive.cube(2, 2)
+    var cube2_3 = Primitive.cube(2, 3)
+    var cube10_10 = Primitive.cube(10, 10)
 
     var cube1_1Mesh = new Mesh(cube1_1, testMat);
     var cube2_2Mesh = new Mesh(cube2_2, testMat);
     var cube2_3Mesh = new Mesh(cube2_3, testMat);
     var cube10_10Mesh = new Mesh(cube10_10, testMat);
 
+
     testMat.setWireFrame(1)
     scene.addChild('cube1_1Mesh', cube1_1Mesh);
     scene.addChild('cube2_2Mesh', cube2_2Mesh);
     scene.addChild('cube2_3Mesh', cube2_3Mesh);
     scene.addChild('cube10_10Mesh', cube10_10Mesh);
+
 
     cube1_1Mesh.rotateX = Math.PI / 2
     cube2_2Mesh.rotateX = Math.PI / 2
@@ -82,21 +84,13 @@
     cube2_2Mesh.x = -1
     cube2_3Mesh.x = 1
     cube10_10Mesh.x = 3
+    cube1_1Mesh.y = cube2_2Mesh.y = cube2_3Mesh.y = cube10_10Mesh.y = -1
 
-
-    world.addEventListener(World.renderBefore,function(){
-        cube1_1Mesh.rotateZ += 0.01
-        cube2_2Mesh.rotateZ += 0.01
-        cube2_3Mesh.rotateZ += 0.01
-        cube10_10Mesh.rotateZ += 0.01
-
-        cube1_1Mesh.rotateY += 0.01
-        cube2_2Mesh.rotateY += 0.01
-        cube2_3Mesh.rotateY += 0.01
-        cube10_10Mesh.rotateY += 0.01
-    })
-
-    world.start()
+    var testMesh = new Mesh(Primitive.cube(), testMat)
+    scene.addChild('testMesh', testMesh)
+    testMesh.rotateX = Math.PI / 2
+    testMesh.setScale(2, 2, 2)
+    testMesh.y = 1.5
 
 
     /////////////////////////////////////////////
@@ -104,44 +98,69 @@
     /////////////////////////////////////////////
     var shadingParams = {
         WireFrame: true,
-        color: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.none)
+        cube: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
         },
-        toon: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.toon)
+        cube2_2: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(2, 2), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
         },
-        PhongColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.phong)
+        cube3_3: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(3, 3), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
         },
-        GouraudColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.gouraud)
+        cube10_10: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(10, 10), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
         },
-        GouraudTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.gouraud)
-        },
-        PhongTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.phong)
+        cube6_2: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(6, 2), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
         }
     };
     var gui = new dat.GUI();
     var shading = gui.addFolder('Shading');
-    shading.add(shadingParams, 'color');
-    shading.add(shadingParams, 'toon');
-    shading.add(shadingParams, 'GouraudColor');
-    shading.add(shadingParams, 'PhongColor');
-    shading.add(shadingParams, 'GouraudTextrue');
-    shading.add(shadingParams, 'PhongTextrue');
-    shading.add(shadingParams, 'WireFrame').onChange(function () {
-        testMat.setWireFrame(shadingParams.WireFrame)
-    });
+    shading.add(shadingParams, 'cube');
+    shading.add(shadingParams, 'cube2_2');
+    shading.add(shadingParams, 'cube3_3');
+    shading.add(shadingParams, 'cube10_10');
+    shading.add(shadingParams, 'cube6_2');
+    shading.open()
+    world.addEventListener(World.renderBefore,function(){
+        cube1_1Mesh.rotateY += 0.01
+        cube2_2Mesh.rotateY += 0.01
+        cube2_3Mesh.rotateY += 0.01
+        cube10_10Mesh.rotateY += 0.01
+        cube1_1Mesh.rotateX += 0.01
+        cube2_2Mesh.rotateX += 0.01
+        cube2_3Mesh.rotateX += 0.01
+        cube10_10Mesh.rotateX += 0.01
+
+        testMesh.rotateY += 0.01
+        testMesh.rotateX += 0.01
+    })
+    world.start()
 </script>
 <hr/>
 

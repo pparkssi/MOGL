@@ -67,11 +67,13 @@
     var plane2_3Mesh = new Mesh(plane2_3, testMat);
     var plane10_10Mesh = new Mesh(plane10_10, testMat);
 
+
     testMat.setWireFrame(1)
     scene.addChild('plane1_1Mesh', plane1_1Mesh);
     scene.addChild('plane2_2Mesh', plane2_2Mesh);
     scene.addChild('plane2_3Mesh', plane2_3Mesh);
     scene.addChild('plane10_10Mesh', plane10_10Mesh);
+
 
     plane1_1Mesh.rotateX = Math.PI / 2
     plane2_2Mesh.rotateX = Math.PI / 2
@@ -82,6 +84,13 @@
     plane2_2Mesh.x = -1
     plane2_3Mesh.x = 1
     plane10_10Mesh.x = 3
+    plane1_1Mesh.y = plane2_2Mesh.y = plane2_3Mesh.y = plane10_10Mesh.y = -1
+
+    var testMesh = new Mesh(Primitive.plane(), testMat)
+    scene.addChild('testMesh', testMesh)
+    testMesh.rotateX = Math.PI / 2
+    testMesh.setScale(2, 2, 2)
+    testMesh.y = 1
 
 
     /////////////////////////////////////////////
@@ -89,45 +98,55 @@
     /////////////////////////////////////////////
     var shadingParams = {
         WireFrame: true,
-        color: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.none)
+        plane: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.plane(), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         },
-        toon: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.toon)
+        plane2_2: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.plane(2, 2), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         },
-        PhongColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.phong)
+        plane3_3: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.plane(3, 3), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         },
-        GouraudColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.gouraud)
+        plane10_10: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.plane(10, 10), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         },
-        GouraudTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.gouraud)
-        },
-        PhongTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.phong)
+        plane6_2: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.plane(6, 2), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         }
     };
     var gui = new dat.GUI();
     var shading = gui.addFolder('Shading');
-    shading.add(shadingParams, 'color');
-    shading.add(shadingParams, 'toon');
-    shading.add(shadingParams, 'GouraudColor');
-    shading.add(shadingParams, 'PhongColor');
-    shading.add(shadingParams, 'GouraudTextrue');
-    shading.add(shadingParams, 'PhongTextrue');
-    shading.add(shadingParams, 'WireFrame').onChange(function () {
-        testMat.setWireFrame(shadingParams.WireFrame)
-    });
-
+    shading.add(shadingParams, 'plane');
+    shading.add(shadingParams, 'plane2_2');
+    shading.add(shadingParams, 'plane3_3');
+    shading.add(shadingParams, 'plane10_10');
+    shading.add(shadingParams, 'plane6_2');
+    shading.open()
     world.start()
 </script>
 <hr/>

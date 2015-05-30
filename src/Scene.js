@@ -206,13 +206,13 @@ var Scene = (function () {
 
 			'vec3 src = vColor.rgb;\n'+
 
-			' if(lambertian>0.95) src.rgb*=0.95;\n' +
-			' else if(lambertian>0.6) src.rgb*=0.5;\n' +
-			' else if(lambertian>0.3) src.rgb*=0.3;\n' +
+			' if(lambertian>0.95-0.5) src.rgb*=0.95;\n' +
+			' else if(lambertian>0.6-0.5) src.rgb*=0.5;\n' +
+			' else if(lambertian>0.3-0.5) src.rgb*=0.3;\n' +
 			' else src.rgb*=0.1;\n' +
 
 			'if(lambertian > 0.0) {\n' +
-			'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
+			'float specAngle = max(dot(reflectDir, viewDir), 0.1);\n' +
 			'   specular = pow(specAngle, 4.0);\n' +
 			'}\n' +
 			'gl_FragColor = vec4(src,1.0)*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
@@ -255,6 +255,7 @@ var Scene = (function () {
 			'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
 			'   specular = pow(specAngle, 4.0);\n' +
 			'}\n' +
+
 			'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
 			'gl_FragColor.a = 1.0;'
 			]
