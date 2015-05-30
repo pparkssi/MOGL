@@ -1,5 +1,5 @@
 # Mesh
-* parent : [MoGL](MoGL.md)
+* parent : [Matrix](Matrix.md)
 * children : [Camera](Camera.md), [Light](Light.md)
 * [Constructor](#constructor)
 
@@ -29,7 +29,7 @@
 * [setPosition](#setposition-positionarray-)
 * [setRotate](#setrotate-rotatearray-)
 * [setScale](#setscale-scalearray-)
-* [setCulling](#setculling)
+* [setCulling](#setculling-valuestring-)
 
 [top](#)
 ## Constructor
