@@ -23,9 +23,19 @@ var Mesh = (function () {
         this._parent = null,
         this.rotateX = 0, this.rotateY = 0, this.rotateZ = 0,
         this.scaleX = 1, this.scaleY = 1, this.scaleZ = 1,
-        this.x = 0, this.y = 0, this.z = 0
+        this.x = 0, this.y = 0, this.z = 0,
+        this._culling = Mesh.cullingNone
     },
+    Mesh.cullingNone = 'CULLING_NONE',
+    Mesh.cullingFront = 'CULLING_FRONT',
+    Mesh.cullingBack = 'CULLING_BACK',
     fn = Mesh.prototype,
+    fn.setCulling = function setCulling(value){
+        if (value == Mesh.cullingNone || value == Mesh.cullingFront || value == Mesh.cullingBack) {
+            this._culling = value
+        }else this.error(0)
+        return this
+    },
     fn.getGeometry = function getGeometry() { 
         return this._scene ? this._geometry : null
     },
