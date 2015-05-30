@@ -181,7 +181,7 @@ var Scene = (function () {
 			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
 			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = vec3(mv * vec4(-aVertexNormal, 0.0));\n' +
+			'vNormal = normalize(vec3(uCameraMatrix * rotationMTX(uRotate) * vec4(-aVertexNormal, 0.0)));\n' +
 
 			'vColor = uColor;'
 			]
@@ -206,16 +206,18 @@ var Scene = (function () {
 
 			'vec3 src = vColor.rgb;\n'+
 
+			'if(lambertian > 0.0) {\n' +
+			'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
+			'   specular = pow(specAngle, 4.0);\n' +
+			'}\n' +
+			'src = src*(ambientColor +lambertian*diffuseColor +specular*specColor);\n' +
+
 			' if(lambertian>0.95-0.5) src.rgb*=0.95;\n' +
 			' else if(lambertian>0.6-0.5) src.rgb*=0.5;\n' +
 			' else if(lambertian>0.3-0.5) src.rgb*=0.3;\n' +
 			' else src.rgb*=0.1;\n' +
 
-			'if(lambertian > 0.0) {\n' +
-			'float specAngle = max(dot(reflectDir, viewDir), 0.1);\n' +
-			'   specular = pow(specAngle, 4.0);\n' +
-			'}\n' +
-			'gl_FragColor = vec4(src,1.0)*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
+			'gl_FragColor.rgb = src.rgb;\n' +
 			'gl_FragColor.a = vColor[3];'
 			]
 		}
@@ -228,7 +230,7 @@ var Scene = (function () {
 			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
 			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = normalize(vec3(mv * vec4(-aVertexNormal, 0.0)));\n' +
+			'vNormal = normalize(vec3( uCameraMatrix * rotationMTX(uRotate) * vec4(-aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
 		}
@@ -243,7 +245,7 @@ var Scene = (function () {
 			'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
 			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-			'vec3 normal = (vNormal);\n' +
+			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(uDLite);\n' +
 			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
@@ -269,7 +271,7 @@ var Scene = (function () {
 			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
 			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = normalize(vec3(mv * vec4(-aVertexNormal, 0.0)));\n' +
+			'vNormal = normalize(vec3( uCameraMatrix * rotationMTX(uRotate) * vec4(-aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
 		}
@@ -283,7 +285,7 @@ var Scene = (function () {
 			'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
 			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-			'vec3 normal = (vNormal);\n' +
+			'vec3 normal = normalize(vNormal);\n' +
 			'vec3 lightDir = normalize(uDLite);\n' +
 
 			'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
@@ -605,7 +607,14 @@ var Scene = (function () {
 			var camera = this._cameras[k];
 			camera._cvs = this._cvs
 			if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
-			else camera.setRenderArea(camera._renderArea[0],camera._renderArea[1], camera._renderArea[2], camera._renderArea[3])
+			else {
+				if(camera._cvs['_autoSize']) {
+					var wRatio = camera._renderArea[2]/this._cvs.width
+					var hRatio = camera._renderArea[3]/this._cvs.height
+					camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], this._cvs.width * wRatio, this._cvs.height * hRatio)
+				}
+				else camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], camera._renderArea[2], camera._renderArea[3])
+			}
 			camera.getProjectionMatrix(),
 			makeFrameBuffer(this, camera)
 		}
