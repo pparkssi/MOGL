@@ -165,8 +165,8 @@ var World = (function () {
     fn.render = function render() {
         var i, j, k,len=0;
         var scene,tSceneList,cameraList,camera,gl,children,cvs;
-        var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList;
-        var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram;
+        var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList,tCulling;
+        var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram,pCulling;
         cvs = cvsList[this],
         tSceneList = sceneList[this],
         i = tSceneList.length
@@ -192,7 +192,6 @@ var World = (function () {
                     gl.clearColor(camera._r, camera._g, camera._b, camera._a);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
-                    //gl.enable(gl.CULL_FACE),gl.frontFace (gl.CCW)
                     gl.enable(gl.BLEND)
                     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
                     for(k in scene._glPROGRAMs){
@@ -204,12 +203,18 @@ var World = (function () {
                     tItem = tMaterial = tProgram = tVBO = tIBO = null;
                     for (k in children) {
                         tItem = children[k],
-                            tVBO = scene._glVBOs[tItem._geometry._key],
-                            tVNBO = scene._glVNBOs[tItem._geometry._key],
-                            tUVBO = scene._glUVBOs[tItem._geometry._key],
-                            tIBO = scene._glIBOs[tItem._geometry._key],
-                            tMaterial = tItem._material,
-                            tDiffuseList = tMaterial._diffuse;
+                        tVBO = scene._glVBOs[tItem._geometry._key],
+                        tVNBO = scene._glVNBOs[tItem._geometry._key],
+                        tUVBO = scene._glUVBOs[tItem._geometry._key],
+                        tIBO = scene._glIBOs[tItem._geometry._key],
+                        tMaterial = tItem._material,
+                        tDiffuseList = tMaterial._diffuse;
+                        tCulling = tItem._culling
+                        if(tCulling != pCulling){
+                            if(tCulling == Mesh.cullingNone) gl.disable(gl.CULL_FACE)
+                            else if(tCulling == Mesh.cullingBack) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CCW)
+                            else if(tCulling == Mesh.cullingFront) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW)
+                        }
                         var dLite = [0,-1,-1], useNormalBuffer = 0;
                         if(tDiffuseList.__indexList.length == 0){
                             if(tMaterial._shading.type == 'none'){
@@ -231,11 +236,11 @@ var World = (function () {
                                 gl.useProgram(tProgram);
                                 useNormalBuffer = 1;
                             }
-                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
+                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null,pCulling=null;
 
                             if(useNormalBuffer){
                                 tVNBO != pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
-                                    tVNBO != pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0) : 0;
+                                tVNBO != pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0) : 0;
                                 gl.uniform3fv(tProgram.uDLite, dLite);
                                 gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert);
                             }
@@ -246,7 +251,7 @@ var World = (function () {
                         }else{
                             if(tMaterial._shading.type == 'none'){
                                 tProgram=scene._glPROGRAMs['bitmap'],
-                                    gl.useProgram(tProgram);
+                                gl.useProgram(tProgram);
                             }else if(tMaterial._shading.type == 'flat'){
                             }else if(tMaterial._shading.type == 'gouraud'){
                                 tProgram=scene._glPROGRAMs['bitmapGouraud'];
@@ -265,15 +270,15 @@ var World = (function () {
 
                             if(useNormalBuffer){
                                 tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
-                                    tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0) : 0;
+                                tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0) : 0;
                                 gl.uniform3fv(tProgram.uDLite, dLite);
                                 gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert);
                             }
                             tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
-                                tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0;
+                            tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0;
                             tUVBO != pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
-                                tUVBO != pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                                gl.activeTexture(gl.TEXTURE0);
+                            tUVBO != pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                            gl.activeTexture(gl.TEXTURE0);
                             var textureObj = scene._glTEXTUREs[tDiffuseList.__indexList[0].id];
                             if(textureObj.loaded){
                                 textureObj != pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
@@ -306,7 +311,7 @@ var World = (function () {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                         }
 
-                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj;
+                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj,pCulling=tCulling;
                     }
                     //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                     //gl.bindTexture(gl.TEXTURE_2D, null);
