@@ -116,9 +116,7 @@ var World = (function () {
             else {
 
                 return renderList[uuid][1] = function () {
-                    self.dispatch(World.renderBefore)
                     self.render();
-                    self.dispatch(World.renderAfter)
                     requestAnimationFrame(renderList[uuid][1]);
                 }
             }
@@ -126,9 +124,7 @@ var World = (function () {
             if (renderList[uuid][0]) return renderList[uuid][0]
             else{
                 renderList[uuid][0] = function () {
-                    self.dispatch(World.renderBefore)
                     renderList[uuid][0] = self.render()
-                    self.dispatch(World.renderAfter)
                 }
                 return renderList[uuid][0]
             }
@@ -170,6 +166,7 @@ var World = (function () {
         cvs = cvsList[this],
         tSceneList = sceneList[this],
         i = tSceneList.length
+        this.dispatch(World.renderBefore)
         while(i--){
             //console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
             scene = tSceneList[i]
@@ -366,6 +363,7 @@ var World = (function () {
                 }
             }
         }
+        this.dispatch(World.renderAfter)
 		return
         //gl.finish();
     }

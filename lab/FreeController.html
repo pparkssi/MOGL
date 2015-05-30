@@ -58,9 +58,8 @@
     var world = new World('world')
     var scene = new Scene()
     var controller = new FreeController(camera)
-    console.log(camera)
 
-    world.addScene('scene', scene)
+    world.addScene(scene)
     scene.addChild('camera', camera)
 
     scene.addTexture('texture', '../showcase/monkey/Suzanne.jpg');
@@ -77,13 +76,11 @@
         a.z = Math.random() * 50 - 25
     }
 
-    world.addRender('scene', 'camera')
-    var controller = new FreeController(camera)
-    setInterval(function () {
+    world.setAutoSize(1)
+    world.addEventListener(World.renderBefore, function () {
         controller.update()
-        world.render()
-    }, 1000 / 60)
-    console.log(camera)
+    })
+    world.start()
     var testMat = material
 
 

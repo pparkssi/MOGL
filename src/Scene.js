@@ -447,6 +447,7 @@ var Scene = (function () {
 		gl.compileShader(shader)
 		return shader
 	}
+
 	var fragmentShaderParser = function fragmentShaderParser(self,source){
 		var gl, resultStr, i, t0, len, shader;
 		gl = self._gl, resultStr = "", shader = gl.createShader(gl.FRAGMENT_SHADER),
