@@ -50,14 +50,17 @@
     var scene = new Scene();
     var camera = new Camera()
     var material = new Material()
+    var material2 = new Material()
 
     world.addScene(scene);
     world.setAutoSize(1)
 
     scene.addChild('camera', camera);
     scene.addMaterial('material', material);
+    scene.addMaterial('material2', material2);
     scene.addTexture('texture', 'smithHead/Map-COL.jpg');
     scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
+    scene.getMaterial('material2').addTexture(Texture.diffuse, 'texture');
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('GET', 'smithHead/smith_head.json', true);
@@ -93,9 +96,9 @@
         mesh.scaleY = 10;
         mesh.scaleZ = 10;
         scene.addChild('head', mesh);
-        mesh.getMaterial().setShading(Shading.blinn);
+        mesh.getMaterial().setShading(Shading.phong);
 
-        var mesh2 = new Mesh('geometry', 'material');
+        var mesh2 = new Mesh('geometry', 'material2');
         mesh2.scaleX = 10;
         mesh2.scaleY = 10;
         mesh2.scaleZ = 10;

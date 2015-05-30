@@ -69,7 +69,7 @@ var Primitive = (function () {
             // TODO ?split - 쪼개질 다각형의 갯수. 생략하거나 30이하의 값이 오면 30이 됨.
             // TODO scene.addChild( 'geo0', new Mesh( Primitive.geodesic(30), new Material() );
 
-            var radius = 0.5, fractures = 30, yUp = true;
+            var radius = 0.5, fractures = arguments[0] || 30, yUp = true;
             var hnLat = fractures + 1; //위도 방향 쪼갠수/2
             var nLat = 2 * hnLat; //위도 방향 쪼갠수
             var nLon; //위도에 대한 경도 방향 쪼갠수 
