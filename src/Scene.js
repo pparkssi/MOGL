@@ -82,17 +82,43 @@ var Scene = (function () {
 			function: [],
 			main: ['gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))']
 		}
+		var colorVertexShaderGouraud = {
+			attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
+			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec4 uColor'],
+			varyings: ['vec4 vColor'],
+			function: [VertexShader.baseFunction],
+			main: ['' +
+			' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			' vec3 N = normalize(mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
+			' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
+			' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
+			' vColor = uColor*df;'+
+			' vColor[3] = uColor[3];'
+			]
+		}
+		var colorFragmentShaderGouraud = {
+			precision: 'mediump float',
+			uniforms: ['sampler2D uSampler'],
+			varyings: ['vec4 vColor'],
+			function: [],
+			main: ['' +
+			'gl_FragColor =  vColor;\n'
+			]
+		}
 		var bitmapVertexShaderGouraud = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
 			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
 			varyings: ['vec2 vUV','vec4 vLight'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
-			' mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-			' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-			' vec3 LD = normalize(uDLite);\n' +
-			' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
-			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.1,1.0)),1.0);\n' +
+			' mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			' gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			' vec3 N = normalize(mv * vec4(aVertexNormal, 0.0)).xyz;\n' +
+			' vec3 LD = normalize(vec4(uDLite, 0.0)).xyz;\n' +
+			' float df = max(0.1,dot(N,-LD)*uLambert);\n' +
+			' vLight = vec4(1.0,1.0,1.0,1.0)*df;\n' +
+			' vLight[3] = 1.0;\n' +
 			' vUV = aUV;'
 			]
 		}
@@ -106,40 +132,17 @@ var Scene = (function () {
 			'gl_FragColor.a = 1.0;'
 			]
 		}
-		var colorVertexShaderGouraud = {
-			attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
-			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec4 uColor'],
-			varyings: ['vec4 vColor','vec4 vLight'],
-			function: [VertexShader.baseFunction],
-			main: ['' +
-			' mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-			' gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-			' vec3 LD = normalize(uDLite);\n' +
-			' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
-			' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.1,1.0)),1.0);\n' +
-			' vColor = uColor;'
-			]
-		}
-		var colorFragmentShaderGouraud = {
-			precision: 'mediump float',
-			uniforms: ['sampler2D uSampler'],
-			varyings: ['vec4 vColor', 'vec4 vLight'],
-			function: [],
-			main: ['' +
-			'gl_FragColor =  vLight*vColor;\n' +
-			'gl_FragColor.a = vColor[3];'
-			]
-		}
+
 		var colorVertexShaderPhong = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
 			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec4 uColor'],
 			varyings: ['vec3 vNormal', 'vec3 vPosition','vec4 vColor'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
-			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = vec3(mv * vec4(aVertexNormal, 0.0));\n' +
+			'vNormal = vec3(mv * vec4(-aVertexNormal, 0.0));\n' +
 			'vColor = uColor;'
 			]
 		}
@@ -154,7 +157,7 @@ var Scene = (function () {
 			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
 			'vec3 normal = normalize(vNormal);\n' +
-			'vec3 lightDir = normalize(-uDLite);\n' +
+			'vec3 lightDir = normalize(uDLite);\n' +
 			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
@@ -175,10 +178,12 @@ var Scene = (function () {
 			varyings: ['vec3 vNormal', 'vec3 vPosition','vec4 vColor'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
-			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
-			'vPosition = vec3(uCameraMatrix*mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = vec3(mv * vec4(aVertexNormal, 0.0));\n' +
+			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
+			'vNormal = vec3(mv * vec4(-aVertexNormal, 0.0));\n' +
+
+
 			'vColor = uColor;'
 			]
 		}
@@ -193,7 +198,7 @@ var Scene = (function () {
 			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
 			'vec3 normal = normalize(vNormal);\n' +
-			'vec3 lightDir = normalize(-uDLite);\n' +
+			'vec3 lightDir = normalize(uDLite);\n' +
 			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
@@ -221,10 +226,10 @@ var Scene = (function () {
 			varyings: ['vec2 vUV','vec3 vNormal', 'vec3 vPosition'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
-			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = normalize(vec3(mv * vec4(aVertexNormal, 0.0)));\n' +
+			'vNormal = normalize(vec3(mv * vec4(-aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
 		}
@@ -240,8 +245,8 @@ var Scene = (function () {
 			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
 
-			'vec3 normal = normalize(vNormal);\n' +
-			'vec3 lightDir = normalize(-uDLite);\n' +
+			'vec3 normal = (vNormal);\n' +
+			'vec3 lightDir = normalize(uDLite);\n' +
 			'vec3 reflectDir = reflect(lightDir, normal);\n' +
 			'vec3 viewDir = normalize(-vPosition);\n' +
 
@@ -262,10 +267,10 @@ var Scene = (function () {
 			varyings: ['vec2 vUV','vec3 vNormal', 'vec3 vPosition'],
 			function: [VertexShader.baseFunction],
 			main: ['' +
-			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
-			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
+			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
+			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = normalize(vec3(mv * vec4(aVertexNormal, 0.0)));\n' +
+			'vNormal = normalize(vec3(mv * vec4(-aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
 		}
@@ -279,13 +284,13 @@ var Scene = (function () {
 			'vec3 diffuseColor = vec3(1.0, 1.0, 1.0);\n' +
 			'vec3 specColor = vec3(1.0, 1.0, 1.0);\n' +
 
-			'vec3 normal = normalize(vNormal);\n' +
-			'vec3 lightDir = normalize(-uDLite);\n' +
+			'vec3 normal = (vNormal);\n' +
+			'vec3 lightDir = normalize(uDLite);\n' +
 
 			'float lambertian = max(dot(lightDir,normal), 0.1)*uLambert;\n' +
 			'float specular = 0.0;\n' +
 
-			'vec3 viewDir = normalize(-vPosition);\n' +
+			'vec3 viewDir = normalize(vPosition);\n' +
 
 			'if(lambertian > 0.0) {\n' +
 			'	vec3 halfDir = normalize(lightDir + viewDir);\n' +
