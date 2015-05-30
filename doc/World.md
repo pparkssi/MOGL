@@ -1,6 +1,19 @@
 # World
 * [Constructor](#constructor)
 
+**const**
+
+1. World.renderBefore : 렌더링전 실행할 함수 이벤트를 작성을 위한 상수
+2. World.renderAfter : 렌더링후 실행할 함수 이벤트를 작성을 위한 상수
+
+```javascript
+var beforFunc = function beforFunc(){}
+world.addEventListener(World.renderBefore, beforFunc)
+world.removeEventListener(beforFunc)
+
+```
+
+
 **method**
 
 * [addScene](#addscene-scenescene-)
