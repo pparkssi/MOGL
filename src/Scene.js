@@ -224,10 +224,11 @@ var Scene = (function () {
 			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
 			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = vec3(mv * vec4(aVertexNormal, 0.0));\n' +
+			'vNormal = normalize(vec3(mv * vec4(aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
 		}
+
 		var bitmapFragmentShaderPhong = {
 			precision: 'mediump float',
 			uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
@@ -264,7 +265,7 @@ var Scene = (function () {
 			'mat4 mv = positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
 			'gl_Position = uPixelMatrix*uCameraMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = vec3(mv * vec4(aVertexNormal, 0.0));\n' +
+			'vNormal = normalize(vec3(mv * vec4(aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
 		}

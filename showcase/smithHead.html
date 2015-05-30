@@ -88,16 +88,26 @@
         }
 
         scene.addGeometry('geometry', new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
-
         var mesh = new Mesh('geometry', 'material');
         mesh.scaleX = 10;
         mesh.scaleY = 10;
         mesh.scaleZ = 10;
         scene.addChild('head', mesh);
-        mesh.getMaterial().setShading(Shading.phong);
+        mesh.getMaterial().setShading(Shading.blinn);
+
+        var mesh2 = new Mesh('geometry', 'material');
+        mesh2.scaleX = 10;
+        mesh2.scaleY = 10;
+        mesh2.scaleZ = 10;
+        scene.addChild('head2', mesh2);
+        mesh2.getMaterial().setShading(Shading.blinn);
+
+        mesh.x = -3
+        mesh2.x = 3
 
         world.addEventListener(World.renderBefore,function(){
             mesh.rotateY -= 0.01;
+            mesh2.rotateY -= 0.01;
         })
         world.start()
     }
