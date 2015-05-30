@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <title>MoGL Test Suite - Primitive.js</title>
+    <title>MoGL Test Suite - geodesic.js</title>
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="format-detection" content="telephone=no"/>
@@ -49,68 +49,105 @@
     var world = new World('geodesic')
     var scene = new Scene()
     var camera = new Camera()
-    var testMat = new Material('#ffffff');
+    var testMat = new Material('#222');
 
-    world.addScene('scene', scene);
+    world.setAutoSize(1)
+    world.addScene(scene);
     scene.addChild('camera', camera);
-    world.addRender('scene', 'camera');
     scene.addTexture('texture', '../asset/geodesicTest.jpg');
     testMat.addTexture(Texture.diffuse, 'texture')
 
-    var geodesic = Primitive.geodesic()
-    var geodesicMesh = new Mesh(geodesic, testMat);
-    scene.addChild('geodesicMesh', geodesicMesh);
+    var geodesic1_1 = Primitive.geodesic()
+    var geodesic2_2 = Primitive.geodesic(3)
+    var geodesic2_3 = Primitive.geodesic(4)
+    var geodesic10_10 = Primitive.geodesic(10)
+
+    var geodesic1_1Mesh = new Mesh(geodesic1_1, testMat);
+    var geodesic2_2Mesh = new Mesh(geodesic2_2, testMat);
+    var geodesic2_3Mesh = new Mesh(geodesic2_3, testMat);
+    var geodesic10_10Mesh = new Mesh(geodesic10_10, testMat);
 
 
-    setInterval(function () {
-        geodesicMesh.rotateY += 0.01
-        world.render();
-    }, 1000 / 60);
+    testMat.setWireFrame(1)
+    scene.addChild('geodesic1_1Mesh', geodesic1_1Mesh);
+    scene.addChild('geodesic2_2Mesh', geodesic2_2Mesh);
+    scene.addChild('geodesic2_3Mesh', geodesic2_3Mesh);
+    scene.addChild('geodesic10_10Mesh', geodesic10_10Mesh);
+
+
+    geodesic1_1Mesh.rotateX = Math.PI / 2
+    geodesic2_2Mesh.rotateX = Math.PI / 2
+    geodesic2_3Mesh.rotateX = Math.PI / 2
+    geodesic10_10Mesh.rotateX = Math.PI / 2
+
+    geodesic1_1Mesh.x = -3
+    geodesic2_2Mesh.x = -1
+    geodesic2_3Mesh.x = 1
+    geodesic10_10Mesh.x = 3
+    geodesic1_1Mesh.y = geodesic2_2Mesh.y = geodesic2_3Mesh.y = geodesic10_10Mesh.y = -1
+
+    var testMesh = new Mesh(Primitive.geodesic(), testMat)
+    scene.addChild('testMesh', testMesh)
+    testMesh.rotateX = Math.PI / 2
+    testMesh.setScale(2, 2, 2)
+    testMesh.y = 1
 
 
     /////////////////////////////////////////////
     // UI
     /////////////////////////////////////////////
     var shadingParams = {
-        WireFrame : false,
-        color: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.none)
+        WireFrame: true,
+        geodesic: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.geodesic(), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         },
-        toon: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.toon)
+        geodesic2_2: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.geodesic(2), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         },
-        PhongColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.phong)
+        geodesic3_3: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.geodesic(3), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         },
-        GouraudColor: function () {
-            testMat.removeTexture('texture');
-            testMat.setShading(Shading.gouraud)
+        geodesic10_10: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.geodesic(10), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         },
-        GouraudTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.gouraud)
-        },
-        PhongTextrue: function () {
-            testMat.removeTexture('texture');
-            testMat.addTexture(Texture.diffuse, 'texture');
-            testMat.setShading(Shading.phong)
+        geodesic6_2: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.geodesic(6), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1
         }
     };
     var gui = new dat.GUI();
     var shading = gui.addFolder('Shading');
-    shading.add(shadingParams, 'color');
-    shading.add(shadingParams, 'toon');
-    shading.add(shadingParams, 'GouraudColor');
-    shading.add(shadingParams, 'PhongColor');
-    shading.add(shadingParams, 'GouraudTextrue');
-    shading.add(shadingParams, 'PhongTextrue');
-    shading.add(shadingParams, 'WireFrame').onChange(function(){
-        testMat.setWireFrame(shadingParams.WireFrame)
-    });
+    shading.add(shadingParams, 'geodesic');
+    shading.add(shadingParams, 'geodesic2_2');
+    shading.add(shadingParams, 'geodesic3_3');
+    shading.add(shadingParams, 'geodesic10_10');
+    shading.add(shadingParams, 'geodesic6_2');
+    shading.open()
+    world.start()
 </script>
 <hr/>
 

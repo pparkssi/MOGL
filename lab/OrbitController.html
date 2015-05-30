@@ -47,13 +47,10 @@
     var controller = new OrbitController(camera)
     console.log(camera)
 
-    world.addScene('scene', scene)
+    world.addScene(scene)
     scene.addChild('camera', camera)
 
-//    scene.addTexture('texture', '../showcase/monkey/Suzanne.jpg');
-
     var material = new Material()
-//    material.addTexture(Texture.diffuse, 'texture')
     material.setShading(Shading.phong)
 
     for (var i = 0; i < 250; i++) {
@@ -64,26 +61,12 @@
         a.z = Math.random() * 50 - 25
     }
 
-    world.addRender('scene', 'camera')
     var controller = new OrbitController(camera)
-    setInterval(function () {
-//        var t = document.getElementById('test')
-//        var str = ''
-//        str += 'controller.getSpeed() : ' + controller.getSpeed() + '<br/>'
-//        str += 'controller.getSmoothDelay() : ' + controller.getSmoothDelay() + '<br/>'
-//        str += 'controller.getMinDistance() : ' + controller.getMinDistance() + '<br/>'
-//        str += 'controller.getMaxDistance() : ' + controller.getMaxDistance() + '<br/>'
-//        str += 'controller.getDistance() : ' + controller.getDistance() + '<br/>'
-//        str += 'controller.getPan() : ' + controller.getPan() + '<br/>'
-//        str += 'controller.getTilt() : ' + controller.getTilt() + '<br/>'
-//
-//        t.innerHTML = str
+    world.setAutoSize(1)
+    world.addEventListener(World.renderBefore, function () {
         controller.update()
-        world.render()
-    }, 1000 / 60)
-    console.log(camera)
-    var testMat = material
-
+    })
+    world.start()
 
 </script>
 <div></div>

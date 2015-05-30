@@ -30,7 +30,8 @@ var Camera = (function () {
         this._mode = '3d'
         this.lookAt(0,0,0);
 
-    }
+    },
+    Camera.resize = 'RESIZE'
     fn = Camera.prototype,
     fn.getBackgroundColor = function getBackgroundColor(){
         return A4[0] = this._r, A4[1] = this._g, A4[2] = this._b, A4[3] = this._a, A4;
@@ -132,10 +133,6 @@ var Camera = (function () {
     },
     fn.setPerspective = function setPerspective(){
         this._mode = '3d';
-        return this;
-    },
-    fn.setProjectionMatrix = function setProjectionMatrix(matrix){
-        //TODO 이거 없애버림...
         return this;
     },
     fn.setRenderArea = function setRenderArea(x,y,w,h){
