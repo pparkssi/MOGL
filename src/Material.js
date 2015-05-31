@@ -34,7 +34,7 @@ var Material = (function () {
         //console.log('확인', this['_' + type],this['_' + type].__indexList.length);
         //배열화
         if (arguments[2] !=undefined) {
-            var idx = arguments[2] >this['_' + type].__indexList.length ? this['_' + type].__indexList.length : arguments[2]
+            var idx = arguments[2] >this['_' + type].__indexList.length ? this['_' + type].__indexList.length : arguments[2];
             result = this['_' + type].__indexList.splice(idx, 0, {id: textureID, blendMode: arguments[3]});
         }
         else result = this['_' + type].__indexList.push({id: textureID, blendMode: arguments[3]});
@@ -52,7 +52,7 @@ var Material = (function () {
         while (i--) {
             if (typeList[i].id == textureID) {
                 typeList.splice(i, 1);
-                break
+                break;
             }
         }
         delete this._textures[textureID];
@@ -80,9 +80,9 @@ var Material = (function () {
             this._r = arguments[0] || Math.random(),
             this._g = arguments[1] || Math.random(),
             this._b = arguments[2] || Math.random(),
-            this._a = arguments[3] == undefined ?  1 : arguments[3]
+            this._a = arguments[3] == undefined ?  1 : arguments[3];
         }
-        return this
+        return this;
     },
     fn.setWireFrame = function setWireFrame(isVisible){ 
         this._wireFrame = isVisible;
@@ -100,15 +100,15 @@ var Material = (function () {
                 this._bw = parseInt(t1[3] + t1[3], 16) / 255;
             }
         }
-        return this
+        return this;
     },
     fn.setShading = function setShading(type){ 
         type.apply(this);
-        return this
+        return this;
     },
     fn.setLambert = function setShading(rate){ 
         this._shading.lambert = rate;
-        return this
+        return this;
     };
     return MoGL.ext(Material, MoGL);
 })();
