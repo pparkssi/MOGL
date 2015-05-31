@@ -707,25 +707,35 @@ var Scene = (function () {
 		this._update = 0;
 	},
 	fn.addChild = function addChild(id, mesh) {  // isAlive는 함수선언 줄에 바로 같이 씁니다.
-		var k, checks;
+		var k, checks,tMaterial;
 		if (this._children[id]) this.error(0);
 		if (!(mesh instanceof Mesh )) this.error(1);
-		mesh._scene = this, mesh._parent = this,
+		mesh._scene = this,
+		mesh._parent = this,
 		mesh.setGeometry(mesh._geometry),
 		mesh.setMaterial(mesh._material),
-		mesh._material._count++,
+		tMaterial =mesh._material,
+		tMaterial._count++,
 		checks = mesh._geometry._vertexShaders;
-		for (k in checks) if (typeof checks[k] == 'string') if (!this._vertexShaders[checks[k]]) this.error(2);
-		checks = mesh._material._fragmentShaders;
-		for (k in checks) if (typeof checks[k] == 'string') if (!this._fragmentShaders[checks[k]]) this.error(3);
-		checks = mesh._material._textures;
+		for (k in checks) {
+			if (typeof checks[k] == 'string') {
+				if (!this._vertexShaders[checks[k]]) this.error(2);
+			}
+		}
+		checks = tMaterial._fragmentShaders;
+		for (k in checks) {
+			if (typeof checks[k] == 'string') {
+				if (!this._fragmentShaders[checks[k]]) this.error(3);
+			}
+		}
+		checks = tMaterial._textures;
 		for (k in checks)
 			if (typeof checks[k] == 'string')
 				if (!this._textures[checks[k]]) this.error(4);
 				else {
-					//console.log(mesh._material._textures),
+					//console.log(tMaterial._textures),
 					//console.log(checks[k]),
-					mesh._material._textures[checks[k]] = this._textures[checks[k]];
+					tMaterial._textures[checks[k]] = this._textures[checks[k]];
 				}
 		if (mesh instanceof Camera) this._cameras[id] = mesh, mesh._cvs = this._cvs;
 		else this._children[id] = mesh;
@@ -750,10 +760,18 @@ var Scene = (function () {
 		if (materials[id]) this.error(0);
 		if (!(material instanceof Material)) this.error(1);
 		checks = material._fragmentShaders;
-		for (k in checks) if (typeof checks[k] == 'string') if (!fShaders[checks[k]]) this.error(2);
+		for (k in checks) {
+			if (typeof checks[k] == 'string') {
+				if (!fShaders[checks[k]]) this.error(2);
+			}
+		}
 		checks = material._textures;
-		for (k in checks) if (typeof checks[k] == 'string') if (!textures[checks[k]]) {
-			this.error(3);
+		for (k in checks) {
+			if (typeof checks[k] == 'string') {
+				if (!textures[checks[k]]) {
+					this.error(3);
+				}
+			}
 		}
 		materials[id] = material,
 		materials[id]._scene = this;
