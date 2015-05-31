@@ -58,7 +58,10 @@ var Camera = (function () {
             this._pixelMatrix._rawData[10] = 0
             this._pixelMatrix._rawData[12] = -1
             this._pixelMatrix._rawData[13] = 1
-        }else this._pixelMatrix.matPerspective(this._fov, this._cvs.width/this._cvs.height, this._near, this._far);
+        }else {
+            if(this._renderArea) this._pixelMatrix.matPerspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far);
+            else this._pixelMatrix.matPerspective(this._fov, this._cvs.width/this._cvs.height, this._near, this._far);
+        }
         return this;
     },
     fn.getRenderArea = function getRenderArea(){
