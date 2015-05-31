@@ -347,9 +347,9 @@ var World = (function () {
                     camera = cameraList[k]
                     if (camera._visible) {
                         tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
-                        f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 , f3[2] = 0;
+                        f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2 / window.devicePixelRatio, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 / window.devicePixelRatio , f3[2] = 0;
                         gl.uniform3fv(tProgram.uPosition, f3),
-                        f3[0] = tFrameBuffer.width / 2, f3[1] = tFrameBuffer.height / 2, f3[2] = 1,
+                        f3[0] = tFrameBuffer.width / 2 / window.devicePixelRatio, f3[1] = tFrameBuffer.height / 2/window.devicePixelRatio, f3[2] = 1,
                         gl.uniform3fv(tProgram.uScale, f3),
                         gl.activeTexture(gl.TEXTURE0),
                         gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture),
