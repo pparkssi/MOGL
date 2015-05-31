@@ -51,16 +51,19 @@ var Camera = (function () {
         return this._fov;
     },
     fn.resetProjectionMatrix = function resetProjectionMatrix(){
-        this._pixelMatrix.matIdentity();
+        var tMatrix, tArea;
+        tMatrix = this._pixelMatrix,
+        tArea = this._renderArea,
+        tMatrix.matIdentity()
         if(this._mode == '2d'){
-            this._pixelMatrix._rawData[0] = 2 / this._renderArea[2]
-            this._pixelMatrix._rawData[5] = -2 / this._renderArea[3]
-            this._pixelMatrix._rawData[10] = 0
-            this._pixelMatrix._rawData[12] = -1
-            this._pixelMatrix._rawData[13] = 1
+            tMatrix._rawData[0] = 2 / tArea[2]
+            tMatrix._rawData[5] = -2 / tArea[3]
+            tMatrix._rawData[10] = 0
+            tMatrix._rawData[12] = -1
+            tMatrix._rawData[13] = 1
         }else {
-            if(this._renderArea) this._pixelMatrix.matPerspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far);
-            else this._pixelMatrix.matPerspective(this._fov, this._cvs.width/this._cvs.height, this._near, this._far);
+            if(tArea) tMatrix.matPerspective(this._fov, tArea[2]/tArea[3], this._near, this._far);
+            else tMatrix.matPerspective(this._fov, this._cvs.width/this._cvs.height, this._near, this._far);
         }
         return this;
     },

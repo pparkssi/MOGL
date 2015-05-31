@@ -115,7 +115,6 @@ var World = (function () {
         if (isRequestAnimationFrame) {
             if (renderList[uuid][1]) return renderList[uuid][1]
             else {
-
                 return renderList[uuid][1] = function (currentTime) {
                     self.render(currentTime);
                     started[uuid] = requestAnimationFrame(renderList[uuid][1]);
