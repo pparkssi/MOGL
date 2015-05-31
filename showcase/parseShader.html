@@ -39,10 +39,10 @@
     w.addScene(new Scene().setId('s0'));
     w.getScene('s0').addGeometry('tri', new Geometry([-1, 0, 0, 1, 0, 0, 0, 1, 0], [0, 1, 2]));
     w.getScene('s0').addGeometry('rect', new Geometry([
-        1.0, 1.0, 0.0, 0.0, 0.0,
-        -1.0, 1.0, 0.0, 1.0, 0.0,
-        1.0, -1.0, 0.0, 0.0, 1.0,
-        -1.0, -1.0, 0.0, 1.0, 1.0
+        0.5, 0.5, 0.0, 0.0, 0.0,
+        -0.5, 0.5, 0.0, 1.0, 0.0,
+        0.5, -0.5, 0.0, 0.0, 1.0,
+        -0.5, -0.5, 0.0, 1.0, 1.0
     ], [0, 1, 2, 1, 2, 3], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
     w.getScene('s0').addMaterial('white', new Material('#fff'));
     w.getScene('s0').addChild('tri', new Mesh('tri', new Material('#ff2244')));
