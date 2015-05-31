@@ -56,12 +56,12 @@ bsTest('new',
 );
 bsTest('add, addXYZ, subtract, subtractXYZ',
     function() {
-        var v = new Vector(1, 2, 3);
+        var v = Vector(1, 2, 3);
         vector.add(v);
         return vector._rawData[0] === 1 && vector._rawData[1] === 2 && vector._rawData[2] === 3;
     }, true,
     function() {
-        var v = new Vector(1, 2, 3);
+        var v = Vector(1, 2, 3);
         vector.subtract(v);
         return vector._rawData[0] === 0 && vector._rawData[1] === 0 && vector._rawData[2] === 0;
     }, true,
@@ -74,8 +74,38 @@ bsTest('add, addXYZ, subtract, subtractXYZ',
         return vector._rawData[0] === 0 && vector._rawData[1] === 0 && vector._rawData[2] === 0;
     }, true
 );
-bsTest('scaleBy, distance, negate, normalize, dot, cross'
-
+bsTest('scaleBy, distance, negate, normalize, dot, cross',
+    function() {
+        vector = Vector(1, 2, 3);
+        vector.scaleBy(2);
+        return vector._rawData[0] === 2 && vector._rawData[1] === 4 && vector._rawData[2] === 6;
+    }, true,
+    function() {
+        var v = new Vector(1, 2, 3);
+        var d = vector.distance(v);
+        return d;
+    }, 3.7416573867739413,
+    function() {
+        vector.negate();
+        return vector._rawData[0] === -2 && vector._rawData[1] === -4 && vector._rawData[2] === -6;
+    }, true,
+    function() {
+        vector = Vector(1, 2, 3); // vector.negate();
+        vector.normalize();
+        return vector._rawData[0] === 0.26726123690605164 && vector._rawData[1] === 0.5345224738121033 && vector._rawData[2] === 0.8017837405204773;
+    }, true,
+    function() {
+        vector = Vector(1, 2, 3);
+        var v = Vector(3, 2, 1);
+        var d = vector.dot(v);
+        return d;
+    }, 10,
+    function() {
+        vector = Vector(1, 2, 3);
+        var v = Vector(3, 2, 1);
+        var r = vector.cross(v);
+        return r._rawData[0] === -4 && r._rawData[1] === 8 && r._rawData[2] === -4;
+    }, true
 );
 </script>
 </body>
