@@ -389,7 +389,8 @@ var Scene = (function () {
 	/////////////////////////////////////////////////////////////////
 	var makeVBO = function makeVBO(self, name, data, stride) {
 		var gl, buffer;
-		gl = self._gl, buffer = self._glVBOs[name];
+		gl = self._gl,
+		buffer = self._glVBOs[name];
 		if (buffer) return buffer;
 		buffer = gl.createBuffer(),
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
@@ -406,7 +407,8 @@ var Scene = (function () {
 
 	var makeVNBO = function makeVNBO(self, name, data, stride) {
 		var gl, buffer;
-		gl = self._gl, buffer = self._glVNBOs[name];
+		gl = self._gl,
+		buffer = self._glVNBOs[name];
 		if (buffer) return buffer;
 		buffer = gl.createBuffer(),
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
@@ -423,7 +425,8 @@ var Scene = (function () {
 
 	var makeIBO = function makeIBO(self, name, data, stride) {
 		var gl, buffer;
-		gl = self._gl, buffer = self._glIBOs[name];
+		gl = self._gl,
+		buffer = self._glIBOs[name];
 		if (buffer) return buffer;
 		buffer = gl.createBuffer(),
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer),
@@ -472,10 +475,12 @@ var Scene = (function () {
 			gl.enableVertexAttribArray(program[vShader.attributes[i]] = gl.getAttribLocation(program, vShader.attributes[i])),
 			gl.vertexAttribPointer(program[vShader.attributes[i]], self._glVBOs['null'].stride, gl.FLOAT, false, 0, 0);
 		}
-		for (i = 0; i < vShader.uniforms.length; i++) {
+		i = vShader.uniforms.length;
+		while(i--){
 			program[vShader.uniforms[i]] = gl.getUniformLocation(program, vShader.uniforms[i]);
 		}
-		for (i = 0; i < fShader.uniforms.length; i++) {
+		i = fShader.uniforms.length;
+		while(i--){
 			program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i]);
 		}
 		self._glPROGRAMs[name] = program;
@@ -486,22 +491,24 @@ var Scene = (function () {
 	};
 
 	var vertexShaderParser = function vertexShaderParser(self, source) {
-		var gl, t0, len, i, resultStr, shader;
-		gl = self._gl, shader = gl.createShader(gl.VERTEX_SHADER),
+		var gl, t0, i, resultStr, shader;
+		gl = self._gl,
+		shader = gl.createShader(gl.VERTEX_SHADER),
 		shader.uniforms = [],
 		shader.attributes = [],
-		resultStr = "", t0 = source.attributes, len = t0.length;
-		for (i = 0; i < len; i++) {
+		resultStr = "",
+		t0 = source.attributes, i = t0.length;
+		while(i--){
 			resultStr += 'attribute ' + t0[i] + ';\n',
 			shader.attributes.push(t0[i].split(' ')[1]);
 		}
-		t0 = source.uniforms, len = t0.length;
-		for (i = 0; i < len; i++) {
+		t0 = source.uniforms, i = t0.length;
+		while(i--){
 			resultStr += 'uniform ' + t0[i] + ';\n',
 			shader.uniforms.push(t0[i].split(' ')[1]);
 		}
-		t0 = source.varyings, len = t0.length;
-		for (i = 0; i < len; i++) {
+		t0 = source.varyings, i = t0.length;
+		while(i--){
 			resultStr += 'varying ' + t0[i] + ';\n';
 		}
 		resultStr += VertexShader.baseFunction,
@@ -515,19 +522,20 @@ var Scene = (function () {
 	};
 
 	var fragmentShaderParser = function fragmentShaderParser(self,source){
-		var gl, resultStr, i, t0, len, shader;
-		gl = self._gl, resultStr = "", shader = gl.createShader(gl.FRAGMENT_SHADER),
-		shader.uniforms = [];
+		var gl, resultStr, i, t0, shader;
+		gl = self._gl,
+		shader = gl.createShader(gl.FRAGMENT_SHADER),
+		shader.uniforms = [],
+		resultStr = "";
 		if (source.precision) resultStr += 'precision ' + source.precision + ';\n';
-		else resultStr += '' +
-			'precision mediump float;\n';
-		t0 = source.uniforms, len = t0.length;
-		for (i = 0; i < len; i++) {
+		else resultStr += 'precision mediump float;\n';
+		t0 = source.uniforms, i = t0.length;
+		while(i--){
 			resultStr += 'uniform ' + t0[i] + ';\n',
 			shader.uniforms.push(t0[i].split(' ')[1]);
 		}
-		t0 = source.varyings, len = t0.length;
-		for (i = 0; i < len; i++) {
+		t0 = source.varyings, i = t0.length;
+		while(i--){
 			resultStr += 'varying ' + t0[i] + ';\n';
 		}
 		resultStr += 'void main(void){\n',
@@ -542,11 +550,10 @@ var Scene = (function () {
 
 	var makeTexture = function makeTexture(self, id, image/*,resizeType*/) {
 		var gl, texture;
+		var img, img2, tw,th;
 		gl = self._gl, texture = self._glTEXTUREs[id];
 		if (texture) return texture;
 		texture = gl.createTexture();
-
-		var img, img2, tw,th;
 		img = new Image(), img2 = new Image(),
 		tw = 1, th = 1;
 
@@ -563,14 +570,14 @@ var Scene = (function () {
 
 		var resize = arguments[3] || Texture.zoomOut;
 		img.onload = function(){
-			//TODO 이걸 인자타입에 따라 다르게 적용하면되겠군
+			var dw, dh;
 			while (img.width > tw) tw *= 2;
 			while (img.height > th) th *= 2;
 			if (resize == Texture.zoomOut) {
 				if (img.width < tw) tw /= 2;
 				if (img.height < th) th /= 2;
 			} else if (resize == Texture.zoomIn) {}
-			var dw = tw, dh = th;
+			dw = tw, dh = th,
 			textureCVS.width = tw,
 			textureCVS.height = th,
 			textureCTX.clearRect(0, 0, tw, th);
@@ -597,7 +604,6 @@ var Scene = (function () {
 			gl.generateMipmap(gl.TEXTURE_2D);
 			texture.loaded = 1;
 		};
-
 		texture.originalData = image,
 		self._glTEXTUREs[id] = texture,
 		gl.bindTexture(gl.TEXTURE_2D, null);
@@ -638,24 +644,25 @@ var Scene = (function () {
 /////////////////////////////////////////////////////////////////
 	fn = Scene.prototype,
 	fn.update = function update() { 
-		var k,checks;
-		this._glVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0, 0.0, 0.0]), 3);
+		var k,checks,tVBOs;
+		tVBOs = this._glVBOs;
+		tVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0, 0.0, 0.0]), 3);
 		//for GPU
 		for (k in this._children) {
 			var mesh = this._children[k], _key, geo = mesh._geometry;
 			if (geo) {
-				if (!this._geometrys[geo._key]) this.addGeometry(geo._key, geo);
-				if (!this._glVBOs[geo]) {
-					_key = geo._key,
-					this._glVBOs[_key] = makeVBO(this, _key, geo._position, 3),
+				_key = geo._key
+				if (!this._geometrys[_key]) this.addGeometry(geo._key, geo);
+				if (!tVBOs[geo]) {
+					tVBOs[_key] = makeVBO(this, _key, geo._position, 3),
 					this._glVNBOs[_key] = makeVNBO(this, _key, geo._normal, 3),
 					this._glUVBOs[_key] = makeUVBO(this, _key, geo._uv, 2),
 					this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1);
 				}
 			}
 		}
-		if (!this._glVBOs['_FRAMERECT_']) {
-			this._glVBOs['_FRAMERECT_'] = makeVBO(this, '_FRAMERECT_', [
+		if (!tVBOs['_FRAMERECT_']) {
+			tVBOs['_FRAMERECT_'] = makeVBO(this, '_FRAMERECT_', [
 				-1.0, 1.0, 0.0,
 				1.0, 1.0, 0.0,
 				-1.0, -1.0, 0.0,
@@ -670,12 +677,14 @@ var Scene = (function () {
 			this._glIBOs['_FRAMERECT_'] = makeIBO(this, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
 		}
 		for (k in this._cameras) {
-			var camera = this._cameras[k];
-			camera._cvs = this._cvs;
-			if (camera._renderArea) {
-				var wRatio = camera._renderArea[2]/this._cvs.width;
-				var hRatio = camera._renderArea[3]/this._cvs.height;
-				camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], this._cvs.width * wRatio, this._cvs.height * hRatio);
+			var camera, tRenderArea,tCVS;
+			camera = this._cameras[k],
+			tCVS = camera._cvs = this._cvs,
+			tRenderArea = camera._renderArea;
+			if (tRenderArea) {
+				var wRatio = tRenderArea[2]/tCVS.width;
+				var hRatio = tRenderArea[3]/tCVS.height;
+				camera.setRenderArea(tRenderArea[0], tRenderArea[1], tCVS.width * wRatio, tCVS.height * hRatio);
 			}
 			camera.resetProjectionMatrix(),
 			makeFrameBuffer(this, camera);
@@ -684,7 +693,7 @@ var Scene = (function () {
 		for (k in checks) makeProgram(this, k);
 		//console.log('////////////////////////////////////////////'),
 		//console.log('Scene 업데이트'),
-		//console.log('this._glVBOs :', this._glVBOs),
+		//console.log('tVBOs :', tVBOs),
 		//console.log('this._glVNBOs :', this._glVNBOs),
 		//console.log('this._glIBOs :', this._glIBOs),
 		//console.log('this._glPROGRAMs :', this._glPROGRAMs),
@@ -723,29 +732,36 @@ var Scene = (function () {
 		this._update = 1;
 		return this;
 	},
-	fn.addGeometry = function (id, geometry) { 
+	fn.addGeometry = function (id, geometry) {
+		var checks, k,tVShader;
+		checks = geometry._vertexShaders,
+		tVShader = this._vertexShaders;
 		if (this._geometrys[id]) this.error(0);
 		if (!(geometry instanceof Geometry)) this.error(1);
-		var checks = geometry._vertexShaders, k;
-		for (k in checks) if (typeof checks[k] == 'string') if (!this._vertexShaders[checks[k]]) this.error(2);
+		for (k in checks) if (typeof checks[k] == 'string') if (!tVShader[checks[k]]) this.error(2);
 		this._geometrys[id] = geometry;
 		return this;
 	},
-	fn.addMaterial = function (id, material) { 
-		if (this._materials[id]) this.error(0);
+	fn.addMaterial = function (id, material) {
+		var materials, textures, fShaders, checks, k;
+		materials = this._materials,
+		textures = this._textures,
+		fShaders = this._fragmentShaders;
+		if (materials[id]) this.error(0);
 		if (!(material instanceof Material)) this.error(1);
-		var checks = material._fragmentShaders, k;
-		for (k in checks) if (typeof checks[k] == 'string') if (!this._fragmentShaders[checks[k]]) this.error(2);
+		checks = material._fragmentShaders;
+		for (k in checks) if (typeof checks[k] == 'string') if (!fShaders[checks[k]]) this.error(2);
 		checks = material._textures;
-		for (k in checks) if (typeof checks[k] == 'string') if (!this._textures[checks[k]]) {
+		for (k in checks) if (typeof checks[k] == 'string') if (!textures[checks[k]]) {
 			this.error(3);
 		}
-		this._materials[id] = material,
-		this._materials[id]._scene = this;
+		materials[id] = material,
+		materials[id]._scene = this;
 		return this;
 	},
-	fn.addTexture = function addTexture(id, image/*,resizeType*/) { 
-		if (this._textures[id]) this.error(0);
+	fn.addTexture = function addTexture(id, image/*,resizeType*/) {
+		var textures = this._textures;
+		if (textures[id]) this.error(0);
 		if (checkDraft(image)) this.error(1);
 		function checkDraft(target) {
 			if (target instanceof HTMLImageElement) return 0;
@@ -757,12 +773,11 @@ var Scene = (function () {
 			// TODO 블랍은 어카지 -__;;;;;;;;;;;;;;;;;;;;;;;;실제 이미지를 포함하고 있는 Blob객체.
 			return 1;
 		}
-
-		if (this._textures[id]) this._textures[id].webglTexture = makeTexture(this, id, image);
+		if (textures[id]) textures[id].webglTexture = makeTexture(this, id, image);
 		else {
-			this._textures[id] = {count: 0, last: 0, webglTexture: null, resizeType: arguments[2] || null},
-			this._textures[id].webglTexture = makeTexture(this, id, image, arguments[2]);
-			//console.log(this._textures),
+			textures[id] = {count: 0, last: 0, webglTexture: null, resizeType: arguments[2] || null},
+			textures[id].webglTexture = makeTexture(this, id, image, arguments[2]);
+			//console.log(textures),
 			//console.log(id, image)
 		}
 		return this;
