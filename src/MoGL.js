@@ -85,11 +85,11 @@ var MoGL = (function() {
             }
         }
     },
-    fn.dispatch = function(ev){
+    fn.dispatch = function(ev,currentTime){
         var target, i, j;
         if (listener[this] && listener[this][ev]) {
             for (target = listener[this][ev], i = 0, j = target.length ; i < j ; i++) {
-                target[i].call(this);
+                target[i].call(this,currentTime);
             }
         }
     },
