@@ -545,10 +545,10 @@ var Scene = (function () {
 		gl = self._gl,
 		framebuffer = gl.createFramebuffer(),
 		gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
-		var tRenderArea = camera._renderArea ? camera._renderArea : [0,0,self._cvs.width,self._cvs.height]
+		var tRenderArea = camera._renderArea ? camera._renderArea : [0, 0, self._cvs.width, self._cvs.height]
 		framebuffer.x = tRenderArea[0], framebuffer.y = tRenderArea[1],
-		framebuffer.width = tRenderArea[2]*window.devicePixelRatio > 2800 ? 2800 : tRenderArea[2]*window.devicePixelRatio,
-		framebuffer.height = tRenderArea[3]*window.devicePixelRatio >2800 ? 2800 :tRenderArea[3]*window.devicePixelRatio;
+		framebuffer.width = tRenderArea[2]*window.devicePixelRatio > self._cvs.width ? self._cvs.width : tRenderArea[2]*window.devicePixelRatio,
+		framebuffer.height = tRenderArea[3]*window.devicePixelRatio >self._cvs.height ? self._cvs.height :tRenderArea[3]*window.devicePixelRatio;
 
 		texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_2D, texture),
