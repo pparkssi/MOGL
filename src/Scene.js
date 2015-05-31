@@ -303,6 +303,66 @@ var Scene = (function () {
 			]
 		};
 
+		var postBaseVertexShader = {
+			attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
+			uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
+			varyings: ['vec2 vUV'],
+			function: [VertexShader.baseFunction],
+			main: ['' +
+			'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+			'vUV = aUV;'
+			]
+		};
+		var postBaseFragmentShader = {
+			precision: 'mediump float',
+			uniforms: ['sampler2D uSampler','vec2 uTexelSize'],
+			varyings: ['vec2 vUV'],
+			function: [],
+			main: ['' +
+			'float FXAA_REDUCE_MIN = (1.0/128.0);\n' +
+			'float FXAA_REDUCE_MUL = (1.0/8.0);\n' +
+			'float FXAA_SPAN_MAX = 8.0;\n' +
+
+			'vec4 rgbNW = texture2D(uSampler, (vUV + vec2(-1.0, -1.0) * uTexelSize));\n' +
+			'vec4 rgbNE = texture2D(uSampler, (vUV + vec2(1.0, -1.0) * uTexelSize));\n' +
+			'vec4 rgbSW = texture2D(uSampler, (vUV + vec2(-1.0, 1.0) * uTexelSize));\n' +
+			'vec4 rgbSE = texture2D(uSampler, (vUV + vec2(1.0, 1.0) * uTexelSize));\n' +
+			'vec4 rgbM = texture2D(uSampler, vUV);\n' +
+			'vec4 luma = vec4(0.299, 0.587, 0.114, 1.0);\n' +
+			'float lumaNW = dot(rgbNW, luma);\n' +
+			'float lumaNE = dot(rgbNE, luma);\n' +
+			'float lumaSW = dot(rgbSW, luma);\n' +
+			'float lumaSE = dot(rgbSE, luma);\n' +
+			'float lumaM = dot(rgbM, luma);\n' +
+			'float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));\n' +
+			'float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));\n' +
+
+			'vec2 dir = vec2(-((lumaNW + lumaNE) - (lumaSW + lumaSE)), ((lumaNW + lumaSW) - (lumaNE + lumaSE)));\n' +
+
+			'float dirReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA_REDUCE_MUL),FXAA_REDUCE_MIN);\n' +
+			'float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);\n' +
+			'dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX),\n' +
+			'max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),\n' +
+			'dir * rcpDirMin)) * uTexelSize;\n' +
+
+			'vec4 rgbA = 0.5 * (' +
+			'	texture2D(uSampler, vUV + dir * (1.0 / 3.0 - 0.5))+' +
+			'	texture2D(uSampler, vUV + dir * (2.0 / 3.0 - 0.5))' +
+			');\n' +
+
+			'vec4 rgbB = rgbA * 0.5 + 0.25 * (texture2D(uSampler, vUV + dir *  -0.5)+texture2D(uSampler, vUV + dir * 0.5));\n' +
+			'float lumaB = dot(rgbB, luma);\n' +
+			'if ((lumaB < lumaMin) || (lumaB > lumaMax)) {\n' +
+			'	gl_FragColor = rgbA;\n' +
+			'}\n' +
+			'else {\n' +
+			'	gl_FragColor = rgbB;\n' +
+			'}\n' +
+
+			//'gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));' +
+			'']
+		};
+
 		this.addVertexShader('color', colorVertexShader),
 		this.addFragmentShader('color', colorFragmentShader),
 		this.addVertexShader('wireFrame', wireFrameVertexShader),
@@ -321,6 +381,8 @@ var Scene = (function () {
 		this.addFragmentShader('bitmapPhong', bitmapFragmentShaderPhong);
 		this.addVertexShader('bitmapBlinn', bitmapVertexShaderBlinn),
 		this.addFragmentShader('bitmapBlinn', bitmapFragmentShaderBlinn);
+		this.addVertexShader('postProcess', postBaseVertexShader),
+		this.addFragmentShader('postProcess', postBaseFragmentShader);
 	};
 	/////////////////////////////////////////////////////////////////
 	var makeVBO = function makeVBO(self, name, data, stride) {

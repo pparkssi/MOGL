@@ -125,7 +125,7 @@ var World = (function () {
             if (renderList[uuid][0]) return renderList[uuid][0]
             else{
                 renderList[uuid][0] = function (currentTime) {
-                    renderList[uuid][0] = self.render(currentTime)
+                    self.render(currentTime)
                 }
                 return renderList[uuid][0]
             }
@@ -325,7 +325,7 @@ var World = (function () {
             tVBO = scene._glVBOs['_FRAMERECT_'],
             tUVBO = scene._glUVBOs['_FRAMERECT_'],
             tIBO = scene._glIBOs['_FRAMERECT_'],
-            tProgram = scene._glPROGRAMs['bitmap'];
+            tProgram = scene._glPROGRAMs['postProcess'];
             if (!tVBO) return;
             gl.useProgram(tProgram);
             gl.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
@@ -347,6 +347,10 @@ var World = (function () {
                     camera = cameraList[k]
                     if (camera._visible) {
                         tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
+                        if(camera._antialias){
+                            if(camera._renderArea) gl.uniform2fv(tProgram.uTexelSize,[1/tFrameBuffer.width,1/tFrameBuffer.height])
+                            else gl.uniform2fv(tProgram.uTexelSize,[1/cvs.width,1/cvs.height])
+                        }
                         f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2 / window.devicePixelRatio, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 / window.devicePixelRatio , f3[2] = 0;
                         gl.uniform3fv(tProgram.uPosition, f3),
                         f3[0] = tFrameBuffer.width / 2 / window.devicePixelRatio, f3[1] = tFrameBuffer.height / 2/window.devicePixelRatio, f3[2] = 1,
