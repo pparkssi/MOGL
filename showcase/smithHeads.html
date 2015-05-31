@@ -57,7 +57,7 @@
     world.addScene(scene);
     world.setAutoSize(1)
 
-    camera.setAntialias(1)
+
 
     scene.addChild('camera', camera);
     scene.addChild('camera2', camera2);
@@ -116,9 +116,13 @@
 
         camera2.z = 10
         camera2.setBackgroundColor(Math.random(),Math.random(),Math.random(),1)
-        camera2.setRenderArea(10,10,128,128)
+        camera2.setRenderArea(10,10,256,300)
         camera3.setBackgroundColor(Math.random(),Math.random(),Math.random(),1)
         camera3.setRenderArea(10,445,300,300)
+
+        camera.setAntialias(1)
+        camera2.setAntialias(1)
+        camera3.setAntialias(1)
 
         world.addEventListener(World.renderBefore,function(t){
             mesh.rotateY -= 0.01;
