@@ -5,16 +5,16 @@
 
 **method**
 
-* [add](#)
-* [addXYZ](#)
-* [subtract](#)
-* [subtractXYZ](#)
-* [scaleBy](#)
-* [distance](#)
-* [negate](#)
-* [normalize](#)
-* [dot](#)
-* [cross](#)
+* [add](#add-vectorvector-)
+* [addXYZ](#addxyz-xnumber-ynumber-znumber-)
+* [subtract](#subtract-vector-)
+* [subtractXYZ](#subtractxyz-xnumber-ynumber-znumber-)
+* [scaleBy](#scaleby-scalenumber-)
+* [distance](#distance-vectorvector-)
+* [negate](#negate)
+* [normalize](#normalize)
+* [dot](#dot-vectorvector-)
+* [cross](#cross-vectorvector-)
 
 [top](#)
 ## Constructor
