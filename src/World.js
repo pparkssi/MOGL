@@ -116,16 +116,16 @@ var World = (function () {
             if (renderList[uuid][1]) return renderList[uuid][1]
             else {
 
-                return renderList[uuid][1] = function () {
-                    self.render();
+                return renderList[uuid][1] = function (currentTime) {
+                    self.render(currentTime);
                     requestAnimationFrame(renderList[uuid][1]);
                 }
             }
         } else {
             if (renderList[uuid][0]) return renderList[uuid][0]
             else{
-                renderList[uuid][0] = function () {
-                    renderList[uuid][0] = self.render()
+                renderList[uuid][0] = function (currentTime) {
+                    renderList[uuid][0] = self.render(currentTime)
                 }
                 return renderList[uuid][0]
             }
@@ -158,7 +158,7 @@ var World = (function () {
         }
         this.error('0')
     },
-    fn.render = function render() {
+    fn.render = function render(currentTime) {
         var i, j, k,len=0;
         var scene,tSceneList,cameraList,camera,gl,children,cvs;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList,tCulling;
@@ -166,7 +166,7 @@ var World = (function () {
         cvs = cvsList[this],
         tSceneList = sceneList[this],
         i = tSceneList.length
-        this.dispatch(World.renderBefore)
+        this.dispatch(World.renderBefore,currentTime)
         while(i--){
             //console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
             scene = tSceneList[i]
@@ -193,8 +193,8 @@ var World = (function () {
                     for(k in scene._glPROGRAMs){
                         tProgram = scene._glPROGRAMs[k];
                         gl.useProgram(tProgram);
-                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera._pixelMatrix._rowData);
-                        gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.getMatrix()._rowData);
+                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera._pixelMatrix._rawData);
+                        gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.getMatrix()._rawData);
                     }
                     tItem = tMaterial = tProgram = tVBO = tIBO = null;
                     for (k in children) {
@@ -342,7 +342,7 @@ var World = (function () {
             gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO),
             gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0),
             gl.uniform3fv(tProgram.uRotate, [0, 0, 0]);
-            gl.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix._rowData);
+            gl.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix._rawData);
             for (k in tSceneList) {
                 scene = tSceneList[k]
                 cameraList = scene._cameras
@@ -363,7 +363,7 @@ var World = (function () {
                 }
             }
         }
-        this.dispatch(World.renderAfter)
+        this.dispatch(World.renderAfter,currentTime)
 		return
         //gl.finish();
     }

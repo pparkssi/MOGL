@@ -65,9 +65,9 @@ var FreeController = (function () {
         MAT2.matRotateX(tCamera.rotateX),
         MAT2.matMultiply(MAT1),
 
-        this._desirePosition[0] += MAT2._rowData[12],
-        this._desirePosition[1] += MAT2._rowData[13],
-        this._desirePosition[2] += MAT2._rowData[14],
+        this._desirePosition[0] += MAT2._rawData[12],
+        this._desirePosition[1] += MAT2._rawData[13],
+        this._desirePosition[2] += MAT2._rawData[14],
 
         tCamera.x += (this._desirePosition[0] - tCamera.x)*this._smoothDelay,
         tCamera.y += (this._desirePosition[1] - tCamera.y)*this._smoothDelay,

@@ -87,7 +87,7 @@ var Mesh = (function () {
         this.matLookAt(F3, F3_2, [0, 1, 0]),
         this.matTranslate(F3);
 
-        var d = this._rowData;
+        var d = this._rawData;
         var d11 = d[0], d12 = d[1], d13 = d[2], d21 = d[4], d22 = d[5], d23 = d[6], d31 = d[8], d32 = d[9], d33 = d[10];
         var radianX, radianY, radianZ;
         var md31 = -d31;
