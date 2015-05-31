@@ -66,7 +66,7 @@ var MoGL = (function() {
     },
     listener = {};
     fn.addEventListener = function(ev, f) {
-        var target
+        var target;
         if (!listener[this]) listener[this] = {};
         target = listener[this];
         if (!target[ev]) target[ev] = [];
