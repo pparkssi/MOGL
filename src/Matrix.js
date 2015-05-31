@@ -28,13 +28,10 @@ var Matrix = (function () {
         return this;
     },
     //fn.matInvert = function matInvert() {
-    //    //TODO �씠嫄대Ц�젣媛�醫� �엳援�?
-    //    console.log('matInvert�뒗 �젏寃��씠 �븘�슂�븿')
     //    return this;
     //},
     ///*
     //fn.matTranspose = function matTranspose(t) {
-    //    console.log('matTranspose�뒗 �젏寃��씠 �븘�슂�븿')
     //     return this;
     //};
     fn.matMultiply = function matMultiply(t) {
