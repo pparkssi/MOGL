@@ -8,18 +8,11 @@ var Matrix = (function () {
         this.matIdentity();
     }
     fn = Matrix.prototype,
-    /*
-     return this
-     */
     fn.matIdentity = function matIdentity() {
         var a = this._rawData;
         a[0] = 1, a[1] = 0, a[2] = 0, a[3] = 0, a[4] = 0, a[5] = 1, a[6] = 0, a[7] = 0, a[8] = 0, a[9] = 0, a[10] = 1, a[11] = 0, a[12] = 0, a[13] = 0, a[14] = 0, a[15] = 1;
         return this;
     },
-    /*
-     ?–‰? ¬?˜ rawDataë¥? ê¸°ë°˜?œ¼ë¡? ?ƒˆë¡œìš´ ?–‰? ¬ ?ƒ?„±
-     return Matrix
-     */
     fn.matClone = function matClone() {
         var a, b,out;
         a = this._rawData,
@@ -28,37 +21,22 @@ var Matrix = (function () {
         b[0] = a[0], b[1] = a[1], b[2] = a[2], b[3] = a[3], b[4] = a[4], b[5] = a[5], b[6] = a[6], b[7] = a[7], b[8] = a[8], b[9] = a[9], b[10] = a[10], b[11] = a[11], b[12] = a[12], b[13] = a[13], b[14] = a[14], b[15] = a[15];
         return out;
     },
-    /*
-     ?–‰? ¬?˜ ëª¨ë“  rawDataë¥? ???ƒ ê°ì²´?— ë³µì‚¬
-     return this
-     */
     fn.matCopy = function matCopy(t) {
         var a = this._rawData;
         t = t._rawData;
         t[0] = a[0], t[1] = a[1], t[2] = a[2], t[3] = a[3], t[4] = a[4], t[5] = a[5], t[6] = a[6], t[7] = a[7], t[8] = a[8], t[9] = a[9], t[10] = a[10], t[11] = a[11], t[12] = a[12], t[13] = a[13], t[14] = a[14], t[15] = a[15];
         return this;
     },
-    ///*
-    // ?˜„?¬ ?–‰? ¬?„ ë°˜ì „
-    // return this
-    // */
     //fn.matInvert = function matInvert() {
-    //    //TODO ?´ê±´ë¬¸? œê°?ì¢? ?ˆêµ??
-    //    console.log('matInvert?Š” ? ê²??´ ?•„?š”?•¨')
+    //    //TODO ï¿½ì” å«„ëŒ€Ğ¦ï¿½ì £åª›ï¿½é†«ï¿½ ï¿½ì—³æ´ï¿½?
+    //    console.log('matInvertï¿½ë’— ï¿½ì å¯ƒï¿½ï¿½ì”  ï¿½ë¸˜ï¿½ìŠ‚ï¿½ë¸¿')
     //    return this;
     //},
     ///*
-    // ?˜„?¬ ?–‰? ¬?„ ? „ì¹?
-    // return this
-    // */
     //fn.matTranspose = function matTranspose(t) {
-    //    console.log('matTranspose?Š” ? ê²??´ ?•„?š”?•¨')
+    //    console.log('matTransposeï¿½ë’— ï¿½ì å¯ƒï¿½ï¿½ì”  ï¿½ë¸˜ï¿½ìŠ‚ï¿½ë¸¿')
     //     return this;
     //};
-    /*
-     ?˜„?¬ ?–‰? ¬ê³? ?…? ¥?œ ?–‰? ¬?˜ ê³?
-     return this
-     */
     fn.matMultiply = function matMultiply(t) {
         var a = this._rawData;
         t = t._rawData;
@@ -73,55 +51,31 @@ var Matrix = (function () {
         a[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30, a[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31, a[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32, a[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
         return this;
     },
-    /*
-     x,y,zì¶•ìœ¼ë¡? ?‰?–‰?´?™
-     return this
-     */
     fn.matTranslate = function matTranslate(x, y, z) {
         var a = this._rawData;
         a[12] = a[0] * x + a[4] * y + a[8] * z + a[12], a[13] = a[1] * x + a[5] * y + a[9] * z + a[13], a[14] = a[2] * x + a[6] * y + a[10] * z + a[14], a[15] = a[3] * x + a[7] * y + a[11] * z + a[15];
         return this;
     },
-    /*
-     x,y,zì¶•ìœ¼ë¡? ?™•??
-     return this
-     */
     fn.matScale = function matScale(x, y, z) {
         var a = this._rawData;
         a[0] = a[0] * x, a[1] = a[1] * x, a[2] = a[2] * x, a[3] = a[3] * x, a[4] = a[4] * y, a[5] = a[5] * y, a[6] = a[6] * y, a[7] = a[7] * y, a[8] = a[8] * z, a[9] = a[9] * z, a[10] = a[10] * z, a[11] = a[11] * z, a[12] = a[12], a[13] = a[13], a[14] = a[14], a[15] = a[15];
         return this;
     },
-    /*
-     xì¶•ê¸°ì¤? ?šŒ? „
-     return this
-     */
     fn.matRotateX = function matRotateX(rad) {
         var a = this._rawData, s = SIN(rad), c = COS(rad), a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
         a[4] = a10 * c + a20 * s, a[5] = a11 * c + a21 * s, a[6] = a12 * c + a22 * s, a[7] = a13 * c + a23 * s, a[8] = a20 * c - a10 * s, a[9] = a21 * c - a11 * s, a[10] = a22 * c - a12 * s, a[11] = a23 * c - a13 * s;
         return this;
     },
-    /*
-     yì¶•ê¸°ì¤? ?šŒ? „
-     return this
-     */
     fn.matRotateY = function matRotateY(rad) {
         var a = this._rawData, s = SIN(rad), c = COS(rad), a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
         a[0] = a00 * c - a20 * s, a[1] = a01 * c - a21 * s, a[2] = a02 * c - a22 * s, a[3] = a03 * c - a23 * s, a[8] = a00 * s + a20 * c, a[9] = a01 * s + a21 * c, a[10] = a02 * s + a22 * c, a[11] = a03 * s + a23 * c;
         return this;
     },
-    /*
-     Zì¶•ê¸°ì¤? ?šŒ? „
-     return this
-     */
     fn.matRotateZ = function matRotateZ(rad) {
         var a = this._rawData, s = SIN(rad), c = COS(rad), a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
         a[0] = a00 * c + a10 * s, a[1] = a01 * c + a11 * s, a[2] = a02 * c + a12 * s, a[3] = a03 * c + a13 * s, a[4] = a10 * c - a00 * s, a[5] = a11 * c - a01 * s, a[6] = a12 * c - a02 * s, a[7] = a13 * c - a03 * s;
         return this;
     },
-    /*
-     axisë¥? ê¸°ì??œ¼ë¡? ?•œ ì¦ë¶„?šŒ? „
-     return this
-     */
     fn.matRotate = function matRotate(rad, axis) {
         var a = this._rawData;
         var x = axis[0], y = axis[1], z = axis[2], len = SQRT(x * x + y * y + z * z), s, c, t, a00, a01, a02, a03, a10, a11, a12, a13, a20, a21, a22, a23, b00, b01, b02, b10, b11, b12, b20, b21, b22;
@@ -140,10 +94,6 @@ var Matrix = (function () {
         f[0] = e * 2 / h, f[1] = 0, f[2] = 0, f[3] = 0, f[4] = 0, f[5] = e * 2 / i, f[6] = 0, f[7] = 0, f[8] = (b + a) / h, f[9] = (d + c) / i, f[10] = -(g + e) / j, f[11] = -1, f[12] = 0, f[13] = 0, f[14] = -(g * e * 2) / j, f[15] = 0;
         return this;
     },
-    /*
-     ?¼?Š¤?™?‹°ë¸? ?–‰? ¬ë°˜í™˜
-     return this
-     */
     fn.matPerspective = function matPerspective(fov, aspect, near, far) {
         fov = near * Math.tan(fov * Math.PI / 360),
         aspect = fov * aspect,
