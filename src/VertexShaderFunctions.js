@@ -18,10 +18,6 @@ var VertexShader = {
     '   mat4 m2 = mat4(c,0,-s,0, 0,1,0,0, s,0,c,0,  0,0,0,1);s = sin(t[2]);c = cos(t[2]);\n' +
     '   mat4 m3 = mat4(c,s,0,0, -s,c,0,0, 0,0,1,0,  0,0,0,1);\n' +
     '   return m3*m2*m1;\n' +
-    '}\n',
-    getGouraudLight: "" +
-    ' vec3 LD = normalize(uDLite);\n' +
-    ' vec3 N = normalize(vec3(mv * vec4(aVertexNormal, 0.0) ));\n' +
-    ' vLight = vec4 (vec3(clamp(dot(N,-LD)*uLambert,0.1,1.0)),1.0);\n'
+    '}\n'
 };
 Object.freeze(VertexShader);

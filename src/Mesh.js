@@ -30,13 +30,7 @@ var Mesh = (function () {
     Mesh.cullingFront = 'CULLING_FRONT',
     Mesh.cullingBack = 'CULLING_BACK',
     fn = Mesh.prototype,
-    fn.setCulling = function setCulling(value){
-        if (value == Mesh.cullingNone || value == Mesh.cullingFront || value == Mesh.cullingBack) {
-            this._culling = value;
-        }else this.error(0);
-        return this;
-    },
-    fn.getGeometry = function getGeometry() { 
+    fn.getGeometry = function getGeometry() {
         return this._scene ? this._geometry : null;
     },
     fn.getMaterial = function getMaterial() { 
@@ -60,6 +54,12 @@ var Mesh = (function () {
     },
     ///////////////////////////////////////////////////
     // set
+    fn.setCulling = function setCulling(value){
+        if (value == Mesh.cullingNone || value == Mesh.cullingFront || value == Mesh.cullingBack) {
+            this._culling = value;
+        }else this.error(0);
+        return this;
+    },
     fn.setGeometry = function setGeometry(geometry) {
         if (!(geometry instanceof Geometry || typeof geometry == 'string')) this.error(0);
         if (this._scene) {
