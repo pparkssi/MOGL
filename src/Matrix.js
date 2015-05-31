@@ -39,13 +39,13 @@ var Matrix = (function () {
         t = t._rawData;
         var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3], a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7], a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11], a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
         var b0 = t[0], b1 = t[1], b2 = t[2], b3 = t[3];
-        a[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30, a[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31, a[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32, a[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33,
+        a[0] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3, a[1] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3, a[2] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3, a[3] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3,
         b0 = t[4], b1 = t[5], b2 = t[6], b3 = t[7],
-        a[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30, a[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31, a[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32, a[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33,
+        a[4] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3 , a[5] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3, a[6] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3, a[7] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3,
         b0 = t[8], b1 = t[9], b2 = t[10], b3 = t[11],
-        a[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30, a[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31, a[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32, a[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33,
+        a[8] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3 , a[9] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3 , a[10] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3 , a[11] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3,
         b0 = t[12], b1 = t[13], b2 = t[14], b3 = t[15],
-        a[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30, a[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31, a[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32, a[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+        a[12] = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3 , a[13] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3, a[14] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3, a[15] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3;
         return this;
     },
     fn.matTranslate = function matTranslate(x, y, z) {
@@ -108,9 +108,9 @@ var Matrix = (function () {
         if (!len) y0 = 0, y1 = 0, y2 = 0;
         else len = 1 / len, y0 *= len, y1 *= len, y2 *= len;
         a[0] = x0, a[1] = y0, a[2] = z0, a[3] = 0,
-            a[4] = x1, a[5] = y1, a[6] = z1, a[7] = 0,
-            a[8] = x2, a[9] = y2, a[10] = z2, a[11] = 0,
-            a[12] = -(x0 * eyex + x1 * eyey + x2 * eyez), a[13] = -(y0 * eyex + y1 * eyey + y2 * eyez), a[14] = -(z0 * eyex + z1 * eyey + z2 * eyez), a[15] = 1;
+        a[4] = x1, a[5] = y1, a[6] = z1, a[7] = 0,
+        a[8] = x2, a[9] = y2, a[10] = z2, a[11] = 0,
+        a[12] = -(x0 * eyex + x1 * eyey + x2 * eyez), a[13] = -(y0 * eyex + y1 * eyey + y2 * eyez), a[14] = -(z0 * eyex + z1 * eyey + z2 * eyez), a[15] = 1;
         return this;
     };
     fn.matStr = function matStr() {

@@ -50,7 +50,7 @@ var Camera = (function () {
     fn.getFOV = function getFOV(){
         return this._fov;
     },
-    fn.getProjectionMatrix = function getProjectionMatrix(){
+    fn.resetProjectionMatrix = function resetProjectionMatrix(){
         this._pixelMatrix.matIdentity();
         if(this._mode == '2d'){
             this._pixelMatrix._rawData[0] = 2 / this._renderArea[2]

@@ -7,7 +7,8 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
     <link rel="stylesheet" type="text/css" href="css.css"/>
     <script src="../src/MoGL.js"></script>
     <script src="../src/BlendMode.js"></script>
@@ -25,23 +26,16 @@
     <script src="../src/World.js"></script>
 </head>
 <body>
-<canvas id="firstWorld" ></canvas>
+<canvas id="firstWorld"></canvas>
 <script>
-
-    ////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////
     var world = new World('firstWorld')
+    world.setAutoSize(1)
     // 씬 생성
     var scene = new Scene()
-    world.addScene('firstScene', scene)
+    world.addScene(scene)
     // 카메라 생성
     var camera = new Camera()
     scene.addChild('testCamera', camera)
-    // 렌더 추가
-    world.addRender('firstScene', 'testCamera')
-    ////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////
-
     // 씬에 지오메트리등록
     scene.addGeometry('rect', new Geometry(
                     [
@@ -59,33 +53,27 @@
             )
     )
     // 씬에 재질을 등록!
-    scene.addMaterial('bitmapMat', new Material())
-
+    var material = new Material()
+    scene.addMaterial('bitmapMat', material)
     // 씬에 텍스쳐를 등록!
     scene.addTexture('texture1', '../src/ohno.png')
-
     // 씬에 등록된 재질에 텍스쳐를 적용!
-    scene.getMaterial('bitmapMat').addTexture(Texture.diffuse,'texture1')
-
+    scene.getMaterial('bitmapMat').addTexture(Texture.diffuse, 'texture1')
     // 메쉬 생성!
-    scene.addChild('mesh1', new Mesh('rect', 'bitmapMat'))
+    var mesh = new Mesh('rect', 'bitmapMat')
+    scene.addChild('mesh1', mesh)
 
-    var mesh = scene.getChild('mesh1')
-
-
-    setInterval(function () {
-        world.render();
-    }, 1000 / 60)
-    // 렌더 루프 추가
-
-    world.LOOP['test'] = function () {
+    world.start()
+    world.addEventListener(World.renderAfter, function () {
         mesh.rotateX += 0.1
         mesh.rotateY += 0.1
         mesh.rotateZ += 0.1
-    }
+    })
 </script>
-<div style="position: absolute; top: 0px; background: #fff; padding: 5px">GitHub - <a href="https://github.com/projectBS/MoGL">https://github.com/projectBS/MoGL</a></div>
-<div style="position: absolute; top: 25px; background: #fff; padding: 5px">Facebook - <a href="https://www.facebook.com/groups/MObilewebGL/">https://www.facebook.com/groups/MObilewebGL/</a></div>
+<div style="position: absolute; top: 0px; background: #fff; padding: 5px">GitHub - <a
+        href="https://github.com/projectBS/MoGL">https://github.com/projectBS/MoGL</a></div>
+<div style="position: absolute; top: 25px; background: #fff; padding: 5px">Facebook - <a
+        href="https://www.facebook.com/groups/MObilewebGL/">https://www.facebook.com/groups/MObilewebGL/</a></div>
 </div>
 </body>
 </html>
