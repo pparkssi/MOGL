@@ -63,9 +63,9 @@ var World = (function () {
 					canvas.height = height * pixelRatio,
 					canvas.style.width = width + 'px',
 					canvas.style.height = height + 'px';
-                    canvas._autoSize = isAutoSize;
+                    canvas._autoSize = isAutoSize
 					for(k in scenes) {
-						scenes[k]._update = 1;
+						scenes[k]._update = 1
 					}
 				};
 			}
@@ -82,7 +82,7 @@ var World = (function () {
         var tSceneList, i,uuid;
         tSceneList = sceneList[this], i = tSceneList.length;
         if (!(scene instanceof Scene )) this.error(1);
-        uuid = scene.uuid;
+        uuid = scene.uuid
         while(i--){
             if (tSceneList[i].uuid == uuid) this.error(0);
         }
@@ -109,38 +109,36 @@ var World = (function () {
         var uuid = this.toString(), self;
         if (!renderList[uuid]) {
             // 없으니까 생성
-            renderList[uuid] = {};
+            renderList[uuid] = {}
         }
         self = this;
         if (isRequestAnimationFrame) {
-            if (renderList[uuid][1]) return renderList[uuid][1];
+            if (renderList[uuid][1]) return renderList[uuid][1]
             else {
+
                 return renderList[uuid][1] = function (currentTime) {
                     self.render(currentTime);
-                    requestAnimationFrame(renderList[uuid][1]);
-                };
+                    started[uuid] = requestAnimationFrame(renderList[uuid][1]);
+                }
             }
         } else {
-            if (renderList[uuid][0]) return renderList[uuid][0];
+            if (renderList[uuid][0]) return renderList[uuid][0]
             else{
                 renderList[uuid][0] = function (currentTime) {
                     renderList[uuid][0] = self.render(currentTime)
-                };
-                return renderList[uuid][0];
+                }
+                return renderList[uuid][0]
             }
         }
     },
     fn.start = function start(){
         var uuid = this.toString();
-        if (!started[uuid]) started[uuid] = 1;
-        else started[uuid] = 1;
-        // TODO 아예 이것도 중복이아니라..전역적으로 관리해야될것 같은데?
-        requestAnimationFrame(this.getRenderer(1));
+        started[uuid] = requestAnimationFrame(this.getRenderer(1));
         return this;
     },
     fn.stop = function stop(){
         var uuid = this.toString();
-        started[uuid] = 0;
+        cancelAnimationFrame(started[uuid])
         return this;
     },
     fn.removeScene = function removeScene(sceneID) {
@@ -150,30 +148,30 @@ var World = (function () {
         if( typeof sceneID === 'undefined' ) return null;
         while(i--){
             if(tSceneList[i].id == sceneID){
-                tSceneList.splice(i,1);
-                console.log(sceneList);
-                return this;
+                tSceneList.splice(i,1)
+                console.log(sceneList)
+                return this
             }
         }
-        this.error('0');
+        this.error('0')
     },
     fn.render = function render(currentTime) {
-        var i, j, k,len = 0;
+        var i, j, k,len=0;
         var scene,tSceneList,cameraList,camera,gl,children,cvs;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList,tCulling;
         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram,pCulling;
         cvs = cvsList[this],
         tSceneList = sceneList[this],
-        i = tSceneList.length;
-        this.dispatch(World.renderBefore,currentTime);
+        i = tSceneList.length
+        this.dispatch(World.renderBefore,currentTime)
         while(i--){
             //console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
-            scene = tSceneList[i];
+            scene = tSceneList[i]
             if (scene._update) scene.update();
-            cameraList = scene._cameras;
-            for (k in cameraList) len++;
+            cameraList = scene._cameras
+            for (k in cameraList) len++
             for (k in cameraList) {
-                camera = cameraList[k];
+                camera = cameraList[k]
                 if(camera._visible){
                     gl = scene._gl;
                     if(len > 1) {
@@ -187,8 +185,8 @@ var World = (function () {
                     gl.clearColor(camera._r, camera._g, camera._b, camera._a);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
-                    gl.enable(gl.BLEND);
-                    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+                    gl.enable(gl.BLEND)
+                    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
                     for(k in scene._glPROGRAMs){
                         tProgram = scene._glPROGRAMs[k];
                         gl.useProgram(tProgram);
@@ -204,11 +202,11 @@ var World = (function () {
                         tIBO = scene._glIBOs[tItem._geometry._key],
                         tMaterial = tItem._material,
                         tDiffuseList = tMaterial._diffuse;
-                        tCulling = tItem._culling;
+                        tCulling = tItem._culling
                         if(tCulling != pCulling){
-                            if(tCulling == Mesh.cullingNone) gl.disable(gl.CULL_FACE);
-                            else if(tCulling == Mesh.cullingBack) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CCW);
-                            else if(tCulling == Mesh.cullingFront) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW);
+                            if(tCulling == Mesh.cullingNone) gl.disable(gl.CULL_FACE)
+                            else if(tCulling == Mesh.cullingBack) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CCW)
+                            else if(tCulling == Mesh.cullingFront) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW)
                         }
                         var dLite = [0,-1,-1], useNormalBuffer = 0;
                         if(tDiffuseList.__indexList.length == 0){
@@ -231,7 +229,7 @@ var World = (function () {
                                 gl.useProgram(tProgram);
                                 useNormalBuffer = 1;
                             }
-                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null, pCulling = null;
+                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null,pCulling=null;
 
                             if(useNormalBuffer){
                                 tVNBO != pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
@@ -239,21 +237,21 @@ var World = (function () {
                                 gl.uniform3fv(tProgram.uDLite, dLite);
                                 gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert);
                             }
-                            tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
-                            tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                            tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
+                            tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                             f4[0] = tMaterial._r,f4[1] = tMaterial._g,f4[2] = tMaterial._b,f4[3] = tMaterial._a,
                             gl.uniform4fv(tProgram.uColor, f4);
                         }else{
                             if(tMaterial._shading.type == 'none'){
-                                tProgram = scene._glPROGRAMs['bitmap'],
+                                tProgram=scene._glPROGRAMs['bitmap'],
                                 gl.useProgram(tProgram);
                             }else if(tMaterial._shading.type == 'flat'){
                             }else if(tMaterial._shading.type == 'gouraud'){
-                                tProgram = scene._glPROGRAMs['bitmapGouraud'];
+                                tProgram=scene._glPROGRAMs['bitmapGouraud'];
                                 gl.useProgram(tProgram);
                                 useNormalBuffer = 1;
                             }else if(tMaterial._shading.type == 'phong'){
-                                tProgram = scene._glPROGRAMs['bitmapPhong'];
+                                tProgram=scene._glPROGRAMs['bitmapPhong'];
                                 gl.useProgram(tProgram);
                                 useNormalBuffer = 1;
                             }else if(tMaterial._shading.type == 'blinn'){
@@ -287,7 +285,7 @@ var World = (function () {
                             f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ,
                             gl.uniform3fv(tProgram.uScale, f3),
                             tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0;
-                        gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0);
+                        gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                         if(tMaterial._wireFrame) {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL);
                             tProgram = scene._glPROGRAMs['wireFrame'],
@@ -306,7 +304,7 @@ var World = (function () {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                         }
 
-                        pProgram = tProgram, pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj,pCulling = tCulling;
+                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj,pCulling=tCulling;
                     }
                     //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                     //gl.bindTexture(gl.TEXTURE_2D, null);
@@ -343,10 +341,10 @@ var World = (function () {
             gl.uniform3fv(tProgram.uRotate, [0, 0, 0]);
             gl.uniformMatrix4fv(tProgram.uCameraMatrix, false, rectMatrix._rawData);
             for (k in tSceneList) {
-                scene = tSceneList[k];
-                cameraList = scene._cameras;
+                scene = tSceneList[k]
+                cameraList = scene._cameras
                 for (k in cameraList) {
-                    camera = cameraList[k];
+                    camera = cameraList[k]
                     if (camera._visible) {
                         tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
                         f3[0] = tFrameBuffer.x + tFrameBuffer.width / 2, f3[1] = tFrameBuffer.y + tFrameBuffer.height / 2 , f3[2] = 0;
@@ -362,8 +360,8 @@ var World = (function () {
                 }
             }
         }
-        this.dispatch(World.renderAfter,currentTime);
-		return;
+        this.dispatch(World.renderAfter,currentTime)
+		return
         //gl.finish();
     }
     return MoGL.ext(World, MoGL);
