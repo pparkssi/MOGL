@@ -43,7 +43,6 @@ var World = (function () {
 		}else{
 			this.error(2);
 		}
-        this._currentTime = 0
     },
     World.renderBefore ='WORLD_RENDER_BEFORE',
     World.renderAfter = 'WORLD_RENDER_AFTER',
