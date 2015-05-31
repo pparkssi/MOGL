@@ -40,12 +40,20 @@
 </head>
 <body>
 <canvas id="canvas"></canvas>
-<div class="FPS">
-    Current FPS: <span id="currentFPS"></span>
-    Average FPS: <span id="averageFPS"></span>
-</div>
+<button style="position:absolute;top:0px; margin:10px" id='fxaa'>FXAA ON</button>
 <script>
     'use strict';
+
+    var a = document.getElementById('fxaa')
+    a.addEventListener('mousedown',function(){
+        var t= a.innerHTML
+        t = t=='FXAA ON' ? 1 : 0
+        camera.setAntialias(t)
+        camera2.setAntialias(t)
+        camera3.setAntialias(t)
+        a.innerHTML = t==1 ? 'FXAA OFF' : 'FXAA ON'
+    })
+
     var world = new World('canvas');
     var scene = new Scene();
     var camera = new Camera()
@@ -56,8 +64,6 @@
 
     world.addScene(scene);
     world.setAutoSize(1)
-
-
 
     scene.addChild('camera', camera);
     scene.addChild('camera2', camera2);
@@ -116,13 +122,9 @@
 
         camera2.z = 10
         camera2.setBackgroundColor(Math.random(),Math.random(),Math.random(),1)
-        camera2.setRenderArea(10,10,256,300)
+        camera2.setRenderArea(100,10,128,128)
         camera3.setBackgroundColor(Math.random(),Math.random(),Math.random(),1)
         camera3.setRenderArea(10,445,300,300)
-
-        camera.setAntialias(1)
-        camera2.setAntialias(1)
-        camera3.setAntialias(1)
 
         world.addEventListener(World.renderBefore,function(t){
             mesh.rotateY -= 0.01;
