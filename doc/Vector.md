@@ -47,7 +47,7 @@ var vector = new Vector( [1, 2, 3] );
 var vector = new Vector( new Float32Array( [1, 2, 3] ) );
 var vector = new Vector();
 
-// 팩토리 함소로도 사용 가능.
+// 팩토리 함수로도 사용 가능.
 var vector = Vector( 1, 2, 3 );
 ```
 
