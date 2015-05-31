@@ -544,10 +544,11 @@ var Scene = (function () {
 		var gl, framebuffer, texture, renderbuffer;
 		gl = self._gl,
 		framebuffer = gl.createFramebuffer(),
-		gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer),
-		framebuffer.x = camera._renderArea[0], framebuffer.y = camera._renderArea[1],
-		framebuffer.width = camera._renderArea[2]*window.devicePixelRatio > 2800 ? 2800 : camera._renderArea[2]*window.devicePixelRatio,
-		framebuffer.height = camera._renderArea[3]*window.devicePixelRatio >2800 ? 2800 :camera._renderArea[3]*window.devicePixelRatio;
+		gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+		var tRenderArea = camera._renderArea ? camera._renderArea : [0,0,self._cvs.width,self._cvs.height]
+		framebuffer.x = tRenderArea[0], framebuffer.y = tRenderArea[1],
+		framebuffer.width = tRenderArea[2]*window.devicePixelRatio > 2800 ? 2800 : tRenderArea[2]*window.devicePixelRatio,
+		framebuffer.height = tRenderArea[3]*window.devicePixelRatio >2800 ? 2800 :tRenderArea[3]*window.devicePixelRatio;
 
 		texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_2D, texture),
@@ -607,14 +608,10 @@ var Scene = (function () {
 		for (k in this._cameras) {
 			var camera = this._cameras[k];
 			camera._cvs = this._cvs;
-			if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height);
-			else {
-				if(camera._cvs['_autoSize']) {
-					var wRatio = camera._renderArea[2]/this._cvs.width;
-					var hRatio = camera._renderArea[3]/this._cvs.height;
-					camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], this._cvs.width * wRatio, this._cvs.height * hRatio);
-				}
-				else camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], camera._renderArea[2], camera._renderArea[3]);
+			if (camera._renderArea) {
+				var wRatio = camera._renderArea[2]/this._cvs.width;
+				var hRatio = camera._renderArea[3]/this._cvs.height;
+				camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], this._cvs.width * wRatio, this._cvs.height * hRatio);
 			}
 			camera.getProjectionMatrix(),
 			makeFrameBuffer(this, camera);
