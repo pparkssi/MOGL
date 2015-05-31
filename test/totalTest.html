@@ -8,25 +8,28 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <meta name="viewport"
           content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
-    <link rel="stylesheet" type="text/css" href="css.css" />
+    <link rel="stylesheet" type="text/css" href="css.css"/>
     <title>MoGL Test Suite - TotalTest</title>
     <style>
-        html{
+        html {
             background: #222;
         }
-        iframe{
+
+        iframe {
             background: #fff;
             border: solid 0;
             margin: 3px;
-            width:325px;
-            height:350px;
-            border-radius:10px;
+            width: 325px;
+            height: 350px;
+            border-radius: 10px;
         }
-        div{
+
+        div {
             color: #eee;
-            font-size:11px;
+            font-size: 11px;
         }
-        a{
+
+        a {
             color: #fff;
         }
     </style>
@@ -34,7 +37,8 @@
 <body>
 <div>
     <h1>MoGL Test 0.3</h1>
-    <h2>MOGL is light weight & high performance MObile webGL library.<br><em>GitHub: <a href="https://github.com/projectBS/MoGL">https://github.com/projectBS/MoGL</a></em></h2>
+    <h2>MOGL is light weight & high performance MObile webGL library.<br><em>GitHub: <a
+            href="https://github.com/projectBS/MoGL">https://github.com/projectBS/MoGL</a></em></h2>
 </div>
 <script>
     var list = [
@@ -57,7 +61,7 @@
         var iframe = document.createElement('iframe');
 
         container.style.display = 'inline-block';
-        title.innerHTML =  "<a href='"+list[i]+"'>"+list[i]+"</a>";
+        title.innerHTML = "<a href='" + list[i] + "'>" + list[i] + "</a>";
         iframe.src = list[i];
 
         container.appendChild(title);
