@@ -677,7 +677,7 @@ var Scene = (function () {
 				var hRatio = camera._renderArea[3]/this._cvs.height;
 				camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], this._cvs.width * wRatio, this._cvs.height * hRatio);
 			}
-			camera.getProjectionMatrix(),
+			camera.resetProjectionMatrix(),
 			makeFrameBuffer(this, camera);
 		}
 		checks = this._vertexShaders;
