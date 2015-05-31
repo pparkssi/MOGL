@@ -5,23 +5,20 @@
 **field**
 
 **method**
-없음 
-
-**static**
-* [Matrix.matClone](#matclone)
-* [Matrix.matCopy](#matcopytargetmatrixmatrix)
-* [Matrix.matIdentity](#matidentity-1)
-* [Matrix.matMultiply](#matmultiplytargetmatrixmatrix)
-* [Matrix.matTranslate](#mattranslatexnumberynumberznumber)
-* [Matrix.matScale](#matscalexnumberynumberznumber)
-* [Matrix.matRotate](#matrotateradnumber-axisarrayxyz)
-* [Matrix.matRotateX](#matrotatexradnumber)
-* [Matrix.matRotateY](#matrotateyradnumber)
-* [Matrix.matRotateZ](#matrotatezradnumber)
-* [Matrix.matRotate](#matrotateradnumber-axisarrayxyz)
-* [Matrix.matPerspective](#matperspectivefovnumberaspectnumbernearnumberfarnumber)
-* [Matrix.matLookAt](#matlookateyearrayxyzcenterarrayxyzuparrayxyz)
-* [Matrix.matStr](mat#str)
+* [matClone](#matclone)
+* [matCopy](#matcopytargetmatrixmatrix)
+* [matIdentity](#matidentity-1)
+* [matMultiply](#matmultiplytargetmatrixmatrix)
+* [matTranslate](#mattranslatexnumberynumberznumber)
+* [matScale](#matscalexnumberynumberznumber)
+* [matRotate](#matrotateradnumber-axisarrayxyz)
+* [matRotateX](#matrotatexradnumber)
+* [matRotateY](#matrotateyradnumber)
+* [matRotateZ](#matrotatezradnumber)
+* [matRotate](#matrotateradnumber-axisarrayxyz)
+* [matPerspective](#matperspectivefovnumberaspectnumbernearnumberfarnumber)
+* [matLookAt](#matlookateyearrayxyzcenterarrayxyzuparrayxyz)
+* [matStr](mat#str)
 
 [top][#]
 ## Constructor
