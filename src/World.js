@@ -347,6 +347,7 @@ var World = (function () {
                     camera = cameraList[k]
                     if (camera._visible) {
                         tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
+                        gl.uniform1i (tProgram.uFXAA,camera._antialias)
                         if(camera._antialias){
                             if(camera._renderArea) gl.uniform2fv(tProgram.uTexelSize,[1/tFrameBuffer.width,1/tFrameBuffer.height])
                             else gl.uniform2fv(tProgram.uTexelSize,[1/cvs.width,1/cvs.height])

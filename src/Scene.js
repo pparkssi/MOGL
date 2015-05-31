@@ -315,10 +315,11 @@ var Scene = (function () {
 		};
 		var postBaseFragmentShader = {
 			precision: 'mediump float',
-			uniforms: ['sampler2D uSampler','vec2 uTexelSize'],
+			uniforms: ['sampler2D uSampler','vec2 uTexelSize','int uFXAA'],
 			varyings: ['vec2 vUV'],
 			function: [],
 			main: ['' +
+			'if(uFXAA==1){\n'+
 			'float FXAA_REDUCE_MIN = (1.0/128.0);\n' +
 			'float FXAA_REDUCE_MUL = (1.0/8.0);\n' +
 			'float FXAA_SPAN_MAX = 8.0;\n' +
@@ -358,8 +359,9 @@ var Scene = (function () {
 			'else {\n' +
 			'	gl_FragColor = rgbB;\n' +
 			'}\n' +
-
-			//'gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));' +
+			'}else{\n' +
+			'	gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t));' +
+			'}' +
 			'']
 		};
 
