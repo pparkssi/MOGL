@@ -81,7 +81,7 @@ var OrbitController = (function () {
             startY0: 0
         };
         self = this;
-        //TODO 紐⑤컮�씪 泥댄겕 �뵒�뀓�꽣�룄 �븘�슂�븯援�
+        //TODO 모바일 체크 디텍터도 필요하군
         if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
             document.body.addEventListener('touchstart',HD_downTouch,false);
             document.body.addEventListener('touchmove',HD_moveTouch,false);
