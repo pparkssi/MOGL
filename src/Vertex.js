@@ -6,6 +6,6 @@ var Vertex = {
     r: 'r', g: 'g', b: 'b', a: 'a',
     normalX: 'nx', normalY: 'ny', normalZ: 'nz',
     u: 'u', v: 'v'
-}
+};
 Object.freeze(Vertex);
 

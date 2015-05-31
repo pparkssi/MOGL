@@ -118,7 +118,7 @@ var World = (function () {
 
                 return renderList[uuid][1] = function (currentTime) {
                     self.render(currentTime);
-                    started[self.uuid] = requestAnimationFrame(renderList[uuid][1]);
+                    requestAnimationFrame(renderList[uuid][1]);
                 }
             }
         } else {
@@ -133,13 +133,14 @@ var World = (function () {
     },
     fn.start = function start(){
         var uuid = this.toString();
-        started[uuid] = requestAnimationFrame(this.getRenderer(1))
+        if (!started[uuid]) started[uuid] = 1;
+        else started[uuid] = 1;
         // TODO 아예 이것도 중복이아니라..전역적으로 관리해야될것 같은데?
+        requestAnimationFrame(this.getRenderer(1))
         return this;
     },
     fn.stop = function stop(){
         var uuid = this.toString();
-        window.cancelAnimationFrame(started[uuid])
         started[uuid] = 0;
         return this;
     },

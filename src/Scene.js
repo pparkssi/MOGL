@@ -4,10 +4,10 @@
 'use strict'
 var Scene = (function () {
 	var Scene, fn;
-	var textureCVS = document.createElement('canvas')
-	var textureCTX = textureCVS.getContext('2d')
+	var textureCVS = document.createElement('canvas');
+	var textureCTX = textureCVS.getContext('2d');
 	Scene = function Scene() {
-		this._update = 0
+		this._update = 0,
 		this._cvs = null,
 		// for JS
 		this._children = {},
@@ -16,7 +16,7 @@ var Scene = (function () {
 		this._materials = {},
 		this._geometrys = {},
 		this._vertexShaders = {},
-		this._fragmentShaders = {}
+		this._fragmentShaders = {},
 		// for GPU
 		this._gl = null,
 		this._glVBOs = {},
@@ -25,7 +25,7 @@ var Scene = (function () {
 		this._glIBOs = {},
 		this._glPROGRAMs = {},
 		this._glTEXTUREs = {},
-		this._glFREAMBUFFERs = {}
+		this._glFREAMBUFFERs = {};
 
 		var colorVertexShader = {
 			attributes: ['vec3 aVertexPosition'],
@@ -36,14 +36,14 @@ var Scene = (function () {
 			'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
 			'vColor = uColor;'
 			]
-		}
+		};
 		var colorFragmentShader = {
 			precision: 'mediump float',
 			uniforms: [],
 			varyings: ['vec4 vColor'],
 			function: [],
 			main: ['gl_FragColor =  vColor']
-		}
+		};
 
 		var wireFrameVertexShader = {
 			attributes: ['vec3 aVertexPosition'],
@@ -54,7 +54,7 @@ var Scene = (function () {
 			'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
 			'vColor = uColor ;'
 			]
-		}
+		};
 		var wireFrameFragmentShader = {
 			precision: 'mediump float',
 			uniforms: [],
@@ -63,7 +63,7 @@ var Scene = (function () {
 			main: ['' +
 			'gl_FragColor =  vColor;' +
 			'']
-		}
+		};
 
 		var bitmapVertexShader = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV'],
@@ -74,14 +74,14 @@ var Scene = (function () {
 			'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
 			'vUV = aUV;'
 			]
-		}
+		};
 		var bitmapFragmentShader = {
 			precision: 'mediump float',
 			uniforms: ['sampler2D uSampler'],
 			varyings: ['vec2 vUV'],
 			function: [],
 			main: ['gl_FragColor =  texture2D(uSampler, vec2(vUV.s, vUV.t))']
-		}
+		};
 		var colorVertexShaderGouraud = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
 			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec4 uColor'],
@@ -96,7 +96,7 @@ var Scene = (function () {
 			' vColor = uColor*df;'+
 			' vColor[3] = uColor[3];'
 			]
-		}
+		};
 		var colorFragmentShaderGouraud = {
 			precision: 'mediump float',
 			uniforms: ['sampler2D uSampler'],
@@ -105,7 +105,7 @@ var Scene = (function () {
 			main: ['' +
 			'gl_FragColor =  vColor;\n'
 			]
-		}
+		};
 		var bitmapVertexShaderGouraud = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
 			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uDLite','float uLambert','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
@@ -121,7 +121,7 @@ var Scene = (function () {
 			' vLight[3] = 1.0;\n' +
 			' vUV = aUV;'
 			]
-		}
+		};
 		var bitmapFragmentShaderGouraud = {
 			precision: 'mediump float',
 			uniforms: ['sampler2D uSampler'],
@@ -131,7 +131,7 @@ var Scene = (function () {
 			'gl_FragColor =  (vLight*texture2D(uSampler, vec2(vUV.s, vUV.t)));\n' +
 			'gl_FragColor.a = 1.0;'
 			]
-		}
+		};
 
 		var colorVertexShaderPhong = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
@@ -145,7 +145,7 @@ var Scene = (function () {
 			'vNormal = vec3(mv * vec4(-aVertexNormal, 0.0));\n' +
 			'vColor = uColor;'
 			]
-		}
+		};
 		var colorFragmentShaderPhong = {
 			precision: 'mediump float',
 			uniforms: ['float uLambert', 'vec3 uDLite'],
@@ -171,7 +171,7 @@ var Scene = (function () {
 			'gl_FragColor = vColor*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
 			'gl_FragColor.a = vColor[3];'
 			]
-		}
+		};
 		var toonVertexShaderPhong = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
 			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition','vec4 uColor'],
@@ -185,7 +185,7 @@ var Scene = (function () {
 
 			'vColor = uColor;'
 			]
-		}
+		};
 		var toonFragmentShaderPhong = {
 			precision: 'mediump float',
 			uniforms: ['float uLambert', 'vec3 uDLite'],
@@ -220,7 +220,7 @@ var Scene = (function () {
 			'gl_FragColor.rgb = src.rgb;\n' +
 			'gl_FragColor.a = vColor[3];'
 			]
-		}
+		};
 		var bitmapVertexShaderPhong = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
 			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
@@ -233,7 +233,7 @@ var Scene = (function () {
 			'vNormal = normalize(vec3( uCameraMatrix * rotationMTX(uRotate) * vec4(-aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
-		}
+		};
 
 		var bitmapFragmentShaderPhong = {
 			precision: 'mediump float',
@@ -261,7 +261,7 @@ var Scene = (function () {
 			'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n'+
 			'gl_FragColor.a = 1.0;'
 			]
-		}
+		};
 		var bitmapVertexShaderBlinn = {
 			attributes: ['vec3 aVertexPosition', 'vec2 aUV','vec3 aVertexNormal'],
 			uniforms: ['mat4 uPixelMatrix','mat4 uCameraMatrix','vec3 uRotate', 'vec3 uScale', 'vec3 uPosition'],
@@ -274,7 +274,7 @@ var Scene = (function () {
 			'vNormal = normalize(vec3( uCameraMatrix * rotationMTX(uRotate) * vec4(-aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
-		}
+		};
 		var bitmapFragmentShaderBlinn = {
 			precision: 'mediump float',
 			uniforms: ['sampler2D uSampler', 'float uLambert', 'vec3 uDLite'],
@@ -301,7 +301,7 @@ var Scene = (function () {
 			'gl_FragColor = texture2D(uSampler, vec2(vUV.s, vUV.t))*vec4(ambientColor +lambertian*diffuseColor +specular*specColor, 1.0);\n' +
 			'gl_FragColor.a = 1.0;'
 			]
-		}
+		};
 
 		this.addVertexShader('color', colorVertexShader),
 		this.addFragmentShader('color', colorFragmentShader),
@@ -321,12 +321,12 @@ var Scene = (function () {
 		this.addFragmentShader('bitmapPhong', bitmapFragmentShaderPhong);
 		this.addVertexShader('bitmapBlinn', bitmapVertexShaderBlinn),
 		this.addFragmentShader('bitmapBlinn', bitmapFragmentShaderBlinn);
-	}
+	};
 	/////////////////////////////////////////////////////////////////
 	var makeVBO = function makeVBO(self, name, data, stride) {
 		var gl, buffer;
-		gl = self._gl, buffer = self._glVBOs[name]
-		if (buffer) return buffer
+		gl = self._gl, buffer = self._glVBOs[name];
+		if (buffer) return buffer;
 		buffer = gl.createBuffer(),
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
@@ -336,14 +336,14 @@ var Scene = (function () {
 		buffer.stride = stride,
 		buffer.numItem = data.length / stride,
 		self._glVBOs[name] = buffer,
-		console.log('VBO생성', self._glVBOs[name])
-		return self._glVBOs[name]
-	}
+		console.log('VBO생성', self._glVBOs[name]);
+		return self._glVBOs[name];
+	};
 
 	var makeVNBO = function makeVNBO(self, name, data, stride) {
 		var gl, buffer;
-		gl = self._gl, buffer = self._glVNBOs[name]
-		if (buffer) return buffer
+		gl = self._gl, buffer = self._glVNBOs[name];
+		if (buffer) return buffer;
 		buffer = gl.createBuffer(),
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
@@ -353,14 +353,14 @@ var Scene = (function () {
 		buffer.stride = stride,
 		buffer.numItem = data.length / stride,
 		self._glVNBOs[name] = buffer,
-		console.log('VNBO생성', self._glVNBOs[name])
-		return self._glVNBOs[name]
-	}
+		console.log('VNBO생성', self._glVNBOs[name]);
+		return self._glVNBOs[name];
+	};
 
 	var makeIBO = function makeIBO(self, name, data, stride) {
 		var gl, buffer;
-		gl = self._gl, buffer = self._glIBOs[name]
-		if (buffer) return buffer
+		gl = self._gl, buffer = self._glIBOs[name];
+		if (buffer) return buffer;
 		buffer = gl.createBuffer(),
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer),
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), gl.STATIC_DRAW),
@@ -370,14 +370,14 @@ var Scene = (function () {
 		buffer.stride = stride,
 		buffer.numItem = data.length / stride,
 		self._glIBOs[name] = buffer,
-		console.log('IBO생성', self._glIBOs[name])
-		return self._glIBOs[name]
-	}
+		console.log('IBO생성', self._glIBOs[name]);
+		return self._glIBOs[name];
+	};
 
 	var makeUVBO = function makeUVBO(self, name, data, stride) {
 		var gl, buffer;
-		gl = self._gl, buffer = self._glUVBOs[name]
-		if (buffer) return buffer
+		gl = self._gl, buffer = self._glUVBOs[name];
+		if (buffer) return buffer;
 		buffer = gl.createBuffer(),
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
@@ -387,12 +387,12 @@ var Scene = (function () {
 		buffer.stride = stride,
 		buffer.numItem = data.length / stride,
 		self._glUVBOs[name] = buffer,
-		console.log('UVBO생성', self._glUVBOs[name])
-		return self._glUVBOs[name]
-	}
+		console.log('UVBO생성', self._glUVBOs[name]);
+		return self._glUVBOs[name];
+	};
 
 	var makeProgram = function makeProgram(self, name) {
-		var gl, vShader, fShader, program, i
+		var gl, vShader, fShader, program, i;
 		gl = self._gl,
 		vShader = vertexShaderParser(self, self._vertexShaders[name]),
 		fShader = fragmentShaderParser(self, self._fragmentShaders[name]),
@@ -400,26 +400,26 @@ var Scene = (function () {
 		gl.attachShader(program, vShader),
 		gl.attachShader(program, fShader),
 		gl.linkProgram(program),
-		vShader.name = name + '_vertex', fShader.name = name + '_fragment', program.name = name
+		vShader.name = name + '_vertex', fShader.name = name + '_fragment', program.name = name;
 		if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error( '프로그램 쉐이더 초기화 실패!' + self );
-		gl.useProgram(program)
+		gl.useProgram(program);
 		for (i = 0; i < vShader.attributes.length; i++) {
 			gl.bindBuffer(gl.ARRAY_BUFFER, self._glVBOs['null']),
-			gl.enableVertexAttribArray(program[vShader.attributes[i]] = gl.getAttribLocation(program, vShader.attributes[i]))
-			gl.vertexAttribPointer(program[vShader.attributes[i]], self._glVBOs['null'].stride, gl.FLOAT, false, 0, 0)
+			gl.enableVertexAttribArray(program[vShader.attributes[i]] = gl.getAttribLocation(program, vShader.attributes[i])),
+			gl.vertexAttribPointer(program[vShader.attributes[i]], self._glVBOs['null'].stride, gl.FLOAT, false, 0, 0);
 		}
 		for (i = 0; i < vShader.uniforms.length; i++) {
-			program[vShader.uniforms[i]] = gl.getUniformLocation(program, vShader.uniforms[i])
+			program[vShader.uniforms[i]] = gl.getUniformLocation(program, vShader.uniforms[i]);
 		}
 		for (i = 0; i < fShader.uniforms.length; i++) {
-			program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i])
+			program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i]);
 		}
-		self._glPROGRAMs[name] = program
+		self._glPROGRAMs[name] = program;
 		//console.log(vShader)
 		//console.log(fShader)
 		//console.log(program)
-		return program
-	}
+		return program;
+	};
 
 	var vertexShaderParser = function vertexShaderParser(self, source) {
 		var gl, t0, len, i, resultStr, shader;
@@ -429,16 +429,16 @@ var Scene = (function () {
 		resultStr = "", t0 = source.attributes, len = t0.length;
 		for (i = 0; i < len; i++) {
 			resultStr += 'attribute ' + t0[i] + ';\n',
-			shader.attributes.push(t0[i].split(' ')[1])
+			shader.attributes.push(t0[i].split(' ')[1]);
 		}
-		t0 = source.uniforms, len = t0.length
+		t0 = source.uniforms, len = t0.length;
 		for (i = 0; i < len; i++) {
 			resultStr += 'uniform ' + t0[i] + ';\n',
-			shader.uniforms.push(t0[i].split(' ')[1])
+			shader.uniforms.push(t0[i].split(' ')[1]);
 		}
-		t0 = source.varyings, len = t0.length
+		t0 = source.varyings, len = t0.length;
 		for (i = 0; i < len; i++) {
-			resultStr += 'varying ' + t0[i] + ';\n'
+			resultStr += 'varying ' + t0[i] + ';\n';
 		}
 		resultStr += VertexShader.baseFunction,
 		resultStr += 'void main(void){\n',
@@ -446,82 +446,82 @@ var Scene = (function () {
 		resultStr += '}\n',
 		//console.log(resultStr),
 		gl.shaderSource(shader, resultStr),
-		gl.compileShader(shader)
-		return shader
-	}
+		gl.compileShader(shader);
+		return shader;
+	};
 
 	var fragmentShaderParser = function fragmentShaderParser(self,source){
 		var gl, resultStr, i, t0, len, shader;
 		gl = self._gl, resultStr = "", shader = gl.createShader(gl.FRAGMENT_SHADER),
-		shader.uniforms = []
-		if (source.precision) resultStr += 'precision ' + source.precision + ';\n'
+		shader.uniforms = [];
+		if (source.precision) resultStr += 'precision ' + source.precision + ';\n';
 		else resultStr += '' +
-			'precision mediump float;\n'
-		t0 = source.uniforms, len = t0.length
+			'precision mediump float;\n';
+		t0 = source.uniforms, len = t0.length;
 		for (i = 0; i < len; i++) {
 			resultStr += 'uniform ' + t0[i] + ';\n',
-			shader.uniforms.push(t0[i].split(' ')[1])
+			shader.uniforms.push(t0[i].split(' ')[1]);
 		}
-		t0 = source.varyings, len = t0.length
+		t0 = source.varyings, len = t0.length;
 		for (i = 0; i < len; i++) {
-			resultStr += 'varying ' + t0[i] + ';\n'
+			resultStr += 'varying ' + t0[i] + ';\n';
 		}
 		resultStr += 'void main(void){\n',
 		resultStr += source.main + ';\n',
 		resultStr += '}\n',
 		//console.log(resultStr),
 		gl.shaderSource(shader, resultStr),
-		gl.compileShader(shader)
-		return shader
-	}
+		gl.compileShader(shader);
+		return shader;
+	};
 
 
 	var makeTexture = function makeTexture(self, id, image/*,resizeType*/) {
 		var gl, texture;
 		gl = self._gl, texture = self._glTEXTUREs[id];
-		if (texture) return texture
-		texture = gl.createTexture()
+		if (texture) return texture;
+		texture = gl.createTexture();
 
 		var img, img2, tw,th;
 		img = new Image(), img2 = new Image(),
-		tw=1,th=1;
+		tw = 1, th = 1;
 
 		///////////////////////////////////
 		// 타입구분
-		if (image instanceof ImageData) img.src = image.data
-		else if (image instanceof HTMLCanvasElement) img.src = image.toDataURL()
-		else if (image instanceof HTMLImageElement) img.src = image.src
-		else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) img.src = image //base64문자열 - urlData형식으로 지정된 base64문자열
-		else if (typeof image == 'string') img.src = image
+		if (image instanceof ImageData) img.src = image.data;
+		else if (image instanceof HTMLCanvasElement) img.src = image.toDataURL();
+		else if (image instanceof HTMLImageElement) img.src = image.src;
+		else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) img.src = image; //base64문자열 - urlData형식으로 지정된 base64문자열
+		else if (typeof image == 'string') img.src = image;
 		//TODO 일단 이미지만
 		//TODO 비디오 처리
 		///////////////////////////////////
 
-		var resize = arguments[3] || Texture.zoomOut
-		img.onload=function(){
+		var resize = arguments[3] || Texture.zoomOut;
+		img.onload = function(){
 			//TODO 이걸 인자타입에 따라 다르게 적용하면되겠군
 			while (img.width > tw) tw *= 2;
 			while (img.height > th) th *= 2;
 			if (resize == Texture.zoomOut) {
-				if (img.width < tw) tw /= 2
-				if (img.height < th) th /= 2
+				if (img.width < tw) tw /= 2;
+				if (img.height < th) th /= 2;
 			} else if (resize == Texture.zoomIn) {}
 			var dw = tw, dh = th;
 			textureCVS.width = tw,
 			textureCVS.height = th,
-			textureCTX.clearRect(0, 0, tw, th)
+			textureCTX.clearRect(0, 0, tw, th);
 			if (resize == Texture.crop) {
-				if (img.width < tw) dw = tw / 2
-				if (img.height < th) dh = th / 2
-				textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, dw, dh)
-			} else if (resize == Texture.addSpace) textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, tw, th)
-			else textureCTX.drawImage(img, 0, 0, dw, dh)
+				if (img.width < tw) dw = tw / 2;
+				if (img.height < th) dh = th / 2;
+				textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, dw, dh);
+			} else if (resize == Texture.addSpace) textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, tw, th);
+			else textureCTX.drawImage(img, 0, 0, dw, dh);
 			console.log(resize,'텍스쳐크기 자동변환', img.width, img.height, '--->', dw, dh),
 			console.log(textureCVS.toDataURL()),
-			img2.src = textureCVS.toDataURL()
-		}
+			img2.src = textureCVS.toDataURL();
+		};
 
-		texture.img = img2
+		texture.img = img2;
 		texture.img.onload = function () {
 			gl.bindTexture(gl.TEXTURE_2D, texture),
 			//TODO 다변화 대응해야됨
@@ -532,12 +532,12 @@ var Scene = (function () {
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 			gl.generateMipmap(gl.TEXTURE_2D);
 			texture.loaded = 1;
-		}
+		};
 
 		texture.originalData = image,
 		self._glTEXTUREs[id] = texture,
-		gl.bindTexture(gl.TEXTURE_2D, null)
-		return texture
+		gl.bindTexture(gl.TEXTURE_2D, null);
+		return texture;
 	}
 
 	var makeFrameBuffer = function makeFrameBuffer(self, camera){
@@ -546,7 +546,7 @@ var Scene = (function () {
 		framebuffer = gl.createFramebuffer(),
 		gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer),
 		framebuffer.x = camera._renderArea[0], framebuffer.y = camera._renderArea[1],
-		framebuffer.width = camera._renderArea[2], framebuffer.height = camera._renderArea[3]
+		framebuffer.width = camera._renderArea[2], framebuffer.height = camera._renderArea[3];
 
 		texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_2D, texture),
@@ -567,24 +567,24 @@ var Scene = (function () {
 		self._glFREAMBUFFERs[camera.uuid] = {
 			frameBuffer: framebuffer,
 			texture: texture
-		}
-	}
+		};
+	};
 /////////////////////////////////////////////////////////////////
 	fn = Scene.prototype,
 	fn.update = function update() { 
 		var k,checks;
-		this._glVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0, 0.0, 0.0]), 3)
+		this._glVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0, 0.0, 0.0]), 3);
 		//for GPU
 		for (k in this._children) {
 			var mesh = this._children[k], _key, geo = mesh._geometry;
 			if (geo) {
-				if (!this._geometrys[geo._key]) this.addGeometry(geo._key, geo)
+				if (!this._geometrys[geo._key]) this.addGeometry(geo._key, geo);
 				if (!this._glVBOs[geo]) {
 					_key = geo._key,
 					this._glVBOs[_key] = makeVBO(this, _key, geo._position, 3),
 					this._glVNBOs[_key] = makeVNBO(this, _key, geo._normal, 3),
 					this._glUVBOs[_key] = makeUVBO(this, _key, geo._uv, 2),
-					this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1)
+					this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1);
 				}
 			}
 		}
@@ -601,25 +601,25 @@ var Scene = (function () {
 				0.0, 1.0,
 				1.0, 1.0
 			], 2),
-			this._glIBOs['_FRAMERECT_'] = makeIBO(this, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1)
+			this._glIBOs['_FRAMERECT_'] = makeIBO(this, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
 		}
 		for (k in this._cameras) {
 			var camera = this._cameras[k];
-			camera._cvs = this._cvs
-			if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height)
+			camera._cvs = this._cvs;
+			if (!camera._renderArea) camera.setRenderArea(0, 0, this._cvs.width, this._cvs.height);
 			else {
 				if(camera._cvs['_autoSize']) {
-					var wRatio = camera._renderArea[2]/this._cvs.width
-					var hRatio = camera._renderArea[3]/this._cvs.height
-					camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], this._cvs.width * wRatio, this._cvs.height * hRatio)
+					var wRatio = camera._renderArea[2]/this._cvs.width;
+					var hRatio = camera._renderArea[3]/this._cvs.height;
+					camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], this._cvs.width * wRatio, this._cvs.height * hRatio);
 				}
-				else camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], camera._renderArea[2], camera._renderArea[3])
+				else camera.setRenderArea(camera._renderArea[0], camera._renderArea[1], camera._renderArea[2], camera._renderArea[3]);
 			}
 			camera.getProjectionMatrix(),
-			makeFrameBuffer(this, camera)
+			makeFrameBuffer(this, camera);
 		}
 		checks = this._vertexShaders;
-		for (k in checks) makeProgram(this, k)
+		for (k in checks) makeProgram(this, k);
 		//console.log('////////////////////////////////////////////'),
 		//console.log('Scene 업데이트'),
 		//console.log('this._glVBOs :', this._glVBOs),
@@ -633,140 +633,140 @@ var Scene = (function () {
 		//console.log('this._fragmentShaders :', this._fragmentShaders),
 		console.log('this._glFREAMBUFFERs :', this._glFREAMBUFFERs),
 		//console.log('////////////////////////////////////////////'),
-		this._update = 0
+		this._update = 0;
 	},
 	fn.addChild = function addChild(id, mesh) {  // isAlive는 함수선언 줄에 바로 같이 씁니다.
 		var k, checks;
-		if (this._children[id]) this.error(0)
-		if (!(mesh instanceof Mesh )) this.error(1)
+		if (this._children[id]) this.error(0);
+		if (!(mesh instanceof Mesh )) this.error(1);
 		mesh._scene = this, mesh._parent = this,
 		mesh.setGeometry(mesh._geometry),
 		mesh.setMaterial(mesh._material),
 		mesh._material._count++,
 		checks = mesh._geometry._vertexShaders;
-		for (k in checks) if (typeof checks[k] == 'string') if (!this._vertexShaders[checks[k]]) this.error(2)
+		for (k in checks) if (typeof checks[k] == 'string') if (!this._vertexShaders[checks[k]]) this.error(2);
 		checks = mesh._material._fragmentShaders;
-		for (k in checks) if (typeof checks[k] == 'string') if (!this._fragmentShaders[checks[k]]) this.error(3)
+		for (k in checks) if (typeof checks[k] == 'string') if (!this._fragmentShaders[checks[k]]) this.error(3);
 		checks = mesh._material._textures;
 		for (k in checks)
 			if (typeof checks[k] == 'string')
-				if (!this._textures[checks[k]]) this.error(4)
+				if (!this._textures[checks[k]]) this.error(4);
 				else {
 					//console.log(mesh._material._textures),
 					//console.log(checks[k]),
-					mesh._material._textures[checks[k]] = this._textures[checks[k]]
+					mesh._material._textures[checks[k]] = this._textures[checks[k]];
 				}
-		if (mesh instanceof Camera) this._cameras[id] = mesh, mesh._cvs = this._cvs
-		else this._children[id] = mesh
-		this._update = 1
-		return this
+		if (mesh instanceof Camera) this._cameras[id] = mesh, mesh._cvs = this._cvs;
+		else this._children[id] = mesh;
+		this._update = 1;
+		return this;
 	},
 	fn.addGeometry = function (id, geometry) { 
-		if (this._geometrys[id]) this.error(0)
-		if (!(geometry instanceof Geometry)) this.error(1)
+		if (this._geometrys[id]) this.error(0);
+		if (!(geometry instanceof Geometry)) this.error(1);
 		var checks = geometry._vertexShaders, k;
-		for (k in checks) if (typeof checks[k] == 'string') if (!this._vertexShaders[checks[k]]) this.error(2)
-		this._geometrys[id] = geometry
-		return this
+		for (k in checks) if (typeof checks[k] == 'string') if (!this._vertexShaders[checks[k]]) this.error(2);
+		this._geometrys[id] = geometry;
+		return this;
 	},
 	fn.addMaterial = function (id, material) { 
-		if (this._materials[id]) this.error(0)
-		if (!(material instanceof Material)) this.error(1)
+		if (this._materials[id]) this.error(0);
+		if (!(material instanceof Material)) this.error(1);
 		var checks = material._fragmentShaders, k;
-		for (k in checks) if (typeof checks[k] == 'string') if (!this._fragmentShaders[checks[k]]) this.error(2)
+		for (k in checks) if (typeof checks[k] == 'string') if (!this._fragmentShaders[checks[k]]) this.error(2);
 		checks = material._textures;
 		for (k in checks) if (typeof checks[k] == 'string') if (!this._textures[checks[k]]) {
-			this.error(3)
+			this.error(3);
 		}
 		this._materials[id] = material,
-		this._materials[id]._scene = this
-		return this
+		this._materials[id]._scene = this;
+		return this;
 	},
 	fn.addTexture = function addTexture(id, image/*,resizeType*/) { 
-		if (this._textures[id]) this.error(0)
-		if (checkDraft(image)) this.error(1)
+		if (this._textures[id]) this.error(0);
+		if (checkDraft(image)) this.error(1);
 		function checkDraft(target) {
-			if (target instanceof HTMLImageElement) return 0
-			if (target instanceof HTMLCanvasElement) return 0
-			if (target instanceof HTMLVideoElement) return 0
-			if (target instanceof ImageData) return 0
-			if (target['substring'] && target.substring(0, 10) == 'data:image' && target.indexOf('base64') > -1) return 0// base64문자열 - urlData형식으로 지정된 base64문자열
-			if (typeof target == 'string') return 0
+			if (target instanceof HTMLImageElement) return 0;
+			if (target instanceof HTMLCanvasElement) return 0;
+			if (target instanceof HTMLVideoElement) return 0;
+			if (target instanceof ImageData) return 0;
+			if (target['substring'] && target.substring(0, 10) == 'data:image' && target.indexOf('base64') > -1) return 0; // base64문자열 - urlData형식으로 지정된 base64문자열
+			if (typeof target == 'string') return 0;
 			// TODO 블랍은 어카지 -__;;;;;;;;;;;;;;;;;;;;;;;;실제 이미지를 포함하고 있는 Blob객체.
-			return 1
+			return 1;
 		}
 
-		if (this._textures[id]) this._textures[id].webglTexture = makeTexture(this, id, image)
+		if (this._textures[id]) this._textures[id].webglTexture = makeTexture(this, id, image);
 		else {
 			this._textures[id] = {count: 0, last: 0, webglTexture: null, resizeType: arguments[2] || null},
-			this._textures[id].webglTexture = makeTexture(this, id, image, arguments[2])
+			this._textures[id].webglTexture = makeTexture(this, id, image, arguments[2]);
 			//console.log(this._textures),
 			//console.log(id, image)
 		}
-		return this
+		return this;
 	},
 	fn.addFragmentShader = function addFragmentShader(id, shaderStr) { 
-		if (this._fragmentShaders[id]) this.error(0)
+		if (this._fragmentShaders[id]) this.error(0);
 		// TODO'Scene.addVertexShader:1' - MoGL 표준 인터페이스를 준수하지 않는 vertex shader를 등록하려할 때.
 		// TODO 마일스톤0.2
-		this._fragmentShaders[id] = shaderStr
-		return this
+		this._fragmentShaders[id] = shaderStr;
+		return this;
 	},
 	fn.addVertexShader = function addVertexShader(id, shaderStr) { 
-		if (this._vertexShaders[id]) this.error(0)
+		if (this._vertexShaders[id]) this.error(0);
 		// TODO'Scene.addVertexShader:1' - MoGL 표준 인터페이스를 준수하지 않는 vertex shader를 등록하려할 때.
 		// TODO 마일스톤0.2
-		this._vertexShaders[id] = shaderStr
-		return this
+		this._vertexShaders[id] = shaderStr;
+		return this;
 	},
 	///////////////////////////////////////////////////////////////////////////
 	// Get
 	fn.getChild = function getChild(id) {
 		var t = this._children[id];
 		t = t ? t : this._cameras[id];
-		return t ? t : null
+		return t ? t : null;
 	},
 	fn.getGeometry = function getGeometry(id) { 
 		var t = this._geometrys[id];
-		return t ? t : null
+		return t ? t : null;
 	},
 	fn.getMaterial = function getMaterial(id) { 
-		var t = this._materials[id]
-		return t ? t : null
+		var t = this._materials[id];
+		return t ? t : null;
 	},
 	fn.getTexture = function getTexture(id) { 
-		var t = this._textures[id]
-		return t ? t : null
+		var t = this._textures[id];
+		return t ? t : null;
 	},
 	fn.getFragmentShader = function (id) { 
 		// TODO 마일스톤0.5
-		return this._fragmentShaders[id]
+		return this._fragmentShaders[id];
 	},
 	fn.getVertexShader = function (id) { 
 		// TODO 마일스톤0.5
-		return this._vertexShaders[id]
+		return this._vertexShaders[id];
 	},
 	///////////////////////////////////////////////////////////////////////////
 	// Remove
 	fn.removeChild = function removeChild(id) { 
-		return this._children[id] ? (this._children[id]._material._count--, this._children[id]._scene = null,this._children[id]._parent = null, delete this._children[id], true) : false
+		return this._children[id] ? (this._children[id]._material._count--, this._children[id]._scene = null,this._children[id]._parent = null, delete this._children[id], true) : false;
 	},
 	fn.removeGeometry = function removeGeometry(id) { 
-		return this._geometrys[id] ? (delete this._geometrys[id], true) : false
+		return this._geometrys[id] ? (delete this._geometrys[id], true) : false;
 	},
 	fn.removeMaterial = function removeMaterial(id) { 
-		return this._materials[id] ? (delete this._materials[id], true) : false
+		return this._materials[id] ? (delete this._materials[id], true) : false;
 	},
 	fn.removeTexture = function removeTexture(id) { 
-		return this._textures[id] ? (delete this._textures[id], true) : false
+		return this._textures[id] ? (delete this._textures[id], true) : false;
 	},
 	fn.removeFragmentShader = function removeFragmentShader() { 
 		// TODO 마일스톤0.5
-		return this
+		return this;
 	},
 	fn.removeVertexShader = function VertexShader() { 
 		// TODO 마일스톤0.5
-		return this
+		return this;
 	}
 	return MoGL.ext(Scene, MoGL);
 })();
