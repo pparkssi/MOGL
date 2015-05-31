@@ -254,7 +254,7 @@ var Scene = (function () {
 			'float specular = 0.0;\n' +
 
 			'if(lambertian > 0.0) {\n' +
-			'float specAngle = max(dot(reflectDir, viewDir), 0.0);\n' +
+			'float specAngle = max(dot(reflectDir, viewDir), 0.1);\n' +
 			'   specular = pow(specAngle, 4.0)*uLambert;\n' +
 			'}\n' +
 
