@@ -28,15 +28,16 @@ Vector( typedArr:Float32Array )
 
 **description**
 
-Vector 연산을...
-
+* Vector 연산을 cpu측에서 수행하기 위한 헬퍼객체.
+* this._rowData에 Float32Array형식의 초기 배열이 생김.
+* x, y, z 형식의 Vector를 다룸.
 * Vector의 메서드는 대부분 메서드체이닝을 지원함.
 
 **param**
 
 1. x, y, z : 각각 x, y, z 의 숫자값.
 2. array : [x, y, z] 형태의 배열.
-3. Floate32Array : [x, y, z] 형태의 Typed Array
+3. Floate32Array : [x, y, z] 형태의 Typed Array.
 
 **sample**
 
@@ -46,7 +47,7 @@ var vector = new Vector( [1, 2, 3] );
 var vector = new Vector( new Float32Array( [1, 2, 3] ) );
 var vector = new Vector();
 
-// 팩토리 함소로도 사용 가능
+// 팩토리 함소로도 사용 가능.
 var vector = Vector( 1, 2, 3 );
 ```
 
@@ -59,7 +60,7 @@ var vector = Vector( 1, 2, 3 );
 
 **param**
 
-1. vector:[Vector](Vector.md) - x, y, z 값을 더할 [Vector](Vector.md) 객체
+1. vector:[Vector](Vector.md) - x, y, z 값을 더할 [Vector](Vector.md) 객체.
 
 **return**
 
@@ -83,9 +84,9 @@ vector.add( vector2 );
 
 **param**
 
-1. x:number - 현재 [Vector](Vector.md) 객체의 x값에 더할 값
-2. y:number - 현재 [Vector](Vector.md) 객체의 y값에 더할 값
-3. z:number - 현재 [Vector](Vector.md) 객체의 z값에 더할 값
+1. x:number - 현재 [Vector](Vector.md) 객체의 x값에 더할 값.
+2. y:number - 현재 [Vector](Vector.md) 객체의 y값에 더할 값.
+3. z:number - 현재 [Vector](Vector.md) 객체의 z값에 더할 값.
 
 **return**
 
@@ -108,7 +109,7 @@ vector.addXYZ( 1, 2, 3 );
 
 **param**
 
-1 vector:[Vector](Vector.md) - x, y, z 값을 뺄 [Vector](Vector.md) 객체
+1 vector:[Vector](Vector.md) - x, y, z 값을 뺄 [Vector](Vector.md) 객체.
 
 **return**
 
@@ -132,9 +133,9 @@ vector1.subtract( vector2 );
 
 **param**
 
-1. x:number - 현재 [Vector](Vector.md) 객체의 x값에 뺄 값
-2. y:number - 현재 [Vector](Vector.md) 객체의 y값에 뺄 값
-3. z:number - 현재 [Vector](Vector.md) 객체의 z값에 뺄 값
+1. x:number - 현재 [Vector](Vector.md) 객체의 x값에 뺄 값.
+2. y:number - 현재 [Vector](Vector.md) 객체의 y값에 뺄 값.
+3. z:number - 현재 [Vector](Vector.md) 객체의 z값에 뺄 값.
 
 **return**
 
