@@ -17,6 +17,7 @@
 <script src="../src/MoGL.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
+(function(){
 	var parent = function parent( a, b ){ 
 		this.a = a;
 		this.b = b;
@@ -114,7 +115,7 @@
 					test = e.toString();
 				}
 				return test;
-			}, 'Error: Destroyed Object:[object Object]'
+			}, bsTest.REG('^Error[:] Destroyed Object[:]')
 	);
 
 	var instance3 = child(7, 8, 9);
@@ -122,7 +123,7 @@
 	bsTest( 'id',
 			function(){
 				return instance3.id;
-			}, null,
+			}, undefined,
 			function(){
 				instance3.setId(1);
 				return instance3.id;
@@ -171,31 +172,69 @@
 			return result;
 		}, 'Error: test.constructor:1'
 	);
-	var a = function(){
-		this.a = 3;
-	};
-	a = MoGL.ext(a);
-	var b = function(){
-		this.b = 5;
-	};
-	b = MoGL.ext( b, a );
-	var c = function(){
-		this.c = 7;
-	};
-	c = MoGL.ext( c, b );
-	var grandchild = new c();
-	bsTest( 'grandChild',
-		function(){
-			return grandchild.a;
-		}, 3,
-		function(){
-			return grandchild.b;
-		}, 5,
-		function(){
-			return grandchild.c;
-		}, 7
-	);
-	
+})();
+(function(){
+    var a = function(){
+        this.a = 3;
+    };
+    a = MoGL.ext(a);
+    var b = function(){
+        this.b = 5;
+    };
+    b = MoGL.ext( b, a );
+    var c = function(){
+        this.c = 7;
+    };
+    c = MoGL.ext( c, b );
+    var grandchild = new c();
+    bsTest( 'grandChild',
+        function(){
+            return grandchild.a;
+        }, 3,
+        function(){
+            return grandchild.b;
+        }, 5,
+        function(){
+            return grandchild.c;
+        }, 7
+    );
+})();
+(function(){
+    var a = function(){}
+    a = MoGL.ext(a);
+    var k = new a();
+    k.id = 'aaaa';
+    k.addEventListener( 'some', function(a,b){
+        var self = this;
+        bsTest( 'event0',
+            function(){
+                return self.id;
+            }, 'aaaa',
+            function(){
+                return a;
+            }, 3,
+            function(){
+                return b;
+            }, 5
+        );
+    } );
+    k.addEventListener( 'some', function(a,b){
+        var self = this;
+        bsTest( 'event1',
+            function(){
+                return self.id;
+            }, 'aaaa',
+            function(){
+                return a;
+            }, 3,
+            function(){
+                return b;
+            }, 5
+        );
+    } );
+    k.dispatch( 'some', 3, 5 );
+})();
+        
 </script>
 </body>
 </html>
