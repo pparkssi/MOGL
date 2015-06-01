@@ -1,6 +1,6 @@
 var MoGL = (function() {
-    var isFactory, isSuperChain, value,
-        uuidProp, isAliveProp,
+    var isFactory, isSuperChain, 
+        value, writable,
         uuid, counter, totalCount,
         method, prevMethod, errorMethod,
         MoGL, fn, listener, ids;
@@ -15,8 +15,7 @@ var MoGL = (function() {
     counter = {}, //클래스별로 관리
     
     //속성지정자용 기술객체
-    uuidProp = {value:0},
-    isAliveProp = {value:true, writable:true},
+    writable = {value:true, writable:true},
     value = {value:null},
     
     //메서드생성기
@@ -32,30 +31,62 @@ var MoGL = (function() {
             return result;
         };
     },
-    ids = {},
     //MoGL정의
     MoGL = function MoGL() {
-        uuidProp.value = uuid++,
-        Object.defineProperty(this, 'uuid', uuidProp),
-        Object.defineProperty(this, 'isAlive', isAliveProp),
+        value.value = uuid++,
+        Object.defineProperty(this, 'uuid', value),
+        writable.value = true,
+        Object.defineProperty(this, 'isAlive', writable),
+        writable.value = false,
+        Object.defineProperty(this, 'isUpdated', writable),
         counter[this.classId]++,
         totalCount++;
     },
     fn = MoGL.prototype,
     fn.classId = MoGL.uuid = uuid++,
     fn.className = 'MoGL',
-    fn.error = function error(id) { //error
-        throw new Error(this.className + '.' + errorMethod + ':' + id);
-    },
+    ids = {},
+    Object.defineProperty(fn, 'id', { //id처리기
+        get:function idGet() {
+            if (ids[this.classId]) {
+                return ids[this.classId][this] || null;
+            } else {
+                return null;
+            }
+        },
+        set:function idSet(v) {
+            if (!ids[this.classId]){
+                ids[this.classId] = {ref:{}};
+            } else if(v in ids[this.classId].ref){
+                 throw new Error(this.className + '.idSetter:0');
+            }
+            if(v === null && this.uuid in ids[this.classId]){
+                v = ids[this.classId][this],
+                delete ids[this.classId][this],
+                delete ids[this.classId].ref[v];
+            }else{
+                ids[this.classId][this] = v;
+                ids[this.classId].ref[v] = this.uuid;
+            }
+        }
+    }),
     fn.destroy = method(function destroy() { //파괴자
         var key;
         for (key in this) {
             if (this.hasOwnProperty(key)) this[key] = null;
         }
+        if(ids[this.classId] && this.uuid in ids[this.classId][this]){
+            key = ids[this.classId][this];
+            delete ids[this.classId][this],
+            delete ids[this.classId].ref[key];
+        }
         this.isAlive = false,
         counter[this.classId]--,
         totalCount--;
     }),
+    fn.error = function error(id) { //error
+        throw new Error(this.className + '.' + errorMethod + ':' + id);
+    },
     fn.setId = method(function setId(v) { //id setter
         this.id = v;
         return this;
@@ -93,10 +124,6 @@ var MoGL = (function() {
             }
         }
     },
-    Object.defineProperty(fn, 'id', { //id처리기
-        get:function idGet() {return ids[this];},
-        set:function idSet(v) {ids[this] = v;}
-    }),
     Object.freeze(fn);
     //인스턴스의 갯수를 알아냄
     MoGL.count = function count(cls) {
