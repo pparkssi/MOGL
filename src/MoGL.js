@@ -90,7 +90,7 @@ var MoGL = (function() {
             }
         }
     }),
-     Object.defineProperty(fn, 'isUpdated', { //updated처리기
+    Object.defineProperty(fn, 'isUpdated', { //updated처리기
         get:function idGet() {
             return updated[this] || false;
         },
@@ -124,7 +124,7 @@ var MoGL = (function() {
         return this.uuid;
     },
     //이벤트시스템
-    fn.addEventListener = function(ev, f) {
+    fn.addEventListener = method(function(ev, f) {
         var target
         //private저장소에 this용 공간 초기화
         if (!listener[this]) listener[this] = {};
@@ -135,8 +135,8 @@ var MoGL = (function() {
         //기존에 없는 리스너라면 추가
         if (target.indexOf(f) == -1) target[target.length] = f;
         return this;
-    },
-    fn.removeEventListener = function(ev, f) {
+    }),
+    fn.removeEventListener = method(function(ev, f) {
         var target, i;
         if( f ){
             if (listener[this] && listener[this][ev]) {
@@ -154,8 +154,8 @@ var MoGL = (function() {
             if (listener[this] && listener[this][ev]) delete listener[this][ev]; //전체를 삭제
         }
         return this;
-    },
-    fn.dispatch = function(ev){
+    }),
+    fn.dispatch = method(function(ev){
         var target, arg, i, j;
         if (listener[this] && listener[this][ev]) {
             //만약 추가로 보낸 인자가 있다면 리스너에게 apply해줌.
@@ -165,7 +165,7 @@ var MoGL = (function() {
             }
         }
         return this;
-    },
+    }),
     Object.freeze(fn);
     MoGL.updated = 'updated',
     //인스턴스의 갯수를 알아냄
