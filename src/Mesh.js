@@ -13,9 +13,9 @@ var Mesh = (function () {
     F3 = new Float32Array(3), F3_2 = new Float32Array(3),
     Mesh = function Mesh(geometry, material) {
         // TODO 어디까지 허용할건가..
-        if(this instanceof Mesh){
-            if (geometry && !(typeof geometry == 'string' || geometry instanceof Geometry  )) this.error(0);
-            if (material && !(typeof material == 'string' || material instanceof Material  )) this.error(1);
+        if (this instanceof Mesh) {
+            if (geometry && !(typeof geometry == 'string' || geometry instanceof Geometry)) this.error(0);
+            if (material && !(typeof material == 'string' || material instanceof Material)) this.error(1);
         }
         this._geometry = geometry,
         this._material = material,
@@ -33,11 +33,11 @@ var Mesh = (function () {
     fn.getGeometry = function getGeometry() {
         return this._scene ? this._geometry : null;
     },
-    fn.getMaterial = function getMaterial() { 
+    fn.getMaterial = function getMaterial() {
         return this._scene ? this._material : null;
     },
     fn.getMatrix = function getMatrix() {
-        this.matIdentity().matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x,this.y,-this.z);
+        this.matIdentity().matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, -this.z);
         return this;
     },
     fn.getParent = function getParent() {
@@ -54,10 +54,10 @@ var Mesh = (function () {
     },
     ///////////////////////////////////////////////////
     // set
-    fn.setCulling = function setCulling(value){
+    fn.setCulling = function setCulling(value) {
         if (value == Mesh.cullingNone || value == Mesh.cullingFront || value == Mesh.cullingBack) {
             this._culling = value;
-        }else this.error(0);
+        } else this.error(0);
         return this;
     },
     fn.setGeometry = function setGeometry(geometry) {
@@ -80,11 +80,11 @@ var Mesh = (function () {
         else this._material = material;
         return this;
     },
-    fn.lookAt = function lookAt(x,y,z){
+    fn.lookAt = function lookAt(x, y, z) {
         this.matIdentity(),
-        F3[0] = this.x, F3[1] = this.y, F3[2] = this.z,
-        F3_2[0] = x, F3_2[1] = y, F3_2[2] = z,
-        this.matLookAt(F3, F3_2, [0, 1, 0])
+            F3[0] = this.x, F3[1] = this.y, F3[2] = this.z,
+            F3_2[0] = x, F3_2[1] = y, F3_2[2] = z,
+            this.matLookAt(F3, F3_2, [0, 1, 0])
         //this.matTranslate(F3);
 
         var d = this._rawData;
@@ -99,8 +99,8 @@ var Mesh = (function () {
         if (cosY <= 0.001) radianZ = 0, radianX = ATAN2(-d23, d22);
         else radianZ = ATAN2(d21, d11), radianX = ATAN2(d32, d33);
         this.rotateX = radianX,
-        this.rotateY = radianY,
-        this.rotateZ = radianZ;
+            this.rotateY = radianY,
+            this.rotateZ = radianZ;
 
         //var dx = x - this.x;
         //var dy = y - this.y;
@@ -109,7 +109,7 @@ var Mesh = (function () {
         //this.rotationY = 0;
         //this.rotationZ = -Math.atan2(dx, dy);
     },
-    fn.setPosition = function setPosition() { 
+    fn.setPosition = function setPosition() {
         var len, arg0;
         len = arguments.length, arg0 = arguments[0];
         if (len == 1 && arg0 instanceof Array) this.x = arg0[0], this.y = arg0[1], this.z = arg0[2];
@@ -117,7 +117,7 @@ var Mesh = (function () {
         else this.x = 0, this.y = 0, this.z = 0;
         return this;
     },
-    fn.setRotate = function setRotate() { 
+    fn.setRotate = function setRotate() {
         var len, arg0;
         len = arguments.length, arg0 = arguments[0];
         if (len == 1 && arg0 instanceof Array) this.rotateX = arg0[0], this.rotateY = arg0[1], this.rotateZ = arg0[2];
@@ -125,13 +125,13 @@ var Mesh = (function () {
         else this.rotateX = 0, this.rotateY = 0, this.rotateZ = 0;
         return this;
     },
-    fn.setScale = function setScale() { 
+    fn.setScale = function setScale() {
         var len, arg0;
         len = arguments.length, arg0 = arguments[0];
         if (len == 1 && arg0 instanceof Array) this.scaleX = arg0[0], this.scaleY = arg0[1], this.scaleZ = arg0[2];
         else if (len > 2) this.scaleX = arguments[0], this.scaleY = arguments[1], this.scaleZ = arguments[2];
         else this.scaleX = 1, this.scaleY = 1, this.scaleZ = 1;
         return this;
-    }
+    };
     return MoGL.ext(Mesh, Matrix);
 })();
