@@ -3,19 +3,27 @@
 * [Constructor](#constructor)
 * [UnitTest](http://projectbs.github.io/MoGL/test/MoGL.html)
 
+**event**
+* [MoGL.updated](#)
+
 **field**
 
 * [classId](#classid)
 * [className](#classname)
 * [id](#id)
 * [isAlive](#isalive)
+* [isUpdated](#isupdated)
 * [uuid](#uuid) 
  
 **method**
 
+* [addEventListener](#)
 * [destroy](#destroy)
+* [dispatch](#)
 * [error](#error-idint-)
+* [removeEventListener](#)
 * [setId](#setid-idstring-)
+* [toString](#)
  
 **static**
 
@@ -59,6 +67,40 @@ MoGL 라이브러리의 모든 클래스는 MoGL을 상속함. 보통 직접적�
 
 ```javascript
 var instance = new MoGL();
+```
+
+[top](#)
+## event - MoGL.updated or 'updated'
+
+**trigger**
+
+isUpdated속성이 바뀔 때마다 발생.
+
+**param**
+1. isUpdated:boolean - isUpdated의 값.
+
+**sample**
+
+```
+var scene = new Scene();
+scene.addEventListener( MoGL.updated, function(isUpdated){
+  console.log(isUpdated);
+} );
+scene.isUpdated = true;
+```
+
+[top](#)
+## className
+
+**description**
+
+현재 인스턴스의 클래스이름.
+
+**sample**
+
+```
+var scene = new Scene();
+console.log( scene.className == 'Scene' ); //true
 ```
 
 [top](#)
@@ -117,6 +159,26 @@ console.log( scene.id ); //'test1'
 var scene = new Scene();
 console.log( scene.isAlive ); //true
 ```
+
+[top](#)
+## isUpdated
+
+**description**
+
+현재 인스턴스의 업데이트여부를 관리하는 플래그.
+* 상태가 바뀌면 'updated' 이벤트가 발생함.
+
+**sample**
+
+```
+var scene = new Scene();
+scene.addEventListener( 'updated', function(v){
+  console.log(v); //2. 리스너가 발동함 - true
+} );
+console.log( scene.isUpdated ); //false
+scene.isUpdated = true; //1. 값을 바꾸면
+```
+
 
 [top](#)
 ## uuid
