@@ -63,7 +63,7 @@
     scene.addChild('camera', new Camera());
     scene.addMaterial('material', new Material(1, 1, 1, 1));
     scene.addTexture('texture', 'woman/plate1diffuse1.png');
-    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
+    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture').setShading(Shading.phong);
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('GET', 'woman/woman.obj', true);
@@ -126,6 +126,8 @@
             scene.addChild(k, mesh)
             scene.getChild('camera').z = 250
             scene.getChild('camera').lookAt(mesh.x, mesh.y, mesh.z);
+
+
         }
         world.addEventListener(World.renderBefore, function () {
             mesh.rotateY += 0.01
