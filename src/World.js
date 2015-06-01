@@ -181,11 +181,11 @@ var World = (function () {
                         gl.viewport(0, 0, cvs.width, cvs.height);
                     }
                     children = scene._children;
-                    gl.clearColor(camera._r, camera._g, camera._b, camera._a);
-                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                     gl.enable(gl.BLEND)
                     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+                    gl.clearColor(camera._r, camera._g, camera._b, camera._a);
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     for(k in scene._glPROGRAMs){
                         tProgram = scene._glPROGRAMs[k];
                         gl.useProgram(tProgram);
@@ -279,11 +279,11 @@ var World = (function () {
                         }
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ;
                         gl.uniform3fv(tProgram.uRotate, f3),
-                            f3[0] = tItem.x,f3[1] = tItem.y,f3[2] = tItem.z,
-                            gl.uniform3fv(tProgram.uPosition, f3),
-                            f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ,
-                            gl.uniform3fv(tProgram.uScale, f3),
-                            tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0;
+                        f3[0] = tItem.x,f3[1] = tItem.y,f3[2] = tItem.z,
+                        gl.uniform3fv(tProgram.uPosition, f3),
+                        f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ,
+                        gl.uniform3fv(tProgram.uScale, f3),
+                        tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0;
                         gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                         if(tMaterial._wireFrame) {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL);

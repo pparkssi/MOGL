@@ -76,32 +76,7 @@ var Camera = (function () {
     fn.getVisible = function getVisible(){
         return this._visible ? true : false;
     },
-    fn.setBackgroundColor = function setBackgroundColor() {
-        var t0, t1, ta;
-        t0 = arguments[0];
-        if (arguments.length == 1) {
-            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7);
-            if (t0.charAt(0) == '#') {
-                if (t1 = hex.exec(t0)) {
-                    this._r = parseInt(t1[1], 16) / 255,
-                    this._g = parseInt(t1[2], 16) / 255,
-                    this._b = parseInt(t1[3], 16) / 255;
-                } else {
-                    t1 = hex_s.exec(t0),
-                    this._r = parseInt(t1[1] + t1[1], 16) / 255,
-                    this._g = parseInt(t1[2] + t1[2], 16) / 255,
-                    this._b = parseInt(t1[3] + t1[3], 16) / 255;
-                }
-                this._a = ta ? ta > 1 ? 1 : ta : 1;
-            }
-        } else {
-            this._r = arguments[0],
-            this._g = arguments[1],
-            this._b = arguments[2],
-            this._a = arguments[3] == undefined ?  1 : arguments[3]
-        }
-        return this;
-    },
+    fn.setBackgroundColor = Material.prototype.setBackgroundColor,
     fn.setClipPlane = function setClipPlane(near,far){
         this._near = near, this._far = far;
         return this;
