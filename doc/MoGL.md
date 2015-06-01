@@ -4,7 +4,7 @@
 * [UnitTest](http://projectbs.github.io/MoGL/test/MoGL.html)
 
 **event**
-* [MoGL.updated](#)
+* [MoGL.updated](#event---moglupdated-or-updated)
 
 **field**
 
@@ -195,6 +195,34 @@ var scene = new Scene();
 console.log( scene.uuid ); //인스턴스의 uuid
 console.log( Scene.uuid ); //클래스의 uuid
 ```
+[top](#)
+## addEventListener( type:string, listener:function )
+
+**description**
+
+해당 type으로 리스너를 추가함.
+
+**param**
+
+1. type:string - 이벤트의 이름.
+2. listener:function - 이벤트를 수신할 리스너.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메소드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var city1 = Scene();
+city1.addEventListener( 'updated', function(v){
+  console.log(v);
+});
+```
 
 [top](#)
 ## destroy()
@@ -220,6 +248,33 @@ console.log( Scene.uuid ); //클래스의 uuid
 ```javascript
 var city1 = Scene();
 city1.destroy();
+```
+
+[top](#)
+## dispatch( type:string[, arg1, arg2..] )
+
+**description**
+
+해당 이벤트를 통보함.
+
+**param**
+
+1. type:string - 통보할 이벤트의 타입.
+2. ?arg1, arg2.. - 리스너에 전달한 인자.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메소드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var city1 = Scene();
+city1.dispatch( 'updated', city.isUpdated );
 ```
 
 [top](#)
@@ -258,6 +313,36 @@ try{
 }
 ```
 
+[top](#)
+## removeEventListener( type:string, listener:function )
+└removeEventListener( type:string, name:string )
+└removeEventListener( type:string )
+
+**description**
+
+해당 이벤트로부터 리스너를 제거함.
+
+**param**
+
+1. type:string - 이벤트타입.
+2. listener:function - 리스너함수.
+3. name:string - 리스너함수의 이름.
+4. 두번째인자없음 - 해당 이벤트의 모든 리스너제거.
+
+**exception**
+
+없음.
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var scene = new Scene();
+scene.addGeometry( new Geometry( vertex, index ).setId('test') );
+```
 
 [top](#)
 ## setId( id:string )
@@ -283,6 +368,32 @@ this - 메서드체이닝을 위해 자신을 반환함.
 ```javascript
 var scene = new Scene();
 scene.addGeometry( new Geometry( vertex, index ).setId('test') );
+```
+
+[top](#)
+## toString()
+
+**description**
+
+자신의 uuid를 반환함. MoGL을 상속한 모든 클래스는 toString상황에서 uuid를 반환하게 됨.
+
+**param**
+
+없음.
+
+**exception**
+
+없음.
+
+**return**
+
+uuid:int - 생성시 할당된 고유값.
+
+**sample**
+
+```javascript
+var scene = new Scene();
+scene.toString() == scene.uuid //true
 ```
 
 [top](#)
