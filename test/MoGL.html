@@ -233,8 +233,16 @@
         );
     } );
     k.dispatch( 'some', 3, 5 );
+    k.addEventListener( MoGL.updated, function(v){
+        bsTest( 'updatedEvent',
+            function(){
+                return v;
+            }, true
+        );
+    });
+    k.isUpdated = true;
 })();
-        
+
 </script>
 </body>
 </html>

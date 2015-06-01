@@ -19,7 +19,7 @@ var MoGL = (function() {
         value, writable,
         uuid, counter, totalCount,
         method, prevMethod, errorMethod,
-        listener, ids,
+        listener, ids, updated,
         MoGL, fn;
     
     //내부용 상수
@@ -38,6 +38,7 @@ var MoGL = (function() {
     //private용 저장소
     ids = {},//id용
     listener = {}, //이벤트 리스너용
+    updated = {}, //업데이트용
     
     //메서드생성기
     prevMethod = [], //스택구조의 이전 함수이름의 배열
@@ -58,8 +59,6 @@ var MoGL = (function() {
         Object.defineProperty(this, 'uuid', value), //객체고유아이디
         writable.value = true,
         Object.defineProperty(this, 'isAlive', writable),//활성화상태초기화 true
-        writable.value = false,
-        Object.defineProperty(this, 'isUpdated', writable),//isUpdated상태초기화 false
         counter[this.classId]++, //클래스별 인스턴스 수 증가
         totalCount++; //전체 인스턴스 수 증가
     },
@@ -89,6 +88,14 @@ var MoGL = (function() {
                 ids[this.classId][this] = v;
                 ids[this.classId].ref[v] = this.uuid;
             }
+        }
+    }),
+     Object.defineProperty(fn, 'isUpdated', { //updated처리기
+        get:function idGet() {
+            return updated[this] || false;
+        },
+        set:function idSet(v) {
+            this.dispatch( 'updated', updated[this] = v ); //set과 동시에 디스패치
         }
     }),
     fn.destroy = method(function destroy() { //파괴자
@@ -153,6 +160,7 @@ var MoGL = (function() {
         }
     },
     Object.freeze(fn);
+    MoGL.updated = 'updated',
     //인스턴스의 갯수를 알아냄
     MoGL.count = function count(cls) {
         if (typeof cls == 'function') {
