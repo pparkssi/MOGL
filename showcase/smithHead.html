@@ -45,106 +45,78 @@
     Average FPS: <span id="averageFPS"></span>
 </div>
 <script>
-    (function (W) {
-        'use strict';
+    'use strict';
+    var world = new World('canvas');
+    var scene = new Scene();
+    var camera = new Camera()
+    var material = new Material()
+    var material2 = new Material()
 
-        var world = new World('canvas');
-        var scene = new Scene();
+    world.addScene(scene);
+    world.setAutoSize(1)
 
+    camera.setAntialias(1)
 
-        var divCurrentFPS = document.getElementById('currentFPS');
-        var divAverageFPS = document.getElementById('averageFPS');
-        var prevTime = 0;
+    scene.addChild('camera', camera);
+    scene.addMaterial('material', material);
+    scene.addMaterial('material2', material2);
+    scene.addTexture('texture', 'smithHead/Map-COL.jpg');
+    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
+    scene.getMaterial('material2').addTexture(Texture.diffuse, 'texture');
 
-        world.addScene('scene', scene);
-
-
-        scene.addChild('camera', new Camera());
-        scene.addMaterial('material', new Material());
-        scene.addTexture('texture', 'smithHead/Map-COL.jpg');
-        scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
-
-        world.addRender('scene', 'camera');
-
-
-        var xmlhttp = new XMLHttpRequest();
-
-        xmlhttp.open('GET', 'smithHead/smith_head.json', true);
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                start(JSON.parse(xmlhttp.responseText));
-            }
-        };
-        xmlhttp.send(null);
-
-        function start(json) {
-            var vertices = json.vertices, faces = json.faces, uvs = json.uv;
-
-            var vertexBuffer = [], indexBuffer = [], uvArray = [], i, j, fv = 0, uvSize = uvs.length;
-
-            faces.forEach(function (v) {
-                v.forEach(function (vv) {
-                    if (fv < uvSize)
-                        uvArray[vv] = uvs[fv];
-                    fv++;
-                })
-            });
-
-
-            for (i = 0, j = vertices.length; i < j; i++) {
-                vertexBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2], uvArray[i][0], 1.0 - uvArray[i][1]);
-            }
-
-            for (i = 0, j = faces.length; i < j; i++) {
-//                indices[i].forEach(function(v){ index.push(v) });
-                indexBuffer.push(faces[i][0], faces[i][1], faces[i][2]);
-                indexBuffer.push(faces[i][0], faces[i][2], faces[i][3]);
-            }
-
-            scene.addGeometry('geometry', new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
-
-            var mesh = new Mesh('geometry', 'material');
-            mesh.scaleX = 10;
-            mesh.scaleY = 10;
-            mesh.scaleZ = 10;
-            scene.addChild('head', mesh);
-
-//            var mesh2 = new Mesh('geometry', 'material');
-//            mesh2.scaleX = 10;
-//            mesh2.scaleY = 10;
-//            mesh2.scaleZ = 10;
-//            scene.addChild('head2', mesh2);
-//
-//            mesh.x = -3
-//            mesh2.x = 3
-            mesh.y = -1
-//            mesh2.y = -2
-
-            mesh.getMaterial().setShading(Shading.phong);
-//            mesh2.getMaterial().setShading(Shading.blinn);
-
-//            mesh.getMaterial().setLambert(1.5)
-//            mesh2.getMaterial().setLambert(1.5)
-                      var sum = 0, count = 1;
-
-            function render(currTime) {
-                var currentFPS = 1000 / ( currTime - prevTime );
-                prevTime = currTime;
-
-                divCurrentFPS.textContent = currentFPS.toFixed(2);
-                divAverageFPS.textContent = ( ( sum += currentFPS ) / count++ ).toFixed(2);
-
-                mesh.rotateY -= 0.01;
-//                mesh2.rotateY -= 0.01;
-
-                world.render();
-
-                requestAnimationFrame(render);
-            }
-
-            requestAnimationFrame(render);
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('GET', 'smithHead/smith_head.json', true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            start(JSON.parse(xmlhttp.responseText));
         }
-    })(this);
+    };
+    xmlhttp.send(null);
+    function start(json) {
+        var vertices = json.vertices, faces = json.faces, uvs = json.uv;
+
+        var vertexBuffer = [], indexBuffer = [], uvArray = [], i, j, fv = 0, uvSize = uvs.length;
+
+        faces.forEach(function (v) {
+            v.forEach(function (vv) {
+                if (fv < uvSize)
+                    uvArray[vv] = uvs[fv];
+                fv++;
+            })
+        });
+        for (i = 0, j = vertices.length; i < j; i++) {
+            vertexBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2], uvArray[i][0], 1.0 - uvArray[i][1]);
+        }
+        for (i = 0, j = faces.length; i < j; i++) {
+            indexBuffer.push(faces[i][0], faces[i][1], faces[i][2]);
+            indexBuffer.push(faces[i][0], faces[i][2], faces[i][3]);
+        }
+
+        scene.addGeometry('geometry', new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
+        var mesh = new Mesh('geometry', 'material');
+        mesh.scaleX = 10;
+        mesh.scaleY = 10;
+        mesh.scaleZ = 10;
+        scene.addChild('head', mesh);
+        mesh.getMaterial().setShading(Shading.phong);
+
+        var mesh2 = new Mesh('geometry', 'material2');
+        mesh2.scaleX = 10;
+        mesh2.scaleY = 10;
+        mesh2.scaleZ = 10;
+        scene.addChild('head2', mesh2);
+        mesh2.getMaterial().setShading(Shading.blinn);
+
+        mesh.x = -3
+        mesh2.x = 3
+
+        world.addEventListener(World.renderBefore,function(){
+            mesh.rotateY -= 0.01;
+            mesh2.rotateY -= 0.01;
+        })
+        world.start()
+    }
+
 </script>
 </body>
 </html>

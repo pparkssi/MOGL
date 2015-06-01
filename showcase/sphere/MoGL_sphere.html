@@ -44,7 +44,6 @@
 	Average FPS: <span id="averageFPS"></span>
 </div>
 <script>
-
 	(function(_win){
 		var divCurrentFPS = document.getElementById( 'currentFPS' );
 		var divAverageFPS = document.getElementById( 'averageFPS' );
@@ -54,9 +53,9 @@
 		glcontents.height = _win.innerHeight;
 		
 		var world = new World("glcontents");
-		var scene = new Scene();
+		var scene = new Scene().setId("scene1");
 		var camera = new Camera();
-        world.addScene('scene1', scene);
+        world.addScene(scene);
 
 		scene.addChild("camera1", camera);
 		
@@ -65,8 +64,8 @@
 		
 		scene.getMaterial("m_sphere").addTexture(Texture.diffuse, "earth");
 		scene.getMaterial("m_sphere").setShading(Shading.phong)
-		
-		world.addRender("scene1", "camera1");
+
+
 		
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.open("get", "sphere100_20_20.txt", true);
@@ -92,8 +91,9 @@
 
 
 			var sum = 0, count = 1;
-
-			function render( currTime ) {
+			prevTime = +(new Date);
+			function render(currTime) {
+				var currTime = +(new Date);
 				var currentFPS = 1000 / ( currTime - prevTime );
 				prevTime = currTime;
 
@@ -102,12 +102,9 @@
 
 				mesh.rotateY += 0.005;
 
-				world.render();
-
-				requestAnimationFrame( render );
 			}
-
-			requestAnimationFrame( render );
+			world.addEventListener(World.renderAfter, render);
+			world.start();
 		}
 	})(window);
 
