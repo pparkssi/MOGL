@@ -51,16 +51,19 @@ var Camera = (function () {
         return this._fov;
     },
     fn.resetProjectionMatrix = function resetProjectionMatrix(){
-        this._pixelMatrix.matIdentity();
+        var tMatrix, tArea;
+        tMatrix = this._pixelMatrix,
+        tArea = this._renderArea,
+        tMatrix.matIdentity()
         if(this._mode == '2d'){
-            this._pixelMatrix._rawData[0] = 2 / this._renderArea[2]
-            this._pixelMatrix._rawData[5] = -2 / this._renderArea[3]
-            this._pixelMatrix._rawData[10] = 0
-            this._pixelMatrix._rawData[12] = -1
-            this._pixelMatrix._rawData[13] = 1
+            tMatrix._rawData[0] = 2 / tArea[2]
+            tMatrix._rawData[5] = -2 / tArea[3]
+            tMatrix._rawData[10] = 0
+            tMatrix._rawData[12] = -1
+            tMatrix._rawData[13] = 1
         }else {
-            if(this._renderArea) this._pixelMatrix.matPerspective(this._fov, this._renderArea[2]/this._renderArea[3], this._near, this._far);
-            else this._pixelMatrix.matPerspective(this._fov, this._cvs.width/this._cvs.height, this._near, this._far);
+            if(tArea) tMatrix.matPerspective(this._fov, tArea[2]/tArea[3], this._near, this._far);
+            else tMatrix.matPerspective(this._fov, this._cvs.width/this._cvs.height, this._near, this._far);
         }
         return this;
     },
@@ -73,32 +76,7 @@ var Camera = (function () {
     fn.getVisible = function getVisible(){
         return this._visible ? true : false;
     },
-    fn.setBackgroundColor = function setBackgroundColor() {
-        var t0, t1, ta;
-        t0 = arguments[0];
-        if (arguments.length == 1) {
-            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7);
-            if (t0.charAt(0) == '#') {
-                if (t1 = hex.exec(t0)) {
-                    this._r = parseInt(t1[1], 16) / 255,
-                    this._g = parseInt(t1[2], 16) / 255,
-                    this._b = parseInt(t1[3], 16) / 255;
-                } else {
-                    t1 = hex_s.exec(t0),
-                    this._r = parseInt(t1[1] + t1[1], 16) / 255,
-                    this._g = parseInt(t1[2] + t1[2], 16) / 255,
-                    this._b = parseInt(t1[3] + t1[3], 16) / 255;
-                }
-                this._a = ta ? ta > 1 ? 1 : ta : 1;
-            }
-        } else {
-            this._r = arguments[0],
-            this._g = arguments[1],
-            this._b = arguments[2],
-            this._a = arguments[3] == undefined ?  1 : arguments[3]
-        }
-        return this;
-    },
+    fn.setBackgroundColor = Material.prototype.setBackgroundColor,
     fn.setClipPlane = function setClipPlane(near,far){
         this._near = near, this._far = far;
         return this;

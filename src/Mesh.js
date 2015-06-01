@@ -84,8 +84,8 @@ var Mesh = (function () {
         this.matIdentity(),
         F3[0] = this.x, F3[1] = this.y, F3[2] = this.z,
         F3_2[0] = x, F3_2[1] = y, F3_2[2] = z,
-        this.matLookAt(F3, F3_2, [0, 1, 0]),
-        this.matTranslate(F3);
+        this.matLookAt(F3, F3_2, [0, 1, 0])
+        //this.matTranslate(F3);
 
         var d = this._rawData;
         var d11 = d[0], d12 = d[1], d13 = d[2], d21 = d[4], d22 = d[5], d23 = d[6], d31 = d[8], d32 = d[9], d33 = d[10];
