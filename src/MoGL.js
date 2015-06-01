@@ -134,20 +134,26 @@ var MoGL = (function() {
         target = target[ev];
         //기존에 없는 리스너라면 추가
         if (target.indexOf(f) == -1) target[target.length] = f;
+        return this;
     },
     fn.removeEventListener = function(ev, f) {
         var target, i;
-        if (listener[this] && listener[this][ev]) {
-            target = listener[this][ev],
-            //해당이벤트의 리스너를 루프돌며 삭제
-            i = target.length;
-            while (i--) {
-                //삭제하려는 값이 문자열인 경우 리스너이름에 매칭, 함수인 경우는 리스너와 직접 매칭
-                if ((typeof f == 'string' && MoGL.functionName(target[i]) == f) || target[i] === f) {
-                    target.splice(i, 1);
+        if( f ){
+            if (listener[this] && listener[this][ev]) {
+                target = listener[this][ev],
+                //해당이벤트의 리스너를 루프돌며 삭제
+                i = target.length;
+                while (i--) {
+                    //삭제하려는 값이 문자열인 경우 리스너이름에 매칭, 함수인 경우는 리스너와 직접 매칭
+                    if ((typeof f == 'string' && MoGL.functionName(target[i]) == f) || target[i] === f) {
+                        target.splice(i, 1);
+                    }
                 }
             }
+        }else{
+            if (listener[this] && listener[this][ev]) delete listener[this][ev]; //전체를 삭제
         }
+        return this;
     },
     fn.dispatch = function(ev){
         var target, arg, i, j;
@@ -158,6 +164,7 @@ var MoGL = (function() {
                 target[i].apply(this, arg);
             }
         }
+        return this;
     },
     Object.freeze(fn);
     MoGL.updated = 'updated',
