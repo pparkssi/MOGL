@@ -15,8 +15,8 @@
     }
 })();
 //전역에서 사용하는 공통함수
-var $method, $setPrivate, $getPrivate,
-    GLMAT_EPSILON, SQRT, SIN, COS, ATAN2, ASIN, ABS, PIH, PERPI;
+var $method, $setPrivate, $getPrivate, $color,
+    GLMAT_EPSILON, SIN, COS, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
     
 (function() {
     var VAR = {}, value = {};
@@ -45,10 +45,32 @@ $method = function $method(f, key) { //생성할 이름과 메서드
 },
 $method.prev = []; //스택구조의 이전 함수이름의 배열
 
+$color = (function(){
+    var co = [];
+    return function(v){
+        var t1, ta;
+        if (typeof v == 'string' && v.charAt(0) == '#') {
+            co[0] = parseInt(v.substr(1, 2), 16) / 255,
+            co[1] = parseInt(v.substr(3, 2), 16) / 255,
+            co[2] = parseInt(v.substr(5, 2), 16) / 255;
+            if (v.length > 7) {
+                co[3] = parseFloat(v.substr(7));
+                if (co[3] > 1) co[3] = 1;
+            } else {
+                co[3] = 1;
+            }
+        } else if ('r' in v) {
+            co[0] = v.r, co[1] = v.g, co[2] = v.b, co[3] = 'a' in v ? v.a : 1;
+        } else {
+            co[0] = v[0], co[1] = v[1], co[2] = v[2], co[3] = '3' in v ? v[3] : 1;
+        }
+        return co;
+    };
+})();
 //수학함수
 GLMAT_EPSILON = 0.000001,
-SQRT = Math.sqrt, SIN = Math.sin, COS = Math.cos, ATAN2 = Math.atan2, ASIN = Math.asin,
-ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
+SIN = Math.sin, COS = Math.cos, ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin,
+SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 
 var MoGL = (function() {
     var isFactory, isSuperChain, 

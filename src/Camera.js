@@ -3,53 +3,149 @@
  * description
  */
 var Camera = (function () {
-    var Camera, fn, A4, F3, PERPI;
-    var hex, hex_s;
-    A4=[], PERPI=Math.PI / 180,
-    F3 = new Float32Array(3),
-    hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i,
-    hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
-    Camera = function Camera() {
-        this._cvs=null,
-        this._renderArea = null,
-        this._geometry = new Geometry([], []),
-        this._material = new Material(),
-        this._r = 0,
-        this._g = 0,
-        this._b = 0,
-        this._a = 1,
-        this._fov = 55,
-        this._near = 0.1,
-        this._far = 1000000,
-        this._visible=1,
-        this._filters ={},
-        this._fog = null,
-        this._antialias = false,
-        this._pixelMatrix = Matrix(),
-        this.z =10,
-        this._mode = '3d'
-        this.lookAt(0,0,0);
+    var PERPIR, value, getter,
+        prop,
+        Camera, fn;
 
+    //lib
+    PERPIR = PI / 180 * .5,
+    
+    
+    //private
+    prop = {},
+    
+    Camera = function Camera() {
+        Object.seal(prop[this] = {
+            cvs:null,
+            renderArea:null,
+            geometry:new Geometry([], []),
+            material:new Material(),
+            r:0,
+            g:0,
+            b:0,
+            a:1,
+            fov:55,
+            near:0.1,
+            far:1000000,
+            visible:1,
+            filters:{},
+            fog:false,
+            fogColor:null,
+            fogNear:0,
+            fogFar:0,
+            antialias:false,
+            pixelMatrix:Matrix(),
+            mode:CAmera.perspective
+        }),
+        this.z =10,
+        this.lookAt(0,0,0);
     },
-    Camera.resize = 'RESIZE'
     fn = Camera.prototype,
-    fn.getBackgroundColor = function getBackgroundColor(){
-        return A4[0] = this._r, A4[1] = this._g, A4[2] = this._b, A4[3] = this._a, A4;
+    value = (function(){
+        var value = {};
+        return function(key){
+            value.get = $method(function() {
+                return prop[this][key];
+            }),
+            value.set = $method(function(v) {
+                prop[this][key] = v;
+            });
+            return value;
+        };
+    })(),
+    Object.defineProperty( fn, 'clipPlaneNear', value('near')),
+    Object.defineProperty( fn, 'clipPlaneFar', value('far')),
+    Object.defineProperty( fn, 'visible', value('visible')),
+    Object.defineProperty( fn, 'antialias', value('antialias')),
+    
+    getter = function(key){
+        return $method(function() {
+            return prop[this][key];
+        });
     },
-    fn.getClipPlane = function getClipPlane(){
-        return [this._near,this._far];
+    Object.defineProperty( fn, 'fogColor', {
+        get:getter('fogColor'),
+        set:$method(function fogColorSet(v){
+            var p = prop[this];
+            p.fogColor = $color(v).slice(0),
+            p.fog = true;
+        })
+    }),
+    Object.defineProperty( fn, 'fogNear', {
+        get:getter('fogNear'),
+        set:$method(function fogNearSet(v){
+            var p = prop[this];
+            p.fogNear = v,
+            p.fog = true;
+        })
+    }),
+    Object.defineProperty( fn, 'fogFar', {
+        get:getter('fogFar'),
+        set:$method(function fogFarSet(v){
+            var p = prop[this];
+            p.fogFar = v,
+            p.fog = true;
+        })
+    }),
+    Object.defineProperty( fn, 'fov', {
+        get:getter('fov'),
+        set:$method(function fovSet(v){
+            var p = prop[this];
+            if (typeof v == 'number') {
+                p.fov = v;
+            } else if ('0' in v && '1' in v) {
+                p.fov = CEIL(2 * ATAN(TAN(arguments[2] * PERPIR) * (v[1] / v[0])) * PERPI);
+            }
+        })
+    }),
+    Object.defineProperty( fn, 'backgroundColor', {
+        get:$method((function(){
+            var a = [];
+            return function backgroundColorGet() {
+                var p = prop[this];
+                a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
+                return a;
+            };
+        })()),
+        set:$method(function backgroundColorSet(v) {
+            var p = prop[this];
+            v = $color(v);
+            p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
+        })
+    }),
+    Object.defineProperty( fn, 'fog', {
+        get:$method(function fogGet(){
+            return prop[this].fog ? true : false;
+        })
+    }),
+    Object.defineProperty( fn, 'mode', {
+        get:getter('mode'),
+        set:$method(function modeSet(v) {
+            if (Camera[v]) {
+                prop[this].mode = v;
+            } else {
+                this.error(0);
+            }
+        })
+    }),
+    fn.getRenderArea = function getRenderArea(){
+        return this._renderArea;
     },
-    fn.getFilters = function getFilters(){
-        var result = [],t = this._filters;
-        for(var k in t) result.push(k);
-        return result;
+    fn.setRenderArea = function setRenderArea(x,y,w,h){
+        var tw, th;
+        tw = this._cvs.width,
+        th = this._cvs.height,
+        //console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
+        this._renderArea = [
+            typeof x == 'string' ? tw * x.replace('%', '') * 0.01 : x,
+            typeof y == 'string' ? th * y.replace('%', '') * 0.01 : y,
+            typeof w == 'string' ? tw * w.replace('%', '') * 0.01 : w,
+            typeof h == 'string' ? th * h.replace('%', '') * 0.01 : h,
+        ];
+        return this;
     },
-    fn.getFog = function getFog(){
-        return this._fog ? true : false;
-    },
-    fn.getFOV = function getFOV(){
-        return this._fov;
-    },
+    
+    
     fn.resetProjectionMatrix = function resetProjectionMatrix(){
         var tMatrix, tArea;
         tMatrix = this._pixelMatrix,
@@ -67,77 +163,13 @@ var Camera = (function () {
         }
         return this;
     },
-    fn.getRenderArea = function getRenderArea(){
-        return this._renderArea;
+    /*마일스톤0.5
+    fn.getFilters = function getFilters(){
+        var result = [],t = this._filters;
+        for(var k in t) result.push(k);
+        return result;
     },
-    fn.getAntialias = function getAntialias(){
-        return this._antialias ? true : false;
-    },
-    fn.getVisible = function getVisible(){
-        return this._visible ? true : false;
-    },
-    fn.setBackgroundColor = Material.prototype.setBackgroundColor,
-    fn.setClipPlane = function setClipPlane(near,far){
-        this._near = near, this._far = far;
-        return this;
-    },
-    fn.setFog = function setFog(color,near,far){
-        var t0 = color, t1, result;
-        if (t0 !=false && t0.charAt(0) == '#') {
-            result= {};
-            if (t1 = hex.exec(t0)) {
-                result.r = parseInt(t1[1], 16) / 255,
-                result.g = parseInt(t1[2], 16) / 255,
-                result.b = parseInt(t1[3], 16) / 255;
-
-            } else {
-                t1 = hex_s.exec(t0),
-                result.r = parseInt(t1[1] + t1[1], 16) / 255,
-                result.g = parseInt(t1[2] + t1[2], 16) / 255,
-                result.b = parseInt(t1[3] + t1[3], 16) / 255;
-            }
-            result.a = 1,
-            result.near = near,
-            result.far = far,
-            this._fog = result;
-        } else if (!t0) this._fog = null;
-        return this;
-    },
-    fn.setFOV = function setFOV(){
-        if (arguments.length == 1) this._fov = arguments[0];
-        else this._fov = Math.ceil(2 * Math.atan(Math.tan(arguments[2] * PERPI / 2) * (arguments[1] / arguments[0])) * (180 / Math.PI));
-        return this;
-    },
-    fn.setOthogonal = function setOthogonal(){
-        this._mode = '2d';
-        return this;
-    },
-    fn.setPerspective = function setPerspective(){
-        this._mode = '3d';
-        return this;
-    },
-    fn.setRenderArea = function setRenderArea(x,y,w,h){
-        var tw, th;
-        tw = this._cvs.width,
-        th = this._cvs.height,
-        //console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
-        this._renderArea = [
-            typeof x == 'string' ? tw * x.replace('%', '') * 0.01 : x,
-            typeof y == 'string' ? th * y.replace('%', '') * 0.01 : y,
-            typeof w == 'string' ? tw * w.replace('%', '') * 0.01 : w,
-            typeof h == 'string' ? th * h.replace('%', '') * 0.01 : h,
-        ];
-        return this;
-    },
-    fn.setAntialias = function setAntialias(isAntialias){
-        this._antialias = isAntialias;
-        return this;
-    },
-    fn.setVisible = function setVisible(value){
-        this._visible = value;
-        return this;
-    },
-    fn.setFilter = function setFilter(filter/*,needIe*/){
+    fn.setFilter = function setFilter(filter,needIe){
         var result;
         if(arguments[1]) result = arguments[1];
         else {
@@ -258,7 +290,12 @@ var Camera = (function () {
     fn.removeFilter = function removeFilter(filter){
         delete this._filters[filter];
         return this;
-    }
-    return MoGL.ext(Camera, Mesh);
+    },
+    */
+    (function(){
+        var key = 'resize,othogonal,perspective'.split(','), i = key.length;
+        while (i--) Camera[key[i]] = key[i];
+    })();
+    return MoGL.ext(Camera, Matrix);
 })();
 
