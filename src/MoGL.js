@@ -15,7 +15,9 @@
     }
 })();
 //전역에서 사용하는 공통함수
-var $method, $setPrivate, $getPrivate;
+var $method, $setPrivate, $getPrivate,
+    GLMAT_EPSILON, SQRT, SIN, COS, ATAN2, ASIN, ABS, PIH, PERPI;
+    
 (function() {
     var VAR = {}, value = {};
     $setPrivate = function $setPrivate(cls, v) { //공용private설정
@@ -42,6 +44,11 @@ $method = function $method(f, key) { //생성할 이름과 메서드
     };
 },
 $method.prev = []; //스택구조의 이전 함수이름의 배열
+
+//수학함수
+GLMAT_EPSILON = 0.000001,
+SQRT = Math.sqrt, SIN = Math.sin, COS = Math.cos, ATAN2 = Math.atan2, ASIN = Math.asin,
+ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 
 var MoGL = (function() {
     var isFactory, isSuperChain, 

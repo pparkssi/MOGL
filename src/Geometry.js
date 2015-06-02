@@ -6,9 +6,9 @@ var Geometry = (function () {
     position = {}, vertexCount = {}, triangleCount = {}, 
     vertexShaders = {}, normal = {}, uv = {}, color = {}, 
     volume = {}, key = {};
-        
-    //공용상수정의
-    $setPrivate('Geometry',  {
+    //공용상수정의 - 꼭노출할것만 골라낼것
+    $setPrivate('Geometry', {
+        /*
         position:position,
         vertexCount:vertexCount,
         triangleCount:triangleCount,
@@ -18,10 +18,9 @@ var Geometry = (function () {
         color:color,
         volume:volume,
         key:key
+        */
     });
   
-    //lib
-    
     Geometry = (function(){
         var calcNormal, infoCheck, pos, nm, uv, co;
         calcNormal = (function(){
