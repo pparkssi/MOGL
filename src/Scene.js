@@ -181,7 +181,7 @@ var Scene = (function () {
 			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
 			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = normalize(vec3(uCameraMatrix * rotationMTX(uRotate) * vec4(-aVertexNormal, 0.0)));\n' +
+			'vNormal = (vec3( mv * vec4(-aVertexNormal, 0.0)));\n' +
 
 			'vColor = uColor;'
 			]
@@ -230,7 +230,7 @@ var Scene = (function () {
 			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
 			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = normalize(vec3( uCameraMatrix * rotationMTX(uRotate) * vec4(-aVertexNormal, 0.0)));\n' +
+			'vNormal = (vec3( mv * vec4(-aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
 		};
@@ -271,7 +271,7 @@ var Scene = (function () {
 			'mat4 mv = uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale);\n' +
 			'gl_Position = uPixelMatrix*mv*vec4(aVertexPosition, 1.0);\n' +
 			'vPosition = vec3(mv * vec4(aVertexPosition, 1.0));\n' +
-			'vNormal = normalize(vec3( uCameraMatrix * rotationMTX(uRotate) * vec4(-aVertexNormal, 0.0)));\n' +
+			'vNormal = normalize(vec3( mv * vec4(-aVertexNormal, 0.0)));\n' +
 			'vUV = aUV;'
 			]
 		};
