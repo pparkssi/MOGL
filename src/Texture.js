@@ -1,6 +1,6 @@
 var Texture = (function() {
     var imgType, canvas, context, empty, resizer,
-        resize, imgs,
+        resize, imgs, loaded,
         Texture, fn;
 
     //lib
@@ -48,12 +48,12 @@ var Texture = (function() {
     //private
     resize = {},
     imgs = {},
+    loaded = {},
     
     Texture = function Texture(){
         var self = this;
         this.isLoaded = false;
-        this.loaded = function(e){
-            //loaded
+        loaded[this] = function(e){
             self.isLoaded = true;
             self.dispatch('load', imgs[this] = resizer(self.resizeType, this));
         };
@@ -101,7 +101,7 @@ var Texture = (function() {
             if (loaded ){
                 self.dispatch('load', imgs[this] = resizer(this.resizeType, img));
             } else {
-                img.addEventListener('load', this.loaded);
+                img.addEventListener('load', loaded[this]);
             }
         })
     }),
