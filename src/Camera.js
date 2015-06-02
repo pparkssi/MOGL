@@ -16,26 +16,16 @@ var Camera = (function () {
     
     Camera = function Camera() {
         Object.seal(prop[this] = {
+            r:0, g:0, b:0, a:1,
+            fov:55, near:0.1, far:1000000,
+            fog:false, fogColor:null, fogNear:0, fogFar:0,
+            visible:true, 
+            antialias:false,
+            mode:CAmera.perspective,
+            //filters:{},
             cvs:null,
             renderArea:null,
-            geometry:new Geometry([], []),
-            material:new Material(),
-            r:0,
-            g:0,
-            b:0,
-            a:1,
-            fov:55,
-            near:0.1,
-            far:1000000,
-            visible:1,
-            filters:{},
-            fog:false,
-            fogColor:null,
-            fogNear:0,
-            fogFar:0,
-            antialias:false,
-            pixelMatrix:Matrix(),
-            mode:CAmera.perspective
+            pixelMatrix:Matrix()
         }),
         this.z =10,
         this.lookAt(0,0,0);
