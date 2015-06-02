@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>Monkey</title>
+    <meta charset="utf-8"/>
+    <meta property="og:image" content="http://shallaa.github.io/SoftEngine/og/1.jpg"/>
+    <meta property="og:title" content="Monkey"/>
+    <meta property="og:description" content="MoGL.js version"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=high-dpi "/>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .FPS {
+            color: #FFF;
+            left: 0px;
+            top: 0px;
+            position: absolute
+        }
+    </style>
+    <script src="../src/MoGL.js"></script>
+    <script src="../src/BlendMode.js"></script>
+    <script src="../src/Filter.js"></script>
+    <script src="../src/Vertex.js"></script>
+    <script src="../src/Shading.js"></script>
+    <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Matrix.js"></script>
+    <script src="../src/Geometry.js"></script>
+    <script src="../src/Material.js"></script>
+    <script src="../src/Texture.js"></script>
+    <script src="../src/Mesh.js"></script>
+    <script src="../src/Group.js"></script>
+    <script src="../src/Camera.js"></script>
+    <script src="../src/Scene.js"></script>
+    <script src="../src/World.js"></script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    /////////////////////////////////////////////////////////////////
+    /*
+     목표는
+     1. 메쉬단위별로 전부 파싱하고... - 완료
+     2. 재질 특성 즉 mtl값을 반영하게 하고..
+     3. 따라서 암비안트, 디퓨즈, 스페큘라 값도 읽어온다.
+     3. 그룹이 완성되면 그룹으로도 파싱하도록.
+     */
+    /////////////////////////////////////////////////////////////////
+    'use strict';
+    var world = new World('canvas');
+    var scene = new Scene();
+    world.addScene(scene);
+    scene.addChild('camera', new Camera());
+    scene.addMaterial('material', new Material(1, 1, 1, 1));
+    scene.addTexture('texture', 'woman/plate1diffuse1.png');
+    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture').setShading(Shading.phong);
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('GET', 'woman/woman.obj', true);
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            start(xmlhttp.responseText);
+        }
+    };
+    xmlhttp.send(null);
+    function start(data) {
+        parseObj(data)
+        world.addEventListener(World.renderAfter, function () {
+        })
+        world.start()
+        world.setAutoSize(1)
+    }
+
+    var parseObj = function parseObj(data) {
+        var data = data.split('\n')
+        var table = {}, temp, currentMesh
+        data.shift()
+        data.shift()
+        data.shift()
+        for (var i = 0, len = data.length; i < len; i++) {
+            temp = data[i]
+            if (temp.charAt(0) == 'o') {
+                currentMesh = table[temp.substr(2).trim()] = {
+                    vertex: [], uv: [], face: [], uvFace: []
+                }
+            } else if (temp.substr(0, 2) == 'vt') {
+                var a = temp.substr(3).split(' ');
+                currentMesh['uv'].push(a[0], a[1])
+            } else if (temp.substr(0, 2) == 'v ') {
+                var a = temp.substr(2).split(' ');
+                currentMesh['vertex'].push(a[0], a[1], a[2])
+            } else if (temp.substr(0, 2) == 'f ') {
+                var a = temp.substr(2).replace(/ /g, '/')
+                a = a.split('/');
+                currentMesh['face'].push(a[0] - 1, a[2] - 1, a[4] - 1)
+                currentMesh['uvFace'].push(a[1] - 1, a[3] - 1, a[5] - 1)
+            }
+        }
+        console.log(table)
+        var result = {}
+        var realData = {}
+        for (var k in table) {
+
+            realData[k] = {
+                vertex: [], face: []
+            }
+            var face = table[k].face, uvFace = table[k].uvFace
+            var tFace, tUVFace, tNum1, tNum2, tRealVertex, tUV, tVertex
+            for (var i = 0, len = face.length; i < len; i++) {
+                tFace = face[i]-face[0]
+                tUVFace = uvFace[i] - uvFace[0]
+                tNum1 = tFace * 5
+                tNum2 = tFace * 3
+                tRealVertex = realData[k].vertex
+                tVertex = table[k].vertex
+                tUV = table[k].uv
+                tRealVertex[tNum1] = tVertex[tNum2]
+                tRealVertex[tNum1 + 1] = tVertex[tNum2 + 1]
+                tRealVertex[tNum1 + 2] = tVertex[tNum2 + 2]
+                tRealVertex[tNum1 + 3] = tUV[tUVFace * 2]
+                tRealVertex[tNum1 + 4] = 1 - tUV[tUVFace * 2 + 1]
+                realData[k].face.push(tFace)
+            }
+            if(k=='head'){
+
+            }
+            scene.addGeometry(k, new Geometry(realData[k].vertex, realData[k].face, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
+            var mesh = new Mesh(k, 'material')
+            scene.addChild(k, mesh)
+            scene.getChild('camera').z = 150
+            scene.getChild('camera').lookAt(mesh.x,mesh.y,mesh.z);
+            result[k] = mesh
+            console.log('생성했다!',mesh)
+        }
+        world.addEventListener(World.renderBefore, function () {
+            for (var k in result) {
+                result[k].rotateY += 0.01
+            }
+
+        })
+        world.start()
+    }
+</script>
+</body>
+</html>
