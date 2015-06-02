@@ -65,16 +65,21 @@ var MoGL = (function() {
     fn = MoGL.prototype,
     fn.classId = MoGL.uuid = 'uuid:' + (uuid++), //프로토타입수준에서 클래스의 고유아이디와
     fn.className = 'MoGL', //클래스명설정
-    
+    fn.error = function error(id) { //error처리기는 method를 통해 래핑하지 않음
+        throw new Error(this.className + '.' + errorMethod + ':' + id);
+    },    
+    fn.toString = function(){//toString상황에서 uuid를 반환함.
+        return this.uuid;
+    },
     Object.defineProperty(fn, 'id', { //id처리기
-        get:function idGet() {
+        get:method(function idGet() {
             //클래스별 id저장소에서 가져옴
             if (ids[this.classId] && this.uuid in ids[this.classId]) { 
                 return ids[this.classId][this];
             }
             return null; //없으면 null
-        },
-        set:function idSet(v) {
+        }),
+        set:method(function idSet(v) {
             if (!ids[this.classId]){ // 클래스별 저장소가 없으면 생성
                 ids[this.classId] = {ref:{}};//역참조 ref는 중복확인용
             } else if(v in ids[this.classId].ref){ //역참조에 이미 존재하는 아이디면 예외
@@ -88,15 +93,15 @@ var MoGL = (function() {
                 ids[this.classId][this] = v;
                 ids[this.classId].ref[v] = this.uuid;
             }
-        }
+        })
     }),
     Object.defineProperty(fn, 'isUpdated', { //updated처리기
-        get:function idGet() {
+        get:method(function isUpdatedGet() {
             return updated[this] || false;
-        },
-        set:function idSet(v) {
+        }),
+        set:method(function isUpdatedSet(v) {
             this.dispatch( 'updated', updated[this] = v ); //set과 동시에 디스패치
-        }
+        })
     }),
     fn.destroy = method(function destroy() { //파괴자
         var key;
@@ -113,16 +118,10 @@ var MoGL = (function() {
         counter[this.classId]--, //클래스별인스턴스감소
         totalCount--; //전체인스턴스감소
     }),
-    fn.error = function error(id) { //error처리기는 method를 통해 래핑하지 않음
-        throw new Error(this.className + '.' + errorMethod + ':' + id);
-    },
     fn.setId = method(function setId(v) { //id setter
         this.id = v;
         return this;
     }),
-    fn.toString = function(){//toString상황에서 uuid를 반환함.
-        return this.uuid;
-    },
     //이벤트시스템
     fn.addEventListener = method(function(ev, f) {
         var target
@@ -167,6 +166,7 @@ var MoGL = (function() {
         return this;
     }),
     Object.freeze(fn);
+    MoGL.method = method,
     MoGL.updated = 'updated',
     //인스턴스의 갯수를 알아냄
     MoGL.count = function count(cls) {
@@ -230,7 +230,7 @@ var MoGL = (function() {
         //새롭게 프로토타입을 정의함
         cls.prototype = newProto,
         Object.freeze(cls),
-        Object.seal(newProto);
+        Object.freeze(newProto);
         return cls;
     };
     return MoGL;
