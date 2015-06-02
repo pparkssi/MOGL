@@ -50,7 +50,7 @@
     /////////////////////////////////////////////////////////////////
     /*
      목표는
-     1. 메쉬단위별로 전부 파싱하고...
+     1. 메쉬단위별로 전부 파싱하고... - 완료
      2. 재질 특성 즉 mtl값을 반영하게 하고..
      3. 따라서 암비안트, 디퓨즈, 스페큘라 값도 읽어온다.
      3. 그룹이 완성되면 그룹으로도 파싱하도록.
@@ -87,12 +87,12 @@
         data.shift()
         data.shift()
         data.shift()
-        currentMesh = table['k'] = {
-            vertex: [], uv: [], face: [], uvFace: []
-        }
         for (var i = 0, len = data.length; i < len; i++) {
             temp = data[i]
             if (temp.charAt(0) == 'o') {
+                currentMesh = table[temp.substr(2).trim()] = {
+                    vertex: [], uv: [], face: [], uvFace: []
+                }
             } else if (temp.substr(0, 2) == 'vt') {
                 var a = temp.substr(3).split(' ');
                 currentMesh['uv'].push(a[0], a[1])
@@ -106,31 +106,47 @@
                 currentMesh['uvFace'].push(a[1] - 1, a[3] - 1, a[5] - 1)
             }
         }
+        console.log(table)
+        var result = {}
         var realData = {}
         for (var k in table) {
+
             realData[k] = {
                 vertex: [], face: []
             }
-            var face = table[k].face
-            var uvFace = table[k].uvFace
+            var face = table[k].face, uvFace = table[k].uvFace
+            var tFace, tUVFace, tNum1, tNum2, tRealVertex, tUV, tVertex
             for (var i = 0, len = face.length; i < len; i++) {
-                realData[k].vertex[face[i] * 5] = table[k].vertex[face[i] * 3]
-                realData[k].vertex[face[i] * 5 + 1] = table[k].vertex[face[i] * 3 + 1]
-                realData[k].vertex[face[i] * 5 + 2] = table[k].vertex[face[i] * 3 + 2]
-                realData[k].vertex[face[i] * 5 + 3] = table[k].uv[uvFace[i] * 2]
-                realData[k].vertex[face[i] * 5 + 4] = 1 - table[k].uv[uvFace[i] * 2 + 1]
-                realData[k].face.push(face[i])
+                tFace = face[i]-face[0]
+                tUVFace = uvFace[i] - uvFace[0]
+                tNum1 = tFace * 5
+                tNum2 = tFace * 3
+                tRealVertex = realData[k].vertex
+                tVertex = table[k].vertex
+                tUV = table[k].uv
+                tRealVertex[tNum1] = tVertex[tNum2]
+                tRealVertex[tNum1 + 1] = tVertex[tNum2 + 1]
+                tRealVertex[tNum1 + 2] = tVertex[tNum2 + 2]
+                tRealVertex[tNum1 + 3] = tUV[tUVFace * 2]
+                tRealVertex[tNum1 + 4] = 1 - tUV[tUVFace * 2 + 1]
+                realData[k].face.push(tFace)
+            }
+            if(k=='head'){
+
             }
             scene.addGeometry(k, new Geometry(realData[k].vertex, realData[k].face, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
             var mesh = new Mesh(k, 'material')
             scene.addChild(k, mesh)
-            scene.getChild('camera').z = 250
-            scene.getChild('camera').lookAt(mesh.x, mesh.y, mesh.z);
-
-
+            scene.getChild('camera').z = 150
+            scene.getChild('camera').lookAt(mesh.x,mesh.y,mesh.z);
+            result[k] = mesh
+            console.log('생성했다!',mesh)
         }
         world.addEventListener(World.renderBefore, function () {
-            mesh.rotateY += 0.01
+            for (var k in result) {
+                result[k].rotateY += 0.01
+            }
+
         })
         world.start()
     }
