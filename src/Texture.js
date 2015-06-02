@@ -1,6 +1,6 @@
 var Texture = (function() {
     var imgType, canvas, context, empty, resizer,
-        resize, imgs, loaded,
+        resize, imgs, loaded, isLoaded,
         Texture, fn;
 
     //lib
@@ -49,12 +49,13 @@ var Texture = (function() {
     resize = {},
     imgs = {},
     loaded = {},
+    isLoaded = {},
     
     Texture = function Texture(){
         var self = this;
-        this.isLoaded = false;
+        isLoaded[this] = false;
         loaded[this] = function(e){
-            self.isLoaded = true;
+            isLoaded[self] = true;
             self.dispatch('load', imgs[this] = resizer(self.resizeType, this));
         };
     },
@@ -66,6 +67,11 @@ var Texture = (function() {
         set:MoGL.method(function resizeTypeSet(v){
             if(!Texture[type]) this.error(0);
             resize[this] = type;
+        })
+    }),
+    Object.defineProperty(fn, 'isLoaded', {
+        get:MoGL.method(function resizeTypeGet(){
+            return isLoaded[this] || false;
         })
     }),
     Object.defineProperty(fn, 'img', {
@@ -98,7 +104,8 @@ var Texture = (function() {
             } else {
                 this.error(0);
             }
-            if (loaded ){
+            if (loaded){
+                isLoaded[this] = true;
                 self.dispatch('load', imgs[this] = resizer(this.resizeType, img));
             } else {
                 img.addEventListener('load', loaded[this]);
