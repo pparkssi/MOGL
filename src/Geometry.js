@@ -9,47 +9,55 @@ var Geometry = (function () {
     var Geometry, fn;
     Geometry = function Geometry(vertex, index, info) {
         var i, len, t, t2,
-        isFloat32 = vertex instanceof Float32Array,
-        isUint16 = index instanceof Uint16Array;
-        if (!(Array.isArray(vertex) || isFloat32 )) this.error(0);
-        if (!(Array.isArray(index) || isUint16  )) this.error(1);
+            isVertexArrayFloat32 = vertex instanceof Float32Array,
+            isIndexArrayUint16 = index instanceof Uint16Array;
+        var isNotVertexProperty = function (propertyName) {
+            return !Vertex.hasOwnProperty(propertyName);
+        };
+
+        if (!(Array.isArray(vertex) || isVertexArrayFloat32)) this.error(0);
+        if (!(Array.isArray(index) || isIndexArrayUint16)) this.error(1);
+        if (info && !Array.isArray(info)) this.error(3);
+        if (Array.isArray(info) && info.some(isNotVertexProperty)) this.error(4);
+
+        /////////////////////////////////////
+        t = info ? info.length : 3;
+        this._vertexCount = vertex.length / t,
+            this._triangleCount = index.length / 3,
+            this._vertexShaders = {},
+            this._position = [],
+            this._normal = [],
+            this._uv = [],
+            this._color = [],
+            this._volume = null,
+            this._key = null;
+
         if (info) {
             i = info.length;
-            if(vertex.length % i) this.error(2);
-            while(i--) info[info[i]] = i;
-            //console.log(info)
-        }
-        /////////////////////////////////////
-        t = arguments[2] ? arguments[2].length : 3;
-        this._vertexCount = vertex.length / t,
-        this._triangleCount = index.length / 3,
-        this._vertexShaders = {},
-        this._position = [],
-        this._normal = [],
-        this._uv = [],
-        this._color = [],
-        this._volume=null,
-        this._key = null;
-        ///////////////////////////////
-        //TODO 노말,UV,컬러없을떄 판별
-        if (arguments[2]) {
+            if (vertex.length % i) this.error(2);
+            while (i--) info[info[i]] = i;
+//console.log('info : ', info);
+
+            ///////////////////////////////
+            //TODO 노말,UV,컬러없을떄 판별
             for (i = 0, len = vertex.length / t; i < len; i++) {
                 t2 = t * i,
-                this._position.push(vertex[t2 + info.x], vertex[t2 + info.y], vertex[t2 + info.z]),
-                info.nx ? this._normal.push(vertex[t2 + info.nx], vertex[t2 + info.ny], vertex[t2 + info.nz]) : 0,
-                info.u ? this._uv.push(vertex[t2 + info.u], vertex[t2 + info.v]) : 0,
-                info.r ? this._color.push(vertex[t2 + info.r], vertex[t2 + info.g], vertex[t2 + info.b], vertex[t2 + info.a]) : 0;
+                    this._position.push(vertex[t2 + info.x], vertex[t2 + info.y], vertex[t2 + info.z]),
+                    info.normalX && info.normalY && info.normalZ ? this._normal.push(vertex[t2 + info.normalX], vertex[t2 + info.normalY], vertex[t2 + info.normalZ]) : 0,
+                    info.u && info.v ? this._uv.push(vertex[t2 + info.u], vertex[t2 + info.v]) : 0,
+                    info.r && info.g && info.b && info.a ? this._color.push(vertex[t2 + info.r], vertex[t2 + info.g], vertex[t2 + info.b], vertex[t2 + info.a]) : 0;
             }
             this._position = new Float32Array(this._position),
-            this._uv = new Float32Array(this._uv),
-            this._color = new Float32Array(this._color);
-        } else this._position = isFloat32 ? vertex : new Float32Array(vertex);
+                this._uv = new Float32Array(this._uv),
+                this._color = new Float32Array(this._color);
+        } else this._position = isVertexArrayFloat32 ? vertex : new Float32Array(vertex);
+
         //TODO Uint32Array을 받아줄것인가! 고민해야됨..
-        this._index = isUint16 ? index : new Uint16Array(index);
-        if(this._normal.length == 0) this._normal = new Float32Array(calculateNormals(this._position, this._index));
+        this._index = isIndexArrayUint16 ? index : new Uint16Array(index);
+        if (this._normal.length == 0) this._normal = new Float32Array(calculateNormals(this._position, this._index));
         else this._normal = new Float32Array(this._normal);
         ///////////////////////////////
-    }
+    };
     var calculateNormals = function calculateNormals(v, i) {
         var x = 0, y = 1, z = 2, j, k, len, mSqt = Math.sqrt, ns = [], v1 = [], v2 = [], n0 = [], n1 = [];
         for (j = 0, len = v.length; j < len; j++) ns[j] = 0.0;
@@ -64,39 +72,39 @@ var Geometry = (function () {
             n1[x] = n1[x] / len, n1[y] = n1[y] / len, n1[z] = n1[z] / len, ns[i + x] = n1[x], ns[i + y] = n1[y], ns[i + z] = n1[z];
         }
         return ns;
-    }
+    };
     fn = Geometry.prototype,
-    fn.addVertexShader = function addVertexShader(id) { 
-        // TODO 마일스톤0.5
-        this._vertexShaders[id] = id;
-        return this;
-    },
-    fn.getVertexCount = function getVertexCount() { 
-        return this._vertexCount;
-    },
-    fn.getTriangleCount = function getTriangleCount() { 
-        return this._triangleCount;
-    },
-    fn.getVolume = function getVolume() { 
-        if (!this._volume) {
-            var minX = 0, minY = 0, minZ = 0, maxX = 0, maxY = 0, maxZ = 0;
-            var t0, t1, t2, t = this._position, i = t.length;
-            while (i--) {
-                t0 = i * 3, t1 = t0 + 1, t2 = t0 + 2;
-                minX = t[t0] < minX ? t[t0] : minX,
-                maxX = t[t0] > maxX ? t[t0] : maxX,
-                minY = t[t1] < minY ? t[t1] : minY,
-                maxY = t[t1] > maxY ? t[t1] : maxY,
-                minZ = t[t2] < minZ ? t[t2] : minZ,
-                maxZ = t[t2] > maxZ ? t[t2] : maxZ;
+        fn.addVertexShader = function addVertexShader(id) {
+            // TODO 마일스톤0.5
+            this._vertexShaders[id] = id;
+            return this;
+        },
+        fn.getVertexCount = function getVertexCount() {
+            return this._vertexCount;
+        },
+        fn.getTriangleCount = function getTriangleCount() {
+            return this._triangleCount;
+        },
+        fn.getVolume = function getVolume() {
+            if (!this._volume) {
+                var minX = 0, minY = 0, minZ = 0, maxX = 0, maxY = 0, maxZ = 0;
+                var t0, t1, t2, t = this._position, i = t.length;
+                while (i--) {
+                    t0 = i * 3, t1 = t0 + 1, t2 = t0 + 2;
+                    minX = t[t0] < minX ? t[t0] : minX,
+                        maxX = t[t0] > maxX ? t[t0] : maxX,
+                        minY = t[t1] < minY ? t[t1] : minY,
+                        maxY = t[t1] > maxY ? t[t1] : maxY,
+                        minZ = t[t2] < minZ ? t[t2] : minZ,
+                        maxZ = t[t2] > maxZ ? t[t2] : maxZ;
+                }
+                this._volume = [maxX - minX, maxY - minY, maxZ - minZ];
             }
-            this._volume = [maxX - minX, maxY - minY, maxZ - minZ];
-        }
-        return this._volume;
-    },
-    fn.removeVertexShader = function removeVertexShader(id) { 
-        // TODO 마일스톤0.5
-        return delete this._vertexShaders[id], this;
-    }
+            return this._volume;
+        },
+        fn.removeVertexShader = function removeVertexShader(id) {
+            // TODO 마일스톤0.5
+            return delete this._vertexShaders[id], this;
+        };
     return MoGL.ext(Geometry, MoGL);
 })();

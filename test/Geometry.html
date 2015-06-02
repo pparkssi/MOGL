@@ -242,55 +242,78 @@
     bsTest( 'NEW TEST' );
 
     bsTest( 'constructor',
-            function(){
-                var geo, test;
-                try{
+            function () {
+                var geo, error;
+                try {
                     geo = new Geometry();
-                }catch(e){
-                    test = e.toString();
+                } catch (e) {
+                    error = e.toString();
                 }
-                return test=='';
-            },false,
-            function(){
-                var geo, test;
+                return error;
+            }, 'Error: Geometry.constructor:0',
+            function () {
+                var geo, error;
                 try{
                     geo = new Geometry(
                             [1,0,0, 0,0,1, 0,1,1,
                             1,0,0, 0,0,1, 0,1,1,
                             1,0,0, 0,0,1, 0,1,1]);
                 }catch(e){
-                    test = e.toString();
+                    error = e.toString();
                 }
-                return test=='';
-            }, false,
-            function(){
-                var geo, test;
+                return error;
+            }, 'Error: Geometry.constructor:1',
+            function () {
+                var geo, error;
                 try{
                     geo = new Geometry(
                             [1,0,0, 0,0,1, 0,1,1,
                             1,0,0, 0,0,1, 0,1,1,
                             1,0,0, 0,0,1, 0,1,1],
                             [0,1,2, 2,3,4, 4,5,6],
-                            [Geometry.x, Geometry.y]
+                            [Vertex.x, Vertex.y]
                     );
                 }catch(e){
-                    test = e.toString();
+                    error = e.toString();
                 }
-                return  test=='';
-            }, false,
-            function(){
-                var cube = new Geometry(
-                        [1,0,0, 0,0,1, 0,1,1,
-                        1,0,0, 0,0,1, 0,1,1,
-                        1,0,0, 0,0,1, 0,1,1],
+                return error;
+            }, 'Error: Geometry.constructor:2',
+            function () {
+                var cube, error;
+                try {
+                    cube = new Geometry(
+                            [1,0,0, 0,0,1, 0,1,1,
+                            1,0,0, 0,0,1, 0,1,1,
+                            1,0,0, 0,0,1, 0,1,1],
 
-                        [0,1,2, 2,3,4, 4,5,6],
+                            [0,1,2, 2,3,4, 4,5,6],
 
-                        [Geometry.x, Geometry.y, Geometry.z]
-                );
+                            Vertex
+                    );
+                } catch (e) {
+                    error = e.toString();
+                }
 
-                return cube.getVertexCount();
-            }, 9
+                return error;
+            }, 'Error: Geometry.constructor:3',
+            function () {
+                var cube, error;
+                try {
+                    cube = new Geometry(
+                            [1,0,0, 0,0,1, 0,1,1,
+                            1,0,0, 0,0,1, 0,1,1,
+                            1,0,0, 0,0,1, 0,1,1],
+
+                            [0,1,2, 2,3,4, 4,5,6],
+
+                            [Geometry.x, Geometry.y, Geometry.z]
+                    );
+                } catch (e) {
+                    error = e.toString();
+                }
+
+                return error;
+            }, 'Error: Geometry.constructor:4'
     );
 
     bsTest( 'addVertexShader',
