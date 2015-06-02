@@ -61,24 +61,24 @@ var Texture = (function() {
     },
     fn = Texture.prototype,
     Object.defineProperty(fn, 'resizeType', {
-        get:MoGL.method(function resizeTypeGet(){
+        get:$method(function resizeTypeGet(){
             return resize[this] || 'zoomOut';
         }),
-        set:MoGL.method(function resizeTypeSet(v){
+        set:$method(function resizeTypeSet(v){
             if(!Texture[type]) this.error(0);
             resize[this] = type;
         })
     }),
     Object.defineProperty(fn, 'isLoaded', {
-        get:MoGL.method(function resizeTypeGet(){
+        get:$method(function resizeTypeGet(){
             return isLoaded[this] || false;
         })
     }),
     Object.defineProperty(fn, 'img', {
-        get:MoGL.method(function imgGet(){
+        get:$method(function imgGet(){
             return imgs[this] || empty;
         }),
-        set:MoGL.method(function imgSet(v){
+        set:$method(function imgSet(v){
             var loaded, img, w, h;
             img = v;
             if (v instanceof HTMLImageElement){
@@ -93,7 +93,7 @@ var Texture = (function() {
                 context.putImageData(v, 0, 0),
                 img = document.createElement('img'),
                 img.src = context.toDataURL();
-            } else if (typeof v == 'string' ) {
+            } else if (typeof v == 'string') {
                 if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
                     loaded = true;
                 } else if (!imgType[src.substring(-4)]) {

@@ -14,12 +14,40 @@
         });
     }
 })();
+//전역에서 사용하는 공통함수
+var $method, $setPrivate, $getPrivate;
+(function() {
+    var VAR = {}, value = {};
+    $setPrivate = function $setPrivate(cls, v) { //공용private설정
+        value.value = v,
+        Object.defineProperty(VAR, cls, v);
+    },
+    $getPrivate = function $getPrivate(cls) { //공용private읽기
+        if (arguments.length == 2 ) {
+            return VAR[cls][arguments[1]];
+        } else {
+            return VAR[cls];
+        }
+    };
+})(),
+$method = function $method(f, key) { //생성할 이름과 메서드
+    return function() {
+        var result, prev = $method.prev;
+        if (!this.isAlive) throw new Error('Destroyed Object:' + this); //비활성객체 배제
+        prev[prev.length] = $method.method, //에러가 발생한 메소드이름을 스택으로 관리
+        $method.method = key, //현재 에러가 난 메소드명
+        result = f.apply(this, arguments), //메소드실행
+        $method.method = prev.pop(); //스택을 되돌림
+        return result;
+    };
+},
+$method.prev = []; //스택구조의 이전 함수이름의 배열
+
 var MoGL = (function() {
     var isFactory, isSuperChain, 
         value, writable,
         uuid, counter, totalCount,
-        method, prevMethod, errorMethod,
-        listener, ids, updated,
+        listener, ids, updated, 
         MoGL, fn;
     
     //내부용 상수
@@ -40,19 +68,6 @@ var MoGL = (function() {
     listener = {}, //이벤트 리스너용
     updated = {}, //업데이트용
     
-    //메서드생성기
-    prevMethod = [], //스택구조의 이전 함수이름의 배열
-    method = function method(f, key) { //생성할 이름과 메서드
-        return function() {
-            var result;
-            if (!this.isAlive) throw new Error('Destroyed Object:' + this); //비활성객체 배제
-            prevMethod[prevMethod.length] = errorMethod, //에러가 발생한 메소드이름을 스택으로 관리
-            errorMethod = key, //현재 에러가 난 메소드명
-            result = f.apply(this, arguments), //메소드실행
-            errorMethod = prevMethod.pop(); //스택을 되돌림
-            return result;
-        };
-    },
     //MoGL정의
     MoGL = function MoGL() {
         value.value = 'uuid:' + (uuid++),
@@ -66,20 +81,20 @@ var MoGL = (function() {
     fn.classId = MoGL.uuid = 'uuid:' + (uuid++), //프로토타입수준에서 클래스의 고유아이디와
     fn.className = 'MoGL', //클래스명설정
     fn.error = function error(id) { //error처리기는 method를 통해 래핑하지 않음
-        throw new Error(this.className + '.' + errorMethod + ':' + id);
+        throw new Error(this.className + '.' + $method.method + ':' + id);
     },    
     fn.toString = function(){//toString상황에서 uuid를 반환함.
         return this.uuid;
     },
     Object.defineProperty(fn, 'id', { //id처리기
-        get:method(function idGet() {
+        get:$method(function idGet() {
             //클래스별 id저장소에서 가져옴
             if (ids[this.classId] && this.uuid in ids[this.classId]) { 
                 return ids[this.classId][this];
             }
             return null; //없으면 null
         }),
-        set:method(function idSet(v) {
+        set:$method(function idSet(v) {
             if (!ids[this.classId]){ // 클래스별 저장소가 없으면 생성
                 ids[this.classId] = {ref:{}};//역참조 ref는 중복확인용
             } else if(v in ids[this.classId].ref){ //역참조에 이미 존재하는 아이디면 예외
@@ -96,14 +111,14 @@ var MoGL = (function() {
         })
     }),
     Object.defineProperty(fn, 'isUpdated', { //updated처리기
-        get:method(function isUpdatedGet() {
+        get:$method(function isUpdatedGet() {
             return updated[this] || false;
         }),
-        set:method(function isUpdatedSet(v) {
+        set:$method(function isUpdatedSet(v) {
             this.dispatch( 'updated', updated[this] = v ); //set과 동시에 디스패치
         })
     }),
-    fn.destroy = method(function destroy() { //파괴자
+    fn.destroy = $method(function destroy() { //파괴자
         var key;
         for (key in this) {
             if (this.hasOwnProperty(key)) this[key] = null;
@@ -118,12 +133,12 @@ var MoGL = (function() {
         counter[this.classId]--, //클래스별인스턴스감소
         totalCount--; //전체인스턴스감소
     }),
-    fn.setId = method(function setId(v) { //id setter
+    fn.setId = $method(function setId(v) { //id setter
         this.id = v;
         return this;
     }),
     //이벤트시스템
-    fn.addEventListener = method(function(ev, f) {
+    fn.addEventListener = $method(function(ev, f) {
         var target
         //private저장소에 this용 공간 초기화
         if (!listener[this]) listener[this] = {};
@@ -135,7 +150,7 @@ var MoGL = (function() {
         if (target.indexOf(f) == -1) target[target.length] = f;
         return this;
     }),
-    fn.removeEventListener = method(function(ev, f) {
+    fn.removeEventListener = $method(function(ev, f) {
         var target, i;
         if( f ){
             if (listener[this] && listener[this][ev]) {
@@ -154,7 +169,7 @@ var MoGL = (function() {
         }
         return this;
     }),
-    fn.dispatch = method(function(ev){
+    fn.dispatch = $method(function(ev){
         var target, arg, i, j;
         if (listener[this] && listener[this][ev]) {
             //만약 추가로 보낸 인자가 있다면 리스너에게 apply해줌.
@@ -166,7 +181,6 @@ var MoGL = (function() {
         return this;
     }),
     Object.freeze(fn);
-    MoGL.method = method,
     MoGL.updated = 'updated',
     //인스턴스의 갯수를 알아냄
     MoGL.count = function count(cls) {
@@ -190,11 +204,11 @@ var MoGL = (function() {
         }
         //생성자클래스
         cls = function() {
-            var arg, arg0 = arguments[0], result;
+            var arg, arg0 = arguments[0], result, prev = $method.prev;
             
             //생성자에서도 에러처리를 위한 스택을 정의함
-            prevMethod[prevMethod.length] = errorMethod;
-            errorMethod = 'constructor';
+            prev[prev.length] = $method.method;
+            $method.method = 'constructor';
             if (arg0 === isSuperChain) {//생성자체인으로 요청된 경우
                 parent.call(this, isSuperChain, arguments[1]),
                 child.apply(this, arguments[1]);
@@ -211,14 +225,14 @@ var MoGL = (function() {
             } else {//팩토리함수형태로 호출된 경우
                 result = cls.call(Object.create(cls.prototype), isFactory, arguments);
             }
-            errorMethod = prevMethod.pop();
+            $method.method = prev.pop();
             return result;
         };
         //parent와 프로토타입체인생성
         newProto = Object.create(parent.prototype);
         //기존 child의 프로토타입속성을 복사
         oldProto = child.prototype;
-        for (key in oldProto) if (oldProto.hasOwnProperty(key)) newProto[key] = method(oldProto[key], key);
+        for (key in oldProto) if (oldProto.hasOwnProperty(key)) newProto[key] = $method(oldProto[key], key);
         //정적 속성을 복사
         for ( key in child ) if (child.hasOwnProperty(key)) cls[key] = child[key];
         //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
