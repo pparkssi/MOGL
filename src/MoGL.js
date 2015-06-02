@@ -55,7 +55,7 @@ var MoGL = (function() {
     },
     //MoGL정의
     MoGL = function MoGL() {
-        value.value = uuid++,
+        value.value = 'uuid:' + (uuid++),
         Object.defineProperty(this, 'uuid', value), //객체고유아이디
         writable.value = true,
         Object.defineProperty(this, 'isAlive', writable),//활성화상태초기화 true
@@ -63,7 +63,7 @@ var MoGL = (function() {
         totalCount++; //전체 인스턴스 수 증가
     },
     fn = MoGL.prototype,
-    fn.classId = MoGL.uuid = uuid++, //프로토타입수준에서 클래스의 고유아이디와
+    fn.classId = MoGL.uuid = 'uuid:' + (uuid++), //프로토타입수준에서 클래스의 고유아이디와
     fn.className = 'MoGL', //클래스명설정
     
     Object.defineProperty(fn, 'id', { //id처리기
@@ -222,7 +222,7 @@ var MoGL = (function() {
         //정적 속성을 복사
         for ( key in child ) if (child.hasOwnProperty(key)) cls[key] = child[key];
         //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
-        value.value = cls.uuid = uuid++,
+        value.value = cls.uuid = 'uuid:' + (uuid++),
         Object.defineProperty(newProto, 'classId', value);
         value.value = child.name;
         Object.defineProperty(newProto, 'className', value);
