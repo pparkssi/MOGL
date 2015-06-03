@@ -224,7 +224,7 @@ var MoGL = (function() {
     },
     //parent클래스를 상속하는 자식클래스를 만들어냄.
     MoGL.ext = function ext(child, parent) {
-        var cls, oldProto, newProto, key;
+        var cls, oldProto, newProto, key, prop;
         //부모검사
         if (!parent) {
             parent = MoGL;
@@ -262,6 +262,15 @@ var MoGL = (function() {
         //기존 child의 프로토타입속성을 복사
         oldProto = child.prototype;
         for (key in oldProto) if (oldProto.hasOwnProperty(key)) newProto[key] = $method(oldProto[key], key);
+        oldProto = oldProto.prop;
+        if (oldProto) {
+            for (key in oldProto) {
+                prop = oldProto[key];
+                if( prop.get ) prop.get = $method(prop.get);
+                if( prop.set ) prop.set = $method(prop.set);
+                Object.definedProperty(newProto, key, prop);
+            }
+        }
         //정적 속성을 복사
         for ( key in child ) if (child.hasOwnProperty(key)) cls[key] = child[key];
         //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
