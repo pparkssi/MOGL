@@ -1,12 +1,11 @@
 var Mesh = (function () {
-    var geometry, material, scene, parent, culling,
+    var geometry, material, scene, culling,
         Mesh, fn;
     
     //private
     geometry = {},
     material = {},
     scene = {},
-    parent = {},
     culling = {};
     //shared private
     $setPrivate('Mesh', {
@@ -31,7 +30,6 @@ var Mesh = (function () {
     },
     fn = Mesh.prototype,
     fn.prop = {
-        parent:{get:$getter(parent)},
         culling:{
             get:$getter(culling, false, Mesh.cullingNone),
             set:function cullingSet(v) {
