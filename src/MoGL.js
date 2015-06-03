@@ -297,7 +297,7 @@ var MoGL = (function() {
                 prop = oldProto[key];
                 if( prop.get ) prop.get = $method(prop.get);
                 if( prop.set ) prop.set = $method(prop.set);
-                Object.definedProperty(newProto, key, prop);
+                Object.defineProperty(newProto, key, prop);
             }
         }
         //정적 속성을 복사

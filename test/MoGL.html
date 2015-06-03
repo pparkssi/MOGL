@@ -242,7 +242,42 @@
     });
     k.isUpdated = true;
 })();
-
+(function(){
+    var a = function(){}, aa;
+    a.prototype.prop = {
+        a:{
+            get:function(){return aa;},
+            set:function(v){aa = v;}
+        }
+    };
+    a = MoGL.ext(a);
+    var b = function(){}, bb;
+    b.prototype.prop = {
+        b:{
+            get:function(){return bb;},
+            set:function(v){bb = v;}
+        }
+    };
+    b = MoGL.ext(b, a);
+    var ins = new b();
+    bsTest( 'property',
+        function(){
+            ins.b = 3;
+            return bb;
+        }, 3,
+        function(){
+            return ins.b;
+        }, 3,
+        function(){
+            ins.a = 5;
+            return aa;
+        }, 5,
+        function(){
+            return ins.a;
+        }, 5
+    );
+    
+})();
 </script>
 </body>
 </html>
