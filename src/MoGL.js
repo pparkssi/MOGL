@@ -16,7 +16,7 @@
 })();
 //전역에서 사용하는 공통함수
 var $method, $setPrivate, $getPrivate, $value, $getter, $setter, $color,
-    GLMAT_EPSILON, SIN, COS, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
+    GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
     
 (function() {
     var VAR = {}, value = {};
@@ -55,11 +55,11 @@ $getter = function(prop, key){
     var defaultValue = arguments.length == 3 ? arguments[3] : null;
     if (key) {
         return function getter() {
-            return prop[this][key] || defaultValue;
+            return prop[this][key]// || defaultValue;
         };
     } else {
         return function getter() {
-            return prop[this] || defaultValue;
+            return prop[this]// || defaultValue;
         };
     }
 },
@@ -77,8 +77,10 @@ $setter = function(prop, key){
 $color = (function(){
     var co = [];
     return function(v){
-        var t1, ta;
         if (typeof v == 'string' && v.charAt(0) == '#') {
+            if (v.length == 4) {
+                v += v.substr(1,3)
+            }
             co[0] = parseInt(v.substr(1, 2), 16) / 255,
             co[1] = parseInt(v.substr(3, 2), 16) / 255,
             co[2] = parseInt(v.substr(5, 2), 16) / 255;
@@ -98,7 +100,7 @@ $color = (function(){
 })();
 //수학함수
 GLMAT_EPSILON = 0.000001,
-SIN = Math.sin, COS = Math.cos, ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin,
+SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.atan2, ASIN = Math.asin,
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 
 var MoGL = (function() {
