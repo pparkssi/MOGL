@@ -113,7 +113,7 @@ var Texture = (function() {
         }
     },
     (function() {
-        var value = {value:null}, key = 'zoomOut,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
+        var value = {value:null}, key = 'zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
         while (i--) {
             value.value = key[i],
             Object.defineProperty( Texture, key[i], value );
