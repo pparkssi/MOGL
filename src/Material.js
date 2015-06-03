@@ -2,28 +2,48 @@
  * Created by redcamel on 2015-05-05.
  */
 var Material = (function () {
-    var Material, fn;
-    var hex, hex_s;
-    hex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i, hex_s = /^#?([a-f\d]{1})([a-f\d]{1})([a-f\d]{1})$/i;
+    var textures, shading, diffuse, normal, specular, diffuseWrap, specularNormal, color, wireFrame, count, scene, 
+        Material, fn;
+    
+    //private
+    textures = {},
+    shading = {},
+    diffuse = {},
+    normal = {},
+    specular = {},
+    diffuseWrap = {},
+    specularNormal = {},
+    color = {},
+    wireFrame = {},
+    count = {},
+    scene = {},
+
+    //shared private
+    $setPrivate('Material', {
+    }),
+    
     Material = function Material() {
-        this._textures = {},
-        this._shading = {type: 'none', lambert: 1},
-        this._diffuse = {__indexList: []},
-        this._normal = {__indexList: []},
-        this._specular = {__indexList: []},
-        this._diffuseWrap = {__indexList: []},
-        this._specularNormal = {__indexList: []},
-        this._r = 1, this._rw = Math.random(),
-        this._g = 1, this._gw = Math.random(),
-        this._b = 1, this._bw = Math.random(),
-        this._a = 1,
-        this._wireFrame = 0,
-        this._count = 0,
-        this._scene = null,
-        this._key = null,
-        this.setBackgroundColor.apply(this, arguments);
+        textures[this] = {},
+        shading[this] = {type: 'none', lambert: 1},
+        diffuse[this] = {__indexList: []},
+        normal[this] = {__indexList: []},
+        specular[this] = {__indexList: []},
+        diffuseWrap[this] = {__indexList: []},
+        specularNormal[this] = {__indexList: []},
+        wireFrame[this] = 0,
+        count[this] = 0,
+        scene[this] = null,
+        color[this] = $color(arguments).slice(0);
+        /*
+        this._rw = Math.random(),
+        this._gw = Math.random(),
+        this._bw = Math.random(),
+        */
     },
     fn = Material.prototype,
+    fn.prop = {
+        count:$value(count)
+    }
     fn.addTexture = function addTexture(type,textureID/*,index,blendMode*/) { 
         var t = this._scene;
         if (t && !t._textures[textureID]) this.error(0);
