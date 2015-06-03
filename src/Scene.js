@@ -3,69 +3,16 @@
  */
 'use strict'
 var Scene = (function () {
-    var canvas, context,
-        children, camera, textures, materials, geometrys, vertexShaders, fragmentShaders, gpu,
+    var canvas, context, makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, vertexShaderParser, fragmentShaderParser, makeTexture, makeFrameBuffer,
+        children, camera, textures, materials, geometrys, vertexShaders, fragmentShaders, gpu, cvs,
         Scene, fn;
     //lib
     canvas = document.createElement('canvas');
-    context = textureCVS.getContext('2d');
-    //private
-    children = {},
-        camera = {},
-        textures = {},
-        materials = {},
-        geometrys = {},
-        gpu = {},
-        //shared private
-        $setPrivate('Scene', {}),
-        Scene = function Scene() {
-            // for JS
-            children[this] = {},
-            cameras[this] = {},
-            textures[this] = {},
-            materials[this] = {},
-            geometrys[this] = {},
-            vertexShaders[this] = {},
-            fragmentShaders[this] = {},
-            // for GPU
-            gpu[this] = {
-                gl: null,
-                vbos: {},
-                vnbos: {},
-                uvbos: {},
-                ibos: {},
-                programs: {},
-                textures: {},
-                framebuffers: {}
-            }
-
-
-            this.addVertexShader(Shader.colorVertexShader),
-            this.addFragmentShader(Shader.colorFragmentShader),
-            this.addVertexShader(Shader.wireFrameVertexShader),
-            this.addFragmentShader(Shader.wireFrameFragmentShader),
-            this.addVertexShader(Shader.bitmapVertexShader),
-            this.addFragmentShader(Shader.bitmapFragmentShader),
-            this.addVertexShader(Shader.bitmapVertexShaderGouraud),
-            this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
-            this.addVertexShader(Shader.colorVertexShaderGouraud),
-            this.addFragmentShader(Shader.colorFragmentShaderGouraud),
-            this.addVertexShader(Shader.colorVertexShaderPhong),
-            this.addFragmentShader(Shader.colorFragmentShaderPhong),
-            this.addVertexShader(Shader.toonVertexShaderPhong),
-            this.addFragmentShader(Shader.toonFragmentShaderPhong),
-            this.addVertexShader(Shader.bitmapVertexShaderPhong),
-            this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
-            this.addVertexShader(Shader.bitmapVertexShaderBlinn),
-            this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
-            this.addVertexShader(Shader.postBaseVertexShader),
-            this.addFragmentShader(Shader.postBaseFragmentShader);
-        };
-    /////////////////////////////////////////////////////////////////
-    var makeVBO = function makeVBO(self, name, data, stride) {
+    context = canvas.getContext('2d');
+    makeVBO = function makeVBO(name, data, stride) {
         var gl, buffer;
-        gl = self._gl,
-            buffer = self._glVBOs[name];
+        gl = gpu[this].gl,
+        buffer = gpu[this].vbos[name];
         if (buffer) return buffer;
         buffer = gl.createBuffer(),
             gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
@@ -75,99 +22,94 @@ var Scene = (function () {
             buffer.data = data,
             buffer.stride = stride,
             buffer.numItem = data.length / stride,
-            self._glVBOs[name] = buffer,
-            console.log('VBO생성', self._glVBOs[name]);
-        return self._glVBOs[name];
-    };
+            gpu[this].vbos[name] = buffer,
+            console.log('VBO생성', gpu[this].vbos[name]);
+        return gpu[this].vbos[name];
+    },
+        makeVNBO = function makeVNBO(name, data, stride) {
+            var gl, buffer;
+            gl = gpu[this].gl,
+                buffer = gpu[this].vnbos[name];
+            if (buffer) return buffer;
+            buffer = gl.createBuffer(),
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
+                buffer.name = name,
+                buffer.type = 'VNBO',
+                buffer.data = data,
+                buffer.stride = stride,
+                buffer.numItem = data.length / stride,
+                gpu[this].vnbos[name] = buffer,
+                console.log('VNBO생성', gpu[this].vnbos[name]);
+            return gpu[this].vnbos[name];
+        },
 
-    var makeVNBO = function makeVNBO(self, name, data, stride) {
-        var gl, buffer;
-        gl = self._gl,
-            buffer = self._glVNBOs[name];
-        if (buffer) return buffer;
-        buffer = gl.createBuffer(),
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
-            buffer.name = name,
-            buffer.type = 'VNBO',
-            buffer.data = data,
-            buffer.stride = stride,
-            buffer.numItem = data.length / stride,
-            self._glVNBOs[name] = buffer,
-            console.log('VNBO생성', self._glVNBOs[name]);
-        return self._glVNBOs[name];
-    };
-
-    var makeIBO = function makeIBO(self, name, data, stride) {
-        var gl, buffer;
-        gl = self._gl,
-            buffer = self._glIBOs[name];
-        if (buffer) return buffer;
-        buffer = gl.createBuffer(),
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer),
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), gl.STATIC_DRAW),
-            buffer.name = name,
-            buffer.type = 'IBO',
-            buffer.data = data,
-            buffer.stride = stride,
-            buffer.numItem = data.length / stride,
-            self._glIBOs[name] = buffer,
-            console.log('IBO생성', self._glIBOs[name]);
-        return self._glIBOs[name];
-    };
-
-    var makeUVBO = function makeUVBO(self, name, data, stride) {
-        var gl, buffer;
-        gl = self._gl, buffer = self._glUVBOs[name];
-        if (buffer) return buffer;
-        buffer = gl.createBuffer(),
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
-            buffer.name = name,
-            buffer.type = 'UVBO',
-            buffer.data = data,
-            buffer.stride = stride,
-            buffer.numItem = data.length / stride,
-            self._glUVBOs[name] = buffer,
-            console.log('UVBO생성', self._glUVBOs[name]);
-        return self._glUVBOs[name];
-    };
-
-    var makeProgram = function makeProgram(self, name) {
-        var gl, vShader, fShader, program, i;
-        gl = self._gl,
-            vShader = vertexShaderParser(self, self._vertexShaders[name]),
-            fShader = fragmentShaderParser(self, self._fragmentShaders[name]),
-            program = gl.createProgram(),
-            gl.attachShader(program, vShader),
-            gl.attachShader(program, fShader),
-            gl.linkProgram(program),
-            vShader.name = name + '_vertex', fShader.name = name + '_fragment', program.name = name;
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error('프로그램 쉐이더 초기화 실패!' + self);
-        gl.useProgram(program);
-        for (i = 0; i < vShader.attributes.length; i++) {
-            gl.bindBuffer(gl.ARRAY_BUFFER, self._glVBOs['null']),
-                gl.enableVertexAttribArray(program[vShader.attributes[i]] = gl.getAttribLocation(program, vShader.attributes[i])),
-                gl.vertexAttribPointer(program[vShader.attributes[i]], self._glVBOs['null'].stride, gl.FLOAT, false, 0, 0);
-        }
-        i = vShader.uniforms.length;
-        while (i--) {
-            program[vShader.uniforms[i]] = gl.getUniformLocation(program, vShader.uniforms[i]);
-        }
-        i = fShader.uniforms.length;
-        while (i--) {
-            program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i]);
-        }
-        self._glPROGRAMs[name] = program;
-        //console.log(vShader)
-        //console.log(fShader)
-        //console.log(program)
-        return program;
-    };
-
-    var vertexShaderParser = function vertexShaderParser(self, source) {
+        makeIBO = function makeIBO(name, data, stride) {
+            var gl, buffer;
+            gl = gpu[this].gl,
+                buffer = gpu[this].ibos[name];
+            if (buffer) return buffer;
+            buffer = gl.createBuffer(),
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer),
+                gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), gl.STATIC_DRAW),
+                buffer.name = name,
+                buffer.type = 'IBO',
+                buffer.data = data,
+                buffer.stride = stride,
+                buffer.numItem = data.length / stride,
+                gpu[this].ibos[name] = buffer,
+                console.log('IBO생성', gpu[this].ibos[name]);
+            return gpu[this].ibos[name];
+        },
+        makeUVBO = function makeUVBO(name, data, stride) {
+            var gl, buffer;
+            gl = gpu[this].gl, buffer = gpu[this].uvbos[name];
+            if (buffer) return buffer;
+            buffer = gl.createBuffer(),
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
+                buffer.name = name,
+                buffer.type = 'UVBO',
+                buffer.data = data,
+                buffer.stride = stride,
+                buffer.numItem = data.length / stride,
+                gpu[this].uvbos[name] = buffer,
+                console.log('UVBO생성', gpu[this].uvbos[name]);
+            return gpu[this].uvbos[name];
+        },
+        makeProgram = function makeProgram(name) {
+            var gl, vShader, fShader, program, i;
+            gl = gpu[this].gl,
+                vShader = vertexShaderParser(gpu[this].vertexShaders[name]),
+                fShader = fragmentShaderParser(gpu[this].fragmentShaders[name]),
+                program = gl.createProgram(),
+                gl.attachShader(program, vShader),
+                gl.attachShader(program, fShader),
+                gl.linkProgram(program),
+                vShader.name = name + '_vertex', fShader.name = name + '_fragment', program.name = name;
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error('프로그램 쉐이더 초기화 실패!' + this);
+            gl.useProgram(program);
+            for (i = 0; i < vShader.attributes.length; i++) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, gpu[this].vbos['null']),
+                    gl.enableVertexAttribArray(program[vShader.attributes[i]] = gl.getAttribLocation(program, vShader.attributes[i])),
+                    gl.vertexAttribPointer(program[vShader.attributes[i]], gpu[this].vbos['null'].stride, gl.FLOAT, false, 0, 0);
+            }
+            i = vShader.uniforms.length;
+            while (i--) {
+                program[vShader.uniforms[i]] = gl.getUniformLocation(program, vShader.uniforms[i]);
+            }
+            i = fShader.uniforms.length;
+            while (i--) {
+                program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i]);
+            }
+            gpu[this].programs[name] = program;
+            //console.log(vShader)
+            //console.log(fShader)
+            //console.log(program)
+            return program;
+        }, vertexShaderParser = function vertexShaderParser(source) {
         var gl, t0, i, resultStr, shader;
-        gl = self._gl,
+        gl = gpu[this].gl,
             shader = gl.createShader(gl.VERTEX_SHADER),
             shader.uniforms = [],
             shader.attributes = [],
@@ -194,11 +136,9 @@ var Scene = (function () {
             gl.shaderSource(shader, resultStr),
             gl.compileShader(shader);
         return shader;
-    };
-
-    var fragmentShaderParser = function fragmentShaderParser(self, source) {
+    }, fragmentShaderParser = function fragmentShaderParser(source) {
         var gl, resultStr, i, t0, shader;
-        gl = self._gl,
+        gl = gpu[this].gl,
             shader = gl.createShader(gl.FRAGMENT_SHADER),
             shader.uniforms = [],
             resultStr = "";
@@ -220,139 +160,175 @@ var Scene = (function () {
             gl.shaderSource(shader, resultStr),
             gl.compileShader(shader);
         return shader;
-    };
+    },
+        makeTexture = function makeTexture(id, image/*,resizeType*/) {
+            var gl, texture;
+            var img, img2, tw, th;
+            gl = gpu[this].gl, texture = gpu[this].textures[id];
+            if (texture) return texture;
+            texture = gl.createTexture();
+            img = new Image(), img2 = new Image(),
+                tw = 1, th = 1;
 
+            ///////////////////////////////////
+            // 타입구분
+            if (image instanceof ImageData) img.src = image.data;
+            else if (image instanceof HTMLCanvasElement) img.src = image.toDataURL();
+            else if (image instanceof HTMLImageElement) img.src = image.src;
+            else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) img.src = image; //base64문자열 - urlData형식으로 지정된 base64문자열
+            else if (typeof image == 'string') img.src = image;
+            //TODO 일단 이미지만
+            //TODO 비디오 처리
+            ///////////////////////////////////
 
-    var makeTexture = function makeTexture(self, id, image/*,resizeType*/) {
-        var gl, texture;
-        var img, img2, tw, th;
-        gl = self._gl, texture = self._glTEXTUREs[id];
-        if (texture) return texture;
-        texture = gl.createTexture();
-        img = new Image(), img2 = new Image(),
-            tw = 1, th = 1;
+            var resize = arguments[3] || Texture.zoomOut;
+            img.onload = function () {
+                var dw, dh;
+                while (img.width > tw) tw *= 2;
+                while (img.height > th) th *= 2;
+                if (resize == Texture.zoomOut) {
+                    if (img.width < tw) tw /= 2;
+                    if (img.height < th) th /= 2;
+                } else if (resize == Texture.zoomIn) {
+                }
+                dw = tw, dh = th,
+                    canvas.width = tw,
+                    canvas.height = th,
+                    context.clearRect(0, 0, tw, th);
+                if (resize == Texture.crop) {
+                    if (img.width < tw) dw = tw / 2;
+                    if (img.height < th) dh = th / 2;
+                    context.drawImage(img, 0, 0, tw, th, 0, 0, dw, dh);
+                } else if (resize == Texture.addSpace) context.drawImage(img, 0, 0, tw, th, 0, 0, tw, th);
+                else context.drawImage(img, 0, 0, dw, dh);
+                console.log(resize, '텍스쳐크기 자동변환', img.width, img.height, '--->', dw, dh),
+                    console.log(canvas.toDataURL()),
+                    img2.src = canvas.toDataURL();
+            };
 
-        ///////////////////////////////////
-        // 타입구분
-        if (image instanceof ImageData) img.src = image.data;
-        else if (image instanceof HTMLCanvasElement) img.src = image.toDataURL();
-        else if (image instanceof HTMLImageElement) img.src = image.src;
-        else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) img.src = image; //base64문자열 - urlData형식으로 지정된 base64문자열
-        else if (typeof image == 'string') img.src = image;
-        //TODO 일단 이미지만
-        //TODO 비디오 처리
-        ///////////////////////////////////
+            texture.img = img2;
+            texture.img.onload = function () {
+                gl.bindTexture(gl.TEXTURE_2D, texture),
+                    //TODO 다변화 대응해야됨
 
-        var resize = arguments[3] || Texture.zoomOut;
-        img.onload = function () {
-            var dw, dh;
-            while (img.width > tw) tw *= 2;
-            while (img.height > th) th *= 2;
-            if (resize == Texture.zoomOut) {
-                if (img.width < tw) tw /= 2;
-                if (img.height < th) th /= 2;
-            } else if (resize == Texture.zoomIn) {
-            }
-            dw = tw, dh = th,
-                textureCVS.width = tw,
-                textureCVS.height = th,
-                textureCTX.clearRect(0, 0, tw, th);
-            if (resize == Texture.crop) {
-                if (img.width < tw) dw = tw / 2;
-                if (img.height < th) dh = th / 2;
-                textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, dw, dh);
-            } else if (resize == Texture.addSpace) textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, tw, th);
-            else textureCTX.drawImage(img, 0, 0, dw, dh);
-            console.log(resize, '텍스쳐크기 자동변환', img.width, img.height, '--->', dw, dh),
-                console.log(textureCVS.toDataURL()),
-                img2.src = textureCVS.toDataURL();
-        };
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                gl.generateMipmap(gl.TEXTURE_2D);
+                texture.loaded = 1;
+            };
+            texture.originalData = image,
+                gpu[this].textures[id] = texture,
+                gl.bindTexture(gl.TEXTURE_2D, null);
+            return texture;
+        },
+        makeFrameBuffer = function makeFrameBuffer(camera) {
+            var gl, framebuffer, texture, renderbuffer;
+            gl = gpu[this].gl,
+                framebuffer = gl.createFramebuffer(),
+                gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+            var tArea = camera._renderArea ? camera._renderArea : [0, 0, cvs[this].width, cvs[this].height]
+            framebuffer.x = tArea[0], framebuffer.y = tArea[1],
+                framebuffer.width = tArea[2] * window.devicePixelRatio > cvs[this].width ? cvs[this].width : tArea[2] * window.devicePixelRatio,
+                framebuffer.height = tArea[3] * window.devicePixelRatio > cvs[this].height ? cvs[this].height : tArea[3] * window.devicePixelRatio;
 
-        texture.img = img2;
-        texture.img.onload = function () {
+            texture = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, texture),
-                //TODO 다변화 대응해야됨
-
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-            gl.generateMipmap(gl.TEXTURE_2D);
-            texture.loaded = 1;
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+            renderbuffer = gl.createRenderbuffer();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer),
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, framebuffer.width, framebuffer.height),
+                gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0),
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer),
+                gl.bindTexture(gl.TEXTURE_2D, null),
+                gl.bindRenderbuffer(gl.RENDERBUFFER, null),
+                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            gpu[this].framebuffers[camera.uuid] = {
+                frameBuffer: framebuffer,
+                texture: texture
+            };
         };
-        texture.originalData = image,
-            self._glTEXTUREs[id] = texture,
-            gl.bindTexture(gl.TEXTURE_2D, null);
-        return texture;
-    }
+    //private
+    children = {},
+        camera = {},
+        textures = {},
+        materials = {},
+        geometrys = {},
+        gpu = {},
+        //shared private
+        $setPrivate('Scene', {}),
+        Scene = function Scene() {
+            // for JS
+            children[this] = {},
+                cameras[this] = {},
+                textures[this] = {},
+                materials[this] = {},
+                geometrys[this] = {},
+                vertexShaders[this] = {},
+                fragmentShaders[this] = {},
+                // for GPU
+                gpu[this] = {
+                    gl: null,
+                    vbos: {},
+                    vnbos: {},
+                    uvbos: {},
+                    ibos: {},
+                    programs: {},
+                    textures: {},
+                    framebuffers: {}
+                }
 
-    var makeFrameBuffer = function makeFrameBuffer(self, camera) {
-        var gl, framebuffer, texture, renderbuffer;
-        gl = self._gl,
-            framebuffer = gl.createFramebuffer(),
-            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
-        var tArea = camera._renderArea ? camera._renderArea : [0, 0, self._cvs.width, self._cvs.height]
-        framebuffer.x = tArea[0], framebuffer.y = tArea[1],
-            framebuffer.width = tArea[2] * window.devicePixelRatio > self._cvs.width ? self._cvs.width : tArea[2] * window.devicePixelRatio,
-            framebuffer.height = tArea[3] * window.devicePixelRatio > self._cvs.height ? self._cvs.height : tArea[3] * window.devicePixelRatio;
-
-        texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture),
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR),
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-
-        renderbuffer = gl.createRenderbuffer();
-        gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer),
-            gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, framebuffer.width, framebuffer.height),
-            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0),
-            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer),
-            gl.bindTexture(gl.TEXTURE_2D, null),
-            gl.bindRenderbuffer(gl.RENDERBUFFER, null),
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        self._glFREAMBUFFERs[camera.uuid] = {
-            frameBuffer: framebuffer,
-            texture: texture
+            this.addVertexShader(Shader.colorVertexShader),
+                this.addFragmentShader(Shader.colorFragmentShader),
+                this.addVertexShader(Shader.wireFrameVertexShader),
+                this.addFragmentShader(Shader.wireFrameFragmentShader),
+                this.addVertexShader(Shader.bitmapVertexShader),
+                this.addFragmentShader(Shader.bitmapFragmentShader),
+                this.addVertexShader(Shader.bitmapVertexShaderGouraud),
+                this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
+                this.addVertexShader(Shader.colorVertexShaderGouraud),
+                this.addFragmentShader(Shader.colorFragmentShaderGouraud),
+                this.addVertexShader(Shader.colorVertexShaderPhong),
+                this.addFragmentShader(Shader.colorFragmentShaderPhong),
+                this.addVertexShader(Shader.toonVertexShaderPhong),
+                this.addFragmentShader(Shader.toonFragmentShaderPhong),
+                this.addVertexShader(Shader.bitmapVertexShaderPhong),
+                this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
+                this.addVertexShader(Shader.bitmapVertexShaderBlinn),
+                this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
+                this.addVertexShader(Shader.postBaseVertexShader),
+                this.addFragmentShader(Shader.postBaseFragmentShader);
         };
-    };
+    /////////////////////////////////////////////////////////////////
+
+
 /////////////////////////////////////////////////////////////////
     fn = Scene.prototype,
         fn.update = function update() {
-            var k, checks, tVBOs;
-            tVBOs = this._glVBOs;
-            tVBOs['null'] = makeVBO(this, 'null', new Float32Array([0.0, 0.0, 0.0]), 3);
-            //for GPU
-            for (k in this._children) {
-                var mesh = this._children[k], _key, geo = mesh._geometry;
+            var p, k, checks, tVBOs, child, geo;
+            p = gpu[this],
+                tVBOs = p.vbos,
+                //for GPU
+                child = children[this];
+            for (k in child) {
+                geo = child[k].geometry;
                 if (geo) {
-                    _key = geo._key
-                    if (!this._geometrys[_key]) this.addGeometry(geo._key, geo);
                     if (!tVBOs[geo]) {
-                        tVBOs[_key] = makeVBO(this, _key, geo._position, 3),
-                            this._glVNBOs[_key] = makeVNBO(this, _key, geo._normal, 3),
-                            this._glUVBOs[_key] = makeUVBO(this, _key, geo._uv, 2),
-                            this._glIBOs[_key] = makeIBO(this, _key, geo._index, 1);
+                        tVBOs[geo] = makeVBO(geo.position, 3),
+                            p.VNBOs[geo] = makeVNBO(geo.normal, 3),
+                            p.UVBOs[geo] = makeUVBO(geo.uv, 2),
+                            p.IBOs[geo] = makeIBO(geo.index, 1);
                     }
                 }
             }
-            if (!tVBOs['_FRAMERECT_']) {
-                tVBOs['_FRAMERECT_'] = makeVBO(this, '_FRAMERECT_', [
-                    -1.0, 1.0, 0.0,
-                    1.0, 1.0, 0.0,
-                    -1.0, -1.0, 0.0,
-                    1.0, -1.0, 0.0
-                ], 3),
-                    this._glUVBOs['_FRAMERECT_'] = makeUVBO(this, '_FRAMERECT_', [
-                        0.0, 0.0,
-                        1.0, 0.0,
-                        0.0, 1.0,
-                        1.0, 1.0
-                    ], 2),
-                    this._glIBOs['_FRAMERECT_'] = makeIBO(this, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
-            }
+
             for (k in this._cameras) {
                 var camera, tRenderArea, tCVS;
                 camera = this._cameras[k],
@@ -371,10 +347,10 @@ var Scene = (function () {
             //console.log('////////////////////////////////////////////'),
             //console.log('Scene 업데이트'),
             //console.log('tVBOs :', tVBOs),
-            //console.log('this._glVNBOs :', this._glVNBOs),
-            //console.log('this._glIBOs :', this._glIBOs),
+            //console.log('gpu[this].vnbos :', gpu[this].vnbos),
+            //console.log('gpu[this].ibos :', gpu[this].ibos),
             //console.log('this._glPROGRAMs :', this._glPROGRAMs),
-            //console.log('this._geometrys :', this._geometrys),
+            //console.log('geometrys[this] :', geometrys[this]),
             //console.log('this._materials :', this._materials),
             //console.log('this._textures :', this._textures),
             //console.log('this._vertexShaders :', this._vertexShaders),
@@ -385,15 +361,15 @@ var Scene = (function () {
         },
         fn.addChild = function addChild(id, mesh) {  // isAlive는 함수선언 줄에 바로 같이 씁니다.
             var k, checks, tMaterial;
-            if (this._children[id]) this.error(0);
+            if (children[this][id]) this.error(0);
             if (!(mesh instanceof Mesh )) this.error(1);
             mesh._scene = this,
                 mesh._parent = this,
-                mesh.setGeometry(mesh._geometry),
+                mesh.setGeometry(mesh.geometry),
                 mesh.setMaterial(mesh._material),
                 tMaterial = mesh._material,
                 tMaterial._count++,
-                checks = mesh._geometry._vertexShaders;
+                checks = mesh.geometry._vertexShaders;
             for (k in checks) {
                 if (typeof checks[k] == 'string') {
                     if (!this._vertexShaders[checks[k]]) this.error(2);
@@ -415,7 +391,7 @@ var Scene = (function () {
                         tMaterial._textures[checks[k]] = this._textures[checks[k]];
                     }
             if (mesh instanceof Camera) this._cameras[id] = mesh, mesh._cvs = this._cvs;
-            else this._children[id] = mesh;
+            else children[this][id] = mesh;
             this._update = 1;
             return this;
         },
@@ -423,10 +399,10 @@ var Scene = (function () {
             var checks, k, tVShader;
             checks = geometry._vertexShaders,
                 tVShader = this._vertexShaders;
-            if (this._geometrys[id]) this.error(0);
+            if (geometrys[this][id]) this.error(0);
             if (!(geometry instanceof Geometry)) this.error(1);
             for (k in checks) if (typeof checks[k] == 'string') if (!tVShader[checks[k]]) this.error(2);
-            this._geometrys[id] = geometry;
+            geometrys[this][id] = geometry;
             return this;
         },
         fn.addMaterial = function (id, material) {
@@ -495,12 +471,12 @@ var Scene = (function () {
         ///////////////////////////////////////////////////////////////////////////
         // Get
         fn.getChild = function getChild(id) {
-            var t = this._children[id];
+            var t = children[this][id];
             t = t ? t : this._cameras[id];
             return t ? t : null;
         },
         fn.getGeometry = function getGeometry(id) {
-            var t = this._geometrys[id];
+            var t = geometrys[this][id];
             return t ? t : null;
         },
         fn.getMaterial = function getMaterial(id) {
@@ -522,10 +498,10 @@ var Scene = (function () {
         ///////////////////////////////////////////////////////////////////////////
         // Remove
         fn.removeChild = function removeChild(id) {
-            return this._children[id] ? (this._children[id]._material._count--, this._children[id]._scene = null, this._children[id]._parent = null, delete this._children[id], true) : false;
+            return children[this][id] ? (children[this][id]._material._count--, children[this][id]._scene = null, children[this][id]._parent = null, delete children[this][id], true) : false;
         },
         fn.removeGeometry = function removeGeometry(id) {
-            return this._geometrys[id] ? (delete this._geometrys[id], true) : false;
+            return geometrys[this][id] ? (delete geometrys[this][id], true) : false;
         },
         fn.removeMaterial = function removeMaterial(id) {
             return this._materials[id] ? (delete this._materials[id], true) : false;
