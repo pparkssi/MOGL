@@ -61,6 +61,12 @@
             }, true,
             function () {
                 // antialias 설정
+                // 숫자로 넣어도 불린값으로 변경
+                camera.antialias = 0;
+                return camera.antialias;
+            }, false,
+            function () {
+                // antialias 설정
                 camera.antialias = false;
                 return camera.antialias;
             }, false
@@ -201,7 +207,7 @@
             function () {
                 camera.fogColor = '#fff'
                 return camera.fogColor.toString()
-            }, [1, 1, 1, 1].toString(),
+            }, [1,1,1,1].toString(),
             function () {
                 camera.fogColor = '#000000'
                 return camera.fogColor.toString()

@@ -1,10 +1,10 @@
 var Geometry = (function () {
-    var position, vertexCount, triangleCount, vertexShaders, normal, uv, color, volume, key,
+    var position, vertexCount, triangleCount, vertexShaders, normal,index, uv, color, volume, key,
         Geometry, fn;
 
     //private
-    position = {}, vertexCount = {}, triangleCount = {}, 
-    vertexShaders = {}, normal = {}, uv = {}, color = {}, 
+    position = {}, vertexCount = {}, triangleCount = {}, index = {},
+    vertexShaders = {}, normal = {}, uv = {}, color = {},
     volume = {}, key = {};
     //shared private
     $setPrivate('Geometry', {
@@ -58,10 +58,9 @@ var Geometry = (function () {
         pos = [], nm = [], uv = [], co = [];
         return function Geometry(vertex, index, info) {
             var len, i, j, k, isNormal, isUV, isColor;
-            
-            if (!Array.isArray(vertex) || !(vertex instanceof Float32Array)) {
+            if (!Array.isArray(vertex) && !(vertex instanceof Float32Array)) {
                 this.error(0);
-            } else if (!Array.isArray(index) || !(index instanceof Uint16Array)) {
+            } else if (!Array.isArray(index) && !(index instanceof Uint16Array)) {
                 this.error(1);
             }
             pos.length = nm.length = uv.length = co.length = 0;
@@ -127,7 +126,11 @@ var Geometry = (function () {
                 }
                 return volume[this];
             }
-        }
+        },
+        uv:{get:$getter(uv)},
+        color:{get:$getter(color)},
+        position:{get:$getter(position)},
+        index:{get:$getter(index)}
     };
     /* TODO 마일스톤0.5
     fn.addVertexShader = function addVertexShader(id) {
