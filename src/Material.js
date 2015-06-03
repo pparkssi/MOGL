@@ -45,7 +45,7 @@ var Material = (function () {
         diffuseWrap[this] = [],
         specularNormal[this] = [],
         color[this] = {r:0,g:0,b:0,a:1}
-        this.color = $color(arguments.length>1 ? arguments : arguments[0]),
+        if (arguments.length) this.color = $color(arguments.length > 1 ? arguments : arguments[0]),
         wireFrame[this] = false,
         wireFrameColor[this] = [Math.random(), Math.random(), Math.random(), 1];
     },
