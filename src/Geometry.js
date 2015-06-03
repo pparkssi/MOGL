@@ -6,20 +6,9 @@ var Geometry = (function () {
     position = {}, vertexCount = {}, triangleCount = {}, 
     vertexShaders = {}, normal = {}, uv = {}, color = {}, 
     volume = {}, key = {};
-    //공용상수정의 - 꼭노출할것만 골라낼것
+    //shared private
     $setPrivate('Geometry', {
-        /*
-        position:position,
-        vertexCount:vertexCount,
-        triangleCount:triangleCount,
-        vertexShaders:vertexShaders,
-        normal:normal,
-        uv:uv,
-        color:color,
-        volume:volume,
-        key:key
-        */
-    });
+    }),
   
     Geometry = (function(){
         var calcNormal, infoCheck, pos, nm, uv, co;
@@ -116,36 +105,30 @@ var Geometry = (function () {
         };
     })(),
     fn = Geometry.prototype,
-    Object.defineProperty(fn, 'vertexCount', {
-        get:$method(function vertexCountGet() {
-            return vertexCount[this];
-        })
-    }),
-    Object.defineProperty(fn, 'triangleCount', {
-        get:$method(function triangleCountGet() {
-            return triangleCount[this];
-        })
-    }),
-    Object.defineProperty(fn, 'volume', {
-        get:$method(function volumeGet() {
-            var minX, minY, minZ, maxX, maxY, maxZ, t0, t1, t2, t, i;
-            if (!volume[this]) {
-                minX = minY = minZ = maxX = maxY = maxZ = 0,
-                t = position[this], i = t.length;
-                while (i--) {
-                    t0 = i * 3, t1 = t0 + 1, t2 = t0 + 2,
-                    minX = t[t0] < minX ? t[t0] : minX,
-                    maxX = t[t0] > maxX ? t[t0] : maxX,
-                    minY = t[t1] < minY ? t[t1] : minY,
-                    maxY = t[t1] > maxY ? t[t1] : maxY,
-                    minZ = t[t2] < minZ ? t[t2] : minZ,
-                    maxZ = t[t2] > maxZ ? t[t2] : maxZ;
+    fn.prop = {
+        vertexCount:{get:$getter(vertexCount)},
+        triangleCount:{get:$getter(triangleCount)},
+        volume:{
+            get:function volumeGet() {
+                var minX, minY, minZ, maxX, maxY, maxZ, t0, t1, t2, t, i;
+                if (!volume[this]) {
+                    minX = minY = minZ = maxX = maxY = maxZ = 0,
+                    t = position[this], i = t.length;
+                    while (i--) {
+                        t0 = i * 3, t1 = t0 + 1, t2 = t0 + 2,
+                        minX = t[t0] < minX ? t[t0] : minX,
+                        maxX = t[t0] > maxX ? t[t0] : maxX,
+                        minY = t[t1] < minY ? t[t1] : minY,
+                        maxY = t[t1] > maxY ? t[t1] : maxY,
+                        minZ = t[t2] < minZ ? t[t2] : minZ,
+                        maxZ = t[t2] > maxZ ? t[t2] : maxZ;
+                    }
+                    volume[this] = [maxX - minX, maxY - minY, maxZ - minZ];
                 }
-                volume[this] = [maxX - minX, maxY - minY, maxZ - minZ];
+                return volume[this];
             }
-            return volume[this];
-        })
-    });
+        }
+    };
     /* TODO 마일스톤0.5
     fn.addVertexShader = function addVertexShader(id) {
         this._vertexShaders[id] = id;

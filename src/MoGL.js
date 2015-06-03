@@ -15,7 +15,7 @@
     }
 })();
 //전역에서 사용하는 공통함수
-var $method, $setPrivate, $getPrivate, $color,
+var $method, $setPrivate, $getPrivate, $value, $getter, $setter, $color,
     GLMAT_EPSILON, SIN, COS, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
     
 (function() {
@@ -43,8 +43,37 @@ $method = function $method(f, key) { //생성할 이름과 메서드
         return result;
     };
 },
-$method.prev = []; //스택구조의 이전 함수이름의 배열
-
+$method.prev = [], //스택구조의 이전 함수이름의 배열
+//defineProperty용 헬퍼
+$value = function(prop, key){
+    return {
+        get:$getter(prop, key),
+        set:$setter(prop, key)
+    };
+},
+$getter = function(prop, key){
+    var defaultValue = arguments.length == 3 ? arguments[3] : null;
+    if (key) {
+        return function getter() {
+            return prop[this][key] || defaultValue;
+        };
+    } else {
+        return function getter() {
+            return prop[this] || defaultValue;
+        };
+    }
+},
+$setter = function(prop, key){
+    if (key) {
+        return function setter(v) {
+            prop[this][key] = v;
+        };
+    } else {
+        return function setter(v) {
+            prop[this] = v;
+        };
+    }
+},
 $color = (function(){
     var co = [];
     return function(v){

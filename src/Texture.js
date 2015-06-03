@@ -50,68 +50,68 @@ var Texture = (function() {
     imgs = {},
     loaded = {},
     isLoaded = {},
-    
+    //shared private
+    $setPrivate('Texture', {
+    }),
     Texture = function Texture(){
         var self = this;
-        isLoaded[this] = false;
+        isLoaded[this] = false,
         loaded[this] = function(e){
             isLoaded[self] = true;
             self.dispatch('load', imgs[this] = resizer(self.resizeType, this));
         };
     },
     fn = Texture.prototype,
-    Object.defineProperty(fn, 'resizeType', {
-        get:$method(function resizeTypeGet(){
-            return resize[this] || 'zoomOut';
-        }),
-        set:$method(function resizeTypeSet(v){
-            if(!Texture[type]) this.error(0);
-            resize[this] = type;
-        })
-    }),
-    Object.defineProperty(fn, 'isLoaded', {
-        get:$method(function resizeTypeGet(){
-            return isLoaded[this] || false;
-        })
-    }),
-    Object.defineProperty(fn, 'img', {
-        get:$method(function imgGet(){
-            return imgs[this] || empty;
-        }),
-        set:$method(function imgSet(v){
-            var loaded, img, w, h;
-            img = v;
-            if (v instanceof HTMLImageElement){
-                if (src.complete) {
-                    loaded = true;
+    fn.prop = {
+        resizeType:{
+            get:$getter(resize, false, 'zoomOut'),
+            set:function resizeTypeSet(v){
+                if (Texture[type]) {
+                    resize[this] = type;
+                } else {
+                    this.error(0);
                 }
-            } else if (v instanceof ImageData){
-                loaded = true,
-                canvas.width = w = v.width,
-                canvas.height = h = v.height,
-                context.clearRect(0, 0, w, h),
-                context.putImageData(v, 0, 0),
-                img = document.createElement('img'),
-                img.src = context.toDataURL();
-            } else if (typeof v == 'string') {
-                if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
-                    loaded = true;
-                } else if (!imgType[src.substring(-4)]) {
-                    this.error(1);
+                
+            }
+        },
+        isLoaded:{get:$getter(isLoaded, false, false)},
+        img:{
+            get:$getter(imgs, false, empty),
+            set:function imgSet(v){
+                var loaded, img, w, h;
+                img = v;
+                if (v instanceof HTMLImageElement){
+                    if (src.complete) {
+                        loaded = true;
+                    }
+                } else if (v instanceof ImageData){
+                    loaded = true,
+                    canvas.width = w = v.width,
+                    canvas.height = h = v.height,
+                    context.clearRect(0, 0, w, h),
+                    context.putImageData(v, 0, 0),
+                    img = document.createElement('img'),
+                    img.src = context.toDataURL();
+                } else if (typeof v == 'string') {
+                    if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
+                        loaded = true;
+                    } else if (!imgType[src.substring(-4)]) {
+                        this.error(1);
+                    }
+                    img = document.createElement('img'),
+                    img.src = v;
+                } else {
+                    this.error(0);
                 }
-                img = document.createElement('img'),
-                img.src = v;
-            } else {
-                this.error(0);
+                if (loaded){
+                    isLoaded[this] = true;
+                    self.dispatch('load', imgs[this] = resizer(this.resizeType, img));
+                } else {
+                    img.addEventListener('load', loaded[this]);
+                }
             }
-            if (loaded){
-                isLoaded[this] = true;
-                self.dispatch('load', imgs[this] = resizer(this.resizeType, img));
-            } else {
-                img.addEventListener('load', loaded[this]);
-            }
-        })
-    }),
+        }
+    },
     (function() {
         var value = {value:null}, key = 'zoomOut,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
         while (i--) {

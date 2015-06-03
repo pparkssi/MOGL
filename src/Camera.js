@@ -1,7 +1,3 @@
-/**
- * Created by redcamel on 2015-05-05.
- * description
- */
 var Camera = (function () {
     var PERPIR, value, getter,
         prop,
@@ -9,10 +5,11 @@ var Camera = (function () {
 
     //lib
     PERPIR = PI / 180 * .5,
-    
-    
     //private
     prop = {},
+    //shared private
+    $setPrivate('Camera', {
+    }),
     
     Camera = function Camera() {
         Object.seal(prop[this] = {
@@ -31,93 +28,77 @@ var Camera = (function () {
         this.lookAt(0,0,0);
     },
     fn = Camera.prototype,
-    value = (function(){
-        var value = {};
-        return function(key){
-            value.get = $method(function() {
-                return prop[this][key];
-            }),
-            value.set = $method(function(v) {
-                prop[this][key] = v;
-            });
-            return value;
-        };
-    })(),
-    Object.defineProperty( fn, 'clipPlaneNear', value('near')),
-    Object.defineProperty( fn, 'clipPlaneFar', value('far')),
-    Object.defineProperty( fn, 'visible', value('visible')),
-    Object.defineProperty( fn, 'antialias', value('antialias')),
-    
-    getter = function(key){
-        return $method(function() {
-            return prop[this][key];
-        });
-    },
-    Object.defineProperty( fn, 'fogColor', {
-        get:getter('fogColor'),
-        set:$method(function fogColorSet(v){
-            var p = prop[this];
-            p.fogColor = $color(v).slice(0),
-            p.fog = true;
-        })
-    }),
-    Object.defineProperty( fn, 'fogNear', {
-        get:getter('fogNear'),
-        set:$method(function fogNearSet(v){
-            var p = prop[this];
-            p.fogNear = v,
-            p.fog = true;
-        })
-    }),
-    Object.defineProperty( fn, 'fogFar', {
-        get:getter('fogFar'),
-        set:$method(function fogFarSet(v){
-            var p = prop[this];
-            p.fogFar = v,
-            p.fog = true;
-        })
-    }),
-    Object.defineProperty( fn, 'fov', {
-        get:getter('fov'),
-        set:$method(function fovSet(v){
-            var p = prop[this];
-            if (typeof v == 'number') {
-                p.fov = v;
-            } else if ('0' in v && '1' in v) {
-                p.fov = CEIL(2 * ATAN(TAN(arguments[2] * PERPIR) * (v[1] / v[0])) * PERPI);
-            }
-        })
-    }),
-    Object.defineProperty( fn, 'backgroundColor', {
-        get:$method((function(){
-            var a = [];
-            return function backgroundColorGet() {
+    fn.prop = {
+        clipPlaneNear:$value(prop, 'near'),
+        clipPlaneFar:$value(prop, 'far'),
+        visible:$value(prop, 'visible'),
+        antialias:$value(prop, 'antialias'),
+        fogColor:{
+            get:$getter(prop, 'fogColor'),
+            set:function fogColorSet(v){
                 var p = prop[this];
-                a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
-                return a;
-            };
-        })()),
-        set:$method(function backgroundColorSet(v) {
-            var p = prop[this];
-            v = $color(v);
-            p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
-        })
-    }),
-    Object.defineProperty( fn, 'fog', {
-        get:$method(function fogGet(){
-            return prop[this].fog ? true : false;
-        })
-    }),
-    Object.defineProperty( fn, 'mode', {
-        get:getter('mode'),
-        set:$method(function modeSet(v) {
-            if (Camera[v]) {
-                prop[this].mode = v;
-            } else {
-                this.error(0);
+                p.fogColor = $color(v).slice(0),
+                p.fog = true;
             }
-        })
-    }),
+        },
+        fogNear:{
+            get:$getter(prop, 'fogNear'),
+            set:function fogNearSet(v){
+                var p = prop[this];
+                p.fogNear = v,
+                p.fog = true;
+            }
+        },
+        fogFar:{
+            get:$getter(prop, 'fogFar'),
+            set:function fogFarSet(v){
+                var p = prop[this];
+                p.fogFar = v,
+                p.fog = true;
+            }
+        },
+        fov:{
+            get:$getter(prop, 'fov'),
+            set:function fovSet(v){
+                var p = prop[this];
+                if (typeof v == 'number') {
+                    p.fov = v;
+                } else if ('0' in v && '1' in v) {
+                    p.fov = CEIL(2 * ATAN(TAN(arguments[2] * PERPIR) * (v[1] / v[0])) * PERPI);
+                }
+            }
+        },
+        backgroundColor:{
+            get:(function(){
+                var a = [];
+                return function backgroundColorGet() {
+                    var p = prop[this];
+                    a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
+                    return a;
+                };
+            })(),
+            set:function backgroundColorSet(v) {
+                var p = prop[this];
+                v = $color(v);
+                p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
+           }
+        },
+        fog:{
+            get:function fogGet(){
+                return prop[this].fog ? true : false;
+            }
+        },
+        mode:{
+            get:$getter(prop, 'mode'),
+            set:function modeSet(v) {
+                if (Camera[v]) {
+                    prop[this].mode = v;
+                } else {
+                    this.error(0);
+                }
+            }
+        }
+    },
     fn.getRenderArea = function getRenderArea(){
         return this._renderArea;
     },
@@ -134,8 +115,6 @@ var Camera = (function () {
         ];
         return this;
     },
-    
-    
     fn.resetProjectionMatrix = function resetProjectionMatrix(){
         var tMatrix, tArea;
         tMatrix = this._pixelMatrix,
