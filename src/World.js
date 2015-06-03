@@ -31,7 +31,266 @@ var World = (function () {
 		return gl;
 	};
     var renderList = {}, sceneList = [], cvsList = {}, glList = {}, autoSizer = {}, started ={};
-	
+
+    ///////////////////////////
+    // 일단 이사
+    var makeVBO = function makeVBO(self, name, data, stride) {
+        var gl, buffer;
+        gl = self._gl,
+            buffer = self._glVBOs[name];
+        if (buffer) return buffer;
+        buffer = gl.createBuffer(),
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
+            buffer.name = name,
+            buffer.type = 'VBO',
+            buffer.data = data,
+            buffer.stride = stride,
+            buffer.numItem = data.length / stride,
+            self._glVBOs[name] = buffer,
+            console.log('VBO생성', self._glVBOs[name]);
+        return self._glVBOs[name];
+    };
+
+    var makeVNBO = function makeVNBO(self, name, data, stride) {
+        var gl, buffer;
+        gl = self._gl,
+            buffer = self._glVNBOs[name];
+        if (buffer) return buffer;
+        buffer = gl.createBuffer(),
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
+            buffer.name = name,
+            buffer.type = 'VNBO',
+            buffer.data = data,
+            buffer.stride = stride,
+            buffer.numItem = data.length / stride,
+            self._glVNBOs[name] = buffer,
+            console.log('VNBO생성', self._glVNBOs[name]);
+        return self._glVNBOs[name];
+    };
+
+    var makeIBO = function makeIBO(self, name, data, stride) {
+        var gl, buffer;
+        gl = self._gl,
+            buffer = self._glIBOs[name];
+        if (buffer) return buffer;
+        buffer = gl.createBuffer(),
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer),
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), gl.STATIC_DRAW),
+            buffer.name = name,
+            buffer.type = 'IBO',
+            buffer.data = data,
+            buffer.stride = stride,
+            buffer.numItem = data.length / stride,
+            self._glIBOs[name] = buffer,
+            console.log('IBO생성', self._glIBOs[name]);
+        return self._glIBOs[name];
+    };
+
+    var makeUVBO = function makeUVBO(self, name, data, stride) {
+        var gl, buffer;
+        gl = self._gl, buffer = self._glUVBOs[name];
+        if (buffer) return buffer;
+        buffer = gl.createBuffer(),
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
+            buffer.name = name,
+            buffer.type = 'UVBO',
+            buffer.data = data,
+            buffer.stride = stride,
+            buffer.numItem = data.length / stride,
+            self._glUVBOs[name] = buffer,
+            console.log('UVBO생성', self._glUVBOs[name]);
+        return self._glUVBOs[name];
+    };
+
+    var makeProgram = function makeProgram(self, name) {
+        var gl, vShader, fShader, program, i;
+        gl = self._gl,
+            vShader = vertexShaderParser(self, self._vertexShaders[name]),
+            fShader = fragmentShaderParser(self, self._fragmentShaders[name]),
+            program = gl.createProgram(),
+            gl.attachShader(program, vShader),
+            gl.attachShader(program, fShader),
+            gl.linkProgram(program),
+            vShader.name = name + '_vertex', fShader.name = name + '_fragment', program.name = name;
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error('프로그램 쉐이더 초기화 실패!' + self);
+        gl.useProgram(program);
+        for (i = 0; i < vShader.attributes.length; i++) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, self._glVBOs['null']),
+                gl.enableVertexAttribArray(program[vShader.attributes[i]] = gl.getAttribLocation(program, vShader.attributes[i])),
+                gl.vertexAttribPointer(program[vShader.attributes[i]], self._glVBOs['null'].stride, gl.FLOAT, false, 0, 0);
+        }
+        i = vShader.uniforms.length;
+        while (i--) {
+            program[vShader.uniforms[i]] = gl.getUniformLocation(program, vShader.uniforms[i]);
+        }
+        i = fShader.uniforms.length;
+        while (i--) {
+            program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i]);
+        }
+        self._glPROGRAMs[name] = program;
+        //console.log(vShader)
+        //console.log(fShader)
+        //console.log(program)
+        return program;
+    };
+
+    var vertexShaderParser = function vertexShaderParser(self, source) {
+        var gl, t0, i, resultStr, shader;
+        gl = self._gl,
+            shader = gl.createShader(gl.VERTEX_SHADER),
+            shader.uniforms = [],
+            shader.attributes = [],
+            resultStr = "",
+            t0 = source.attributes, i = t0.length;
+        while (i--) {
+            resultStr += 'attribute ' + t0[i] + ';\n',
+                shader.attributes.push(t0[i].split(' ')[1]);
+        }
+        t0 = source.uniforms, i = t0.length;
+        while (i--) {
+            resultStr += 'uniform ' + t0[i] + ';\n',
+                shader.uniforms.push(t0[i].split(' ')[1]);
+        }
+        t0 = source.varyings, i = t0.length;
+        while (i--) {
+            resultStr += 'varying ' + t0[i] + ';\n';
+        }
+        resultStr += VertexShader.baseFunction,
+            resultStr += 'void main(void){\n',
+            resultStr += source.main + ';\n',
+            resultStr += '}\n',
+            //console.log(resultStr),
+            gl.shaderSource(shader, resultStr),
+            gl.compileShader(shader);
+        return shader;
+    };
+
+    var fragmentShaderParser = function fragmentShaderParser(self, source) {
+        var gl, resultStr, i, t0, shader;
+        gl = self._gl,
+            shader = gl.createShader(gl.FRAGMENT_SHADER),
+            shader.uniforms = [],
+            resultStr = "";
+        if (source.precision) resultStr += 'precision ' + source.precision + ';\n';
+        else resultStr += 'precision mediump float;\n';
+        t0 = source.uniforms, i = t0.length;
+        while (i--) {
+            resultStr += 'uniform ' + t0[i] + ';\n',
+                shader.uniforms.push(t0[i].split(' ')[1]);
+        }
+        t0 = source.varyings, i = t0.length;
+        while (i--) {
+            resultStr += 'varying ' + t0[i] + ';\n';
+        }
+        resultStr += 'void main(void){\n',
+            resultStr += source.main + ';\n',
+            resultStr += '}\n',
+            //console.log(resultStr),
+            gl.shaderSource(shader, resultStr),
+            gl.compileShader(shader);
+        return shader;
+    };
+
+    var makeTexture = function makeTexture(self, id, image/*,resizeType*/) {
+        var gl, texture;
+        var img, img2, tw, th;
+        gl = self._gl, texture = self._glTEXTUREs[id];
+        if (texture) return texture;
+        texture = gl.createTexture();
+        img = new Image(), img2 = new Image(),
+            tw = 1, th = 1;
+
+        ///////////////////////////////////
+        // 타입구분
+        if (image instanceof ImageData) img.src = image.data;
+        else if (image instanceof HTMLCanvasElement) img.src = image.toDataURL();
+        else if (image instanceof HTMLImageElement) img.src = image.src;
+        else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) img.src = image; //base64문자열 - urlData형식으로 지정된 base64문자열
+        else if (typeof image == 'string') img.src = image;
+        //TODO 일단 이미지만
+        //TODO 비디오 처리
+        ///////////////////////////////////
+
+        var resize = arguments[3] || Texture.zoomOut;
+        img.onload = function () {
+            var dw, dh;
+            while (img.width > tw) tw *= 2;
+            while (img.height > th) th *= 2;
+            if (resize == Texture.zoomOut) {
+                if (img.width < tw) tw /= 2;
+                if (img.height < th) th /= 2;
+            } else if (resize == Texture.zoomIn) {
+            }
+            dw = tw, dh = th,
+                textureCVS.width = tw,
+                textureCVS.height = th,
+                textureCTX.clearRect(0, 0, tw, th);
+            if (resize == Texture.crop) {
+                if (img.width < tw) dw = tw / 2;
+                if (img.height < th) dh = th / 2;
+                textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, dw, dh);
+            } else if (resize == Texture.addSpace) textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, tw, th);
+            else textureCTX.drawImage(img, 0, 0, dw, dh);
+            console.log(resize, '텍스쳐크기 자동변환', img.width, img.height, '--->', dw, dh),
+                console.log(textureCVS.toDataURL()),
+                img2.src = textureCVS.toDataURL();
+        };
+
+        texture.img = img2;
+        texture.img.onload = function () {
+            gl.bindTexture(gl.TEXTURE_2D, texture),
+                //TODO 다변화 대응해야됨
+
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.generateMipmap(gl.TEXTURE_2D);
+            texture.loaded = 1;
+        };
+        texture.originalData = image,
+            self._glTEXTUREs[id] = texture,
+            gl.bindTexture(gl.TEXTURE_2D, null);
+        return texture;
+    }
+
+    var makeFrameBuffer = function makeFrameBuffer(self, camera) {
+        var gl, framebuffer, texture, renderbuffer;
+        gl = self._gl,
+            framebuffer = gl.createFramebuffer(),
+            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+        var tArea = camera._renderArea ? camera._renderArea : [0, 0, self._cvs.width, self._cvs.height]
+        framebuffer.x = tArea[0], framebuffer.y = tArea[1],
+            framebuffer.width = tArea[2] * window.devicePixelRatio > self._cvs.width ? self._cvs.width : tArea[2] * window.devicePixelRatio,
+            framebuffer.height = tArea[3] * window.devicePixelRatio > self._cvs.height ? self._cvs.height : tArea[3] * window.devicePixelRatio;
+
+        texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture),
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR),
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+        renderbuffer = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer),
+            gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, framebuffer.width, framebuffer.height),
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0),
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer),
+            gl.bindTexture(gl.TEXTURE_2D, null),
+            gl.bindRenderbuffer(gl.RENDERBUFFER, null),
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        self._glFREAMBUFFERs[camera.uuid] = {
+            frameBuffer: framebuffer,
+            texture: texture
+        };
+    };
+    ///////////////////////////////
+
     World = function World(id) {
         if(!id) this.error(0);
         cvsList[this] = document.getElementById(id);
