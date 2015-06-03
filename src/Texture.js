@@ -48,18 +48,18 @@ var Texture = (function() {
     //private
     resize = {},
     imgs = {},
-    loaded = {},
     isLoaded = {},
+    loaded = function(e){
+        isLoaded[this] = true,
+        imgs[this] = resizer(self.resizeType, this),
+        self.dispatch('load');
+    };
     //shared private
     $setPrivate('Texture', {
     }),
     Texture = function Texture(){
         var self = this;
         isLoaded[this] = false,
-        loaded[this] = function(e){
-            isLoaded[self] = true;
-            self.dispatch('load', imgs[this] = resizer(self.resizeType, this));
-        };
     },
     fn = Texture.prototype,
     fn.prop = {
@@ -105,9 +105,10 @@ var Texture = (function() {
                 }
                 if (loaded){
                     isLoaded[this] = true;
-                    self.dispatch('load', imgs[this] = resizer(this.resizeType, img));
+                    imgs[this] = resizer(this.resizeType, img)
+                    self.dispatch('load');
                 } else {
-                    img.addEventListener('load', loaded[this]);
+                    img.addEventListener('load', loaded, this);
                 }
             }
         }

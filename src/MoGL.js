@@ -206,7 +206,7 @@ var MoGL = (function() {
         return this;
     }),
     //이벤트시스템
-    fn.addEventListener = $method(function(ev, f) {
+    fn.addEventListener = $method(function(ev, f/*, context, arg1*/) {
         var target
         //private저장소에 this용 공간 초기화
         if (!listener[this]) listener[this] = {};
@@ -214,8 +214,11 @@ var MoGL = (function() {
         //해당 이벤트용 공간 초기화
         if (!target[ev]) target[ev] = [];
         target = target[ev];
-        //기존에 없는 리스너라면 추가
-        if (target.indexOf(f) == -1) target[target.length] = f;
+        target[target.length] = {
+            f:f, 
+            cx:arguments[2] || this, 
+            arg:arguments.length > 3 ? Array.prototype.slice.call(arguments, 3) : null
+        };
         return this;
     }),
     fn.removeEventListener = $method(function(ev, f) {
@@ -227,7 +230,7 @@ var MoGL = (function() {
                 i = target.length;
                 while (i--) {
                     //삭제하려는 값이 문자열인 경우 리스너이름에 매칭, 함수인 경우는 리스너와 직접 매칭
-                    if ((typeof f == 'string' && MoGL.functionName(target[i]) == f) || target[i] === f) {
+                    if ((typeof f == 'string' && target[i].f.name == f) || target[i].f === f) {
                         target.splice(i, 1);
                     }
                 }
@@ -238,12 +241,25 @@ var MoGL = (function() {
         return this;
     }),
     fn.dispatch = $method(function(ev){
-        var target, arg, i, j;
+        var target, arg, i, j, k, l;
         if (listener[this] && listener[this][ev]) {
             //만약 추가로 보낸 인자가 있다면 리스너에게 apply해줌.
             if(arguments.length > 1) arg = Array.prototype.slice.call(arguments, 1);
             for (target = listener[this][ev], i = 0, j = target.length ; i < j ; i++) {
-                target[i].apply(this, arg);
+                k = target[i];
+                if (arg) {
+                    if (k.arg) {
+                        k.f.apply(k.cx, arg.concat(k.arg));
+                    } else{
+                        k.f.apply(k.cx, arg);
+                    }
+                } else {
+                    if (k.arg) {
+                        k.f.apply(k.cx, k.arg);
+                    } else{
+                        k.f.call(k.cx);
+                    }
+                }
             }
         }
         return this;
