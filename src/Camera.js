@@ -34,13 +34,19 @@ var Camera = (function () {
         visible: {
             get: $getter(prop, 'visible'),
             set: function visibleSet(v) {
-                prop[this].visible = v ? true : false;
+                if(typeof v =='number'){
+                    v = v ? true : false
+                }
+                prop[this].visible =v
             }
         },
         antialias: {
             get: $getter(prop, 'antialias'),
             set: function antialiasSet(v) {
-                prop[this].antialias = v ? true : false;
+                if(typeof v =='number'){
+                    v = v ? true : false
+                }
+                prop[this].antialias = v
             }
         },
         fogColor:{

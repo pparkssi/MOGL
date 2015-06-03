@@ -46,20 +46,28 @@ $method = function $method(f, key) { //생성할 이름과 메서드
 $method.prev = [], //스택구조의 이전 함수이름의 배열
 //defineProperty용 헬퍼
 $value = function(prop, key){
-    return {
-        get:$getter(prop, key),
-        set:$setter(prop, key)
-    };
+    if (arguments.length == 3) {
+        return {
+            get:$getter(prop, key, arguments[2]),
+            set:$setter(prop, key)
+        };
+    } else {
+        return {
+            get:$getter(prop, key),
+            set:$setter(prop, key)
+        };
+    }
 },
 $getter = function(prop, key){
-    var defaultValue = arguments.length == 3 ? arguments[3] : null;
+    var defaultValue = arguments.length == 3 ? arguments[2] : null;
     if (key) {
         return function getter() {
-            return prop[this][key]// || defaultValue;
+            var p = prop[this];
+            return key in p ? p[key] : defaultValue;
         };
     } else {
         return function getter() {
-            return prop[this]// || defaultValue;
+            return this.uuid in prop ? prop[this] : defaultValue;
         };
     }
 },
