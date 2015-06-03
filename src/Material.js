@@ -44,7 +44,8 @@ var Material = (function () {
         specular[this] = [],
         diffuseWrap[this] = [],
         specularNormal[this] = [],
-        color[this] = $color(arguments).slice(0),
+        color[this] = {r:0,g:0,b:0,a:1}
+        this.color = $color(arguments.length>1 ? arguments : arguments[0]),
         wireFrame[this] = false,
         wireFrameColor[this] = [Math.random(), Math.random(), Math.random(), 1];
     },
@@ -83,7 +84,8 @@ var Material = (function () {
            }
         },
         shading:$value(shading),
-        lambert:$value(lambert)
+        lambert:$value(lambert),
+        diffuse:$value(diffuse)
     },
     fn.addTexture = function addTexture(type, texture/*,index,blendMode*/) {
         var p;
@@ -100,9 +102,9 @@ var Material = (function () {
             texture.blendMode = arguments[3];
         }
         if (arguments.length > 2 && typeof arguments[2] !== 'number') {
-            p.splice(arguments[2], 0, texture);
-        }else{
             p[p.length] = texture;
+        }else{
+            p.splice(arguments[2], 0, texture);
         }
         this.dispatch(Material.changed);
         return this;

@@ -20,7 +20,6 @@ var Vector = (function () {
      */
     fn.add = function add(v) {
         var a = this;
-
         a.x += v.x, a.y += v.y, a.z += v.z;
         return this;
     },
@@ -89,7 +88,6 @@ var Vector = (function () {
      */
     fn.dot = function (v) {
         var a = this;
-
         return a.x * v.x + a.y * v.y + a.z * v.z;
     },
     /*

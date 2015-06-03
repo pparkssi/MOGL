@@ -46,7 +46,7 @@ var Camera = (function () {
                 if(typeof v =='number'){
                     v = v ? true : false
                 }
-                prop[this].antialias = v
+                prop[this].antialias = typeof v =='number' ? true : false;
             }
         },
         fogColor:{
@@ -90,7 +90,6 @@ var Camera = (function () {
                 return function backgroundColorGet() {
                     var p = prop[this];
                     a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
-                    console.log(a)
                     return a;
                 };
             })(),

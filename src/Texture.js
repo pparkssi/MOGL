@@ -10,8 +10,8 @@ var Texture = (function() {
     canvas.width = canvas.height = 2,
     context.clearRect(0, 0, 2, 2),
     empty = document.createElement('img'),
-    empty.src = context.toDataURL(),
-    
+    empty.src = canvas.toDataURL(),
+
     resizer = function(resizeType, v){
         var tw, th, dw, dh;
         //texture size
@@ -59,7 +59,7 @@ var Texture = (function() {
     }),
     Texture = function Texture(){
         var self = this;
-        isLoaded[this] = false,
+        isLoaded[this] = false
     },
     fn = Texture.prototype,
     fn.prop = {
@@ -114,11 +114,10 @@ var Texture = (function() {
         }
     },
     (function() {
-        var value = {value:null}, key = 'zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
-        while (i--) {
-            value.value = key[i],
-            Object.defineProperty( Texture, key[i], value );
-        }
+        (function(){
+            var key = 'zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
+            while (i--) Texture[key[i]] = key[i];
+        })();
     })();
-    return MoGL.ext(Texture);
+    return MoGL.ext(Texture,MoGL);
 })();
