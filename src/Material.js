@@ -2,7 +2,7 @@
  * Created by redcamel on 2015-05-05.
  */
 var Material = (function () {
-    var textures, shading, diffuse, normal, specular, diffuseWrap, specularNormal, color, wireFrame, count, scene, 
+    var textures, shading, diffuse, normal, specular, diffuseWrap, specularNormal, color, wireFrame, count, scene, texType,
         Material, fn;
     
     //private
@@ -17,7 +17,13 @@ var Material = (function () {
     wireFrame = {},
     count = {},
     scene = {},
-
+    texType = {
+        diffuse:diffuse,
+        specular:specular,
+        diffuseWrap:diffuseWrap,
+        normal:normal,
+        specularNormal:specularNormal
+    },
     //shared private
     $setPrivate('Material', {
     }),
@@ -25,13 +31,12 @@ var Material = (function () {
     Material = function Material() {
         textures[this] = {},
         shading[this] = {type: 'none', lambert: 1},
-        diffuse[this] = {__indexList: []},
-        normal[this] = {__indexList: []},
-        specular[this] = {__indexList: []},
-        diffuseWrap[this] = {__indexList: []},
-        specularNormal[this] = {__indexList: []},
+        diffuse[this] = [],
+        normal[this] = [],
+        specular[this] = [],
+        diffuseWrap[this] = [],
+        specularNormal[this] = [],
         wireFrame[this] = 0,
-        count[this] = 0,
         scene[this] = null,
         color[this] = $color(arguments).slice(0);
         /*
@@ -42,26 +47,39 @@ var Material = (function () {
     },
     fn = Material.prototype,
     fn.prop = {
-        count:$value(count)
+        count:$getter(count, false, 0),
+        backgroundColor:{
+            get:(function(){
+                var a = [];
+                return function backgroundColorGet() {
+                    var p = color[this];
+                    a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
+                    return a;
+                };
+            })(),
+            set:function backgroundColorSet(v) {
+                v = $color(v);
+                color.r = v[0], color.g = v[1], color.b = v[2], color.a = v[3];
+           }
+        },
     }
-    fn.addTexture = function addTexture(type,textureID/*,index,blendMode*/) { 
-        var t = this._scene;
-        if (t && !t._textures[textureID]) this.error(0);
-        if (this._textures[textureID]) this.error(1);
-        this._textures[textureID] = {id: textureID, type: type};
-        var result;
-        //console.log('type :', '_' + type);
-        //console.log('확인', this['_' + type],this['_' + type].__indexList.length);
-        //배열화
-        if (arguments[2] !=undefined) {
-            var idx = arguments[2] >this['_' + type].__indexList.length ? this['_' + type].__indexList.length : arguments[2];
-            result = this['_' + type].__indexList.splice(idx, 0, {id: textureID, blendMode: arguments[3]});
+    fn.addTexture = function addTexture(type, texture/*,index,blendMode*/) {
+        var p;
+        if (!texType[type]) this.error(0);
+        if (!(texture instanceof Texture)) this.error(1);
+        p = texType[type][this];
+        if (p[texture]) this.error(2);
+        p[texture] = 1;
+        texture = {tex:texture};
+        if (arguments.length > 3) {
+            texture.blendMode = arguments[3];
         }
-        else result = this['_' + type].__indexList.push({id: textureID, blendMode: arguments[3]});
+        if (arguments.length > 2 && arguments[2] !== false) {
+            p.splice(arguments[2], 0, texture);
+        }else{
+            p[p.length] = texture;
+        }
         return this;
-    },
-    fn.getRefCount = function getRefCount(){ 
-        return this._count;
     },
     fn.removeTexture = function removeTexture(textureID){ 
         var t = this._textures[textureID];
@@ -77,31 +95,6 @@ var Material = (function () {
         }
         delete this._textures[textureID];
         console.log('확인', this['_' + type]);
-        return this;
-    },
-    fn.setBackgroundColor = function setBackgroundColor(){
-        var t0 = arguments[0], t1, ta;
-        if (arguments.length == 1) {
-            if (t0.length > 7) ta = +t0.substr(7), t0 = t0.substr(0, 7);
-            if (t0.charAt(0) == '#') {
-                if (t1 = hex.exec(t0)) {
-                    this._r = parseInt(t1[1], 16) / 255,
-                    this._g = parseInt(t1[2], 16) / 255,
-                    this._b = parseInt(t1[3], 16) / 255;
-                } else {
-                    t1 = hex_s.exec(t0),
-                    this._r = parseInt(t1[1] + t1[1], 16) / 255,
-                    this._g = parseInt(t1[2] + t1[2], 16) / 255,
-                    this._b = parseInt(t1[3] + t1[3], 16) / 255;
-                }
-                this._a = ta  ? ta > 1 ? 1 : ta : 1;
-            }
-        } else {
-            this._r = arguments[0] || Math.random(),
-            this._g = arguments[1] || Math.random(),
-            this._b = arguments[2] || Math.random(),
-            this._a = arguments[3] == undefined ?  1 : arguments[3];
-        }
         return this;
     },
     fn.setWireFrame = function setWireFrame(isVisible){ 
