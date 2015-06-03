@@ -16,9 +16,9 @@ var Camera = (function () {
             r:0, g:0, b:0, a:1,
             fov:55, near:0.1, far:1000000,
             fog:false, fogColor:null, fogNear:0, fogFar:0,
-            visible:true, 
+            visible:true,
             antialias:false,
-            mode:CAmera.perspective,
+            mode:Camera.perspective,
             //filters:{},
             cvs:null,
             renderArea:null,
@@ -31,8 +31,18 @@ var Camera = (function () {
     fn.prop = {
         clipPlaneNear:$value(prop, 'near'),
         clipPlaneFar:$value(prop, 'far'),
-        visible:$value(prop, 'visible'),
-        antialias:$value(prop, 'antialias'),
+        visible: {
+            get: $getter(prop, 'visible'),
+            set: function visibleSet(v) {
+                prop[this].visible = v ? true : false;
+            }
+        },
+        antialias: {
+            get: $getter(prop, 'antialias'),
+            set: function antialiasSet(v) {
+                prop[this].antialias = v ? true : false;
+            }
+        },
         fogColor:{
             get:$getter(prop, 'fogColor'),
             set:function fogColorSet(v){
@@ -64,7 +74,7 @@ var Camera = (function () {
                 if (typeof v == 'number') {
                     p.fov = v;
                 } else if ('0' in v && '1' in v) {
-                    p.fov = CEIL(2 * ATAN(TAN(arguments[2] * PERPIR) * (v[1] / v[0])) * PERPI);
+                    p.fov = CEIL(2 * ATAN(TAN(v[2] * PERPIR) * (v[1] / v[0])) * PERPI);
                 }
             }
         },
@@ -74,6 +84,7 @@ var Camera = (function () {
                 return function backgroundColorGet() {
                     var p = prop[this];
                     a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
+                    console.log(a)
                     return a;
                 };
             })(),
@@ -97,23 +108,29 @@ var Camera = (function () {
                     this.error(0);
                 }
             }
+        },
+        cvs:{
+            get:$getter(prop, 'cvs'),
+            set:function modeSet(v) {
+                prop[this].cvs = v;
+            }
+        },
+        renderArea : {
+            get: $getter(prop, 'renderArea'),
+            set: function renderAreaSet(v) {
+                var tw, th,c;
+                c = prop[this].cvs,
+                tw = c.width,
+                th = c.height,
+                //console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
+                prop[this].renderArea = [
+                    typeof v[0] == 'string' ? tw * v[0].replace('%', '') * 0.01 : v[0],
+                    typeof v[1] == 'string' ? th * v[1].replace('%', '') * 0.01 : v[1],
+                    typeof v[2] == 'string' ? tw * v[2].replace('%', '') * 0.01 : v[2],
+                    typeof v[3] == 'string' ? th * v[3].replace('%', '') * 0.01 : v[3],
+                ];
+            }
         }
-    },
-    fn.getRenderArea = function getRenderArea(){
-        return this._renderArea;
-    },
-    fn.setRenderArea = function setRenderArea(x,y,w,h){
-        var tw, th;
-        tw = this._cvs.width,
-        th = this._cvs.height,
-        //console.log(typeof x == 'string' ? tw * x.replace('%', '') : x);
-        this._renderArea = [
-            typeof x == 'string' ? tw * x.replace('%', '') * 0.01 : x,
-            typeof y == 'string' ? th * y.replace('%', '') * 0.01 : y,
-            typeof w == 'string' ? tw * w.replace('%', '') * 0.01 : w,
-            typeof h == 'string' ? th * h.replace('%', '') * 0.01 : h,
-        ];
-        return this;
     },
     fn.resetProjectionMatrix = function resetProjectionMatrix(){
         var tMatrix, tArea;
