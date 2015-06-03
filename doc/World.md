@@ -237,7 +237,7 @@ this - 메서드체이닝을 위해 자신을 반환함.
 
 ```javascript
 var world = new World('canvasID');
-world.isAutoSize(true);
+world.setAutoSize(true);
 ```
 
 [top](#)
