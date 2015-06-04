@@ -4,7 +4,7 @@
 var Material = (function () {
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal, 
-        shading, lambert, color, wireFrame, wireFrameColor, count, 
+        shading, lambert, color, wireFrame, wireFrameColor, count,
         Material, fn, fnProp;
     
     //private
@@ -27,6 +27,7 @@ var Material = (function () {
     textureLoaded = function(mat){
         this.removeEventListener(Texture.load, textureLoaded),
         mat.dispatch(Material.changed);
+        if (mat.isLoaded) mat.dispatch(Material.load);
     },
     texType = {
         diffuse:diffuse,
@@ -37,32 +38,19 @@ var Material = (function () {
     },
     
     Material = function Material() {
-        shading[this] = Shading.none,
-        lambert[this] = 1,
-        diffuse[this] = [],
-        normal[this] = [],
-        specular[this] = [],
-        diffuseWrap[this] = [],
-        specularNormal[this] = [],
-        color[this] = {r:0,g:0,b:0,a:1}
-        if (arguments.length) this.color = $color(arguments.length > 1 ? arguments : arguments[0]),
-        wireFrame[this] = false,
-        wireFrameColor[this] = [Math.random(), Math.random(), Math.random(), 1];
+        var v;
+        if (arguments.length) {
+            this.color = arguments.length > 1 ? arguments : arguments[0];
+        }
+        wireFrame[this] = false;
     },
-    fn = Material.prototype,
     fnProp = {
         count:$getter(count, false, 0),
         color:{
-            get:(function(){
-                var a = [];
-                return function colorGet() {
-                    var p = color[this];
-                    a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
-                    return a;
-                };
-            })(),
+            get:$getter(color, false, {r:0,g:0,b:0,a:1}),
             set:function colorSet(v) {
-                var p = color[this]
+                var p = color[this];
+                if (!p) p = color[this] = {};
                 v = $color(v);
                 p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
            }
@@ -83,30 +71,62 @@ var Material = (function () {
                 p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
            }
         },
-        shading:$value(shading),
-        lambert:$value(lambert),
-        diffuse:$value(diffuse)
+        shading:$value(shading, false, Shading.none),
+        lambert:$value(lambert, false, 1),
+        diffuse:$value(diffuse),
+        isLoaded:{
+            get:function(mat) {
+                var type, tex, key;
+                for (type in texType) {
+                    if (tex = texType[type][mat]) {
+                        i = tex.length;
+                        while (i--) {
+                            if(!tex[i].tex.isLoaded) return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
     },
+    fn = Material.prototype,
     fn.addTexture = function addTexture(type, texture/*,index,blendMode*/) {
         var p;
         if (!texType[type]) this.error(0);
         if (!(texture instanceof Texture)) this.error(1);
-        p = texType[type][this];
-        if (p[texture]) this.error(2);
-        p[texture] = 1;
-        if(!texture.isLoaded) texture.addEventListener(Texture.load, textureLoaded, null, this);
         
+        //lazy초기화
+        p = texType[type];
+        if (this in p) {
+            p = p[this];
+            if (p[texture]) this.error(2); //이미 있는 텍스쳐
+        } else {
+            p = p[this] = [];
+        }
+        
+        //중복검사용 마킹
+        p[texture] = 1;
+        //로딩전 텍스쳐에게는 이벤트리스너를 걸어줌
+        if(!texture.isLoaded) {
+            texture.addEventListener(Texture.load, textureLoaded, null, this);
+        }
+        
+        //실제 텍스쳐구조체에는 텍스쳐와 블랜드모드가 포함됨
         texture = {tex:texture};
         
+        //블랜드모드가 들어온 경우의 처리
         if (arguments.length > 3) {
             texture.blendMode = arguments[3];
         }
+        //인덱스 제공 여부에 따라 텍스쳐리스트에 삽입
         if (arguments.length > 2 && typeof arguments[2] !== 'number') {
             p[p.length] = texture;
         }else{
             p.splice(arguments[2], 0, texture);
         }
+        //changed이벤트는 무조건 발생함.
         this.dispatch(Material.changed);
+        if (mat.isLoaded) mat.dispatch(Material.load);
         return this;
     },
     fn.removeTexture = function removeTexture(type, texture){
