@@ -5,7 +5,7 @@ var Material = (function () {
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal, 
         shading, lambert, color, wireFrame, wireFrameColor, count, 
-        Material, fn;
+        Material, fn, fnProp;
     
     //private
     shading = {},
@@ -50,7 +50,7 @@ var Material = (function () {
         wireFrameColor[this] = [Math.random(), Math.random(), Math.random(), 1];
     },
     fn = Material.prototype,
-    fn.prop = {
+    fnProp = {
         count:$getter(count, false, 0),
         color:{
             get:(function(){
@@ -132,5 +132,5 @@ var Material = (function () {
         return this;
     },
     Material.changed = 'changed';
-    return MoGL.ext(Material);
+    return MoGL.ext(Material, MoGL, fnProp);
 })();

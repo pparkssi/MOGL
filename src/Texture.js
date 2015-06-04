@@ -1,7 +1,7 @@
 var Texture = (function() {
     var imgType, canvas, context, empty, resizer,
         resize, imgs, loaded, isLoaded,
-        Texture, fn;
+        Texture, fn, fnProp;
 
     //lib
     imgType = {'.jpg':1, '.png':1, '.gif':1},
@@ -62,7 +62,7 @@ var Texture = (function() {
         isLoaded[this] = false
     },
     fn = Texture.prototype,
-    fn.prop = {
+    fnProp = {
         resizeType:{
             get:$getter(resize, false, 'zoomOut'),
             set:function resizeTypeSet(v){
@@ -119,5 +119,5 @@ var Texture = (function() {
             while (i--) Texture[key[i]] = key[i];
         })();
     })();
-    return MoGL.ext(Texture,MoGL);
+    return MoGL.ext(Texture, MoGL, fnProp);
 })();

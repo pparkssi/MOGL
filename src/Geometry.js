@@ -1,6 +1,6 @@
 var Geometry = (function () {
     var position, vertexCount, triangleCount, vertexShaders, normal,index, uv, color, volume, key,
-        Geometry, fn;
+        Geometry, fn, fnProp;
 
     //private
     position = {}, vertexCount = {}, triangleCount = {}, index = {},
@@ -104,7 +104,7 @@ var Geometry = (function () {
         };
     })(),
     fn = Geometry.prototype,
-    fn.prop = {
+    fnProp = {
         vertexCount:{get:$getter(vertexCount)},
         triangleCount:{get:$getter(triangleCount)},
         volume:{
@@ -141,5 +141,5 @@ var Geometry = (function () {
         return delete this._vertexShaders[id], this;
     };
     */
-    return MoGL.ext(Geometry, MoGL);
+    return MoGL.ext(Geometry, MoGL, fnProp);
 })();

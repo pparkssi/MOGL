@@ -1,6 +1,6 @@
 var Shader = (function () {
     var code,
-        Shader, fn;
+        Shader, fn, fnProp;
 
     //private
     code = {},

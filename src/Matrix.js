@@ -1,7 +1,7 @@
 var Matrix = (function () {
     var temp, setter, getter,
         raw,
-        Matrix, fn;
+        Matrix, fn, fnProp;
 
     //lib
     temp = new Float32Array(16),
@@ -35,7 +35,7 @@ var Matrix = (function () {
         this.scaleX = this.scaleY = this.scaleZ = 1;
     }
     fn = Matrix.prototype,
-    fn.prop = {
+    fnProp = {
         position:{
             set:setter('x', 'y', 'z'),
             get:getter('x', 'y', 'z')
@@ -210,5 +210,5 @@ var Matrix = (function () {
             a[8] + ', ' + a[9] + ', ' + a[10] + ', ' + a[11] + ', ' +
             a[12] + ', ' + a[13] + ', ' + a[14] + ', ' + a[15] + ')';
     };
-    return MoGL.ext(Matrix);
+    return MoGL.ext(Matrix, MoGL, fnProp);
 })();

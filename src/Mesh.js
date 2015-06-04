@@ -1,6 +1,6 @@
 var Mesh = (function () {
     var geometry, material, scene, culling,
-        Mesh, fn;
+        Mesh, fn, fnProp;
     
     //private
     geometry = {},
@@ -29,7 +29,7 @@ var Mesh = (function () {
         culling[this] = Mesh.cullingNone;
     },
     fn = Mesh.prototype,
-    fn.prop = {
+    fnProp = {
         culling:{
             get:$getter(culling, false, Mesh.cullingNone),
             set:function cullingSet(v) {
@@ -65,5 +65,5 @@ var Mesh = (function () {
         var key = 'cullingNone,cullingFront,cullingBack'.split(','), i = key.length;
         while (i--) Mesh[key[i]] = key[i];
     })();
-    return MoGL.ext(Mesh, Matrix);
+    return MoGL.ext(Mesh, Matrix, fnProp);
 })();

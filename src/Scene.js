@@ -5,7 +5,7 @@
 var Scene = (function () {
     var canvas, context, makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, vertexShaderParser, fragmentShaderParser, makeTexture, makeFrameBuffer,
         children, camera, textures, materials, geometrys, vertexShaders, fragmentShaders, gpu, cvs,
-        Scene, fn;
+        Scene, fn, fnProp;
     //lib
     canvas = document.createElement('canvas');
     context = canvas.getContext('2d');

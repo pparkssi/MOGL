@@ -28,7 +28,7 @@
 	parent.prototype.printB = function(){
 		return this.b;
 	};
-	parent = MoGL.ext( parent );
+	parent = MoGL.ext( parent, MoGL );
 
 	var child = function child( a, b, c ){
 		this.c = c;
@@ -163,7 +163,7 @@
 			var test = function test(){
 				this.error(1);
 			}, result = '';
-			test = MoGL.ext(test);
+			test = MoGL.ext(test,MoGL);
 			try{
 				var a = new test()
 			}catch(e){
@@ -177,7 +177,7 @@
     var a = function(){
         this.a = 3;
     };
-    a = MoGL.ext(a);
+    a = MoGL.ext(a,MoGL);
     var b = function(){
         this.b = 5;
     };
@@ -201,7 +201,7 @@
 })();
 (function(){
     var a = function(){}
-    a = MoGL.ext(a);
+    a = MoGL.ext(a,MoGL);
     var k = new a();
     k.id = 'aaaa';
     k.addEventListener( 'some', function(a,b){
@@ -244,21 +244,19 @@
 })();
 (function(){
     var a = function(){}, aa;
-    a.prototype.prop = {
+    a = MoGL.ext(a,MoGL,{
         a:{
             get:function(){return aa;},
             set:function(v){aa = v;}
         }
-    };
-    a = MoGL.ext(a);
+    });
     var b = function(){}, bb;
-    b.prototype.prop = {
+    b = MoGL.ext(b, a, {
         b:{
             get:function(){return bb;},
             set:function(v){bb = v;}
         }
-    };
-    b = MoGL.ext(b, a);
+    });
     var ins = new b();
     bsTest( 'property',
         function(){

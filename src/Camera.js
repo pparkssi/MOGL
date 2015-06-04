@@ -1,7 +1,7 @@
 var Camera = (function () {
     var PERPIR, value, getter,
         prop,
-        Camera, fn;
+        Camera, fn, fnProp;
 
     //lib
     PERPIR = PI / 180 * .5,
@@ -28,7 +28,7 @@ var Camera = (function () {
         this.lookAt(0,0,0);
     },
     fn = Camera.prototype,
-    fn.prop = {
+    fnProp = {
         clipPlaneNear:$value(prop, 'near'),
         clipPlaneFar:$value(prop, 'far'),
         visible: {
@@ -287,6 +287,6 @@ var Camera = (function () {
         var key = 'resize,othogonal,perspective'.split(','), i = key.length;
         while (i--) Camera[key[i]] = key[i];
     })();
-    return MoGL.ext(Camera, Matrix);
+    return MoGL.ext(Camera, Matrix, fnProp);
 })();
 
