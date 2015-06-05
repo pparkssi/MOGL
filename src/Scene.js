@@ -295,21 +295,7 @@ var Scene = (function () {
                     ], 2),
                     gpu[this].ibo['_FRAMERECT_'] = makeIBO(gpu[this], '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
             }
-            var p, k;
-            p = gpu[this]
-            for (k in cameras[this]) {
-                var camera, tRenderArea, tCVS;
-                camera = cameras[this][k],
-                tCVS = camera.cvs = cvs[this],
-                tRenderArea = camera._renderArea;
-                if (tRenderArea) {
-                    var wRatio = tRenderArea[2] / tCVS.width;
-                    var hRatio = tRenderArea[3] / tCVS.height;
-                    camera.setRenderArea(tRenderArea[0], tRenderArea[1], tCVS.width * wRatio, tCVS.height * hRatio);
-                }
-                camera.resetProjectionMatrix(),
-                makeFrameBuffer(gpu[this],camera);
-            }
+            this._cameraUpdate()
             makeProgram(gpu[this], 'color',Shader.colorVertexShader, Shader.colorFragmentShader);
             makeProgram(gpu[this], 'wire',Shader.wireFrameVertexShader, Shader.wireFrameFragmentShader);
             makeProgram(gpu[this], 'bitmap',Shader.bitmapVertexShader, Shader.bitmapFragmentShader);
@@ -335,6 +321,23 @@ var Scene = (function () {
             console.log('gpu[this].framebuffers :', gpu[this].framebuffers)
             //console.log('////////////////////////////////////////////'),
         },
+        fn._cameraUpdate = function(){
+            var p, k;
+            p = gpu[this]
+            for (k in cameras[this]) {
+                var camera, tRenderArea, tCVS;
+                camera = cameras[this][k],
+                    tCVS = camera.cvs = cvs[this],
+                    tRenderArea = camera._renderArea;
+                if (tRenderArea) {
+                    var wRatio = tRenderArea[2] / tCVS.width;
+                    var hRatio = tRenderArea[3] / tCVS.height;
+                    camera.setRenderArea(tRenderArea[0], tRenderArea[1], tCVS.width * wRatio, tCVS.height * hRatio);
+                }
+                camera.resetProjectionMatrix(),
+                    makeFrameBuffer(gpu[this],camera);
+            }
+        }
         fn.addMesh = function(v){
             var p = children[this],  geo;
             if (p[v]) this.error(0);
@@ -346,7 +349,6 @@ var Scene = (function () {
             geo = v.geometry
 
             if (geo) {
-
                 if (!p.vbo[geo]) {
                     p.vbo[geo] = makeVBO(p, geo, geo.position, 3),
                     p.vnbo[geo] = makeVNBO(p, geo, geo.normal, 3),

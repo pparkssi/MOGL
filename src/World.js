@@ -67,6 +67,7 @@ var World = (function () {
                     canvas._autoSize = isAutoSize
 					for(k in scenes) {
 						scenes[k]._update = 1
+                        scenes[k]._cameraUpdate()
 					}
 				};
 			}
