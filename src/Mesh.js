@@ -1,37 +1,27 @@
 var Mesh = (function () {
-    var geometry, material, scene, parent, culling,
-        Mesh, fn;
+    var geometry, material, scene, culling,
+        Mesh, fn, fnProp;
     
     //private
     geometry = {},
     material = {},
     scene = {},
-    parent = {},
     culling = {};
     //shared private
     $setPrivate('Mesh', {
     }),
     
     Mesh = function Mesh(geometry, material) {
-        if (geometry) {
-            if (geometry instanceof Geometry) {
-                geometry[this] = geometry;
-            } else {
-                this.error(0);
-            }
-        }
-        if (material) {
-            if (material instanceof Material) {
-                material[this] = material;
-            } else {
-                 this.error(1);
-            }
-        }
+        this.geometry = geometry
+        this.material = material
         culling[this] = Mesh.cullingNone;
     },
     fn = Mesh.prototype,
-    fn.prop = {
-        parent:{get:$getter(parent)},
+    fnProp = {
+        scene : {
+            get : $getter(scene),
+            set : $setter(scene)
+        },
         culling:{
             get:$getter(culling, false, Mesh.cullingNone),
             set:function cullingSet(v) {
@@ -67,5 +57,5 @@ var Mesh = (function () {
         var key = 'cullingNone,cullingFront,cullingBack'.split(','), i = key.length;
         while (i--) Mesh[key[i]] = key[i];
     })();
-    return MoGL.ext(Mesh, Matrix);
+    return MoGL.ext(Mesh, Matrix, fnProp);
 })();

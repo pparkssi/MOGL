@@ -28,6 +28,7 @@
     <script src="../src/Vertex.js"></script>
     <script src="../src/Shading.js"></script>
     <script src="../src/VertexShaderFunctions.js"></script>
+    <script src="../src/Shader.js"></script>
     <script src="../src/Matrix.js"></script>
     <script src="../src/Geometry.js"></script>
     <script src="../src/Material.js"></script>
@@ -49,20 +50,18 @@
     var world = new World('canvas');
     var scene = new Scene();
     var camera = new Camera()
-    var material = new Material()
-    var material2 = new Material()
+    var material = new Material('#fff')
+    var material2 = new Material('#fff232')
 
     world.addScene(scene);
     world.setAutoSize(1)
 
-    camera.setAntialias(1)
-
-    scene.addChild('camera', camera);
-    scene.addMaterial('material', material);
-    scene.addMaterial('material2', material2);
-    scene.addTexture('texture', 'smithHead/Map-COL.jpg');
-    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
-    scene.getMaterial('material2').addTexture(Texture.diffuse, 'texture');
+    scene.addChild(camera);
+    scene.addMaterial(material);
+    scene.addMaterial(material2);
+    //    scene.addTexture('texture', 'smithHead/Map-COL.jpg');
+    //    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
+    //    scene.getMaterial('material2').addTexture(Texture.diffuse, 'texture');
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('GET', 'smithHead/smith_head.json', true);
@@ -91,26 +90,24 @@
             indexBuffer.push(faces[i][0], faces[i][1], faces[i][2]);
             indexBuffer.push(faces[i][0], faces[i][2], faces[i][3]);
         }
-
-        scene.addGeometry('geometry', new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v]));
-        var mesh = new Mesh('geometry', 'material');
+        var geo = new Geometry(vertexBuffer, indexBuffer, [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v])
+        scene.addGeometry(geo);
+        var mesh = new Mesh(geo, material);
         mesh.scaleX = 10;
         mesh.scaleY = 10;
         mesh.scaleZ = 10;
-        scene.addChild('head', mesh);
-        mesh.getMaterial().setShading(Shading.phong);
+        scene.addChild(mesh);
 
-        var mesh2 = new Mesh('geometry', 'material2');
+        var mesh2 = new Mesh(geo, material2);
         mesh2.scaleX = 10;
         mesh2.scaleY = 10;
         mesh2.scaleZ = 10;
-        scene.addChild('head2', mesh2);
-        mesh2.getMaterial().setShading(Shading.blinn);
+        scene.addChild(mesh2);
 
         mesh.x = -3
         mesh2.x = 3
 
-        world.addEventListener(World.renderBefore,function(){
+        world.addEventListener(World.renderBefore, function () {
             mesh.rotateY -= 0.01;
             mesh2.rotateY -= 0.01;
         })

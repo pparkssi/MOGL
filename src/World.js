@@ -31,7 +31,8 @@ var World = (function () {
 		return gl;
 	};
     var renderList = {}, sceneList = [], cvsList = {}, glList = {}, autoSizer = {}, started ={};
-	
+    ///////////////////////////////
+
     World = function World(id) {
         if(!id) this.error(0);
         cvsList[this] = document.getElementById(id);
@@ -87,8 +88,9 @@ var World = (function () {
             if (tSceneList[i].uuid == uuid) this.error(0);
         }
         tSceneList.push(scene),
-        scene._gl = glList[this],
-        scene._cvs = cvsList[this];
+        scene.gl = glList[this],
+        scene.cvs = cvsList[this],
+        scene._baseUpdate()
         //scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
         //이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
         return this;
@@ -159,6 +161,7 @@ var World = (function () {
         var scene,tSceneList,cameraList,camera,gl,children,cvs;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList,tCulling;
         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram,pCulling;
+        var gpu
         cvs = cvsList[this],
         tSceneList = sceneList[this],
         i = tSceneList.length
@@ -166,117 +169,60 @@ var World = (function () {
         while(i--){
             //console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
             scene = tSceneList[i]
-            if (scene._update) scene.update();
-            cameraList = scene._cameras
+            cameraList = scene.cameras
             for (k in cameraList) len++
             for (k in cameraList) {
                 camera = cameraList[k]
-                if(camera._visible){
-                    gl = scene._gl;
+                if(camera.visible){
+                    gl = scene.gl;
                     if(len > 1) {
-                        tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
+                        tFrameBuffer = scene._glFREAMBUFFERs[camera].frameBuffer;
                         gl.bindFramebuffer( gl.FRAMEBUFFER,tFrameBuffer);
                         gl.viewport(0,0, tFrameBuffer.width, tFrameBuffer.height);
                     }else{
                         gl.viewport(0, 0, cvs.width, cvs.height);
                     }
-                    children = scene._children;
+                    children = scene.children;
                     gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                     gl.enable(gl.BLEND)
                     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-                    gl.clearColor(camera._r, camera._g, camera._b, camera._a);
+                    var color = camera.backgroundColor
+                    gl.clearColor(color[0],color[1],color[2],color[3]);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                    for(k in scene._glPROGRAMs){
-                        tProgram = scene._glPROGRAMs[k];
+                    for(k in scene.programs){
+                        tProgram = scene.programs[k];
                         gl.useProgram(tProgram);
-                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera._pixelMatrix._rawData);
-                        gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.getMatrix()._rawData);
+                        camera.cvs = cvs
+                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera.resetProjectionMatrix().pixelMatrix.raw);
+                        gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.matrix.raw);
                     }
                     tItem = tMaterial = tProgram = tVBO = tIBO = null;
                     for (k in children) {
                         tItem = children[k],
-                        tVBO = scene._glVBOs[tItem._geometry._key],
-                        tVNBO = scene._glVNBOs[tItem._geometry._key],
-                        tUVBO = scene._glUVBOs[tItem._geometry._key],
-                        tIBO = scene._glIBOs[tItem._geometry._key],
-                        tMaterial = tItem._material,
-                        tDiffuseList = tMaterial._diffuse;
-                        tCulling = tItem._culling
+                        gpu = scene.gpu
+                        tVBO = gpu.vbo[tItem.geometry],
+                        tVNBO = gpu.vnbo[tItem.geometry],
+                        tUVBO = gpu.uvbo[tItem.geometry],
+                        tIBO = gpu.ibo[tItem.geometry],
+                        tMaterial = tItem.material,
+                        //tDiffuseList = tMaterial.diffuse;
+                        tCulling = tItem.culling
                         if(tCulling != pCulling){
                             if(tCulling == Mesh.cullingNone) gl.disable(gl.CULL_FACE)
                             else if(tCulling == Mesh.cullingBack) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CCW)
                             else if(tCulling == Mesh.cullingFront) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW)
                         }
                         var dLite = [0,-1,-1], useNormalBuffer = 0;
-                        if(tDiffuseList.__indexList.length == 0){
-                            if(tMaterial._shading.type == 'none'){
-                                tProgram=scene._glPROGRAMs['color'];
-                                gl.useProgram(tProgram);
-                            }
-                            else if(tMaterial._shading.type == 'toon'){
-                                tProgram = scene._glPROGRAMs['colorToon'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }
-                            else if(tMaterial._shading.type=='gouraud'){
-                                tProgram = scene._glPROGRAMs['colorGouraud'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }
-                            else if(tMaterial._shading.type=='phong'){
-                                tProgram=scene._glPROGRAMs['colorPhong'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }
-                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null,pCulling=null;
-
-                            if(useNormalBuffer){
-                                tVNBO != pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
-                                tVNBO != pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0) : 0;
-                                gl.uniform3fv(tProgram.uDLite, dLite);
-                                gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert);
-                            }
-                            tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
-                            tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                            f4[0] = tMaterial._r,f4[1] = tMaterial._g,f4[2] = tMaterial._b,f4[3] = tMaterial._a,
-                            gl.uniform4fv(tProgram.uColor, f4);
-                        }else{
-                            if(tMaterial._shading.type == 'none'){
-                                tProgram=scene._glPROGRAMs['bitmap'],
-                                gl.useProgram(tProgram);
-                            }else if(tMaterial._shading.type == 'flat'){
-                            }else if(tMaterial._shading.type == 'gouraud'){
-                                tProgram=scene._glPROGRAMs['bitmapGouraud'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }else if(tMaterial._shading.type == 'phong'){
-                                tProgram=scene._glPROGRAMs['bitmapPhong'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }else if(tMaterial._shading.type == 'blinn'){
-                                tProgram=scene._glPROGRAMs['bitmapBlinn'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }
-                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
-
-                            if(useNormalBuffer){
-                                tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
-                                tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0) : 0;
-                                gl.uniform3fv(tProgram.uDLite, dLite);
-                                gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert);
-                            }
-                            tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
-                            tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0;
-                            tUVBO != pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
-                            tUVBO != pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                            gl.activeTexture(gl.TEXTURE0);
-                            var textureObj = scene._glTEXTUREs[tDiffuseList.__indexList[0].id];
-                            if(textureObj.loaded){
-                                textureObj != pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
-                                gl.uniform1i(tProgram.uSampler, 0);
-                            }
-                        }
+                        tProgram=gpu.programs['color'];
+                        gl.useProgram(tProgram);
+                        tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
+                        tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                        f4[0] = tMaterial.color.r
+                        f4[1] = tMaterial.color.g
+                        f4[2] = tMaterial.color.b
+                        f4[3] = tMaterial.color.a
+                        gl.uniform4fv(tProgram.uColor, f4);
+                        
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ;
                         gl.uniform3fv(tProgram.uRotate, f3),
                         f3[0] = tItem.x,f3[1] = tItem.y,f3[2] = tItem.z,
@@ -287,7 +233,7 @@ var World = (function () {
                         gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                         if(tMaterial._wireFrame) {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL);
-                            tProgram = scene._glPROGRAMs['wireFrame'],
+                            tProgram = gpu.programs['wireFrame'],
                                 gl.useProgram(tProgram),
                                 tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                                 tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
@@ -303,7 +249,7 @@ var World = (function () {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                         }
 
-                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj,pCulling=tCulling;
+                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pCulling=tCulling//,pDiffuse = textureObj;
                     }
                     //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                     //gl.bindTexture(gl.TEXTURE_2D, null);
@@ -321,10 +267,10 @@ var World = (function () {
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            tVBO = scene._glVBOs['_FRAMERECT_'],
-            tUVBO = scene._glUVBOs['_FRAMERECT_'],
-            tIBO = scene._glIBOs['_FRAMERECT_'],
-            tProgram = scene._glPROGRAMs['postProcess'];
+            tVBO = gpu.vbo['_FRAMERECT_'],
+            tUVBO = gpu.uvbo['_FRAMERECT_'],
+            tIBO = gpu.ibo['_FRAMERECT_'],
+            tProgram = gpu.programs['postProcess'];
             if (!tVBO) return;
             gl.useProgram(tProgram);
             gl.uniformMatrix4fv(tProgram.uPixelMatrix, false, [

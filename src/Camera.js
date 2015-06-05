@@ -1,7 +1,7 @@
 var Camera = (function () {
     var PERPIR, value, getter,
         prop,
-        Camera, fn;
+        Camera, fn, fnProp;
 
     //lib
     PERPIR = PI / 180 * .5,
@@ -28,7 +28,7 @@ var Camera = (function () {
         this.lookAt(0,0,0);
     },
     fn = Camera.prototype,
-    fn.prop = {
+    fnProp = {
         clipPlaneNear:$value(prop, 'near'),
         clipPlaneFar:$value(prop, 'far'),
         visible: {
@@ -46,7 +46,7 @@ var Camera = (function () {
                 if(typeof v =='number'){
                     v = v ? true : false
                 }
-                prop[this].antialias = v
+                prop[this].antialias = typeof v =='number' ? true : false;
             }
         },
         fogColor:{
@@ -90,7 +90,6 @@ var Camera = (function () {
                 return function backgroundColorGet() {
                     var p = prop[this];
                     a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
-                    console.log(a)
                     return a;
                 };
             })(),
@@ -136,23 +135,30 @@ var Camera = (function () {
                     typeof v[3] == 'string' ? th * v[3].replace('%', '') * 0.01 : v[3],
                 ];
             }
+        },
+        pixelMatrix : {
+            get : $getter(prop,'pixelMatrix'),
         }
     },
     fn.resetProjectionMatrix = function resetProjectionMatrix(){
-        var tMatrix, tArea;
-        tMatrix = this._pixelMatrix,
-        tArea = this._renderArea,
-        tMatrix.matIdentity()
-        if(this._mode == '2d'){
-            tMatrix._rawData[0] = 2 / tArea[2]
-            tMatrix._rawData[5] = -2 / tArea[3]
-            tMatrix._rawData[10] = 0
-            tMatrix._rawData[12] = -1
-            tMatrix._rawData[13] = 1
-        }else {
-            if(tArea) tMatrix.matPerspective(this._fov, tArea[2]/tArea[3], this._near, this._far);
-            else tMatrix.matPerspective(this._fov, this._cvs.width/this._cvs.height, this._near, this._far);
-        }
+        //var tMatrix, tArea;
+        //tMatrix = this._pixelMatrix,
+        //tArea = this._renderArea,
+        //tMatrix.matIdentity()
+        //if(this._mode == '2d'){
+        //    tMatrix._rawData[0] = 2 / tArea[2]
+        //    tMatrix._rawData[5] = -2 / tArea[3]
+        //    tMatrix._rawData[10] = 0
+        //    tMatrix._rawData[12] = -1
+        //    tMatrix._rawData[13] = 1
+        //}else {
+        //
+        //}
+        //if(tArea) tMatrix.matPerspective(this._fov, tArea[2]/tArea[3], this._near, this._far);
+        //else
+        console.log(prop[this].cvs)
+        prop[this].pixelMatrix.matPerspective(prop[this].fov, prop[this].cvs.width/prop[this].cvs.height, prop[this].near, prop[this].far);
+
         return this;
     },
     /*마일스톤0.5
@@ -288,6 +294,6 @@ var Camera = (function () {
         var key = 'resize,othogonal,perspective'.split(','), i = key.length;
         while (i--) Camera[key[i]] = key[i];
     })();
-    return MoGL.ext(Camera, Matrix);
+    return MoGL.ext(Camera, Matrix, fnProp);
 })();
 

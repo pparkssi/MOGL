@@ -1,17 +1,17 @@
 var Geometry = (function () {
     var position, vertexCount, triangleCount, vertexShaders, normal,index, uv, color, volume, key,
-        Geometry, fn;
+        Geometry, fn, fnProp;
 
     //private
-    position = {}, vertexCount = {}, triangleCount = {}, index = {},
-    vertexShaders = {}, normal = {}, uv = {}, color = {},
-    volume = {}, key = {};
+    position = {}, normal = {}, uv = {}, color = {},index = {},
+    vertexCount = {}, triangleCount = {}, vertexShaders = {},
+    volume = {};
     //shared private
     $setPrivate('Geometry', {
     }),
   
     Geometry = (function(){
-        var calcNormal, infoCheck, pos, nm, uv, co;
+        var calcNormal, infoCheck, pos, nm, tUV, tCo;
         calcNormal = (function(){
             var sqr, v1, v2;
             sqr = Math.sqrt,
@@ -55,15 +55,15 @@ var Geometry = (function () {
         infoCheck = function(v){
             return Vertex[v];
         },
-        pos = [], nm = [], uv = [], co = [];
-        return function Geometry(vertex, index, info) {
+        pos = [], nm = [], tUV = [], tCo = [];
+        return function Geometry(vertex, tIndex, info) {
             var len, i, j, k, isNormal, isUV, isColor;
             if (!Array.isArray(vertex) && !(vertex instanceof Float32Array)) {
                 this.error(0);
-            } else if (!Array.isArray(index) && !(index instanceof Uint16Array)) {
+            } else if (!Array.isArray(tIndex) && !(tIndex instanceof Uint16Array)) {
                 this.error(1);
             }
-            pos.length = nm.length = uv.length = co.length = 0;
+            pos.length = nm.length = tUV.length = tCo.length = 0;
             if (info) {
                 if (!Array.isArray(info)) {
                     this.error(3);
@@ -76,7 +76,6 @@ var Geometry = (function () {
                 
                 i = len;
                 while (i--) info[info[i]] = i;
-
                 isNormal = info.normalX && info.normalY && info.normalZ,
                 isUV = info.u && info.v,
                 isColor = info.r && info.g && info.b && info.a;
@@ -85,26 +84,25 @@ var Geometry = (function () {
                     k = len * i,
                     pos.push(vertex[k+info.x], vertex[k+info.y], vertex[k+info.z]);
                     if (isNormal) nm.push(vertex[k+info.normalX], vertex[k+info.normalY], vertex[k+info.normalZ]);
-                    if (isUV) uv.push(vertex[k+info.u], vertex[k+info.v]);
-                    if (isColor) co.push(vertex[k+info.r], vertex[k+info.g], vertex[k+info.b], vertex[k+info.a]);
+                    if (isUV) tUV.push(vertex[k+info.u], vertex[k+info.v]);
+                    if (isColor) tCo.push(vertex[k+info.r], vertex[k+info.g], vertex[k+info.b], vertex[k+info.a]);
                 }
-                
                 position[this] = new Float32Array(pos);
             } else {
                 len = 3;
                 position[this] = vertex instanceof Float32Array ? vertex : new Float32Array(vertex);
             }
-            if (!isNormal) calcNormal(nm, info ? pos : vertex, index);
+            if (!isNormal) calcNormal(nm, info ? pos : vertex, tIndex);
             normal[this] = new Float32Array(nm);
             vertexCount[this] = vertex.length / len,
-            triangleCount[this] = index.length / 3,
-            uv[this] = new Float32Array(uv),
-            color[this] = new Float32Array(co),
-            index[this] = index instanceof Uint16Array ? index : new Uint16Array(index);
+            triangleCount[this] = tIndex.length / 3,
+            uv[this] = new Float32Array(tUV),
+            color[this] = new Float32Array(tCo),
+            index[this] = tIndex instanceof Uint16Array ? tIndex : new Uint16Array(tIndex);
         };
     })(),
     fn = Geometry.prototype,
-    fn.prop = {
+    fnProp = {
         vertexCount:{get:$getter(vertexCount)},
         triangleCount:{get:$getter(triangleCount)},
         volume:{
@@ -127,10 +125,11 @@ var Geometry = (function () {
                 return volume[this];
             }
         },
-        uv:{get:$getter(uv)},
-        color:{get:$getter(color)},
-        position:{get:$getter(position)},
-        index:{get:$getter(index)}
+        position: {get: $getter(position)},
+        normal: {get: $getter(normal)},
+        uv: {get: $getter(uv)},
+        color: {get: $getter(color)},
+        index: {get: $getter(index)}
     };
     /* TODO 마일스톤0.5
     fn.addVertexShader = function addVertexShader(id) {
@@ -141,5 +140,5 @@ var Geometry = (function () {
         return delete this._vertexShaders[id], this;
     };
     */
-    return MoGL.ext(Geometry, MoGL);
+    return MoGL.ext(Geometry, MoGL, fnProp);
 })();

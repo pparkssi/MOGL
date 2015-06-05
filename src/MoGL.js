@@ -15,7 +15,7 @@
     }
 })();
 //전역에서 사용하는 공통함수
-var $method, $setPrivate, $getPrivate, $value, $getter, $setter, $color,
+var $setPrivate, $getPrivate, $value, $getter, $setter, $color,
     GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
     
 (function() {
@@ -32,18 +32,6 @@ var $method, $setPrivate, $getPrivate, $value, $getter, $setter, $color,
         }
     };
 })(),
-$method = function $method(f, key) { //생성할 이름과 메서드
-    return function() {
-        var result, prev = $method.prev;
-        if (!this.isAlive) throw new Error('Destroyed Object:' + this); //비활성객체 배제
-        prev[prev.length] = $method.method, //에러가 발생한 메소드이름을 스택으로 관리
-        $method.method = key, //현재 에러가 난 메소드명
-        result = f.apply(this, arguments), //메소드실행
-        $method.method = prev.pop(); //스택을 되돌림
-        return result;
-    };
-},
-$method.prev = [], //스택구조의 이전 함수이름의 배열
 //defineProperty용 헬퍼
 $value = function(prop, key){
     if (arguments.length == 3) {
@@ -112,12 +100,25 @@ SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.a
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 
 var MoGL = (function() {
-    var isFactory, isSuperChain, 
+    var wrap, method, prev,
+        isFactory, isSuperChain, 
         value, writable,
         uuid, counter, totalCount,
         listener, ids, updated, 
         MoGL, fn;
-    
+    //lib
+    prev = [], //스택구조의 이전 함수이름의 배열
+    wrap = function wrap(f, key) { //생성할 이름과 메서드
+        return function() {
+            var result;
+            if (!this.isAlive) throw new Error('Destroyed Object:' + this); //비활성객체 배제
+            prev[prev.length] = method, //에러가 발생한 메소드이름을 스택으로 관리
+            method = key, //현재 에러가 난 메소드명
+            result = f.apply(this, arguments), //메소드실행
+            method = prev.pop(); //스택을 되돌림
+            return result;
+        };
+    },
     //내부용 상수
     isFactory = {factory:1},//팩토리 함수용 식별상수
     isSuperChain = {superChain:1},//생성자체인용 상수
@@ -149,20 +150,20 @@ var MoGL = (function() {
     fn.classId = MoGL.uuid = 'uuid:' + (uuid++), //프로토타입수준에서 클래스의 고유아이디와
     fn.className = 'MoGL', //클래스명설정
     fn.error = function error(id) { //error처리기는 method를 통해 래핑하지 않음
-        throw new Error(this.className + '.' + $method.method + ':' + id);
+        throw new Error(this.className + '.' + method + ':' + id);
     },    
     fn.toString = function(){//toString상황에서 uuid를 반환함.
         return this.uuid;
     },
     Object.defineProperty(fn, 'id', { //id처리기
-        get:$method(function idGet() {
+        get:wrap(function idGet() {
             //클래스별 id저장소에서 가져옴
             if (ids[this.classId] && this.uuid in ids[this.classId]) { 
                 return ids[this.classId][this];
             }
             return null; //없으면 null
         }),
-        set:$method(function idSet(v) {
+        set:wrap(function idSet(v) {
             if (!ids[this.classId]){ // 클래스별 저장소가 없으면 생성
                 ids[this.classId] = {ref:{}};//역참조 ref는 중복확인용
             } else if(v in ids[this.classId].ref){ //역참조에 이미 존재하는 아이디면 예외
@@ -179,14 +180,14 @@ var MoGL = (function() {
         })
     }),
     Object.defineProperty(fn, 'isUpdated', { //updated처리기
-        get:$method(function isUpdatedGet() {
+        get:wrap(function isUpdatedGet() {
             return updated[this] || false;
         }),
-        set:$method(function isUpdatedSet(v) {
+        set:wrap(function isUpdatedSet(v) {
             this.dispatch( 'updated', updated[this] = v ); //set과 동시에 디스패치
         })
     }),
-    fn.destroy = $method(function destroy() { //파괴자
+    fn.destroy = wrap(function destroy() { //파괴자
         var key;
         for (key in this) {
             if (this.hasOwnProperty(key)) this[key] = null;
@@ -201,12 +202,12 @@ var MoGL = (function() {
         counter[this.classId]--, //클래스별인스턴스감소
         totalCount--; //전체인스턴스감소
     }),
-    fn.setId = $method(function setId(v) { //id setter
+    fn.setId = wrap(function setId(v) { //id setter
         this.id = v;
         return this;
     }),
     //이벤트시스템
-    fn.addEventListener = $method(function(ev, f) {
+    fn.addEventListener = wrap(function(ev, f/*, context, arg1*/) {
         var target
         //private저장소에 this용 공간 초기화
         if (!listener[this]) listener[this] = {};
@@ -214,11 +215,14 @@ var MoGL = (function() {
         //해당 이벤트용 공간 초기화
         if (!target[ev]) target[ev] = [];
         target = target[ev];
-        //기존에 없는 리스너라면 추가
-        if (target.indexOf(f) == -1) target[target.length] = f;
+        target[target.length] = {
+            f:f, 
+            cx:arguments[2] || this, 
+            arg:arguments.length > 3 ? Array.prototype.slice.call(arguments, 3) : null
+        };
         return this;
     }),
-    fn.removeEventListener = $method(function(ev, f) {
+    fn.removeEventListener = wrap(function(ev, f) {
         var target, i;
         if( f ){
             if (listener[this] && listener[this][ev]) {
@@ -227,7 +231,7 @@ var MoGL = (function() {
                 i = target.length;
                 while (i--) {
                     //삭제하려는 값이 문자열인 경우 리스너이름에 매칭, 함수인 경우는 리스너와 직접 매칭
-                    if ((typeof f == 'string' && MoGL.functionName(target[i]) == f) || target[i] === f) {
+                    if ((typeof f == 'string' && target[i].f.name == f) || target[i].f === f) {
                         target.splice(i, 1);
                     }
                 }
@@ -237,13 +241,26 @@ var MoGL = (function() {
         }
         return this;
     }),
-    fn.dispatch = $method(function(ev){
-        var target, arg, i, j;
+    fn.dispatch = wrap(function(ev){
+        var target, arg, i, j, k, l;
         if (listener[this] && listener[this][ev]) {
             //만약 추가로 보낸 인자가 있다면 리스너에게 apply해줌.
             if(arguments.length > 1) arg = Array.prototype.slice.call(arguments, 1);
             for (target = listener[this][ev], i = 0, j = target.length ; i < j ; i++) {
-                target[i].apply(this, arg);
+                k = target[i];
+                if (arg) {
+                    if (k.arg) {
+                        k.f.apply(k.cx, arg.concat(k.arg));
+                    } else{
+                        k.f.apply(k.cx, arg);
+                    }
+                } else {
+                    if (k.arg) {
+                        k.f.apply(k.cx, k.arg);
+                    } else{
+                        k.f.call(k.cx);
+                    }
+                }
             }
         }
         return this;
@@ -262,21 +279,19 @@ var MoGL = (function() {
         throw new Error(cls + '.' + method + ':' + id);
     },
     //parent클래스를 상속하는 자식클래스를 만들어냄.
-    MoGL.ext = function ext(child, parent) {
-        var cls, oldProto, newProto, key, prop;
+    MoGL.ext = function ext(child, parent, prop) {
+        var cls, oldProto, newProto, key, v;
         //부모검사
-        if (!parent) {
-            parent = MoGL;
-        } else if (parent !== MoGL && !('uuid' in parent)) {
+        if (parent !== MoGL && !(parent.prototype instanceof MoGL)) {
             MoGL.error('MoGL', 'ext', 0);
         }
         //생성자클래스
         cls = function() {
-            var arg, arg0 = arguments[0], result, prev = $method.prev;
+            var arg, arg0 = arguments[0], result;
             
             //생성자에서도 에러처리를 위한 스택을 정의함
-            prev[prev.length] = $method.method;
-            $method.method = 'constructor';
+            prev[prev.length] = method;
+            method = 'constructor';
             if (arg0 === isSuperChain) {//생성자체인으로 요청된 경우
                 parent.call(this, isSuperChain, arguments[1]),
                 child.apply(this, arguments[1]);
@@ -293,25 +308,33 @@ var MoGL = (function() {
             } else {//팩토리함수형태로 호출된 경우
                 result = cls.call(Object.create(cls.prototype), isFactory, arguments);
             }
-            $method.method = prev.pop();
+            method = prev.pop();
             return result;
         };
         //parent와 프로토타입체인생성
         newProto = Object.create(parent.prototype);
         //기존 child의 프로토타입속성을 복사
         oldProto = child.prototype;
-        for (key in oldProto) if (oldProto.hasOwnProperty(key)) newProto[key] = $method(oldProto[key], key);
-        oldProto = oldProto.prop;
-        if (oldProto) {
-            for (key in oldProto) {
-                prop = oldProto[key];
-                if( prop.get ) prop.get = $method(prop.get);
-                if( prop.set ) prop.set = $method(prop.set);
-                Object.defineProperty(newProto, key, prop);
+        for (key in oldProto) {
+            if (oldProto.hasOwnProperty(key) && typeof oldProto[key] == 'function') {
+                newProto[key] = wrap(oldProto[key], key);
             }
         }
         //정적 속성을 복사
-        for ( key in child ) if (child.hasOwnProperty(key)) cls[key] = child[key];
+        for ( key in child ) {
+            if (child.hasOwnProperty(key)) {
+                cls[key] = child[key];
+            }
+        }
+        //속성지정자처리
+        if (prop) {
+            for (key in prop) {
+                v = prop[key];
+                if (v.get) v.get = wrap(v.get);
+                if (v.set) v.set = wrap(v.set);
+                Object.defineProperty(newProto, key, v);
+            }
+        }
         //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
         value.value = cls.uuid = 'uuid:' + (uuid++),
         Object.defineProperty(newProto, 'classId', value);

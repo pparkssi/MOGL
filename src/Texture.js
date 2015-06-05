@@ -1,7 +1,7 @@
 var Texture = (function() {
     var imgType, canvas, context, empty, resizer,
         resize, imgs, loaded, isLoaded,
-        Texture, fn;
+        Texture, fn, fnProp;
 
     //lib
     imgType = {'.jpg':1, '.png':1, '.gif':1},
@@ -10,8 +10,8 @@ var Texture = (function() {
     canvas.width = canvas.height = 2,
     context.clearRect(0, 0, 2, 2),
     empty = document.createElement('img'),
-    empty.src = context.toDataURL(),
-    
+    empty.src = canvas.toDataURL(),
+
     resizer = function(resizeType, v){
         var tw, th, dw, dh;
         //texture size
@@ -48,21 +48,21 @@ var Texture = (function() {
     //private
     resize = {},
     imgs = {},
-    loaded = {},
     isLoaded = {},
+    loaded = function(e){
+        isLoaded[this] = true,
+        imgs[this] = resizer(self.resizeType, this),
+        self.dispatch('load');
+    };
     //shared private
     $setPrivate('Texture', {
     }),
     Texture = function Texture(){
         var self = this;
-        isLoaded[this] = false,
-        loaded[this] = function(e){
-            isLoaded[self] = true;
-            self.dispatch('load', imgs[this] = resizer(self.resizeType, this));
-        };
+        isLoaded[this] = false
     },
     fn = Texture.prototype,
-    fn.prop = {
+    fnProp = {
         resizeType:{
             get:$getter(resize, false, 'zoomOut'),
             set:function resizeTypeSet(v){
@@ -105,19 +105,19 @@ var Texture = (function() {
                 }
                 if (loaded){
                     isLoaded[this] = true;
-                    self.dispatch('load', imgs[this] = resizer(this.resizeType, img));
+                    imgs[this] = resizer(this.resizeType, img)
+                    self.dispatch('load');
                 } else {
-                    img.addEventListener('load', loaded[this]);
+                    img.addEventListener('load', loaded, this);
                 }
             }
         }
     },
     (function() {
-        var value = {value:null}, key = 'zoomOut,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
-        while (i--) {
-            value.value = key[i],
-            Object.defineProperty( Texture, key[i], value );
-        }
+        (function(){
+            var key = 'zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
+            while (i--) Texture[key[i]] = key[i];
+        })();
     })();
-    return MoGL.ext(Texture);
+    return MoGL.ext(Texture, MoGL, fnProp);
 })();
