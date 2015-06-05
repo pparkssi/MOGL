@@ -25,6 +25,7 @@
 <!--<script src="../src/VertexShaderFunctions.js"></script>-->
 <!--<script src="../src/Matrix.js"></script>-->
 <!--<script src="../src/Geometry.js"></script>-->
+<script src="../src/Shading.js"></script>
 <script src="../src/Texture.js"></script>
 <script src="../src/Material.js"></script>
 
@@ -70,24 +71,25 @@
     bsTest('colorCheck',
             // 잘생성이되었나
             function () {
+                console.log(testMaterial1.color)
                 return testMaterial1.color.toString();
-            }, [0, 0, 0, 1].toString(),
+            }, {r:0,g:0,b:0,a:1}.toString(),
 //             잘생성이되었나
             function () {
                 return testMaterial2.color.toString();
-            }, [0, 0, 0, 1].toString(),
+            }, {r:0,g:0,b:0,a:1}.toString(),
             function () {
                 return testMaterial3.color.toString();
-            }, [1, 1, 1, 0.8].toString(),
+            }, {r:1,g:1,b:1,a:0.8}.toString(),
             function () {
                 return testMaterial4.color.toString()
-            }, [0xff / 0xff, 0xaf / 0xff, 0x45 / 0xff, 0.5].toString(),
+            }, {r:0xff / 0xff,g:0xaf / 0xff,b:0x45 / 0xff,a:0.5}.toString(),
             function () {
                 return testMaterial5.color.toString()
-            }, [1, 1, 1, 1].toString(),
+            }, {r:1,g:1,b:1,a:1}.toString(),
             function () {
                 return testMaterial6.color.toString();
-            }, [1, 1, 1, 1].toString()
+            }, {r:1,g:1,b:1,a:1}.toString()
     );
     //    var world = new World('canvas')
     //    var lobby = new Scene().setId('lobby');
@@ -100,17 +102,17 @@
     var testResult
     var testTexture = new Texture()
     console.log()
-    bsTest('texture',
-            function () {
-                testResult = 1
-                try {
-                    sceneAddedMaterial.addTexture(Texture.diffuse, testTexture);  //floor1가 존재하지 않으므로 에러발생
-                } catch (e) {
-                    testResult = 0
-                    console.log(e); // 'Material.addTexture:0'
-                }
-                return testResult
-            }, 1
+//    bsTest('texture',
+//            function () {
+//                testResult = 1
+//                try {
+//                    sceneAddedMaterial.addTexture(Texture.diffuse, testTexture);  //floor1가 존재하지 않으므로 에러발생
+//                } catch (e) {
+//                    testResult = 0
+//                    console.log(e); // 'Material.addTexture:0'
+//                }
+//                return testResult
+//            }, 1
 //            function () {
 //                testResult = 1
 //                try {
@@ -153,7 +155,7 @@
 //                    return sceneAddedMaterial._textures['floorTexture'] == undefined && lobby.getTexture('floorTexture') != null
 //                    return true
 //                }, true
-    );
+//    );
     //    var lobby2 = Scene().setId('lobby2')
     //    world.addScene(lobby2)
     //    lobby2.addTexture('countTexture', document.getElementById('img0'));

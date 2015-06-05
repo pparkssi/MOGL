@@ -25,6 +25,8 @@
 <script src="../src/Vertex.js"></script>
 <script src="../src/VertexShaderFunctions.js"></script>
 <script src="../src/Matrix.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/Shader.js"></script>
 <script src="../src/Geometry.js"></script>
 <script src="../src/Material.js"></script>
 <script src="../src/Texture.js"></script>
@@ -76,7 +78,7 @@
     )
 
     world = new World('canvasTest');
-//    world.setAutoSize(1)
+    //    world.setAutoSize(1)
     var testScene = Scene()
     var testScene2 = Scene().setId('redcamel')
     bsTest('addScene,getScene',
@@ -97,33 +99,33 @@
             }, 'changeID'
     )
     world = new World('canvasTest');
-    testScene2 = Scene().setId('redcamel')
+    testScene2 = Scene().setId('redcamel2')
     bsTest('removeScene',
             function () {
                 // 아이디로 삭제후 다시 찾아봄
                 world.addScene(testScene2)
-                world.removeScene('redcamel')
-                return world.getScene('redcamel')
+                world.removeScene('redcamel2')
+                return world.getScene('redcamel2')
             }, null,
             function () {
-                return world.getScene('redcamel')
+                return world.getScene(testScene2)
             }, null,
             function () {
                 // 없는게 확인되었으니 같은 씬을 등록해도 통과해야함
                 world.addScene(testScene2)
-                return world.getScene('redcamel')
+                return world.getScene('redcamel2')
             }, testScene2
     )
-//    world.getRenderer()
-//    world.getRenderer()
-//    world.getRenderer()
-//    world.getRenderer(1)
+    //    world.getRenderer()
+    //    world.getRenderer()
+    //    world.getRenderer()
     //    world.getRenderer(1)
     //    world.getRenderer(1)
+    //    world.getRenderer(1)
 
 
-    testScene2.addChild('testCamera',new Camera)
-
+    testScene2.addChild(new Camera().setId('testCamera'))
+    //
     world.addEventListener(World.renderBefore, function () {
         console.log('렌더전에 실행되자~~')
     })
@@ -136,16 +138,16 @@
     world.addEventListener(World.renderAfter, function () {
         console.log('렌더후에 실행되자~~')
     })
-    //    world.render()
-    //            world.getRenderer()()
-    //    setInterval(world.getRenderer(), 300)
+    world.render()
+    //                world.getRenderer()()
+    //        setInterval(world.getRenderer(), 300)
 
     var result_str = "";
     function before_fn() {
         result_str += "_renderBefore2";
     }
     bsTest('eventListener - renderBefore, renderAfter',
-            function(){             // before anonymous fn
+            function () {             // before anonymous fn
                 world.addEventListener(World.renderBefore, function () {
                     result_str += "_renderBefore";
                 });
@@ -154,14 +156,14 @@
                 result_str += "_end";
                 return result_str.indexOf("start_renderBefore_end") > -1;
             }, true,
-            function(){              // before fn
+            function () {              // before fn
                 world.addEventListener(World.renderBefore, before_fn);
                 result_str = "start";
                 world.render();
                 result_str += "_end";
                 return result_str.indexOf("start_renderBefore_renderBefore2_end") > -1;
             }, true,
-            function(){             // after anonymous fn
+            function () {             // after anonymous fn
                 world.addEventListener(World.renderAfter, function () {
                     result_str += "_renderAfter"
                 });
@@ -171,7 +173,6 @@
                 return result_str.indexOf("start_renderBefore_renderBefore2_renderAfter_end") > -1;
             }, true
     );
-
 
 
 </script>

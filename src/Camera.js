@@ -46,7 +46,7 @@ var Camera = (function () {
                 if(typeof v =='number'){
                     v = v ? true : false
                 }
-                prop[this].antialias = typeof v =='number' ? true : false;
+                prop[this].antialias =v
             }
         },
         fogColor:{

@@ -81,12 +81,11 @@ var World = (function () {
 		return this;
     },
     fn.addScene = function addScene(scene) {
-        var tSceneList, i,uuid;
+        var tSceneList, i;
         tSceneList = sceneList[this], i = tSceneList.length;
         if (!(scene instanceof Scene )) this.error(1);
-        uuid = scene.uuid
         while(i--){
-            if (tSceneList[i].uuid == uuid) this.error(0);
+            if (tSceneList[i] == this) this.error(0);
         }
         tSceneList.push(scene),
         scene.gl = glList[this],
@@ -109,38 +108,37 @@ var World = (function () {
         return null;
     },
     fn.getRenderer = function(isRequestAnimationFrame){
-        var uuid = this.toString(), self;
-        if (!renderList[uuid]) {
+        var p,self;
+        p=renderList[this];
+        if (!p) {
             // 없으니까 생성
-            renderList[uuid] = {}
+            p = {}
         }
         self = this;
         if (isRequestAnimationFrame) {
-            if (renderList[uuid][1]) return renderList[uuid][1]
+            if (p[1]) return p[1]
             else {
-                return renderList[uuid][1] = function (currentTime) {
+                return p[1] = function (currentTime) {
                     self.render(currentTime);
-                    started[uuid] = requestAnimationFrame(renderList[uuid][1]);
+                    started[this] = requestAnimationFrame(p[1]);
                 }
             }
         } else {
-            if (renderList[uuid][0]) return renderList[uuid][0]
+            if (p[0]) return p[0]
             else{
-                renderList[uuid][0] = function (currentTime) {
+                p[0] = function (currentTime) {
                     self.render(currentTime)
                 }
-                return renderList[uuid][0]
+                return p[0]
             }
         }
     },
     fn.start = function start(){
-        var uuid = this.toString();
-        started[uuid] = requestAnimationFrame(this.getRenderer(1));
+        started[this] = requestAnimationFrame(this.getRenderer(1));
         return this;
     },
     fn.stop = function stop(){
-        var uuid = this.toString();
-        cancelAnimationFrame(started[uuid])
+        cancelAnimationFrame(started[this])
         return this;
     },
     fn.removeScene = function removeScene(sceneID) {

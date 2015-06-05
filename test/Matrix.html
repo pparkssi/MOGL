@@ -24,7 +24,9 @@
 <script src="../src/VertexShaderFunctions.js"></script>
 <script src="../src/Matrix.js"></script>
 <script src="../src/Geometry.js"></script>
+<script src="../src/Shading.js"></script>
 <script src="../src/Material.js"></script>
+
 <script src="../src/Texture.js"></script>
 <script src="../src/Mesh.js"></script>
 <script src="../src/Group.js"></script>
@@ -77,6 +79,7 @@
             function () {
                 matrix.matIdentity()
                 matrix.matTranslate(0.01, 0.01, 0.01)
+                console.log(matrix.matStr())
                 return matrix.matStr();
             }, 'Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.009999999776482582, 0.009999999776482582, 0.009999999776482582, 1)',
             function () {
@@ -89,12 +92,8 @@
                 matrix.matIdentity()
                 matrix.matPerspective(45, 1024 / 768, 0.1, 1000)
                 return matrix.matStr();
-            }, 'Matrix(1.8106601238250732, 0, 0, 0, 0, 2.4142136573791504, 0, 0, 0, 0, -1.0002000331878662, -1, 0, 0, -0.20002000033855438, 0)',
-            function () {
-                matrix.matIdentity()
-                matrix.matLookAt([0, 0, -5], [0, 0, 0], [0, 0, 0])
-                return matrix.matStr();
-            }, 'Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, -5, 1)'
+            }, 'Matrix(1.8106601238250732, 0, 0, 0, 0, 2.4142136573791504, 0, 0, 0, 0, -1.0002000331878662, -1, 0, 0, -0.20002000033855438, 0)'
+
     );
 </script>
 </body>
