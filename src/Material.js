@@ -57,14 +57,7 @@ var Material = (function () {
         },
         wireFrame:$value(wireFrame),
         wireFrameColor:{
-            get:(function(){
-                var a = [];
-                return function wireFrameColorGet() {
-                    var p = wireFrameColor[this];
-                    a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
-                    return a;
-                };
-            })(),
+            get:$getter(wireFrameColor, false, {r:0,g:0,b:0,a:1}),
             set:function colorSet(v) {
                 var p = wireFrameColor[this]
                 v = $color(v);

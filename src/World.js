@@ -230,7 +230,7 @@ var World = (function () {
                         gl.uniform3fv(tProgram.uScale, f3),
                         tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0;
                         gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
-                        if(tMaterial._wireFrame) {
+                        if(tMaterial.wireFrame) {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL);
                             tProgram = gpu.programs['wireFrame'],
                                 gl.useProgram(tProgram),
@@ -242,7 +242,10 @@ var World = (function () {
                                 gl.uniform3fv(tProgram.uPosition, f3),
                                 f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                                 gl.uniform3fv(tProgram.uScale, f3),
-                                f4[0] = tMaterial._rw, f4[1] = tMaterial._gw, f4[2] = tMaterial._bw,f4[3] = 1,
+                                f4[0] = tMaterial.wireFrameColor.r
+                                f4[1] = tMaterial.wireFrameColor.g
+                                f4[2] = tMaterial.wireFrameColor.b
+                                f4[3] = tMaterial.wireFrameColor.a
                                 gl.uniform4fv(tProgram.uColor, f4),
                                 gl.drawElements(gl.LINES, tIBO.numItem, gl.UNSIGNED_SHORT, 0);
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);

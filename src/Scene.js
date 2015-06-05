@@ -323,7 +323,7 @@ var Scene = (function () {
         }
         this._cameraUpdate()
         makeProgram(gpu[this], 'color', Shader.colorVertexShader, Shader.colorFragmentShader);
-        makeProgram(gpu[this], 'wire', Shader.wireFrameVertexShader, Shader.wireFrameFragmentShader);
+        makeProgram(gpu[this], 'wireFrame', Shader.wireFrameVertexShader, Shader.wireFrameFragmentShader);
         makeProgram(gpu[this], 'bitmap', Shader.bitmapVertexShader, Shader.bitmapFragmentShader);
         makeProgram(gpu[this], 'bitmapGouraud', Shader.bitmapVertexShaderGouraud, Shader.bitmapFragmentShaderGouraud);
         makeProgram(gpu[this], 'colorGouraud', Shader.colorVertexShaderGouraud, Shader.colorFragmentShaderGouraud);
