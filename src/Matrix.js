@@ -53,6 +53,11 @@ var Matrix = (function () {
                 this.matIdentity().matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, -this.z);
                 return this;
             }
+        },
+        raw:{
+            get:function rawGet(){
+                return raw[this]
+            }
         }
     },
     fn.lookAt = (function(){

@@ -135,6 +135,9 @@ var Camera = (function () {
                     typeof v[3] == 'string' ? th * v[3].replace('%', '') * 0.01 : v[3],
                 ];
             }
+        },
+        pixelMatrix : {
+            get : $getter(prop,'pixelMatrix')
         }
     },
     fn.resetProjectionMatrix = function resetProjectionMatrix(){

@@ -87,6 +87,10 @@ var Material = (function () {
                 }
                 return true;
             }
+        },
+        scene : {
+            get : $getter(scene),
+            set : $setter(scene)
         }
     },
     fn = Material.prototype,

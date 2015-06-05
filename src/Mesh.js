@@ -12,24 +12,16 @@ var Mesh = (function () {
     }),
     
     Mesh = function Mesh(geometry, material) {
-        if (geometry) {
-            if (geometry instanceof Geometry) {
-                geometry[this] = geometry;
-            } else {
-                this.error(0);
-            }
-        }
-        if (material) {
-            if (material instanceof Material) {
-                material[this] = material;
-            } else {
-                 this.error(1);
-            }
-        }
+        this.geometry = geometry
+        this.material = material
         culling[this] = Mesh.cullingNone;
     },
     fn = Mesh.prototype,
     fnProp = {
+        scene : {
+            get : $getter(scene),
+            set : $setter(scene)
+        },
         culling:{
             get:$getter(culling, false, Mesh.cullingNone),
             set:function cullingSet(v) {

@@ -31,264 +31,6 @@ var World = (function () {
 		return gl;
 	};
     var renderList = {}, sceneList = [], cvsList = {}, glList = {}, autoSizer = {}, started ={};
-
-    ///////////////////////////
-    // 일단 이사
-    var makeVBO = function makeVBO(self, name, data, stride) {
-        var gl, buffer;
-        gl = self._gl,
-            buffer = self._glVBOs[name];
-        if (buffer) return buffer;
-        buffer = gl.createBuffer(),
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
-            buffer.name = name,
-            buffer.type = 'VBO',
-            buffer.data = data,
-            buffer.stride = stride,
-            buffer.numItem = data.length / stride,
-            self._glVBOs[name] = buffer,
-            console.log('VBO생성', self._glVBOs[name]);
-        return self._glVBOs[name];
-    };
-
-    var makeVNBO = function makeVNBO(self, name, data, stride) {
-        var gl, buffer;
-        gl = self._gl,
-            buffer = self._glVNBOs[name];
-        if (buffer) return buffer;
-        buffer = gl.createBuffer(),
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
-            buffer.name = name,
-            buffer.type = 'VNBO',
-            buffer.data = data,
-            buffer.stride = stride,
-            buffer.numItem = data.length / stride,
-            self._glVNBOs[name] = buffer,
-            console.log('VNBO생성', self._glVNBOs[name]);
-        return self._glVNBOs[name];
-    };
-
-    var makeIBO = function makeIBO(self, name, data, stride) {
-        var gl, buffer;
-        gl = self._gl,
-            buffer = self._glIBOs[name];
-        if (buffer) return buffer;
-        buffer = gl.createBuffer(),
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer),
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), gl.STATIC_DRAW),
-            buffer.name = name,
-            buffer.type = 'IBO',
-            buffer.data = data,
-            buffer.stride = stride,
-            buffer.numItem = data.length / stride,
-            self._glIBOs[name] = buffer,
-            console.log('IBO생성', self._glIBOs[name]);
-        return self._glIBOs[name];
-    };
-
-    var makeUVBO = function makeUVBO(self, name, data, stride) {
-        var gl, buffer;
-        gl = self._gl, buffer = self._glUVBOs[name];
-        if (buffer) return buffer;
-        buffer = gl.createBuffer(),
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
-            buffer.name = name,
-            buffer.type = 'UVBO',
-            buffer.data = data,
-            buffer.stride = stride,
-            buffer.numItem = data.length / stride,
-            self._glUVBOs[name] = buffer,
-            console.log('UVBO생성', self._glUVBOs[name]);
-        return self._glUVBOs[name];
-    };
-
-    var makeProgram = function makeProgram(self, name) {
-        var gl, vShader, fShader, program, i;
-        gl = self._gl,
-            vShader = vertexShaderParser(self, self._vertexShaders[name]),
-            fShader = fragmentShaderParser(self, self._fragmentShaders[name]),
-            program = gl.createProgram(),
-            gl.attachShader(program, vShader),
-            gl.attachShader(program, fShader),
-            gl.linkProgram(program),
-            vShader.name = name + '_vertex', fShader.name = name + '_fragment', program.name = name;
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error('프로그램 쉐이더 초기화 실패!' + self);
-        gl.useProgram(program);
-        for (i = 0; i < vShader.attributes.length; i++) {
-            gl.bindBuffer(gl.ARRAY_BUFFER, self._glVBOs['null']),
-                gl.enableVertexAttribArray(program[vShader.attributes[i]] = gl.getAttribLocation(program, vShader.attributes[i])),
-                gl.vertexAttribPointer(program[vShader.attributes[i]], self._glVBOs['null'].stride, gl.FLOAT, false, 0, 0);
-        }
-        i = vShader.uniforms.length;
-        while (i--) {
-            program[vShader.uniforms[i]] = gl.getUniformLocation(program, vShader.uniforms[i]);
-        }
-        i = fShader.uniforms.length;
-        while (i--) {
-            program[fShader.uniforms[i]] = gl.getUniformLocation(program, fShader.uniforms[i]);
-        }
-        self._glPROGRAMs[name] = program;
-        //console.log(vShader)
-        //console.log(fShader)
-        //console.log(program)
-        return program;
-    };
-
-    var vertexShaderParser = function vertexShaderParser(self, source) {
-        var gl, t0, i, resultStr, shader;
-        gl = self._gl,
-            shader = gl.createShader(gl.VERTEX_SHADER),
-            shader.uniforms = [],
-            shader.attributes = [],
-            resultStr = "",
-            t0 = source.attributes, i = t0.length;
-        while (i--) {
-            resultStr += 'attribute ' + t0[i] + ';\n',
-                shader.attributes.push(t0[i].split(' ')[1]);
-        }
-        t0 = source.uniforms, i = t0.length;
-        while (i--) {
-            resultStr += 'uniform ' + t0[i] + ';\n',
-                shader.uniforms.push(t0[i].split(' ')[1]);
-        }
-        t0 = source.varyings, i = t0.length;
-        while (i--) {
-            resultStr += 'varying ' + t0[i] + ';\n';
-        }
-        resultStr += VertexShader.baseFunction,
-            resultStr += 'void main(void){\n',
-            resultStr += source.main + ';\n',
-            resultStr += '}\n',
-            //console.log(resultStr),
-            gl.shaderSource(shader, resultStr),
-            gl.compileShader(shader);
-        return shader;
-    };
-
-    var fragmentShaderParser = function fragmentShaderParser(self, source) {
-        var gl, resultStr, i, t0, shader;
-        gl = self._gl,
-            shader = gl.createShader(gl.FRAGMENT_SHADER),
-            shader.uniforms = [],
-            resultStr = "";
-        if (source.precision) resultStr += 'precision ' + source.precision + ';\n';
-        else resultStr += 'precision mediump float;\n';
-        t0 = source.uniforms, i = t0.length;
-        while (i--) {
-            resultStr += 'uniform ' + t0[i] + ';\n',
-                shader.uniforms.push(t0[i].split(' ')[1]);
-        }
-        t0 = source.varyings, i = t0.length;
-        while (i--) {
-            resultStr += 'varying ' + t0[i] + ';\n';
-        }
-        resultStr += 'void main(void){\n',
-            resultStr += source.main + ';\n',
-            resultStr += '}\n',
-            //console.log(resultStr),
-            gl.shaderSource(shader, resultStr),
-            gl.compileShader(shader);
-        return shader;
-    };
-
-    var makeTexture = function makeTexture(self, id, image/*,resizeType*/) {
-        var gl, texture;
-        var img, img2, tw, th;
-        gl = self._gl, texture = self._glTEXTUREs[id];
-        if (texture) return texture;
-        texture = gl.createTexture();
-        img = new Image(), img2 = new Image(),
-            tw = 1, th = 1;
-
-        ///////////////////////////////////
-        // 타입구분
-        if (image instanceof ImageData) img.src = image.data;
-        else if (image instanceof HTMLCanvasElement) img.src = image.toDataURL();
-        else if (image instanceof HTMLImageElement) img.src = image.src;
-        else if (image['substring'] && image.substring(0, 10) == 'data:image' && image.indexOf('base64') > -1) img.src = image; //base64문자열 - urlData형식으로 지정된 base64문자열
-        else if (typeof image == 'string') img.src = image;
-        //TODO 일단 이미지만
-        //TODO 비디오 처리
-        ///////////////////////////////////
-
-        var resize = arguments[3] || Texture.zoomOut;
-        img.onload = function () {
-            var dw, dh;
-            while (img.width > tw) tw *= 2;
-            while (img.height > th) th *= 2;
-            if (resize == Texture.zoomOut) {
-                if (img.width < tw) tw /= 2;
-                if (img.height < th) th /= 2;
-            } else if (resize == Texture.zoomIn) {
-            }
-            dw = tw, dh = th,
-                textureCVS.width = tw,
-                textureCVS.height = th,
-                textureCTX.clearRect(0, 0, tw, th);
-            if (resize == Texture.crop) {
-                if (img.width < tw) dw = tw / 2;
-                if (img.height < th) dh = th / 2;
-                textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, dw, dh);
-            } else if (resize == Texture.addSpace) textureCTX.drawImage(img, 0, 0, tw, th, 0, 0, tw, th);
-            else textureCTX.drawImage(img, 0, 0, dw, dh);
-            console.log(resize, '텍스쳐크기 자동변환', img.width, img.height, '--->', dw, dh),
-                console.log(textureCVS.toDataURL()),
-                img2.src = textureCVS.toDataURL();
-        };
-
-        texture.img = img2;
-        texture.img.onload = function () {
-            gl.bindTexture(gl.TEXTURE_2D, texture),
-                //TODO 다변화 대응해야됨
-
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-            gl.generateMipmap(gl.TEXTURE_2D);
-            texture.loaded = 1;
-        };
-        texture.originalData = image,
-            self._glTEXTUREs[id] = texture,
-            gl.bindTexture(gl.TEXTURE_2D, null);
-        return texture;
-    }
-
-    var makeFrameBuffer = function makeFrameBuffer(self, camera) {
-        var gl, framebuffer, texture, renderbuffer;
-        gl = self._gl,
-            framebuffer = gl.createFramebuffer(),
-            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
-        var tArea = camera._renderArea ? camera._renderArea : [0, 0, self._cvs.width, self._cvs.height]
-        framebuffer.x = tArea[0], framebuffer.y = tArea[1],
-            framebuffer.width = tArea[2] * window.devicePixelRatio > self._cvs.width ? self._cvs.width : tArea[2] * window.devicePixelRatio,
-            framebuffer.height = tArea[3] * window.devicePixelRatio > self._cvs.height ? self._cvs.height : tArea[3] * window.devicePixelRatio;
-
-        texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture),
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR),
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-
-        renderbuffer = gl.createRenderbuffer();
-        gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer),
-            gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, framebuffer.width, framebuffer.height),
-            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0),
-            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer),
-            gl.bindTexture(gl.TEXTURE_2D, null),
-            gl.bindRenderbuffer(gl.RENDERBUFFER, null),
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        self._glFREAMBUFFERs[camera.uuid] = {
-            frameBuffer: framebuffer,
-            texture: texture
-        };
-    };
     ///////////////////////////////
 
     World = function World(id) {
@@ -346,8 +88,9 @@ var World = (function () {
             if (tSceneList[i].uuid == uuid) this.error(0);
         }
         tSceneList.push(scene),
-        scene._gl = glList[this],
-        scene._cvs = cvsList[this];
+        scene.gl = glList[this],
+        scene.cvs = cvsList[this],
+        scene._baseUpdate()
         //scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
         //이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
         return this;
@@ -418,6 +161,7 @@ var World = (function () {
         var scene,tSceneList,cameraList,camera,gl,children,cvs;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList,tCulling;
         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram,pCulling;
+        var gpu
         cvs = cvsList[this],
         tSceneList = sceneList[this],
         i = tSceneList.length
@@ -425,117 +169,59 @@ var World = (function () {
         while(i--){
             //console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
             scene = tSceneList[i]
-            if (scene._update) scene.update();
-            cameraList = scene._cameras
+            cameraList = scene.cameras
             for (k in cameraList) len++
             for (k in cameraList) {
                 camera = cameraList[k]
-                if(camera._visible){
-                    gl = scene._gl;
+                if(camera.visible){
+                    gl = scene.gl;
                     if(len > 1) {
-                        tFrameBuffer = scene._glFREAMBUFFERs[camera.uuid].frameBuffer;
+                        tFrameBuffer = scene._glFREAMBUFFERs[camera].frameBuffer;
                         gl.bindFramebuffer( gl.FRAMEBUFFER,tFrameBuffer);
                         gl.viewport(0,0, tFrameBuffer.width, tFrameBuffer.height);
                     }else{
                         gl.viewport(0, 0, cvs.width, cvs.height);
                     }
-                    children = scene._children;
+                    children = scene.children;
                     gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                     gl.enable(gl.BLEND)
                     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-                    gl.clearColor(camera._r, camera._g, camera._b, camera._a);
+                    var color = camera.backgroundColor
+                    gl.clearColor(color[0],color[1],color[2],color[3]);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                    for(k in scene._glPROGRAMs){
-                        tProgram = scene._glPROGRAMs[k];
+                    for(k in scene.programs){
+                        tProgram = scene.programs[k];
                         gl.useProgram(tProgram);
-                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera._pixelMatrix._rawData);
-                        gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.getMatrix()._rawData);
+                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera.pixelMatrix.raw);
+                        gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.raw);
                     }
                     tItem = tMaterial = tProgram = tVBO = tIBO = null;
                     for (k in children) {
                         tItem = children[k],
-                        tVBO = scene._glVBOs[tItem._geometry._key],
-                        tVNBO = scene._glVNBOs[tItem._geometry._key],
-                        tUVBO = scene._glUVBOs[tItem._geometry._key],
-                        tIBO = scene._glIBOs[tItem._geometry._key],
-                        tMaterial = tItem._material,
-                        tDiffuseList = tMaterial._diffuse;
-                        tCulling = tItem._culling
+                        gpu = scene.gpu
+                        tVBO = gpu.vbo[tItem.geometry],
+                        tVNBO = gpu.vnbo[tItem.geometry],
+                        tUVBO = gpu.uvbo[tItem.geometry],
+                        tIBO = gpu.ibo[tItem.geometry],
+                        tMaterial = tItem.material,
+                        //tDiffuseList = tMaterial.diffuse;
+                        tCulling = tItem.culling
                         if(tCulling != pCulling){
                             if(tCulling == Mesh.cullingNone) gl.disable(gl.CULL_FACE)
                             else if(tCulling == Mesh.cullingBack) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CCW)
                             else if(tCulling == Mesh.cullingFront) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW)
                         }
                         var dLite = [0,-1,-1], useNormalBuffer = 0;
-                        if(tDiffuseList.__indexList.length == 0){
-                            if(tMaterial._shading.type == 'none'){
-                                tProgram=scene._glPROGRAMs['color'];
-                                gl.useProgram(tProgram);
-                            }
-                            else if(tMaterial._shading.type == 'toon'){
-                                tProgram = scene._glPROGRAMs['colorToon'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }
-                            else if(tMaterial._shading.type=='gouraud'){
-                                tProgram = scene._glPROGRAMs['colorGouraud'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }
-                            else if(tMaterial._shading.type=='phong'){
-                                tProgram=scene._glPROGRAMs['colorPhong'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }
-                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null,pCulling=null;
-
-                            if(useNormalBuffer){
-                                tVNBO != pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
-                                tVNBO != pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0) : 0;
-                                gl.uniform3fv(tProgram.uDLite, dLite);
-                                gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert);
-                            }
-                            tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
-                            tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                            f4[0] = tMaterial._r,f4[1] = tMaterial._g,f4[2] = tMaterial._b,f4[3] = tMaterial._a,
-                            gl.uniform4fv(tProgram.uColor, f4);
-                        }else{
-                            if(tMaterial._shading.type == 'none'){
-                                tProgram=scene._glPROGRAMs['bitmap'],
-                                gl.useProgram(tProgram);
-                            }else if(tMaterial._shading.type == 'flat'){
-                            }else if(tMaterial._shading.type == 'gouraud'){
-                                tProgram=scene._glPROGRAMs['bitmapGouraud'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }else if(tMaterial._shading.type == 'phong'){
-                                tProgram=scene._glPROGRAMs['bitmapPhong'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }else if(tMaterial._shading.type == 'blinn'){
-                                tProgram=scene._glPROGRAMs['bitmapBlinn'];
-                                gl.useProgram(tProgram);
-                                useNormalBuffer = 1;
-                            }
-                            if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
-
-                            if(useNormalBuffer){
-                                tVNBO!=pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
-                                tVNBO!=pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0) : 0;
-                                gl.uniform3fv(tProgram.uDLite, dLite);
-                                gl.uniform1f(tProgram.uLambert,tMaterial._shading.lambert);
-                            }
-                            tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
-                            tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0;
-                            tUVBO != pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
-                            tUVBO != pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                            gl.activeTexture(gl.TEXTURE0);
-                            var textureObj = scene._glTEXTUREs[tDiffuseList.__indexList[0].id];
-                            if(textureObj.loaded){
-                                textureObj != pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
-                                gl.uniform1i(tProgram.uSampler, 0);
-                            }
-                        }
+                        tProgram=gpu.programs['color'];
+                        gl.useProgram(tProgram);
+                        tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
+                        tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                        f4[0] = tMaterial.color.r
+                        f4[1] = tMaterial.color.g
+                        f4[2] = tMaterial.color.b
+                        f4[3] = tMaterial.color.a
+                        gl.uniform4fv(tProgram.uColor, f4);
+                        
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ;
                         gl.uniform3fv(tProgram.uRotate, f3),
                         f3[0] = tItem.x,f3[1] = tItem.y,f3[2] = tItem.z,
@@ -546,7 +232,7 @@ var World = (function () {
                         gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
                         if(tMaterial._wireFrame) {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL);
-                            tProgram = scene._glPROGRAMs['wireFrame'],
+                            tProgram = gpu.programs['wireFrame'],
                                 gl.useProgram(tProgram),
                                 tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                                 tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
@@ -562,7 +248,7 @@ var World = (function () {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                         }
 
-                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pDiffuse = textureObj,pCulling=tCulling;
+                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pCulling=tCulling//,pDiffuse = textureObj;
                     }
                     //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                     //gl.bindTexture(gl.TEXTURE_2D, null);
@@ -580,10 +266,10 @@ var World = (function () {
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            tVBO = scene._glVBOs['_FRAMERECT_'],
-            tUVBO = scene._glUVBOs['_FRAMERECT_'],
-            tIBO = scene._glIBOs['_FRAMERECT_'],
-            tProgram = scene._glPROGRAMs['postProcess'];
+            tVBO = gpu.vbo['_FRAMERECT_'],
+            tUVBO = gpu.uvbo['_FRAMERECT_'],
+            tIBO = gpu.ibo['_FRAMERECT_'],
+            tProgram = gpu.programs['postProcess'];
             if (!tVBO) return;
             gl.useProgram(tProgram);
             gl.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
