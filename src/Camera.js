@@ -22,7 +22,7 @@ var Camera = (function () {
             //filters:{},
             cvs:null,
             renderArea:null,
-            pixelMatrix:Matrix()
+            projectionMatrix:Matrix()
         }),
         this.z =10,
         this.lookAt(0,0,0);
@@ -136,27 +136,29 @@ var Camera = (function () {
                 ];
             }
         },
-        pixelMatrix : {
-            get : $getter(prop,'pixelMatrix'),
+        projectionMatrix : {
+            get : function projectionMatrixGet(){
+                return prop[this].projectionMatrix
+            }
         }
     },
     fn.resetProjectionMatrix = function resetProjectionMatrix(){
-        //var tMatrix, tArea;
-        //tMatrix = this._pixelMatrix,
-        //tArea = this._renderArea,
-        //tMatrix.matIdentity()
-        //if(this._mode == '2d'){
-        //    tMatrix._rawData[0] = 2 / tArea[2]
-        //    tMatrix._rawData[5] = -2 / tArea[3]
-        //    tMatrix._rawData[10] = 0
-        //    tMatrix._rawData[12] = -1
-        //    tMatrix._rawData[13] = 1
-        //}else {
-        //
-        //}
-        //if(tArea) tMatrix.matPerspective(this._fov, tArea[2]/tArea[3], this._near, this._far);
-        //else
-        prop[this].pixelMatrix.matPerspective(prop[this].fov, prop[this].cvs.width/prop[this].cvs.height, prop[this].near, prop[this].far);
+        var tMatrix, tArea,p;
+        p = prop[this]
+        tMatrix = p.projectionMatrix,
+        tArea = p.renderArea,
+        tMatrix.matIdentity()
+        if(this._mode == '2d'){
+            tMatrix.raw[0] = 2 / tArea[2]
+            tMatrix.raw[5] = -2 / tArea[3]
+            tMatrix.raw[10] = 0
+            tMatrix.raw[12] = -1
+            tMatrix.raw[13] = 1
+        }else {
+            if (tArea) tMatrix.matPerspective(p.fov, tArea[2] / tArea[3], p.near, p.far);
+            else tMatrix.matPerspective(p.fov, p.cvs.width/p.cvs.height, p.near, p.far);
+        }
+
 
         return this;
     },

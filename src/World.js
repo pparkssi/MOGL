@@ -194,7 +194,7 @@ var World = (function () {
                         tProgram = scene.programs[k];
                         gl.useProgram(tProgram);
                         camera.cvs = cvs
-                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera.resetProjectionMatrix().pixelMatrix.raw);
+                        gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera.projectionMatrix.raw);
                         gl.uniformMatrix4fv(tProgram.uCameraMatrix,false,camera.matrix.raw);
                     }
                     tItem = tMaterial = tProgram = tVBO = tIBO = null;

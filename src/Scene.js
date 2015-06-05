@@ -4,7 +4,7 @@
 'use strict'
 var Scene = (function () {
     var canvas, context, makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, vertexShaderParser, fragmentShaderParser, makeTexture, makeFrameBuffer,
-        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, gpu, cvs,
+        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, gpu, cvsList,
         Scene, fn, fnProp;
     //lib
     canvas = document.createElement('canvas');
@@ -183,7 +183,7 @@ var Scene = (function () {
     },
     makeFrameBuffer = function makeFrameBuffer(gpu, camera) {
         var gl, texture, framebuffer, renderbuffer, tArea,cvs,cvsW,cvsH,pRatio;
-        cvs = cvs[this],
+        cvs = camera.cvs,
         cvsW = cvs.width,
         cvsH= cvs.height,
         pRatio = window.devicePixelRatio
@@ -222,6 +222,7 @@ var Scene = (function () {
         };
     },
     //private
+    cvsList = {},
     children = {},
     cameras = {},
     textures = {},
@@ -235,6 +236,7 @@ var Scene = (function () {
     }),
     Scene = function Scene() {
         // for JS
+        cvsList[this] = null,
         children[this] = {},
         cameras[this] = {},
         textures[this] = {},
@@ -287,6 +289,10 @@ var Scene = (function () {
         },
         gpu : {
             get : $getter(gpu)
+        },
+        cvs : {
+            get : $getter(cvsList),
+            set : $setter(cvsList)
         },
         cameras: {get: $getter(cameras)},
         children : {
@@ -347,7 +353,7 @@ var Scene = (function () {
         for (k in p) {
             var camera, tRenderArea, tCVS;
             camera = p[k],
-            tCVS = camera.cvs = cvs[this],
+            tCVS = cvsList[this],
             tRenderArea = camera._renderArea;
             if (tRenderArea) {
                 var wRatio = tRenderArea[2] / tCVS.width;
@@ -382,6 +388,9 @@ var Scene = (function () {
         if (p[v]) this.error(0);
         if (!(v instanceof Camera)) this.error(1);
         p[v] = v;
+        v.cvs = cvsList[this]
+        v.resetProjectionMatrix(),
+        makeFrameBuffer(gpu[this],v);
         return this;
     },
     fn.addChild = function addChild(v) {
