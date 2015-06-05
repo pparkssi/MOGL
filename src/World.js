@@ -239,11 +239,7 @@ var World = (function () {
 
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                        f4[0] = tMaterial.color.r
-                        f4[1] = tMaterial.color.g
-                        f4[2] = tMaterial.color.b
-                        f4[3] = tMaterial.color.a
-                        gl.uniform4fv(tProgram.uColor, f4);
+                        gl.uniform4fv(tProgram.uColor, tMaterial.color);
                         
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ;
                         gl.uniform3fv(tProgram.uRotate, f3),
@@ -270,11 +266,7 @@ var World = (function () {
                                 gl.uniform3fv(tProgram.uPosition, f3),
                                 f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                                 gl.uniform3fv(tProgram.uScale, f3),
-                                f4[0] = tMaterial.wireFrameColor.r
-                                f4[1] = tMaterial.wireFrameColor.g
-                                f4[2] = tMaterial.wireFrameColor.b
-                                f4[3] = tMaterial.wireFrameColor.a
-                                gl.uniform4fv(tProgram.uColor, f4),
+                                gl.uniform4fv(tProgram.uColor, tMaterial.wireFrameColor),
                                 gl.drawElements(gl.LINES, tIBO.numItem, gl.UNSIGNED_SHORT, 0);
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                         }
