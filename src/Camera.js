@@ -156,7 +156,6 @@ var Camera = (function () {
         //}
         //if(tArea) tMatrix.matPerspective(this._fov, tArea[2]/tArea[3], this._near, this._far);
         //else
-        console.log(prop[this].cvs)
         prop[this].pixelMatrix.matPerspective(prop[this].fov, prop[this].cvs.width/prop[this].cvs.height, prop[this].near, prop[this].far);
 
         return this;
