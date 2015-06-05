@@ -10,7 +10,7 @@ var FreeController = (function () {
         this._displacement = [0,0,0];
         this._speed = 1000.0;
         this._smoothDelay = 0.1;
-        this._desirePosition=this._camera.getPosition();
+        this._desirePosition=this._camera.position;
     },
     fn = FreeController.prototype,
     fn.autoBindKey = function(){
@@ -65,9 +65,9 @@ var FreeController = (function () {
         MAT2.matRotateX(tCamera.rotateX),
         MAT2.matMultiply(MAT1),
 
-        this._desirePosition[0] += MAT2._rawData[12],
-        this._desirePosition[1] += MAT2._rawData[13],
-        this._desirePosition[2] += MAT2._rawData[14],
+        this._desirePosition[0] += MAT2.raw[12],
+        this._desirePosition[1] += MAT2.raw[13],
+        this._desirePosition[2] += MAT2.raw[14],
 
         tCamera.x += (this._desirePosition[0] - tCamera.x)*this._smoothDelay,
         tCamera.y += (this._desirePosition[1] - tCamera.y)*this._smoothDelay,
@@ -79,6 +79,7 @@ var FreeController = (function () {
         this._displacement[2]=0,
         updateRotateX = 0,
         updateRotateY = 0;
+
     }
     return MoGL.ext(FreeController, MoGL);
 })();

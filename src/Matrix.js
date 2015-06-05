@@ -50,7 +50,12 @@ var Matrix = (function () {
         },
         matrix:{
             get:function matrixGet() {
-                this.matIdentity().matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, this.z);
+                if(this instanceof Camera) {
+                    this.matIdentity().matScale(this.scaleX,this.scaleY,this.scaleZ).matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, -this.z);
+                }
+                else {
+                    this.matIdentity().matScale(this.scaleX,this.scaleY,this.scaleZ).matRotateX(this.rotateX).matRotateY(this.rotateY).matRotateZ(this.rotateZ).matTranslate(this.x, this.y, this.z);
+                }
                 return this;
             }
         },
@@ -145,7 +150,10 @@ var Matrix = (function () {
     },
     fn.matTranslate = function matTranslate(x, y, z) {
         var a = raw[this];
-        a[12] = a[0] * x + a[4] * y + a[8] * z + a[12], a[13] = a[1] * x + a[5] * y + a[9] * z + a[13], a[14] = a[2] * x + a[6] * y + a[10] * z + a[14], a[15] = a[3] * x + a[7] * y + a[11] * z + a[15];
+        a[12] = a[0] * x + a[4] * y + a[8] * z + a[12];
+        a[13] = a[1] * x + a[5] * y + a[9] * z + a[13];
+        a[14] = a[2] * x + a[6] * y + a[10] * z + a[14];
+        a[15] = a[3] * x + a[7] * y + a[11] * z + a[15];
         return this;
     },
     fn.matScale = function matScale(x, y, z) {
