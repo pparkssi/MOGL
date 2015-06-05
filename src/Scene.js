@@ -183,7 +183,8 @@ var Scene = (function () {
     },
     makeFrameBuffer = function makeFrameBuffer(gpu, camera) {
         var gl, texture, framebuffer, renderbuffer, tArea,cvs,cvsW,cvsH,pRatio;
-        cvs = camera.cvs,
+        cvs = camera.cvs
+        if(!cvs) return
         cvsW = cvs.width,
         cvsH= cvs.height,
         pRatio = window.devicePixelRatio
@@ -192,7 +193,6 @@ var Scene = (function () {
         } else {
             tArea = [0, 0, cvsW, cvsH]
         }
-
         gl = gpu.gl,
         framebuffer = gl.createFramebuffer(),
         framebuffer.x = tArea[0], framebuffer.y = tArea[1],
@@ -351,14 +351,15 @@ var Scene = (function () {
         var p, k;
         p = cameras[this]
         for (k in p) {
-            var camera, tRenderArea, tCVS;
+            var camera, tRenderArea, cvs;
             camera = p[k],
-            tCVS = cvsList[this],
-            tRenderArea = camera._renderArea;
+            cvs = camera.cvs = cvsList[this]
+            if(!cvs) return
+            tRenderArea = camera.renderArea;
             if (tRenderArea) {
-                var wRatio = tRenderArea[2] / tCVS.width;
-                var hRatio = tRenderArea[3] / tCVS.height;
-                camera.setRenderArea(tRenderArea[0], tRenderArea[1], tCVS.width * wRatio, tCVS.height * hRatio);
+                var wRatio = tRenderArea[2] / cvs.width;
+                var hRatio = tRenderArea[3] / cvs.height;
+                camera.setRenderArea(tRenderArea[0], tRenderArea[1], cvs.width * wRatio, cvs.height * hRatio);
             }
             camera.resetProjectionMatrix(),
             makeFrameBuffer(gpu[this],camera);
@@ -389,8 +390,7 @@ var Scene = (function () {
         if (!(v instanceof Camera)) this.error(1);
         p[v] = v;
         v.cvs = cvsList[this]
-        v.resetProjectionMatrix(),
-        makeFrameBuffer(gpu[this],v);
+        this._cameraUpdate()
         return this;
     },
     fn.addChild = function addChild(v) {
