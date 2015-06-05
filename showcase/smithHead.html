@@ -51,7 +51,8 @@
     var scene = new Scene();
     var camera = new Camera()
     var material = new Material('#fff')
-    var material2 = new Material('#fff232')
+    var material2 = new Material('#22f232')
+    var material3 = new Material('#fef232')
     scene.addChild(camera);
     world.addScene(scene);
     world.setAutoSize(1)
@@ -98,6 +99,10 @@
         mesh.scaleZ = 10;
         scene.addChild(mesh);
 
+        material.wireFrame = 1
+        material2.wireFrame = 1
+        material3.wireFrame = 1
+
         var mesh2 = new Mesh(geo, material2);
         mesh2.scaleX = 10;
         mesh2.scaleY = 10;
@@ -107,9 +112,23 @@
         mesh.x = -3
         mesh2.x = 3
 
+        var mesh3 = new Mesh(geo, material3);
+        mesh3.scaleX = 10;
+        mesh3.scaleY = 10;
+        mesh3.scaleZ = 10;
+        scene.addChild(mesh3);
+
+        material2.shading = Shading.phong
+        material3.shading = Shading.phong
+        material3.lambert = 1.5
+
+        mesh3.y = -1
+
+
         world.addEventListener(World.renderBefore, function () {
             mesh.rotateY -= 0.01;
             mesh2.rotateY -= 0.01;
+            mesh3.rotateY -= 0.01;
         })
         world.start()
     }

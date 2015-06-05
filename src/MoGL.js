@@ -15,14 +15,14 @@
     }
 })();
 //전역에서 사용하는 공통함수
-var $setPrivate, $getPrivate, $value, $getter, $setter, $color,
+var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $color,
     GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
     
 (function() {
     var VAR = {}, value = {};
     $setPrivate = function $setPrivate(cls, v) { //공용private설정
-        value.value = v,
-        Object.defineProperty(VAR, cls, v);
+        $value.value = v,
+        Object.defineProperty(VAR, cls, $value);
     },
     $getPrivate = function $getPrivate(cls) { //공용private읽기
         if (arguments.length == 2 ) {
@@ -33,6 +33,8 @@ var $setPrivate, $getPrivate, $value, $getter, $setter, $color,
     };
 })(),
 //defineProperty용 헬퍼
+$writable = {value:true, writable:true},
+$readonly = {value:null},
 $value = function(prop, key){
     if (arguments.length == 3) {
         return {
@@ -100,94 +102,118 @@ SIN = Math.sin, COS = Math.cos, TAN = Math.tan, ATAN = Math.atan, ATAN2 = Math.a
 SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5, PERPI = 180 / PI;
 
 var MoGL = (function() {
-    var wrap, method, prev,
-        isFactory, isSuperChain, 
-        value, writable,
+    var wrapper, method, prev,
         uuid, counter, totalCount,
         listener, ids, updated, 
-        MoGL, fn;
+        MoGL, mock, fn, fnProp;
     //lib
     prev = [], //스택구조의 이전 함수이름의 배열
-    wrap = function wrap(f, key) { //생성할 이름과 메서드
-        return function() {
-            var result;
-            if (!this.isAlive) throw new Error('Destroyed Object:' + this); //비활성객체 배제
-            prev[prev.length] = method, //에러가 발생한 메소드이름을 스택으로 관리
-            method = key, //현재 에러가 난 메소드명
-            result = f.apply(this, arguments), //메소드실행
-            method = prev.pop(); //스택을 되돌림
-            return result;
+    wrapper = (function(){
+        var wrap;
+        wrap = function wrap(f, key) { //생성할 이름과 메서드
+            return function() {
+                var result;
+                if (!this.isAlive) throw new Error('Destroyed Object:' + this); //비활성객체 배제
+                prev[prev.length] = method, //에러가 발생한 메소드이름을 스택으로 관리
+                method = key, //현재 에러가 난 메소드명
+                result = f.apply(this, arguments), //메소드실행
+                method = prev.pop(); //스택을 되돌림
+                return result;
+            };
         };
-    },
-    //내부용 상수
-    isFactory = {factory:1},//팩토리 함수용 식별상수
-    isSuperChain = {superChain:1},//생성자체인용 상수
-    
-    //인스턴스 카운트 시스템
+        return function(cls, newProto, f, prop, notFreeze) {
+            var k, v;
+            //정적 속성을 복사
+            for (k in f) {
+                if (f.hasOwnProperty(k)) {
+                    cls[k] = f[k];
+                }
+            }
+            //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
+            $value.value = cls.uuid = 'uuid:' + (uuid++),
+            Object.defineProperty(newProto, 'classId', $value);
+            $value.value = f.name,
+            Object.defineProperty(newProto, 'className', $value);
+            if(!(cls.uuid in counter)) counter[cls.uuid] = 0;
+            f = f.prototype;
+            for (k in f) {
+                if (f.hasOwnProperty(k)) {
+                    if (typeof f[k] == 'function') {
+                        newProto[k] = wrap(f[k], k);
+                    } else {
+                        newProto[k] = f[k];
+                    }
+                }
+            }
+            //속성지정자처리
+            if (prop) {
+                for (k in prop) {
+                    v = prop[k];
+                    if (v.get) v.get = wrap(v.get, k + 'Get');
+                    if (v.set) v.set = wrap(v.set, k + 'Set');
+                    Object.defineProperty(newProto, k, v);
+                }
+            }
+            //새롭게 프로토타입을 정의함
+            cls.prototype = newProto,
+            Object.freeze(cls);
+            if(!notFreeze) Object.freeze(newProto);
+            return cls;
+        };
+    })(),
     uuid = 0,//모든 인스턴스는 고유한 uuid를 갖게 됨.
     totalCount = 0, //생성된 인스턴스의 갯수를 관리함
     counter = {}, //클래스별로 관리
-    
-    //속성지정자용 기술객체
-    writable = {value:true, writable:true},
-    value = {value:null},
-    
-    //private용 저장소
-    ids = {},//id용
-    listener = {}, //이벤트 리스너용
-    updated = {}, //업데이트용
+    //private
+    ids = {},
+    listener = {},
+    updated = {},
     
     //MoGL정의
     MoGL = function MoGL() {
-        value.value = 'uuid:' + (uuid++),
-        Object.defineProperty(this, 'uuid', value), //객체고유아이디
-        writable.value = true,
-        Object.defineProperty(this, 'isAlive', writable),//활성화상태초기화 true
+        $value.value = 'uuid:' + (uuid++),
+        Object.defineProperty(this, 'uuid', $value), //객체고유아이디
+        $writable.value = true,
+        Object.defineProperty(this, 'isAlive', $writable),//활성화상태초기화 true
         counter[this.classId]++, //클래스별 인스턴스 수 증가
         totalCount++; //전체 인스턴스 수 증가
     },
-    fn = MoGL.prototype,
-    fn.classId = MoGL.uuid = 'uuid:' + (uuid++), //프로토타입수준에서 클래스의 고유아이디와
-    fn.className = 'MoGL', //클래스명설정
-    fn.error = function error(id) { //error처리기는 method를 통해 래핑하지 않음
-        throw new Error(this.className + '.' + method + ':' + id);
-    },    
-    fn.toString = function(){//toString상황에서 uuid를 반환함.
-        return this.uuid;
+    fnProp = {
+        id:{
+            get:function idGet() {
+                //클래스별 id저장소에서 가져옴
+                if (ids[this.classId] && this.uuid in ids[this.classId]) { 
+                    return ids[this.classId][this];
+                }
+                return null; //없으면 null
+            },
+            set:function idSet(v) {
+                if (!ids[this.classId]){ // 클래스별 저장소가 없으면 생성
+                    ids[this.classId] = {ref:{}};//역참조 ref는 중복확인용
+                } else if(v in ids[this.classId].ref){ //역참조에 이미 존재하는 아이디면 예외
+                     throw new Error(this.className + '.idSetter:0');
+                }
+                if(v === null && this.uuid in ids[this.classId]){ //기존id가 있는데 null온 경우 삭제
+                    v = ids[this.classId][this],
+                    delete ids[this.classId][this],
+                    delete ids[this.classId].ref[v];
+                }else{ //정상인 경우는 정의함
+                    ids[this.classId][this] = v;
+                    ids[this.classId].ref[v] = this.uuid;
+                }
+            }
+        },
+        isUpdated:{
+            get:function isUpdatedGet() {
+                return updated[this] || false;
+            },
+            set:function isUpdatedSet(v) {
+                this.dispatch( 'updated', updated[this] = v ); //set과 동시에 디스패치
+            }
+        }
     },
-    Object.defineProperty(fn, 'id', { //id처리기
-        get:wrap(function idGet() {
-            //클래스별 id저장소에서 가져옴
-            if (ids[this.classId] && this.uuid in ids[this.classId]) { 
-                return ids[this.classId][this];
-            }
-            return null; //없으면 null
-        }),
-        set:wrap(function idSet(v) {
-            if (!ids[this.classId]){ // 클래스별 저장소가 없으면 생성
-                ids[this.classId] = {ref:{}};//역참조 ref는 중복확인용
-            } else if(v in ids[this.classId].ref){ //역참조에 이미 존재하는 아이디면 예외
-                 throw new Error(this.className + '.idSetter:0');
-            }
-            if(v === null && this.uuid in ids[this.classId]){ //기존id가 있는데 null온 경우 삭제
-                v = ids[this.classId][this],
-                delete ids[this.classId][this],
-                delete ids[this.classId].ref[v];
-            }else{ //정상인 경우는 정의함
-                ids[this.classId][this] = v;
-                ids[this.classId].ref[v] = this.uuid;
-            }
-        })
-    }),
-    Object.defineProperty(fn, 'isUpdated', { //updated처리기
-        get:wrap(function isUpdatedGet() {
-            return updated[this] || false;
-        }),
-        set:wrap(function isUpdatedSet(v) {
-            this.dispatch( 'updated', updated[this] = v ); //set과 동시에 디스패치
-        })
-    }),
-    fn.destroy = wrap(function destroy() { //파괴자
+    fn = MoGL.prototype,
+    fn.destroy = function destroy() { //파괴자
         var key;
         for (key in this) {
             if (this.hasOwnProperty(key)) this[key] = null;
@@ -201,13 +227,13 @@ var MoGL = (function() {
         this.isAlive = false, //비활성화
         counter[this.classId]--, //클래스별인스턴스감소
         totalCount--; //전체인스턴스감소
-    }),
-    fn.setId = wrap(function setId(v) { //id setter
+    },
+    fn.setId = function setId(v) { //id setter
         this.id = v;
         return this;
-    }),
+    },
     //이벤트시스템
-    fn.addEventListener = wrap(function(ev, f/*, context, arg1*/) {
+    fn.addEventListener = function(ev, f/*, context, arg1*/) {
         var target
         //private저장소에 this용 공간 초기화
         if (!listener[this]) listener[this] = {};
@@ -221,8 +247,8 @@ var MoGL = (function() {
             arg:arguments.length > 3 ? Array.prototype.slice.call(arguments, 3) : null
         };
         return this;
-    }),
-    fn.removeEventListener = wrap(function(ev, f) {
+    },
+    fn.removeEventListener = function(ev, f) {
         var target, i;
         if( f ){
             if (listener[this] && listener[this][ev]) {
@@ -240,8 +266,8 @@ var MoGL = (function() {
             if (listener[this] && listener[this][ev]) delete listener[this][ev]; //전체를 삭제
         }
         return this;
-    }),
-    fn.dispatch = wrap(function(ev){
+    },
+    fn.dispatch = function(ev){
         var target, arg, i, j, k, l;
         if (listener[this] && listener[this][ev]) {
             //만약 추가로 보낸 인자가 있다면 리스너에게 apply해줌.
@@ -264,13 +290,10 @@ var MoGL = (function() {
             }
         }
         return this;
-    }),
-    Object.freeze(fn);
-    MoGL.updated = 'updated',
-    //인스턴스의 갯수를 알아냄
-    MoGL.count = function count(cls) {
-        if (typeof cls == 'function') {
-            return counter[cls.uuid]; //클래스별 인스턴스수
+    },
+    MoGL.count = function count(cls) { //인스턴스의 갯수를 알아냄
+        if (cls instanceof MoGL) {
+            return counter[cls]; //클래스별 인스턴스수
         } else {
             return totalCount; //전체 인스턴스 수
         }
@@ -278,74 +301,47 @@ var MoGL = (function() {
     MoGL.error = function error(cls, method, id) { //정적함수용 에러보고함수
         throw new Error(cls + '.' + method + ':' + id);
     },
-    //parent클래스를 상속하는 자식클래스를 만들어냄.
-    MoGL.ext = function ext(child, parent, prop) {
-        var cls, oldProto, newProto, key, v;
-        //부모검사
-        if (parent !== MoGL && !(parent.prototype instanceof MoGL)) {
-            MoGL.error('MoGL', 'ext', 0);
-        }
-        //생성자클래스
-        cls = function() {
-            var arg, arg0 = arguments[0], result;
-            
-            //생성자에서도 에러처리를 위한 스택을 정의함
-            prev[prev.length] = method;
-            method = 'constructor';
-            if (arg0 === isSuperChain) {//생성자체인으로 요청된 경우
-                parent.call(this, isSuperChain, arguments[1]),
-                child.apply(this, arguments[1]);
-            } else if(this instanceof cls) {//일반적인 new생성시
-                if (arg0 === isFactory) {
-                    arg = arguments[1];
+    MoGL.ext = (function(){
+        var isFactory, isSuperChain;
+        isFactory = {factory:1},//팩토리 함수용 식별상수
+        isSuperChain = {superChain:1};//생성자체인용 상수
+        return function ext(child, parent, prop) { //parent클래스를 상속하는 자식클래스를 만들어냄.
+            var cls;
+            if (parent !== MoGL && !(parent.prototype instanceof MoGL)) MoGL.error('MoGL', 'ext', 0);
+            return wrapper(cls = function() {
+                var arg, arg0 = arguments[0], result;
+                prev[prev.length] = method,
+                method = 'constructor';
+                if (arg0 === isSuperChain) {
+                    parent.call(this, isSuperChain, arguments[1]),
+                    child.apply(this, arguments[1]);
+                } else if (this instanceof cls) {
+                    if (arg0 === isFactory) {
+                        arg = arguments[1];
+                    } else {
+                        arg = arguments;
+                    }
+                    parent.call(this, isSuperChain, arg),
+                    child.apply(this, arg),
+                    Object.seal(this),
+                    result = this;
                 } else {
-                    arg = arguments;
+                    result = cls.call(Object.create(cls.prototype), isFactory, arguments);
                 }
-                parent.call(this, isSuperChain, arg),
-                child.apply(this, arg),
-                Object.seal(this),
-                result = this;
-            } else {//팩토리함수형태로 호출된 경우
-                result = cls.call(Object.create(cls.prototype), isFactory, arguments);
-            }
-            method = prev.pop();
-            return result;
+                method = prev.pop();
+                return result;
+            }, Object.create(parent.prototype), child, prop);
         };
-        //parent와 프로토타입체인생성
-        newProto = Object.create(parent.prototype);
-        //기존 child의 프로토타입속성을 복사
-        oldProto = child.prototype;
-        for (key in oldProto) {
-            if (oldProto.hasOwnProperty(key) && typeof oldProto[key] == 'function') {
-                newProto[key] = wrap(oldProto[key], key);
-            }
-        }
-        //정적 속성을 복사
-        for ( key in child ) {
-            if (child.hasOwnProperty(key)) {
-                cls[key] = child[key];
-            }
-        }
-        //속성지정자처리
-        if (prop) {
-            for (key in prop) {
-                v = prop[key];
-                if (v.get) v.get = wrap(v.get);
-                if (v.set) v.set = wrap(v.set);
-                Object.defineProperty(newProto, key, v);
-            }
-        }
-        //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
-        value.value = cls.uuid = 'uuid:' + (uuid++),
-        Object.defineProperty(newProto, 'classId', value);
-        value.value = child.name;
-        Object.defineProperty(newProto, 'className', value);
-        if(!(cls.uuid in counter)) counter[cls.uuid] = 0;
-        //새롭게 프로토타입을 정의함
-        cls.prototype = newProto,
-        Object.freeze(cls),
-        Object.freeze(newProto);
-        return cls;
-    };
+    })(),
+    MoGL.updated = 'updated',
+    wrapper(MoGL, fn, MoGL, fnProp, true);
+    fn = MoGL.prototype;
+    fn.error = function error(id) { //error처리기는 method를 통해 래핑하지 않음
+        throw new Error(this.className + '.' + method + ':' + id);
+    },    
+    fn.toString = function(){//toString상황에서 uuid를 반환함.
+        return this.uuid;
+    },
+    Object.freeze(fn);
     return MoGL;
 })();

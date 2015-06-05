@@ -145,7 +145,7 @@ var Shader = (function () {
         },
         Shader.colorVertexShaderPhong = {
             code: {
-                attributes: ['vec3 aVertexPosition', 'vec2 aUV', 'vec3 aVertexNormal'],
+                attributes: ['vec3 aVertexPosition', 'vec3 aVertexNormal'],
                 uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
                 varyings: ['vec3 vNormal', 'vec3 vPosition', 'vec4 vColor'],
                 function: [VertexShader.baseFunction],
