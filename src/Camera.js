@@ -137,24 +137,28 @@ var Camera = (function () {
             }
         },
         pixelMatrix : {
-            get : $getter(prop,'pixelMatrix')
+            get : $getter(prop,'pixelMatrix'),
         }
     },
     fn.resetProjectionMatrix = function resetProjectionMatrix(){
-        var tMatrix, tArea;
-        tMatrix = this._pixelMatrix,
-        tArea = this._renderArea,
-        tMatrix.matIdentity()
-        if(this._mode == '2d'){
-            tMatrix._rawData[0] = 2 / tArea[2]
-            tMatrix._rawData[5] = -2 / tArea[3]
-            tMatrix._rawData[10] = 0
-            tMatrix._rawData[12] = -1
-            tMatrix._rawData[13] = 1
-        }else {
-            if(tArea) tMatrix.matPerspective(this._fov, tArea[2]/tArea[3], this._near, this._far);
-            else tMatrix.matPerspective(this._fov, this._cvs.width/this._cvs.height, this._near, this._far);
-        }
+        //var tMatrix, tArea;
+        //tMatrix = this._pixelMatrix,
+        //tArea = this._renderArea,
+        //tMatrix.matIdentity()
+        //if(this._mode == '2d'){
+        //    tMatrix._rawData[0] = 2 / tArea[2]
+        //    tMatrix._rawData[5] = -2 / tArea[3]
+        //    tMatrix._rawData[10] = 0
+        //    tMatrix._rawData[12] = -1
+        //    tMatrix._rawData[13] = 1
+        //}else {
+        //
+        //}
+        //if(tArea) tMatrix.matPerspective(this._fov, tArea[2]/tArea[3], this._near, this._far);
+        //else
+        console.log(prop[this].cvs)
+        prop[this].pixelMatrix.matPerspective(prop[this].fov, prop[this].cvs.width/prop[this].cvs.height, prop[this].near, prop[this].far);
+
         return this;
     },
     /*마일스톤0.5
