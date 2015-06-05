@@ -267,13 +267,19 @@
             function () {
                 // getMatrix - psoition change
                 mesh1.matIdentity()
+                mesh1.scale = [1,1,1]
+                mesh1.rotate = [0,0,0]
                 mesh1.position = [3, 6, 9];
-                return mesh1.matStr();
+
+                return mesh1.matrix.matStr();
             }, "Matrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 6, 9, 1)",
             function () {
                 // getMatrix - scale change
                 mesh1.matIdentity()
-                mesh1.scale=[10, 20, 30];
+                mesh1.position = [0, 0, 0]
+                mesh1.rotate = [0, 0, 0]
+                mesh1.scale = [10, 20, 30];
+
                 return mesh1.matrix.matStr();
             }, "Matrix(10, 0, 0, 0, 0, 20, 0, 0, 0, 0, 30, 0, 0, 0, 0, 1)"
     )
