@@ -21,6 +21,7 @@
 * [destroy](#destroy)
 * [dispatch](#dispatch-typestring-arg1-arg2-)
 * [error](#error-idint-)
+* [registerInstance](#)
 * [removeEventListener](#removeeventlistener-typestring-listenerfunction-)
 * [setId](#setid-idstring-)
 * [toString](#tostring)
@@ -28,9 +29,10 @@
 **static**
 
 * [MoGL.count](#moglcount-classfunction-)
-* [MoGL.error](#moglerror-classnamestring-methodnamestring-idint-)
-* [MoGL.ext](#moglext-childfunction-parentfunction-)
+* [MoGL.getInstance](#)
 * [MoGL.globalization](#)
+* [MoGL.error](#moglerror-classnamestring-methodnamestring-idint-)
+* [MoGL.ext](#moglext-childfunction-parentfunction-)* 
 
 **const**
 * [MoGL.BlendMode](#BlendMode.md)
@@ -133,6 +135,7 @@ console.log( scene.className == 'Scene' ); //true
 
 [top](#)
 ## id
+└ writable 
 
 **description**
 
@@ -148,6 +151,7 @@ console.log( scene.id ); //'test1'
 
 [top](#)
 ## isAlive
+└ writable
 
 **description**
 
@@ -162,6 +166,7 @@ console.log( scene.isAlive ); //true
 
 [top](#)
 ## isUpdated
+└ writable
 
 **description**
 
@@ -196,7 +201,7 @@ console.log( scene.uuid ); //인스턴스의 uuid
 console.log( Scene.uuid ); //클래스의 uuid
 ```
 [top](#)
-## addEventListener( type:string, listener:function )
+## addEventListener( type:string, listener:function[, context:*, arg1, ...] )
 
 **description**
 
@@ -206,6 +211,8 @@ console.log( Scene.uuid ); //클래스의 uuid
 
 1. type:string - 이벤트의 이름.
 2. listener:function - 이벤트를 수신할 리스너.
+3. ?context:* - 리스너가 호출될 때 사용될 this의 컨텍스트. 생략 또는 거짓인 경우는 원래 디스패치 대상으로 바인딩됨.
+4. ?arg1,... - 리스너가 호출될 때 dispatch의 인자 뒤에 추가적으로 받고 싶은 인자를 기술함.
 
 **exception**
 
@@ -222,6 +229,11 @@ var city1 = Scene();
 city1.addEventListener( 'updated', function(v){
   console.log(v);
 });
+var city2 = Scene();
+city1.addEventListener( 'updated', function(v, added){
+  this == city2
+  added == 10
+}, city2, 10);
 ```
 
 [top](#)
@@ -311,6 +323,38 @@ try{
 }catch(e){
   console.log( e.toString() ); //'Test.action:0'
 }
+```
+
+[top](#)
+## registerInstance()
+
+**description**
+
+MoGL.getInstance에서 찾기 위해 사전에 자신을 등록해 둠. 이후 uuid를 이용하면 실제 객체를 찾을 수 있음.
+
+**param**
+
+없음.
+
+**exception**
+
+없음.
+
+**return**
+
+없음.
+
+**sample**
+
+```javascript
+var Test = function(){
+  this.registerInstance();
+}
+Test = MoGL.ext(Test);
+var a = new Test();
+var b = MoGL.getInstance(a.uuid);
+
+a === b //true
 ```
 
 [top](#)
@@ -448,6 +492,37 @@ console.log( MoGL.count(Scene) );
 MoGL.error( 'Scene', 'addChild', 2 );  
 ```  
 
+[top](#)  
+## MoGL_Class.getInstance( key:string )
+  
+**description**  
+  
+key로부터 역으로 인스턴스를 찾아냄. key에는 uuid또는 id가 올 수 있음.
+* MoGL을 상속한 모든 클래스는 클래스.getInstance(uuid) 정적메서드를 자동으로 부여받음.
+  
+**param**  
+  
+1. key:string - 찾고자 하는 인스턴스의 uuid 또는 id
+  
+**exception**  
+  
+* MoGL.getInstance:0 - 해당되는 인스턴스가 없는 경우 발생.
+  
+**return**  
+  
+해당 클래스의 인스턴스
+  
+**sample**  
+  
+```javascript  
+var city1 = new Scene();
+city1.registerInstance();
+
+Scene.getInstance(city1.uuid) === city1
+
+city1.id = 'test';
+Scene.getInstance('test') === city1
+```  
 
 [top](#)
 ## MoGL.ext( child:function[, parent:function] )
