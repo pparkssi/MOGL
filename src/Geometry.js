@@ -131,14 +131,5 @@ var Geometry = (function () {
         color: {get: $getter(color)},
         index: {get: $getter(index)}
     };
-    /* TODO 마일스톤0.5
-    fn.addVertexShader = function addVertexShader(id) {
-        this._vertexShaders[id] = id;
-        return this;
-    },
-    fn.removeVertexShader = function removeVertexShader(id) {
-        return delete this._vertexShaders[id], this;
-    };
-    */
     return MoGL.ext(Geometry, MoGL, fnProp);
 })();
