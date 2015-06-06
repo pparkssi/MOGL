@@ -51,21 +51,17 @@ var Texture = (function() {
     imgs = {},
     isLoaded = {},
     loaded = function(e){
-        var self = this._target
-        console.log(this)
-        console.log(self)
-        console.log('로딩안된게 로딩되어 먼가 처리해야함',self.resizeType)
-        isLoaded[this] = true,
-        imgs[this] = resizer(self.resizeType, this),
-        this.removeEventListener('load');
-        self.dispatch('load');
-    };
+        var texture = MoGL.getInstance(this.dataset.texture);
+        isLoaded[texture] = true,
+        imgs[texture] = resizer(self.resizeType, texture),
+        this.removeEventListener('load', loaded);
+        texture.dispatch('load');
+    },
     //shared private
     $setPrivate('Texture', {
     }),
     Texture = function Texture(){
-        var self = this;
-        isLoaded[this] = false
+        this.registerInstance();
     },
     fn = Texture.prototype,
     fnProp = {
@@ -88,11 +84,9 @@ var Texture = (function() {
                 complete= false,
                 img = v;
                 if (v instanceof HTMLImageElement){
-                    console.log('일단 여기를거쳐야함')
                     if (v.complete) {
                         complete = true;
                     }
-                    console.log(complete)
                 } else if (v instanceof ImageData){
                     complete = true,
                     canvas.width = w = v.width,
@@ -113,14 +107,12 @@ var Texture = (function() {
                     this.error(0);
                 }
                 if (complete){
-                    console.log('로딩된상태로 돌어옴')
-                    isLoaded[this] = true;
-                    imgs[this] = resizer(this.resizeType, img)
+                    isLoaded[this] = true,
+                    imgs[this] = resizer(this.resizeType, img),
                     this.dispatch('load');
                 } else {
-                    console.log('로딩안된상태로 들어옴')
-                    img._target = this
-                    img.addEventListener('load', loaded,this);
+                    img.dataset.texture = this.uuid;
+                    img.addEventListener('load', loaded);
                 }
             }
         }

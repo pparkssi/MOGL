@@ -312,6 +312,19 @@
             return result;
         }, 'Error: undefined.actionC:0'
     );
+})(),
+(function(){
+    var a = function(){
+        this.registerInstance();
+    };
+    a = MoGL.ext(a, MoGL);
+    var inst = new a();
+    var uuid = inst.uuid;
+    bsTest( 'register&getInstance',
+        function(){
+            return MoGL.getInstance(uuid).uuid;
+        }, uuid
+    );
 })()
    
 </script>
