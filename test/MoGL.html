@@ -276,6 +276,44 @@
     );
     
 })();
+(function(){
+    var a = function(){};
+    a.prototype.actionA = function(){
+        this.actionB();
+    },
+    a.prototype.actionB = function(){
+        this.error(0);
+    };
+    a.prototype.actionC = function(){
+        this.actionD();
+        this.error(0);
+    },
+    a.prototype.actionD = function(){};
+    
+    a = MoGL.ext(a, MoGL);
+    var inst = new a();
+    bsTest( 'errorStack',
+        function(){
+            var result = '';
+            try{
+                inst.actionA();
+            }catch(e){
+                result = e.toString();
+            };
+            return result;
+        }, 'Error: undefined.actionB:0',
+        function(){
+            var result = '';
+            try{
+                inst.actionC();
+            }catch(e){
+                result = e.toString();
+            };
+            return result;
+        }, 'Error: undefined.actionC:0'
+    );
+})()
+   
 </script>
 </body>
 </html>
