@@ -213,7 +213,7 @@ var World = (function () {
                             else if(tCulling == Mesh.cullingFront) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW)
                         }
 
-                        var dLite = [0,-1,-1], useNormalBuffer = 0;
+                        var dLite = [0,-1,-1], useNormalBuffer = 0,useTexture = 0;
 
                         // 쉐이딩 결정
                         switch(tMaterial.shading){
@@ -221,7 +221,14 @@ var World = (function () {
                              tProgram=gpu.programs['color'];
                             break
                             case  Shading.phong :
-                                tProgram=gpu.programs['colorPhong'];
+                                if(tMaterial.diffuse){
+                                    tProgram=gpu.programs['bitmapPhong'];
+                                    console.log('들어왔다!')
+                                    //useTexture =1
+                                } else {
+                                    tProgram=gpu.programs['colorPhong'];
+                                    //console.log('컬러퐁')
+                                }
                                 useNormalBuffer = 1;
                             break
                         }
@@ -240,7 +247,20 @@ var World = (function () {
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                         gl.uniform4fv(tProgram.uColor, tMaterial.color);
-                        
+
+                        // 텍스쳐 세팅
+                        //if(useTexture){
+                        //    tUVBO != pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
+                        //    tUVBO != pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                        //    gl.activeTexture(gl.TEXTURE0);
+                        //    var textureObj = tMaterial.diffuse[0];
+                        //    console.log(textureObj)
+                        //    if(textureObj.isLoaded){
+                        //        textureObj != pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
+                        //        gl.uniform1i(tProgram.uSampler, 0);
+                        //    }
+                        //}
+
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ;
                         gl.uniform3fv(tProgram.uRotate, f3),
 

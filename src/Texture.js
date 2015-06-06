@@ -50,9 +50,13 @@ var Texture = (function() {
     imgs = {},
     isLoaded = {},
     loaded = function(e){
+        console.log(this)
+        console.log(this._target)
+        console.log('로딩안된게 로딩되어 먼가 처리해야함',this._target.resizeType)
         isLoaded[this] = true,
-        imgs[this] = resizer(self.resizeType, this),
-        self.dispatch('load');
+        imgs[this] = resizer(this._target.resizeType, this),
+        console.log(imgs[this])
+        this._target.dispatch('load');
     };
     //shared private
     $setPrivate('Texture', {
@@ -78,14 +82,17 @@ var Texture = (function() {
         img:{
             get:$getter(imgs, false, empty),
             set:function imgSet(v){
-                var loaded, img, w, h;
+                var complete, img, w, h;
+                complete= false,
                 img = v;
                 if (v instanceof HTMLImageElement){
-                    if (src.complete) {
-                        loaded = true;
+                    console.log('일단 여기를거쳐야함')
+                    if (v.complete) {
+                        complete = true;
                     }
+                    console.log(complete)
                 } else if (v instanceof ImageData){
-                    loaded = true,
+                    complete = true,
                     canvas.width = w = v.width,
                     canvas.height = h = v.height,
                     context.clearRect(0, 0, w, h),
@@ -94,8 +101,8 @@ var Texture = (function() {
                     img.src = context.toDataURL();
                 } else if (typeof v == 'string') {
                     if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
-                        loaded = true;
-                    } else if (!imgType[src.substring(-4)]) {
+                        complete = true;
+                    } else if (!imgType[v.substring(-4)]) {
                         this.error(1);
                     }
                     img = document.createElement('img'),
@@ -103,12 +110,15 @@ var Texture = (function() {
                 } else {
                     this.error(0);
                 }
-                if (loaded){
+                if (complete){
+                    console.log('로딩된상태로 돌어옴')
                     isLoaded[this] = true;
                     imgs[this] = resizer(this.resizeType, img)
-                    self.dispatch('load');
+                    this.dispatch('load');
                 } else {
-                    img.addEventListener('load', loaded, this);
+                    console.log('로딩안된상태로 들어옴')
+                    img._target = this
+                    img.addEventListener('load', loaded,this);
                 }
             }
         }
