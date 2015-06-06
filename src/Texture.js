@@ -13,6 +13,7 @@ var Texture = (function() {
     empty.src = canvas.toDataURL(),
 
     resizer = function(resizeType, v){
+        console.log('리사이저처리',resizeType, v)
         var tw, th, dw, dh;
         //texture size
         tw = th = 1;
@@ -20,7 +21,7 @@ var Texture = (function() {
         while (v.height > th) th *= 2;
         //fit size
         if (v.width == tw && v.height == th) return;
-        
+
         if (resizeType == Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
@@ -42,7 +43,7 @@ var Texture = (function() {
         default:
             context.drawImage(v, 0, 0, dw, dh);
         }
-        v.src = context.toDataURL();
+        v.src = canvas.toDataURL();
         return v;
     };
     //private
@@ -50,8 +51,13 @@ var Texture = (function() {
     imgs = {},
     isLoaded = {},
     loaded = function(e){
+        var self = this._target
+        console.log(this)
+        console.log(self)
+        console.log('로딩안된게 로딩되어 먼가 처리해야함',self.resizeType)
         isLoaded[this] = true,
         imgs[this] = resizer(self.resizeType, this),
+        this.removeEventListener('load');
         self.dispatch('load');
     };
     //shared private
@@ -78,14 +84,17 @@ var Texture = (function() {
         img:{
             get:$getter(imgs, false, empty),
             set:function imgSet(v){
-                var loaded, img, w, h;
+                var complete, img, w, h;
+                complete= false,
                 img = v;
                 if (v instanceof HTMLImageElement){
-                    if (src.complete) {
-                        loaded = true;
+                    console.log('일단 여기를거쳐야함')
+                    if (v.complete) {
+                        complete = true;
                     }
+                    console.log(complete)
                 } else if (v instanceof ImageData){
-                    loaded = true,
+                    complete = true,
                     canvas.width = w = v.width,
                     canvas.height = h = v.height,
                     context.clearRect(0, 0, w, h),
@@ -94,8 +103,8 @@ var Texture = (function() {
                     img.src = context.toDataURL();
                 } else if (typeof v == 'string') {
                     if (v.substring(0, 10) == 'data:image' && v.indexOf('base64') > -1){
-                        loaded = true;
-                    } else if (!imgType[src.substring(-4)]) {
+                        complete = true;
+                    } else if (!imgType[v.substring(-4)]) {
                         this.error(1);
                     }
                     img = document.createElement('img'),
@@ -103,12 +112,15 @@ var Texture = (function() {
                 } else {
                     this.error(0);
                 }
-                if (loaded){
+                if (complete){
+                    console.log('로딩된상태로 돌어옴')
                     isLoaded[this] = true;
                     imgs[this] = resizer(this.resizeType, img)
-                    self.dispatch('load');
+                    this.dispatch('load');
                 } else {
-                    img.addEventListener('load', loaded, this);
+                    console.log('로딩안된상태로 들어옴')
+                    img._target = this
+                    img.addEventListener('load', loaded,this);
                 }
             }
         }

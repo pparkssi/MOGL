@@ -205,32 +205,76 @@ var World = (function () {
                         tIBO = gpu.ibo[tItem.geometry],
                         tMaterial = tItem.material,
                         //tDiffuseList = tMaterial.diffuse;
+
                         tCulling = tItem.culling
                         if(tCulling != pCulling){
                             if(tCulling == Mesh.cullingNone) gl.disable(gl.CULL_FACE)
                             else if(tCulling == Mesh.cullingBack) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CCW)
                             else if(tCulling == Mesh.cullingFront) gl.enable(gl.CULL_FACE),gl.frontFace (gl.CW)
                         }
-                        var dLite = [0,-1,-1], useNormalBuffer = 0;
-                        tProgram=gpu.programs['color'];
+
+                        var dLite = [0,-1,-1], useNormalBuffer = 0,useTexture = 0;
+
+                        // 쉐이딩 결정
+                        switch(tMaterial.shading){
+                            case  Shading.none :
+                             tProgram=gpu.programs['color'];
+                            break
+                            case  Shading.phong :
+                                if(tMaterial.diffuse){
+                                    tProgram=gpu.programs['bitmapPhong'];
+                                    console.log('들어왔다!')
+                                    //useTexture =1
+                                } else {
+                                    tProgram=gpu.programs['colorPhong'];
+                                    //console.log('컬러퐁')
+                                }
+                                useNormalBuffer = 1;
+                            break
+                        }
+                        // 쉐이딩 변경시 캐쉬 삭제
+                        if(pProgram != tProgram) pProgram = null ,pVBO = null, pVNBO = null, pUVBO = null, pIBO = null, pDiffuse = null;
+
+                        // 정보 밀어넣기
                         gl.useProgram(tProgram);
+                        if(useNormalBuffer){
+                            tVNBO != pVNBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVNBO) : 0,
+                            tVNBO != pVNBO ? gl.vertexAttribPointer(tProgram.aVertexNormal, tVNBO.stride, gl.FLOAT, false, 0, 0) : 0;
+                            gl.uniform3fv(tProgram.uDLite, dLite);
+                            gl.uniform1f(tProgram.uLambert,tMaterial.lambert);
+                        }
+
                         tVBO!=pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                         tVBO!=pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                        f4[0] = tMaterial.color.r
-                        f4[1] = tMaterial.color.g
-                        f4[2] = tMaterial.color.b
-                        f4[3] = tMaterial.color.a
-                        gl.uniform4fv(tProgram.uColor, f4);
-                        
+                        gl.uniform4fv(tProgram.uColor, tMaterial.color);
+
+                        // 텍스쳐 세팅
+                        //if(useTexture){
+                        //    tUVBO != pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
+                        //    tUVBO != pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                        //    gl.activeTexture(gl.TEXTURE0);
+                        //    var textureObj = tMaterial.diffuse[0];
+                        //    console.log(textureObj)
+                        //    if(textureObj.isLoaded){
+                        //        textureObj != pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
+                        //        gl.uniform1i(tProgram.uSampler, 0);
+                        //    }
+                        //}
+
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ;
                         gl.uniform3fv(tProgram.uRotate, f3),
+
                         f3[0] = tItem.x,f3[1] = tItem.y,f3[2] = tItem.z,
                         gl.uniform3fv(tProgram.uPosition, f3),
+
                         f3[0] = tItem.scaleX,f3[1] = tItem.scaleY,f3[2] = tItem.scaleZ,
                         gl.uniform3fv(tProgram.uScale, f3),
+
                         tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0;
                         gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
-                        if(tMaterial._wireFrame) {
+
+                        // 와이어프레임 그리기
+                        if(tMaterial.wireFrame) {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL);
                             tProgram = gpu.programs['wireFrame'],
                                 gl.useProgram(tProgram),
@@ -242,8 +286,7 @@ var World = (function () {
                                 gl.uniform3fv(tProgram.uPosition, f3),
                                 f3[0] = tItem.scaleX, f3[1] = tItem.scaleY, f3[2] = tItem.scaleZ,
                                 gl.uniform3fv(tProgram.uScale, f3),
-                                f4[0] = tMaterial._rw, f4[1] = tMaterial._gw, f4[2] = tMaterial._bw,f4[3] = 1,
-                                gl.uniform4fv(tProgram.uColor, f4),
+                                gl.uniform4fv(tProgram.uColor, tMaterial.wireFrameColor),
                                 gl.drawElements(gl.LINES, tIBO.numItem, gl.UNSIGNED_SHORT, 0);
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                         }

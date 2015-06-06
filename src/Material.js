@@ -4,8 +4,8 @@
 var Material = (function () {
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal, 
-        shading, lambert, color, wireFrame, wireFrameColor, count,
-        Material, fn, fnProp;
+        shading, lambert,  wireFrame, wireFrameColor, count,
+        Material, fn, fnProp,prop;
     
     //private
     shading = {},
@@ -15,7 +15,6 @@ var Material = (function () {
     specular = {},
     diffuseWrap = {},
     specularNormal = {},
-    color = {},
     wireFrame = {},
     wireFrameColor = {},
     count = {},
@@ -23,6 +22,7 @@ var Material = (function () {
     //shared private
     $setPrivate('Material', {
     }),
+    prop = {},
     //lib
     textureLoaded = function(mat){
         this.removeEventListener(Texture.load, textureLoaded),
@@ -36,39 +36,34 @@ var Material = (function () {
         normal:normal,
         specularNormal:specularNormal
     },
-    
+
     Material = function Material() {
-        var v;
+        Object.seal(prop[this] = {
+            color : [1,1,1,1],
+            wireFrameColor : [Math.random(),Math.random(),Math.random(),1]
+        })
         if (arguments.length) {
-            this.color = arguments.length > 1 ? arguments : arguments[0];
+            this.color = arguments.length > 1 ? arguments : arguments[0]
         }
         wireFrame[this] = false;
     },
     fnProp = {
         count:$getter(count, false, 0),
         color:{
-            get:$getter(color, false, {r:0,g:0,b:0,a:1}),
+            get:$getter(prop,'color'),
             set:function colorSet(v) {
-                var p = color[this];
-                if (!p) p = color[this] = {};
+                var p = prop[this].color;
                 v = $color(v);
-                p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
+                p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
            }
         },
         wireFrame:$value(wireFrame),
         wireFrameColor:{
-            get:(function(){
-                var a = [];
-                return function wireFrameColorGet() {
-                    var p = wireFrameColor[this];
-                    a[0] = p.r, a[1] = p.g, a[2] = p.b, a[3] = p.a
-                    return a;
-                };
-            })(),
+            get:$getter(prop,'wireFrameColor'),
             set:function colorSet(v) {
-                var p = wireFrameColor[this]
+                var p = prop[this].wireFrameColor;
                 v = $color(v);
-                p.r = v[0], p.g = v[1], p.b = v[2], p.a = v[3];
+                p[0] = v[0], p[1] = v[1], p[2] = v[2], p[3] = v[3];
            }
         },
         shading:$value(shading, false, Shading.none),
@@ -76,7 +71,7 @@ var Material = (function () {
         diffuse:$value(diffuse),
         isLoaded:{
             get:function(mat) {
-                var type, tex, key;
+                var type, tex, i;
                 for (type in texType) {
                     if (tex = texType[type][mat]) {
                         i = tex.length;
@@ -130,7 +125,7 @@ var Material = (function () {
         }
         //changed이벤트는 무조건 발생함.
         this.dispatch(Material.changed);
-        if (mat.isLoaded) mat.dispatch(Material.load);
+        if (this.isLoaded) this.dispatch(Material.load);
         return this;
     },
     fn.removeTexture = function removeTexture(type, texture){
