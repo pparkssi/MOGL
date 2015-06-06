@@ -314,15 +314,17 @@
     );
 })(),
 (function(){
-    var a = function(){
-        this.registerInstance();
-    };
+    var a = function(){};
     a = MoGL.ext(a, MoGL);
     var inst = new a();
     var uuid = inst.uuid;
+    inst.id = 'test';
     bsTest( 'register&getInstance',
         function(){
-            return MoGL.getInstance(uuid).uuid;
+            return a.getInstance(uuid).uuid;
+        }, uuid,
+        function(){
+            return a.getInstance('test').uuid;
         }, uuid
     );
 })()

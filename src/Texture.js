@@ -52,7 +52,7 @@ var Texture = (function() {
     imgs = {},
     isLoaded = {},
     loaded = function(e){
-        var texture = MoGL.getInstance(this.dataset.texture);
+        var texture = Texture.getInstance(this.dataset.texture);
         isLoaded[texture] = true,
         console.log('이미지가 로딩되어 리사이즈시도',this)
         imgs[texture] = resizer(texture.resizeType, this),
@@ -62,9 +62,7 @@ var Texture = (function() {
     //shared private
     $setPrivate('Texture', {
     }),
-    Texture = function Texture(){
-        this.registerInstance();
-    },
+    Texture = function Texture(){},
     fn = Texture.prototype,
     fnProp = {
         resizeType:{

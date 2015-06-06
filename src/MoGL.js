@@ -104,12 +104,14 @@ SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5
 var MoGL = (function() {
     var wrapper, method, prev,
         uuid, counter, totalCount,
-        listener, ids, updated, uuid2instance,
+        listener, ids, updated, allInst, classInst,
         MoGL, mock, fn, fnProp;
     //lib
     prev = [], //스택구조의 이전 함수이름의 배열
     wrapper = (function(){
-        var wrap;
+        var wrap, statics,  isFactory, isSuperChain;
+        isFactory = {factory:1},//팩토리 함수용 식별상수
+        isSuperChain = {superChain:1},//생성자체인용 상수
         wrap = function wrap(f, key) { //생성할 이름과 메서드
             return function() {
                 var result;
@@ -120,15 +122,60 @@ var MoGL = (function() {
                 method = prev.pop(); //스택을 되돌림
                 return result;
             };
+        },
+        statics = {
+            getInstance:function getInstance(v){
+                var inst, p, k;
+                if (v in allInst) {
+                    inst = allInst[v];
+                    if (inst.classId == this.uuid) {
+                        return inst;
+                    }
+                } else {
+                    p = ids[this.uuid];
+                    for (k in p) {
+                        if (p[k] == v) return allInst[k];
+                    }
+                }
+                MoGL.error('MoGL', 'getInstance', 0);
+            },
+            count:function count() { //인스턴스의 갯수를 알아냄
+                return counter[this];
+            },
+            error:function error(method, id) { //정적함수용 에러보고함수
+                throw new Error(this.name + '.' + method + ':' + id);
+            },
+            ext:function ext(child, prop) { //상속하는 자식클래스를 만들어냄.
+                var cls, self;
+                self = this;
+                if (!(self.prototype instanceof MoGL)) self.error('ext', 0);
+                return wrapper(cls = function() {
+                    var arg, arg0 = arguments[0], result;
+                    prev[prev.length] = method,
+                    method = 'constructor';
+                    if (arg0 === isSuperChain) {
+                        self.call(this, isSuperChain, arguments[1]),
+                        child.apply(this, arguments[1]);
+                    } else if (this instanceof cls) {
+                        if (arg0 === isFactory) {
+                            arg = arguments[1];
+                        } else {
+                            arg = arguments;
+                        }
+                        self.call(this, isSuperChain, arg),
+                        child.apply(this, arg),
+                        Object.seal(this),
+                        result = this;
+                    } else {
+                        result = cls.call(Object.create(cls.prototype), isFactory, arguments);
+                    }
+                    method = prev.pop();
+                    return result;
+                }, Object.create(self.prototype), child, prop);
+            }
         };
         return function(cls, newProto, f, prop, notFreeze) {
             var k, v;
-            //정적 속성을 복사
-            for (k in f) {
-                if (f.hasOwnProperty(k)) {
-                    cls[k] = f[k];
-                }
-            }
             //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
             $readonly.value = cls.uuid = 'uuid:' + (uuid++),
             Object.defineProperty(newProto, 'classId', $readonly);
@@ -154,6 +201,17 @@ var MoGL = (function() {
                     Object.defineProperty(newProto, k, v);
                 }
             }
+            //정적 속성을 복사
+            for (k in f) {
+                if (f.hasOwnProperty(k)) {
+                    cls[k] = f[k];
+                }
+            }
+            for (k in statics) {
+                if (f.hasOwnProperty(k)) {
+                    cls[k] = statics[k];
+                }
+            }
             //새롭게 프로토타입을 정의함
             cls.prototype = newProto,
             Object.freeze(cls);
@@ -168,11 +226,12 @@ var MoGL = (function() {
     ids = {},
     listener = {},
     updated = {},
-    uuid2instance = {},
+    allInst = {},
     //MoGL정의
     MoGL = function MoGL() {
         $readonly.value = 'uuid:' + (uuid++),
         Object.defineProperty(this, 'uuid', $readonly), //객체고유아이디
+        allInst[this] = this,
         $writable.value = true,
         Object.defineProperty(this, 'isAlive', $writable),//활성화상태초기화 true
         counter[this.classId]++, //클래스별 인스턴스 수 증가
@@ -224,14 +283,10 @@ var MoGL = (function() {
             delete ids[this.classId][this],
             delete ids[this.classId].ref[key];
         }
-        delete uuid2instance[this],
+        delete allInst[this],
         this.isAlive = false, //비활성화
         counter[this.classId]--, //클래스별인스턴스감소
         totalCount--; //전체인스턴스감소
-    },
-    fn.registerInstance = function(){
-        uuid2instance[this] = this;
-        
     },
     fn.setId = function setId(v) { //id setter
         this.id = v;
@@ -296,55 +351,9 @@ var MoGL = (function() {
         }
         return this;
     },
-    MoGL.count = function count(cls) { //인스턴스의 갯수를 알아냄
-        if (cls instanceof MoGL) {
-            return counter[cls]; //클래스별 인스턴스수
-        } else {
-            return totalCount; //전체 인스턴스 수
-        }
+    MoGL.totalCount = function count() { //인스턴스의 갯수를 알아냄
+        return totalCount; //전체 인스턴스 수
     },
-    MoGL.error = function error(cls, method, id) { //정적함수용 에러보고함수
-        throw new Error(cls + '.' + method + ':' + id);
-    },
-    MoGL.getInstance = function getInstance(v){
-        if (v in uuid2instance) {
-            return uuid2instance[v];
-        } else {
-            MoGL.error('MoGL', 'getInstance', 0);
-        }
-    },
-    MoGL.ext = (function(){
-        var isFactory, isSuperChain;
-        isFactory = {factory:1},//팩토리 함수용 식별상수
-        isSuperChain = {superChain:1};//생성자체인용 상수
-        return function ext(child, parent, prop) { //parent클래스를 상속하는 자식클래스를 만들어냄.
-            var cls;
-            if (parent !== MoGL && !(parent.prototype instanceof MoGL)) MoGL.error('MoGL', 'ext', 0);
-            return wrapper(cls = function() {
-                var arg, arg0 = arguments[0], result;
-                prev[prev.length] = method,
-                method = 'constructor';
-                if (arg0 === isSuperChain) {
-                    parent.call(this, isSuperChain, arguments[1]),
-                    child.apply(this, arguments[1]);
-                } else if (this instanceof cls) {
-                    if (arg0 === isFactory) {
-                        arg = arguments[1];
-                    } else {
-                        arg = arguments;
-                    }
-                    parent.call(this, isSuperChain, arg),
-                    child.apply(this, arg),
-                    Object.seal(this),
-                    result = this;
-                } else {
-                    result = cls.call(Object.create(cls.prototype), isFactory, arguments);
-                }
-                method = prev.pop();
-                return result;
-            }, Object.create(parent.prototype), child, prop);
-        };
-    })(),
     MoGL.updated = 'updated',
     wrapper(MoGL, fn, MoGL, fnProp, true);
     fn = MoGL.prototype;
