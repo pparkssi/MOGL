@@ -254,7 +254,7 @@ var World = (function () {
                             tUVBO != pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
                             gl.activeTexture(gl.TEXTURE0);
                             if(tMaterial.diffuse[0]){
-                                var textureObj = tMaterial.diffuse[0].tex
+                                var textureObj = tMaterial.diffuse[tMaterial.diffuse.length-1].tex
                                 if(textureObj.isLoaded){
                                     textureObj = gpu.textures[textureObj];
                                     textureObj != pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;

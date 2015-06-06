@@ -436,7 +436,6 @@ var Scene = (function () {
     },
     fn.addMaterial = function (v) {
         var p = materials[this],self,i;
-        self = this;
         if (p[v]) this.error(0);
         if (!(v instanceof Material)) this.error(1);
         p[v] = v,
