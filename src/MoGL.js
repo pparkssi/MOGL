@@ -104,7 +104,7 @@ SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5
 var MoGL = (function() {
     var wrapper, method, prev,
         uuid, counter, totalCount,
-        listener, ids, updated, 
+        listener, ids, updated, uuid2instance,
         MoGL, mock, fn, fnProp;
     //lib
     prev = [], //스택구조의 이전 함수이름의 배열
@@ -168,7 +168,7 @@ var MoGL = (function() {
     ids = {},
     listener = {},
     updated = {},
-    
+    uuid2instance = {},
     //MoGL정의
     MoGL = function MoGL() {
         $value.value = 'uuid:' + (uuid++),
@@ -224,9 +224,14 @@ var MoGL = (function() {
             delete ids[this.classId][this],
             delete ids[this.classId].ref[key];
         }
+        delete uuid2instance[this],
         this.isAlive = false, //비활성화
         counter[this.classId]--, //클래스별인스턴스감소
         totalCount--; //전체인스턴스감소
+    },
+    fn.registerInstance = function(){
+        uuid2instance[this] = this;
+        
     },
     fn.setId = function setId(v) { //id setter
         this.id = v;
@@ -300,6 +305,13 @@ var MoGL = (function() {
     },
     MoGL.error = function error(cls, method, id) { //정적함수용 에러보고함수
         throw new Error(cls + '.' + method + ':' + id);
+    },
+    MoGL.getInstance = function getInstance(v){
+        if (v in uuid2instance) {
+            return uuid2instance[v];
+        } else {
+            MoGL.error('MoGL', 'getInstance', 0);
+        }
     },
     MoGL.ext = (function(){
         var isFactory, isSuperChain;

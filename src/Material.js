@@ -25,7 +25,8 @@ var Material = (function () {
     prop = {},
     //lib
     textureLoaded = function(mat){
-        this.removeEventListener(Texture.load, textureLoaded),
+        console.log('이게안터지나?')
+        //this.removeEventListener(Texture.load, textureLoaded),
         mat.dispatch(Material.changed);
         if (mat.isLoaded) mat.dispatch(Material.load);
     },
@@ -71,7 +72,7 @@ var Material = (function () {
         diffuse:$value(diffuse),
         isLoaded:{
             get:function(mat) {
-                var type, tex, key;
+                var type, tex, i;
                 for (type in texType) {
                     if (tex = texType[type][mat]) {
                         i = tex.length;
@@ -125,7 +126,7 @@ var Material = (function () {
         }
         //changed이벤트는 무조건 발생함.
         this.dispatch(Material.changed);
-        if (mat.isLoaded) mat.dispatch(Material.load);
+        if (this.isLoaded) this.dispatch(Material.load);
         return this;
     },
     fn.removeTexture = function removeTexture(type, texture){
