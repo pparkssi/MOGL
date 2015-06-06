@@ -41,11 +41,13 @@
 </head>
 <body>
 <canvas id="canvas"></canvas>
+
 <div class="FPS">
     Current FPS: <span id="currentFPS"></span>
     Average FPS: <span id="averageFPS"></span>
 </div>
-<img src="smithHead/Map-COL.jpg" id="testIMG">
+<img src="smithHead/Map-COL.jpg" id="testIMG" style="position: absolute;top:0px;" width="128" height="128">
+<img src="monkey/Suzanne.jpg" id="testIMG2" style="position: absolute;top:0px;" width="128" height="128">
 <script>
     'use strict';
     var world = new World('canvas');
@@ -59,18 +61,12 @@
     world.setAutoSize(1)
 
 
-    scene.addMaterial(material);
-    scene.addMaterial(material2);
-
 
     var texture = new Texture()
-    texture.img = document.getElementById('testIMG')
-    material.addTexture(Texture.diffuse, texture)
 
     //    scene.addTexture('texture', 'smithHead/Map-COL.jpg');
     //    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
     //    scene.getMaterial('material2').addTexture(Texture.diffuse, 'texture');
-
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('GET', 'smithHead/smith_head.json', true);
     xmlhttp.onreadystatechange = function () {
@@ -109,7 +105,7 @@
         material.wireFrame = 1
         material2.wireFrame = 1
         material3.wireFrame = 1
-
+//
         var mesh2 = new Mesh(geo, material2);
         mesh2.scaleX = 10;
         mesh2.scaleY = 10;
@@ -130,7 +126,18 @@
         material3.lambert = 1.5
 
         mesh3.y = -1
+        material.shading = Shading.phong
 
+        texture.img = document.getElementById('testIMG')
+        material.addTexture(Texture.diffuse, texture)
+        console.log('재질 텍스쳐 로딩완료 확인',material.isLoaded)
+        console.log('디퓨즈 확인',material.diffuse)
+
+        setTimeout(function(){
+            var texture2 = new Texture()
+            texture2.img = document.getElementById('testIMG2')
+            material.addTexture(Texture.diffuse, texture2)
+        },1000)
 
         world.addEventListener(World.renderBefore, function () {
             mesh.rotateY -= 0.01;

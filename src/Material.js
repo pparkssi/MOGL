@@ -25,7 +25,8 @@ var Material = (function () {
     prop = {},
     //lib
     textureLoaded = function(mat){
-        this.removeEventListener(Texture.load, textureLoaded),
+        console.log('이게안터지나?')
+        //this.removeEventListener(Texture.load, textureLoaded),
         mat.dispatch(Material.changed);
         if (mat.isLoaded) mat.dispatch(Material.load);
     },
@@ -121,9 +122,9 @@ var Material = (function () {
         }
         //인덱스 제공 여부에 따라 텍스쳐리스트에 삽입
         if (arguments.length > 2 && typeof arguments[2] !== 'number') {
-            p[p.length] = texture;
-        }else{
             p.splice(arguments[2], 0, texture);
+        }else{
+            p[p.length] = texture;
         }
         //changed이벤트는 무조건 발생함.
         this.dispatch(Material.changed);

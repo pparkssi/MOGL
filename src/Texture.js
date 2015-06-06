@@ -14,14 +14,14 @@ var Texture = (function() {
 
     resizer = function(resizeType, v){
         console.log('리사이저처리',resizeType, v)
+        console.log(v.width,v.height)
         var tw, th, dw, dh;
         //texture size
         tw = th = 1;
         while (v.width > tw) tw *= 2;
         while (v.height > th) th *= 2;
         //fit size
-        if (v.width == tw && v.height == th) return;
-
+        if (v.width == tw && v.height == th) {}
         if (resizeType == Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
@@ -30,20 +30,21 @@ var Texture = (function() {
         canvas.width = dw = tw,
         canvas.height = dh = th,
         context.clearRect(0, 0, tw, th);
-        
+
         switch(resizeType){
-        case Texture.crop:
-            if (v.width < tw) dw = tw / 2;
-            if (v.height < th) dh = th / 2;
-            context.drawImage(v, 0, 0, tw, th, 0, 0, dw, dh);
-            break;
-        case Texture.addSpace:
-            context.drawImage(v, 0, 0, tw, th, 0, 0, tw, th);
-            break;
-        default:
-            context.drawImage(v, 0, 0, dw, dh);
+            case Texture.crop:
+                if (v.width < tw) dw = tw / 2;
+                if (v.height < th) dh = th / 2;
+                context.drawImage(v, 0, 0, tw, th, 0, 0, dw, dh);
+                break;
+            case Texture.addSpace:
+                context.drawImage(v, 0, 0, tw, th, 0, 0, tw, th);
+                break;
+            default:
+                context.drawImage(v, 0, 0, dw, dh);
         }
         v.src = canvas.toDataURL();
+        console.log('리사이저처리결과', v.width, v.height)
         return v;
     };
     //private
@@ -53,7 +54,8 @@ var Texture = (function() {
     loaded = function(e){
         var texture = MoGL.getInstance(this.dataset.texture);
         isLoaded[texture] = true,
-        imgs[texture] = resizer(self.resizeType, texture),
+        console.log('이미지가 로딩되어 리사이즈시도',this)
+        imgs[texture] = resizer(texture.resizeType, this),
         this.removeEventListener('load', loaded);
         texture.dispatch('load');
     },
@@ -108,9 +110,12 @@ var Texture = (function() {
                 }
                 if (complete){
                     isLoaded[this] = true,
+                    console.log('이미지등록시 로딩완료',img)
+                    img.dataset.texture = this.uuid;
                     imgs[this] = resizer(this.resizeType, img),
                     this.dispatch('load');
                 } else {
+                    console.log('이미지등록시 로딩안됨',img)
                     img.dataset.texture = this.uuid;
                     img.addEventListener('load', loaded);
                 }
