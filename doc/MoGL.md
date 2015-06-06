@@ -32,7 +32,7 @@
 * [MoGL.getInstance](#)
 * [MoGL.globalization](#)
 * [MoGL.error](#moglerror-classnamestring-methodnamestring-idint-)
-* [MoGL.ext](#moglext-childfunction-parentfunction-)* 
+* [MoGL.ext](#moglext-childfunction-parentfunction-)
 
 **const**
 * [MoGL.BlendMode](#BlendMode.md)
