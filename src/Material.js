@@ -120,9 +120,9 @@ var Material = (function () {
         }
         //인덱스 제공 여부에 따라 텍스쳐리스트에 삽입
         if (arguments.length > 2 && typeof arguments[2] !== 'number') {
-            p[p.length] = texture;
-        }else{
             p.splice(arguments[2], 0, texture);
+        }else{
+            p[p.length] = texture;
         }
         //changed이벤트는 무조건 발생함.
         this.dispatch(Material.changed);
