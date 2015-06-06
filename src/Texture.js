@@ -43,8 +43,8 @@ var Texture = (function() {
             default:
                 context.drawImage(v, 0, 0, dw, dh);
         }
-        var img = new Image()
-        img.src = canvas.toDataURL();
+        v.src = canvas.toDataURL();
+        console.log('리사이저처리결과', v.width, v.height)
         return v;
     };
     //private
