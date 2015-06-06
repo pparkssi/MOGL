@@ -158,8 +158,6 @@ var Camera = (function () {
             if (tArea) tMatrix.matPerspective(p.fov, tArea[2] / tArea[3], p.near, p.far);
             else tMatrix.matPerspective(p.fov, p.cvs.width/p.cvs.height, p.near, p.far);
         }
-
-
         return this;
     },
     /*마일스톤0.5

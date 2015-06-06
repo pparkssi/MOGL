@@ -7,6 +7,7 @@
  */
 var World = (function () {
     var getGL, glSetting,glContext, World, fn, rectMatrix = Matrix(), f3 = new Float32Array(3),f4 = new Float32Array(4);
+    var canvas, context, makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer;
 	glSetting = {
 		alpha: true,
 		depth: true,
@@ -30,14 +31,199 @@ var World = (function () {
 		}
 		return gl;
 	};
-    var renderList = {}, sceneList = [], cvsList = {}, glList = {}, autoSizer = {}, started ={};
+    var renderList = {}, sceneList = [], cvsList = {},  autoSizer = {}, started ={},gpu={};
+
     ///////////////////////////////
+    // 씬에서 이사온놈들
+    canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+    makeVBO = function makeVBO(gpu,geometry, data, stride) {
+        var gl, buffer;
+        console.log(gpu)
+        gl = gpu.gl,
+            buffer = gpu.vbo[geometry];
+        if (buffer) return buffer;
+          buffer = gl.createBuffer(),
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+            gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW),
+            buffer.name = geometry,
+            buffer.type = 'VBO',
+            buffer.data = data,
+            buffer.stride = stride,
+            buffer.numItem = data.length / stride,
+            gpu.vbo[geometry] = buffer,
+            console.log('VBO생성', gpu.vbo[geometry]);
+        return gpu.vbo[geometry];
+    },
+        makeVNBO = function makeVNBO(gpu, geometry, data, stride) {
+            var gl, buffer;
+            gl = gpu.gl,
+                buffer = gpu.vnbo[geometry];
+            if (buffer) return buffer;
+            buffer = gl.createBuffer(),
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+                gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW),
+                buffer.name = geometry,
+                buffer.type = 'VNBO',
+                buffer.data = data,
+                buffer.stride = stride,
+                buffer.numItem = data.length / stride,
+                gpu.vnbo[geometry] = buffer,
+                console.log('VNBO생성', gpu.vnbo[geometry]);
+            return gpu.vnbo[geometry];
+        },
+        makeIBO = function makeIBO(gpu, geometry, data, stride) {
+            var gl, buffer;
+            gl = gpu.gl,
+                buffer = gpu.ibo[geometry];
+            if (buffer) return buffer;
+            buffer = gl.createBuffer(),
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer),
+                gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW),
+                buffer.name = geometry,
+                buffer.type = 'IBO',
+                buffer.data = data,
+                buffer.stride = stride,
+                buffer.numItem = data.length / stride,
+                gpu.ibo[geometry] = buffer,
+                console.log('IBO생성', gpu.ibo[geometry]);
+            return gpu.ibo[geometry];
+        },
+        makeUVBO = function makeUVBO(gpu, geometry, data, stride) {
+            var gl, buffer;
+            gl = gpu.gl,
+                buffer = gpu.uvbo[geometry];
+            if (buffer) return buffer;
+            buffer = gl.createBuffer(),
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer),
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW),
+                buffer.name = geometry,
+                buffer.type = 'UVBO',
+                buffer.data = data,
+                buffer.stride = stride,
+                buffer.numItem = data.length / stride,
+                gpu.uvbo[geometry] = buffer,
+                console.log('UVBO생성', gpu.uvbo[geometry]);
+            return gpu.uvbo[geometry];
+        },
+        makeProgram = function makeProgram(gpu, name, vSource, fSource) {
+            console.log(name, vSource, fSource)
+            var gl, vShader, fShader, program, i,len,temp;
+            gl = gpu.gl,
+                vShader = gl.createShader(gl.VERTEX_SHADER),
+                fShader = gl.createShader(gl.FRAGMENT_SHADER),
+                gl.shaderSource(vShader, vSource.shaderStr),
+                gl.compileShader(vShader);
+                gl.shaderSource(fShader, fSource.shaderStr),
+                gl.compileShader(fShader);
+
+                program = gl.createProgram(),
+                gl.attachShader(program, vShader),
+                gl.attachShader(program, fShader),
+                gl.linkProgram(program),
+                vShader.name = vSource.id,
+                fShader.name = fSource.id,
+                program.name = name;
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                throw new Error('프로그램 쉐이더 초기화 실패!' + this);
+            }
+            gl.useProgram(program);
+            temp = vSource.attributes
+            for (i = 0, len = temp.length; i < len; i++) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, gpu.vbo['null']),
+                    gl.enableVertexAttribArray(program[temp[i]] = gl.getAttribLocation(program, temp[i])),
+                    gl.vertexAttribPointer(program[temp[i]], gpu.vbo['null'].stride, gl.FLOAT, false, 0, 0);
+            }
+            temp = vSource.uniforms
+            i = temp.length;
+            while (i--) {
+                program[temp[i]] = gl.getUniformLocation(program, temp[i]);
+            }
+            temp = fSource.uniforms
+            i = temp.length;
+            while (i--) {
+                program[temp[i]] = gl.getUniformLocation(program, temp[i]);
+            }
+            gpu.programs[name] = program;
+            return program;
+        },
+        makeTexture = function makeTexture(gpu, texture) {
+            //TODO
+            console.log('이걸재련해야됨',texture.img)
+            var gl,webglTexture;
+            gl = gpu.gl,
+                webglTexture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, webglTexture),
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
+                gl.generateMipmap(gl.TEXTURE_2D),
+                webglTexture.textrue = texture
+            gpu.textures[texture] = webglTexture,
+                gl.bindTexture(gl.TEXTURE_2D, null);
+            return gpu.textures[texture];
+        },
+        makeFrameBuffer = function makeFrameBuffer(gpu, camera) {
+            var gl, texture, framebuffer, renderbuffer, tArea,cvs,cvsW,cvsH,pRatio;
+            cvs = camera.cvs
+            if(!cvs) return
+            cvsW = cvs.width,
+                cvsH= cvs.height,
+                pRatio = window.devicePixelRatio
+            if (camera.renderArea) {
+                tArea = camera.renderArea
+            } else {
+                tArea = [0, 0, cvsW, cvsH]
+            }
+            gl = gpu.gl,
+                framebuffer = gl.createFramebuffer(),
+                framebuffer.x = tArea[0], framebuffer.y = tArea[1],
+                framebuffer.width = tArea[2] * pRatio > cvsW ? cvsW : tArea[2] * pRatio,
+                framebuffer.height = tArea[3] * pRatio > cvsH ? cvsH : tArea[3] * pRatio,
+                gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+
+            texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, framebuffer.width, framebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+            renderbuffer = gl.createRenderbuffer();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer),
+                gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, framebuffer.width, framebuffer.height),
+                gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0),
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer),
+                gl.bindTexture(gl.TEXTURE_2D, null),
+                gl.bindRenderbuffer(gl.RENDERBUFFER, null),
+                gl.bindFramebuffer(gl.FRAMEBUFFER, null),
+                gpu.framebuffers[camera] = {
+                    frameBuffer: framebuffer,
+                    texture: texture
+                };
+        }
+
+        /////////////////////////////////////
 
     World = function World(id) {
         if(!id) this.error(0);
         cvsList[this] = document.getElementById(id);
+        // for GPU
+        gpu[this] = {
+            gl: null,
+            vbo: {},
+            vnbo: {},
+            uvbo: {},
+            ibo: {},
+            programs: {},
+            textures: {},
+            framebuffers: {}
+        }
         if (!cvsList[this]) this.error(1);
-        if (glList[this] = getGL(cvsList[this]) ) {
+        if (gpu[this].gl = getGL(cvsList[this]) ) {
             renderList[this] = {},
             sceneList[this] = [],
 			autoSizer[this] = null;
@@ -66,8 +252,7 @@ var World = (function () {
 					canvas.style.height = height + 'px';
                     canvas._autoSize = isAutoSize
 					for(k in scenes) {
-						scenes[k]._update = 1
-                        scenes[k]._cameraUpdate()
+                        scenes[k].cameraUpdate()
 					}
 				};
 			}
@@ -88,9 +273,66 @@ var World = (function () {
             if (tSceneList[i] == this) this.error(0);
         }
         tSceneList.push(scene),
-        scene.gl = glList[this],
-        scene.cvs = cvsList[this],
-        scene._baseUpdate()
+        scene.cvs = cvsList[this]
+        var p = gpu[this]
+        var baseUpdate = function () {
+            // TODO 기초 버퍼들도 씬이 월드에서 등록될떄 해야겠음..
+
+            p.vbo['null'] = makeVBO(p, 'null', new Float32Array([0.0, 0.0, 0.0]), 3);
+            if (!p.vbo['_FRAMERECT_']) {
+                p.vbo['_FRAMERECT_'] = makeVBO(p, '_FRAMERECT_', [
+                    -1.0, 1.0, 0.0,
+                    1.0, 1.0, 0.0,
+                    -1.0, -1.0, 0.0,
+                    1.0, -1.0, 0.0
+                ], 3),
+                p.uvbo['_FRAMERECT_'] = makeUVBO(p, '_FRAMERECT_', [
+                    0.0, 0.0,
+                    1.0, 0.0,
+                    0.0, 1.0,
+                    1.0, 1.0
+                ], 2),
+                p.ibo['_FRAMERECT_'] = makeIBO(p, '_FRAMERECT_', [0, 1, 2, 1, 2, 3], 1);
+            }
+            scene.cameraUpdate()
+            var vS,fS
+            vS = scene.vertexShaders
+            fS = scene.fragmentShaders
+
+            console.log('~~~~~~~~~',vS)
+            console.log('~~~~~~~~~',fS)
+
+            makeProgram(p, 'color', vS.colorVertexShader, fS.colorFragmentShader);
+            makeProgram(p, 'wireFrame', vS.wireFrameVertexShader, fS.wireFrameFragmentShader);
+            makeProgram(p, 'bitmap', vS.bitmapVertexShader, fS.bitmapFragmentShader);
+            makeProgram(p, 'bitmapGouraud', vS.bitmapVertexShaderGouraud, fS.bitmapFragmentShaderGouraud);
+            makeProgram(p, 'colorGouraud', vS.colorVertexShaderGouraud, fS.colorFragmentShaderGouraud);
+            makeProgram(p, 'colorPhong', vS.colorVertexShaderPhong, fS.colorFragmentShaderPhong);
+            makeProgram(p, 'toonPhong', vS.toonVertexShaderPhong, fS.toonFragmentShaderPhong);
+            makeProgram(p, 'bitmapPhong', vS.bitmapVertexShaderPhong, fS.bitmapFragmentShaderPhong);
+            makeProgram(p, 'bitmapBlind', vS.bitmapVertexShaderBlinn, fS.bitmapFragmentShaderBlinn);
+            makeProgram(p, 'postBase', vS.postBaseVertexShader, fS.postBaseFragmentShader);
+
+
+            //TODO 버퍼도 업로드 해줘야하네 -_-
+            var tChild = scene.children
+
+            console.log('!!!!!!!!!',tChild)
+            for(var k in tChild){
+                var v = tChild[k]
+                var geo = v.geometry
+                if (geo) {
+                    if (!p.vbo[geo]) {
+                        p.vbo[geo] = makeVBO(p, geo, geo.position, 3),
+                            p.vnbo[geo] = makeVNBO(p, geo, geo.normal, 3),
+                            p.uvbo[geo] = makeUVBO(p, geo, geo.uv, 2),
+                            p.ibo[geo] = makeIBO(p, geo, geo.index, 1);
+                    }
+                }
+            }
+            console.log(p)
+        }
+        baseUpdate()
         //scene등록시 현재 갖고 있는 모든 카메라 중 visible이 카메라 전부 등록
         //이후부터는 scene에 카메라의 변화가 생기면 자신의 world에게 알려야함
         return this;
@@ -160,9 +402,11 @@ var World = (function () {
         var scene,tSceneList,cameraList,camera,gl,children,cvs;
         var tItem, tMaterial, tProgram, tVBO, tVNBO, tUVBO, tIBO, tFrameBuffer, tDiffuseList,tCulling;
         var pVBO, pVNBO, pUVBO, pIBO, pDiffuse,pProgram,pCulling;
-        var gpu
+        var tGPU
         cvs = cvsList[this],
         tSceneList = sceneList[this],
+        tGPU = gpu[this]
+        gl = tGPU.gl;
         i = tSceneList.length
         this.dispatch(World.renderBefore,currentTime)
         while(i--){
@@ -173,7 +417,6 @@ var World = (function () {
             for (k in cameraList) {
                 camera = cameraList[k]
                 if(camera.visible){
-                    gl = scene.gl;
                     if(len > 1) {
                         tFrameBuffer = scene._glFREAMBUFFERs[camera].frameBuffer;
                         gl.bindFramebuffer( gl.FRAMEBUFFER,tFrameBuffer);
@@ -188,8 +431,8 @@ var World = (function () {
                     var color = camera.backgroundColor
                     gl.clearColor(color[0],color[1],color[2],color[3]);
                     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                    for(k in scene.programs){
-                        tProgram = scene.programs[k];
+                    for(k in tGPU.programs){
+                        tProgram = tGPU.programs[k];
                         gl.useProgram(tProgram);
                         camera.cvs = cvs
                         gl.uniformMatrix4fv(tProgram.uPixelMatrix,false,camera.projectionMatrix.raw);
@@ -198,11 +441,10 @@ var World = (function () {
                     tItem = tMaterial = tProgram = tVBO = tIBO = null;
                     for (k in children) {
                         tItem = children[k],
-                        gpu = scene.gpu
-                        tVBO = gpu.vbo[tItem.geometry],
-                        tVNBO = gpu.vnbo[tItem.geometry],
-                        tUVBO = gpu.uvbo[tItem.geometry],
-                        tIBO = gpu.ibo[tItem.geometry],
+                        tVBO = tGPU.vbo[tItem.geometry],
+                        tVNBO = tGPU.vnbo[tItem.geometry],
+                        tUVBO = tGPU.uvbo[tItem.geometry],
+                        tIBO = tGPU.ibo[tItem.geometry],
                         tMaterial = tItem.material,
                         //tDiffuseList = tMaterial.diffuse;
 
@@ -218,16 +460,15 @@ var World = (function () {
                         // 쉐이딩 결정
                         switch(tMaterial.shading){
                             case  Shading.none :
-                             tProgram=gpu.programs['color'];
+                             tProgram=tGPU.programs['color'];
                             break
                             case  Shading.phong :
                                 if(tMaterial.diffuse){
-                                    tProgram=gpu.programs['bitmapPhong'];
+                                    tProgram=tGPU.programs['bitmapPhong'];
                                     //console.log('들어왔다!')
                                     useTexture =1
                                 } else {
-                                    tProgram=gpu.programs['colorPhong'];
-                                    //console.log('컬러퐁')
+                                    tProgram=tGPU.programs['colorPhong'];
                                 }
                                 useNormalBuffer = 1;
                             break
@@ -256,7 +497,7 @@ var World = (function () {
                             if(tMaterial.diffuse[0]){
                                 var textureObj = tMaterial.diffuse[tMaterial.diffuse.length-1].tex
                                 if(textureObj.isLoaded){
-                                    textureObj = gpu.textures[textureObj];
+                                    textureObj = tGPU.textures[textureObj];
                                     textureObj != pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
                                     gl.uniform1i(tProgram.uSampler, 0);
                                 }
@@ -273,11 +514,10 @@ var World = (function () {
 
                         tIBO != pIBO ? gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, tIBO) : 0;
                         gl.drawElements(gl.TRIANGLES, tIBO.numItem, gl.UNSIGNED_SHORT, 0)
-
                         // 와이어프레임 그리기
                         if(tMaterial.wireFrame) {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LEQUAL);
-                            tProgram = gpu.programs['wireFrame'],
+                            tProgram = tGPU.programs['wireFrame'],
                                 gl.useProgram(tProgram),
                                 tVBO != pVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tVBO) : 0,
                                 tVBO != pVBO ? gl.vertexAttribPointer(tProgram.aVertexPosition, tVBO.stride, gl.FLOAT, false, 0, 0) : 0,
@@ -310,10 +550,10 @@ var World = (function () {
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            tVBO = gpu.vbo['_FRAMERECT_'],
-            tUVBO = gpu.uvbo['_FRAMERECT_'],
-            tIBO = gpu.ibo['_FRAMERECT_'],
-            tProgram = gpu.programs['postProcess'];
+            tVBO = tGPU.vbo['_FRAMERECT_'],
+            tUVBO = tGPU.uvbo['_FRAMERECT_'],
+            tIBO = tGPU.ibo['_FRAMERECT_'],
+            tProgram = tGPU.programs['postProcess'];
             if (!tVBO) return;
             gl.useProgram(tProgram);
             gl.uniformMatrix4fv(tProgram.uPixelMatrix, false, [
