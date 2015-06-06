@@ -50,7 +50,7 @@ var Material = (function () {
     fnProp = {
         count:$getter(count, false, 0),
         color:{
-            get:$getter(prop,'color',base),
+            get:$getter(prop,'color',{'0':1,'1':1,'2':1,'3':1}),
             set:function colorSet(v) {
                 var p = prop[this].color;
                 v = $color(v);

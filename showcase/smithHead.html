@@ -57,7 +57,7 @@
     var material2 = new Material('#22f232')
     var material3 = new Material('#fef232')
     scene.addChild(camera);
-    world.addScene(scene);
+
     world.setAutoSize(1)
 
 
@@ -121,24 +121,24 @@
         mesh3.scaleZ = 10;
         scene.addChild(mesh3);
 
-        material2.shading = Shading.phong
-        material3.shading = Shading.phong
+//        material2.shading = Shading.phong
+//        material3.shading = Shading.phong
         material3.lambert = 1.5
 
         mesh3.y = -1
-        material.shading = Shading.phong
+//        material.shading = Shading.phong
 
-        texture.img = document.getElementById('testIMG')
-        material.addTexture(Texture.diffuse, texture)
-        console.log('재질 텍스쳐 로딩완료 확인',material.isLoaded)
-        console.log('디퓨즈 확인',material.diffuse)
+//        texture.img = document.getElementById('testIMG')
+//        material.addTexture(Texture.diffuse, texture)
+//        console.log('재질 텍스쳐 로딩완료 확인',material.isLoaded)
+//        console.log('디퓨즈 확인',material.diffuse)
 
-        setTimeout(function(){
-            var texture2 = new Texture()
-            texture2.img = document.getElementById('testIMG2')
-            material.addTexture(Texture.diffuse, texture2)
-        },1000)
-
+//        setTimeout(function(){
+//            var texture2 = new Texture()
+//            texture2.img = document.getElementById('testIMG2')
+//            material.addTexture(Texture.diffuse, texture2)
+//        },1000)
+        world.addScene(scene);
         world.addEventListener(World.renderBefore, function () {
             mesh.rotateY -= 0.01;
             mesh2.rotateY -= 0.01;
