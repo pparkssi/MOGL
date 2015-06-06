@@ -1,6 +1,3 @@
-/**
- * Created by redcamel on 2015-05-05.
- */
 var Material = (function () {
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal, 

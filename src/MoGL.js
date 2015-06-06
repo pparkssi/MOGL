@@ -21,8 +21,8 @@ var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $c
 (function() {
     var VAR = {}, value = {};
     $setPrivate = function $setPrivate(cls, v) { //공용private설정
-        $value.value = v,
-        Object.defineProperty(VAR, cls, $value);
+        $readonly.value = v,
+        Object.defineProperty(VAR, cls, $readonly);
     },
     $getPrivate = function $getPrivate(cls) { //공용private읽기
         if (arguments.length == 2 ) {
@@ -130,10 +130,10 @@ var MoGL = (function() {
                 }
             }
             //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
-            $value.value = cls.uuid = 'uuid:' + (uuid++),
-            Object.defineProperty(newProto, 'classId', $value);
-            $value.value = f.name,
-            Object.defineProperty(newProto, 'className', $value);
+            $readonly.value = cls.uuid = 'uuid:' + (uuid++),
+            Object.defineProperty(newProto, 'classId', $readonly);
+            $readonly.value = f.name,
+            Object.defineProperty(newProto, 'className', $readonly);
             if(!(cls.uuid in counter)) counter[cls.uuid] = 0;
             f = f.prototype;
             for (k in f) {
@@ -171,8 +171,8 @@ var MoGL = (function() {
     uuid2instance = {},
     //MoGL정의
     MoGL = function MoGL() {
-        $value.value = 'uuid:' + (uuid++),
-        Object.defineProperty(this, 'uuid', $value), //객체고유아이디
+        $readonly.value = 'uuid:' + (uuid++),
+        Object.defineProperty(this, 'uuid', $readonly), //객체고유아이디
         $writable.value = true,
         Object.defineProperty(this, 'isAlive', $writable),//활성화상태초기화 true
         counter[this.classId]++, //클래스별 인스턴스 수 증가
