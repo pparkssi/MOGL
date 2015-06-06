@@ -223,8 +223,8 @@ var World = (function () {
                             case  Shading.phong :
                                 if(tMaterial.diffuse){
                                     tProgram=gpu.programs['bitmapPhong'];
-                                    console.log('들어왔다!')
-                                    //useTexture =1
+                                    //console.log('들어왔다!')
+                                    useTexture =1
                                 } else {
                                     tProgram=gpu.programs['colorPhong'];
                                     //console.log('컬러퐁')
@@ -249,18 +249,19 @@ var World = (function () {
                         gl.uniform4fv(tProgram.uColor, tMaterial.color);
 
                         // 텍스쳐 세팅
-                        //if(useTexture){
-                        //    tUVBO != pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
-                        //    tUVBO != pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
-                        //    gl.activeTexture(gl.TEXTURE0);
-                        //    var textureObj = tMaterial.diffuse[0];
-                        //    console.log(textureObj)
-                        //    if(textureObj.isLoaded){
-                        //        textureObj != pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
-                        //        gl.uniform1i(tProgram.uSampler, 0);
-                        //    }
-                        //}
-
+                        if(useTexture){
+                            tUVBO != pUVBO ? gl.bindBuffer(gl.ARRAY_BUFFER, tUVBO) : 0,
+                            tUVBO != pUVBO ? gl.vertexAttribPointer(tProgram.aUV, tUVBO.stride, gl.FLOAT, false, 0, 0) : 0,
+                            gl.activeTexture(gl.TEXTURE0);
+                            if(tMaterial.diffuse[0]){
+                                var textureObj = tMaterial.diffuse[0].tex
+                                if(textureObj.isLoaded){
+                                    textureObj = gpu.textures[textureObj];
+                                    textureObj != pDiffuse ? gl.bindTexture(gl.TEXTURE_2D, textureObj) : 0;
+                                    gl.uniform1i(tProgram.uSampler, 0);
+                                }
+                            }
+                        }
                         f3[0] = tItem.rotateX,f3[1] = tItem.rotateY,f3[2] = tItem.rotateZ;
                         gl.uniform3fv(tProgram.uRotate, f3),
 
@@ -291,7 +292,7 @@ var World = (function () {
                             gl.enable(gl.DEPTH_TEST), gl.depthFunc(gl.LESS);
                         }
 
-                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pCulling=tCulling//,pDiffuse = textureObj;
+                        pProgram = tProgram ,pVBO = tVBO, pVNBO = useNormalBuffer ? tVNBO : null, pUVBO = tUVBO, pIBO = tIBO, pCulling=tCulling,pDiffuse = textureObj;
                     }
                     //gl.bindTexture(gl.TEXTURE_2D, scene._glFREAMBUFFERs[camera.uuid].texture);
                     //gl.bindTexture(gl.TEXTURE_2D, null);

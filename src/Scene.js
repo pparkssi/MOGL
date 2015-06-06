@@ -176,10 +176,23 @@ var Scene = (function () {
         gl.compileShader(shader);
         return shader;
     },
-    makeTexture = function makeTexture(gpu, id, image/*,resizeType*/) {
+    makeTexture = function makeTexture(gpu, texture) {
         //TODO
-        var texture
-        return texture;
+        console.log('이걸재련해야됨',texture.img)
+        var gl,webglTexture;
+        gl = gpu.gl,
+        webglTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, webglTexture),
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img),
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE),
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE),
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR),
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR),
+        gl.generateMipmap(gl.TEXTURE_2D),
+        webglTexture.textrue = texture
+        gpu.textures[texture] = webglTexture,
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        return gpu.textures[texture];
     },
     makeFrameBuffer = function makeFrameBuffer(gpu, camera) {
         var gl, texture, framebuffer, renderbuffer, tArea,cvs,cvsW,cvsH,pRatio;
@@ -366,7 +379,7 @@ var Scene = (function () {
         }
     }
     fn.addMesh = function(v){
-        var p = children[this],  geo;
+        var p = children[this], geo,mat;
         if (p[v]) this.error(0);
         if (!(v instanceof Mesh)) this.error(1);
         p[v] = v;
@@ -382,6 +395,21 @@ var Scene = (function () {
                 p.ibo[geo] = makeIBO(p, geo, geo.index, 1);
             }
         }
+
+        mat = v.material
+        mat.addEventListener(Material.changed,function(){
+            var t= this.diffuse
+            if(t){
+                var i = t.length
+                while(i--){
+                    console.log('로딩체크',t[i].tex.isLoaded)
+                    if(t[i].tex.isLoaded){
+                        makeTexture(p,t[i].tex)
+                    }
+                }
+            }
+        })
+        mat.dispatch(Material.changed,mat)
         return this;
     },
     fn.addCamera = function(v){
@@ -407,7 +435,8 @@ var Scene = (function () {
         return this;
     },
     fn.addMaterial = function (v) {
-        var p = materials[this];
+        var p = materials[this],self,i;
+        self = this;
         if (p[v]) this.error(0);
         if (!(v instanceof Material)) this.error(1);
         p[v] = v,
@@ -415,27 +444,7 @@ var Scene = (function () {
         return this;
     },
     fn.addTexture = function addTexture(texture/*,resizeType*/) {
-        var p = textures[this];
-        if (p[id]) this.error(0);
-        if (checkDraft(image)) this.error(1);
-        function checkDraft(target) {
-            if (target instanceof HTMLImageElement) return 0;
-            if (target instanceof HTMLCanvasElement) return 0;
-            if (target instanceof HTMLVideoElement) return 0;
-            if (target instanceof ImageData) return 0;
-            if (target['substring'] && target.substring(0, 10) == 'data:image' && target.indexOf('base64') > -1) return 0; // base64문자열 - urlData형식으로 지정된 base64문자열
-            if (typeof target == 'string') return 0;
-            // TODO 블랍은 어카지 -__;;;;;;;;;;;;;;;;;;;;;;;;실제 이미지를 포함하고 있는 Blob객체.
-            return 1;
-        }
-
-        if (textures[id]) textures[id].webglTexture = makeTexture(this, id, image);
-        else {
-            textures[id] = {count: 0, last: 0, webglTexture: null, resizeType: arguments[2] || null},
-                textures[id].webglTexture = makeTexture(this, id, image, arguments[2]);
-            //console.log(textures),
-            //console.log(id, image)
-        }
+        //TODO
         return this;
     },
     fn.addFragmentShader = function addFragmentShader(shader) {

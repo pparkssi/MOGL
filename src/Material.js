@@ -25,7 +25,8 @@ var Material = (function () {
     prop = {},
     //lib
     textureLoaded = function(mat){
-        this.removeEventListener(Texture.load, textureLoaded),
+        console.log('이게안터지나?')
+        //this.removeEventListener(Texture.load, textureLoaded),
         mat.dispatch(Material.changed);
         if (mat.isLoaded) mat.dispatch(Material.load);
     },
