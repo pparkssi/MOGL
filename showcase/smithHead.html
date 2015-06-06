@@ -45,6 +45,7 @@
     Current FPS: <span id="currentFPS"></span>
     Average FPS: <span id="averageFPS"></span>
 </div>
+<img src="smithHead/Map-COL.jpg" id="testIMG">
 <script>
     'use strict';
     var world = new World('canvas');
@@ -60,6 +61,12 @@
 
     scene.addMaterial(material);
     scene.addMaterial(material2);
+
+
+    var texture = new Texture()
+    texture.img = document.getElementById('testIMG')
+    material.addTexture(Texture.diffuse, texture)
+
     //    scene.addTexture('texture', 'smithHead/Map-COL.jpg');
     //    scene.getMaterial('material').addTexture(Texture.diffuse, 'texture');
     //    scene.getMaterial('material2').addTexture(Texture.diffuse, 'texture');

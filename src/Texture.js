@@ -13,6 +13,7 @@ var Texture = (function() {
     empty.src = canvas.toDataURL(),
 
     resizer = function(resizeType, v){
+        console.log('리사이저처리',resizeType, v)
         var tw, th, dw, dh;
         //texture size
         tw = th = 1;
@@ -20,7 +21,7 @@ var Texture = (function() {
         while (v.height > th) th *= 2;
         //fit size
         if (v.width == tw && v.height == th) return;
-        
+
         if (resizeType == Texture.zoomOut) {
             if (v.width < tw) tw /= 2;
             if (v.height < th) th /= 2;
@@ -42,7 +43,7 @@ var Texture = (function() {
         default:
             context.drawImage(v, 0, 0, dw, dh);
         }
-        v.src = context.toDataURL();
+        v.src = canvas.toDataURL();
         return v;
     };
     //private
@@ -50,13 +51,14 @@ var Texture = (function() {
     imgs = {},
     isLoaded = {},
     loaded = function(e){
+        var self = this._target
         console.log(this)
-        console.log(this._target)
-        console.log('로딩안된게 로딩되어 먼가 처리해야함',this._target.resizeType)
+        console.log(self)
+        console.log('로딩안된게 로딩되어 먼가 처리해야함',self.resizeType)
         isLoaded[this] = true,
-        imgs[this] = resizer(this._target.resizeType, this),
-        console.log(imgs[this])
-        this._target.dispatch('load');
+        imgs[this] = resizer(self.resizeType, this),
+        this.removeEventListener('load');
+        self.dispatch('load');
     };
     //shared private
     $setPrivate('Texture', {
