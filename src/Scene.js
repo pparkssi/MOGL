@@ -98,7 +98,10 @@ var Scene = (function () {
         geometrys[this] = {},
         vertexShaders[this] = {},
         fragmentShaders[this] = {},
-        updateList[this] = [],
+        updateList[this] = {
+            mesh : [],
+            material : []
+        },
         this.addVertexShader(Shader.colorVertexShader),this.addFragmentShader(Shader.colorFragmentShader)
         this.addVertexShader(Shader.wireFrameVertexShader),this.addFragmentShader(Shader.wireFrameFragmentShader),
         this.addVertexShader(Shader.bitmapVertexShader),this.addFragmentShader(Shader.bitmapFragmentShader),
@@ -128,11 +131,11 @@ var Scene = (function () {
         }
     },
     fn.addMesh = function(v){
-        var p = children[this], mat;
+        var p = children[this], p2 = updateList[this], mat;
         if (p[v]) this.error(0);
         if (!(v instanceof Mesh)) this.error(1);
         p[v] = v;
-        updateList[this].push(v)
+        updateList[this].mesh.push(v)
         v.scene = this
         mat = v.material
         mat.addEventListener(Material.changed,function(){
@@ -142,8 +145,7 @@ var Scene = (function () {
                 while(i--){
                     console.log('로딩체크',t[i].tex.isLoaded)
                     if(t[i].tex.isLoaded){
-                        //TODO 고쳐
-                        //makeTexture(p,t[i].tex)
+                        p2.material.push(t[i].tex)
                     }
                 }
             }

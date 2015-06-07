@@ -423,11 +423,13 @@ var World = (function () {
         while(i--){
             //console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
             scene = tSceneList[i]
-            //Scene 업데이트 버퍼업데이트
-            j = scene.updateList.length
+
+            //Scene 업데이트 사항 반영
+            j = scene.updateList.mesh.length
             while(j--){
+                // 버퍼 업데이트
                 var updateItem, geo;
-                updateItem = scene.updateList[i]
+                updateItem = scene.updateList.mesh[i]
                 geo = updateItem.geometry
                 if (geo) {
                     if (!tGPU.vbo[geo]) {
@@ -438,6 +440,12 @@ var World = (function () {
                     }
                 }
             }
+            j = scene.updateList.material.length
+            while(j--){
+                makeTexture(tGPU,scene.updateList.material[i])
+            }
+            scene.updateList.mesh.length= 0
+            scene.updateList.material.length= 0
 
             cameraList = scene.cameras
             for (k in cameraList) len++
@@ -629,11 +637,10 @@ var World = (function () {
             }
         }
         this.dispatch(World.renderAfter,currentTime)
-		return
         //gl.finish();
-    },
-    World = MoGL.ext(World),
+    }
     World.renderBefore = 'WORLD_RENDER_BEFORE',
     World.renderAfter = 'WORLD_RENDER_AFTER'
-    return World;
+    return MoGL.ext(World);
 })();
+console.log(Object.isExtensible(World))

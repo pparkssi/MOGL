@@ -121,9 +121,9 @@ var Texture = (function() {
     },
     (function() {
         (function(){
-            var key = 'zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
+            var key = 'load,zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
             while (i--) Texture[key[i]] = key[i];
         })();
     })();
-    return MoGL.ext(Texture, fnProp);
+    return MoGL.ext(Texture,fnProp);
 })();

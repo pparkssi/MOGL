@@ -192,13 +192,13 @@ var MoGL = (function() {
         };
         return function(cls, newProto, f, prop, notFreeze) {
             var k, v;
-            //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
             //정적 속성을 복사
             for (k in f) {
                 if (f.hasOwnProperty(k)) {
                     cls[k] = f[k];
                 }
             }
+            //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
             $readonly.value = cls.uuid = 'uuid:' + (uuid++),
             Object.defineProperty(newProto, 'classId', $readonly);
             $readonly.value = f.name,
