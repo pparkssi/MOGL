@@ -4,132 +4,73 @@
 'use strict'
 var Scene = (function () {
     var vertexShaderParser, fragmentShaderParser,
-        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, cvsList,
+        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, cvsList,updateList,
         Scene, fn, fnProp;
     //lib
-
-    // TODO 이놈은 등록하기 전에 코드만 가지게 변경
     vertexShaderParser = function vertexShaderParser(source) {
-        var temp, i, resultStr;
-        var code =  source.code
-        var resultObject ={} ;
-            resultObject.uniforms = [],
-            resultObject.attributes = [],
-            resultStr = "",
-            temp = code.attributes,
-            i = temp.length;
+        var i, temp, str, resultObject, code;
+        code =  source.code,
+        resultObject = {
+            uniforms: [],
+            attributes: [],
+            id: source.id,
+            shaderStr: null
+        },
+        str = "",
+        temp = code.attributes,
+        i = temp.length;
         while (i--) {
-            resultStr += 'attribute ' + temp[i] + ';\n',
+            str += 'attribute ' + temp[i] + ';\n',
             resultObject.attributes.push(temp[i].split(' ')[1]);
         }
         temp = code.uniforms,
-            i = temp.length;
+        i = temp.length;
         while (i--) {
-            resultStr += 'uniform ' + temp[i] + ';\n',
+            str += 'uniform ' + temp[i] + ';\n',
             resultObject.uniforms.push(temp[i].split(' ')[1]);
         }
         temp = code.varyings,
-            i = temp.length;
+        i = temp.length;
         while (i--) {
-            resultStr += 'varying ' + temp[i] + ';\n';
+            str += 'varying ' + temp[i] + ';\n';
         }
-        resultStr += VertexShader.baseFunction,
-        resultStr += 'void main(void){\n',
-        resultStr += code.main + ';\n',
-        resultStr += '}\n'
-        resultObject.id = source.id
-        resultObject.shaderStr = resultStr
-
-        //var gl, temp, i, resultStr, shader;
-        //gl = gpu.gl,
-        //shader = gl.createShader(gl.VERTEX_SHADER),
-        //shader.uniforms = [],
-        //shader.attributes = [],
-        //resultStr = "",
-        //temp = source.attributes,
-        //i = temp.length;
-        //while (i--) {
-        //    resultStr += 'attribute ' + temp[i] + ';\n',
-        //    shader.attributes.push(temp[i].split(' ')[1]);
-        //}
-        //temp = source.uniforms,
-        //i = temp.length;
-        //while (i--) {
-        //    resultStr += 'uniform ' + temp[i] + ';\n',
-        //    shader.uniforms.push(temp[i].split(' ')[1]);
-        //}
-        //temp = source.varyings,
-        //i = temp.length;
-        //while (i--) {
-        //    resultStr += 'varying ' + temp[i] + ';\n';
-        //}
-        //resultStr += VertexShader.baseFunction,
-        //resultStr += 'void main(void){\n',
-        //resultStr += source.main + ';\n',
-        //resultStr += '}\n',
-        ////console.log(resultStr),
-        //gl.shaderSource(shader, resultStr),
-        //gl.compileShader(shader);
+        str += VertexShader.baseFunction,
+        str += 'void main(void){\n',
+        str += code.main + ';\n',
+        str += '}\n'
+        resultObject.shaderStr = str
         return resultObject;
     },
     fragmentShaderParser = function fragmentShaderParser(source) {
-        var resultStr, i, temp, resultObject;
-        var code =  source.code
-        resultObject = {}
-        resultObject.uniforms = [],
-        resultStr = "";
+        var i, temp, str, resultObject, code;
+        code =  source.code,
+        resultObject = {
+            uniforms: [],
+            id: source.id,
+            shaderStr: null
+        },
+        str = "";
         if (code.precision) {
-            resultStr += 'precision ' + code.precision + ';\n';
+            str += 'precision ' + code.precision + ';\n';
         }
         else {
-            resultStr += 'precision mediump float;\n';
+            str += 'precision mediump float;\n';
         }
         temp = code.uniforms,
-            i = temp.length;
+        i = temp.length;
         while (i--) {
-            resultStr += 'uniform ' + temp[i] + ';\n',
+            str += 'uniform ' + temp[i] + ';\n',
             resultObject.uniforms.push(temp[i].split(' ')[1]);
         }
         temp = code.varyings,
-            i = temp.length;
+        i = temp.length;
         while (i--) {
-            resultStr += 'varying ' + temp[i] + ';\n';
+            str += 'varying ' + temp[i] + ';\n';
         }
-        resultStr += 'void main(void){\n',
-        resultStr += code.main + ';\n',
-        resultStr += '}\n'
-        resultObject.id = source.id
-        resultObject.shaderStr = resultStr
-        //console.log(resultStr)
-
-        //var gl, resultStr, i, temp, shader;
-        //gl = gpu.gl,
-        //shader = gl.createShader(gl.FRAGMENT_SHADER),
-        //shader.uniforms = [],
-        //resultStr = "";
-        //if (source.precision) {
-        //    resultStr += 'precision ' + source.precision + ';\n';
-        //}
-        //else {
-        //    resultStr += 'precision mediump float;\n';
-        //}
-        //temp = source.uniforms,
-        //i = temp.length;
-        //while (i--) {
-        //    resultStr += 'uniform ' + temp[i] + ';\n',
-        //    shader.uniforms.push(temp[i].split(' ')[1]);
-        //}
-        //temp = source.varyings,
-        //i = temp.length;
-        //while (i--) {
-        //    resultStr += 'varying ' + temp[i] + ';\n';
-        //}
-        //resultStr += 'void main(void){\n',
-        //resultStr += source.main + ';\n',
-        //resultStr += '}\n',
-        ////console.log(resultStr),
-        //gl.shaderSource(shader, resultStr),
-        //gl.compileShader(shader);
+        str += 'void main(void){\n',
+        str += code.main + ';\n',
+        str += '}\n'
+        resultObject.shaderStr = str
         return resultObject;
     },
 
@@ -142,9 +83,11 @@ var Scene = (function () {
     geometrys = {},
     vertexShaders = {},
     fragmentShaders = {},
+    updateList = {},
     //shared private
     $setPrivate('Scene', {
     }),
+
     Scene = function Scene() {
         // for JS
         cvsList[this] = null,
@@ -155,81 +98,42 @@ var Scene = (function () {
         geometrys[this] = {},
         vertexShaders[this] = {},
         fragmentShaders[this] = {},
-
-        this.addVertexShader(Shader.colorVertexShader),
-        this.addFragmentShader(Shader.colorFragmentShader)
-        this.addVertexShader(Shader.wireFrameVertexShader),
-        this.addFragmentShader(Shader.wireFrameFragmentShader),
-        this.addVertexShader(Shader.bitmapVertexShader),
-        this.addFragmentShader(Shader.bitmapFragmentShader),
-        this.addVertexShader(Shader.bitmapVertexShaderGouraud),
-        this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
-        this.addVertexShader(Shader.colorVertexShaderGouraud),
-        this.addFragmentShader(Shader.colorFragmentShaderGouraud),
-        this.addVertexShader(Shader.colorVertexShaderPhong),
-        this.addFragmentShader(Shader.colorFragmentShaderPhong),
-        this.addVertexShader(Shader.toonVertexShaderPhong),
-        this.addFragmentShader(Shader.toonFragmentShaderPhong),
-        this.addVertexShader(Shader.bitmapVertexShaderPhong),
-        this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
-        this.addVertexShader(Shader.bitmapVertexShaderBlinn),
-        this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
-        this.addVertexShader(Shader.postBaseVertexShader),
-        this.addFragmentShader(Shader.postBaseFragmentShader);
-
+        updateList[this] = [],
+        this.addVertexShader(Shader.colorVertexShader),this.addFragmentShader(Shader.colorFragmentShader)
+        this.addVertexShader(Shader.wireFrameVertexShader),this.addFragmentShader(Shader.wireFrameFragmentShader),
+        this.addVertexShader(Shader.bitmapVertexShader),this.addFragmentShader(Shader.bitmapFragmentShader),
+        this.addVertexShader(Shader.bitmapVertexShaderGouraud),this.addFragmentShader(Shader.bitmapFragmentShaderGouraud),
+        this.addVertexShader(Shader.colorVertexShaderGouraud),this.addFragmentShader(Shader.colorFragmentShaderGouraud),
+        this.addVertexShader(Shader.colorVertexShaderPhong),this.addFragmentShader(Shader.colorFragmentShaderPhong),
+        this.addVertexShader(Shader.toonVertexShaderPhong),this.addFragmentShader(Shader.toonFragmentShaderPhong),
+        this.addVertexShader(Shader.bitmapVertexShaderPhong),this.addFragmentShader(Shader.bitmapFragmentShaderPhong),
+        this.addVertexShader(Shader.bitmapVertexShaderBlinn),this.addFragmentShader(Shader.bitmapFragmentShaderBlinn),
+        this.addVertexShader(Shader.postBaseVertexShader),this.addFragmentShader(Shader.postBaseFragmentShader);
     };
 
     fn = Scene.prototype,
     fnProp = {
-        cvs : {
-            get : $getter(cvsList),
-            set : $setter(cvsList)
+        cvs: {
+            get: $getter(cvsList),
+            set: $setter(cvsList)
         },
-        vertexShaders : { get : $getter(vertexShaders)},
-        fragmentShaders : { get : $getter(fragmentShaders)},
+        updateList: {
+            get: $getter(updateList),
+        },
+        vertexShaders: {get: $getter(vertexShaders)},
+        fragmentShaders: {get: $getter(fragmentShaders)},
         cameras: {get: $getter(cameras)},
-        children : {
-            get : $getter(children)
+        children: {
+            get: $getter(children)
         }
     },
-    fn.cameraUpdate = function(){
-        var p, k;
-        p = cameras[this]
-        for (k in p) {
-            var camera, tRenderArea, cvs;
-            camera = p[k],
-            cvs = camera.cvs = cvsList[this]
-            if(!cvs) return
-            tRenderArea = camera.renderArea;
-            if (tRenderArea) {
-                var wRatio = tRenderArea[2] / cvs.width;
-                var hRatio = tRenderArea[3] / cvs.height;
-                camera.setRenderArea(tRenderArea[0], tRenderArea[1], cvs.width * wRatio, cvs.height * hRatio);
-            }
-            camera.resetProjectionMatrix()
-                //TODO 고쳐
-            //makeFrameBuffer(gpu[this],camera);
-        }
-    }
     fn.addMesh = function(v){
-        var p = children[this], geo,mat;
+        var p = children[this], mat;
         if (p[v]) this.error(0);
         if (!(v instanceof Mesh)) this.error(1);
         p[v] = v;
+        updateList[this].push(v)
         v.scene = this
-        //TODO 고쳐
-        //gpu
-        //p = gpu[this],
-        //geo = v.geometry
-        //if (geo) {
-        //    if (!p.vbo[geo]) {
-        //        p.vbo[geo] = makeVBO(p, geo, geo.position, 3),
-        //        p.vnbo[geo] = makeVNBO(p, geo, geo.normal, 3),
-        //        p.uvbo[geo] = makeUVBO(p, geo, geo.uv, 2),
-        //        p.ibo[geo] = makeIBO(p, geo, geo.index, 1);
-        //    }
-        //}
-
         mat = v.material
         mat.addEventListener(Material.changed,function(){
             var t= this.diffuse
@@ -253,7 +157,6 @@ var Scene = (function () {
         if (!(v instanceof Camera)) this.error(1);
         p[v] = v;
         v.cvs = cvsList[this]
-        this.cameraUpdate()
         return this;
     },
     fn.addChild = function addChild(v) {
@@ -281,18 +184,16 @@ var Scene = (function () {
         //TODO
         return this;
     },
-    fn.addFragmentShader = function addFragmentShader(shader) {
+    fn.addFragmentShader = function addFragmentShader(v) {
         var p = fragmentShaders[this];
-        if (p[shader.id]) this.error(0);
-        p[shader.id] = fragmentShaderParser(shader);;
-        //console.log( p[shader.id] )
+        if (p[v.id]) this.error(0);
+        p[v.id] = fragmentShaderParser(v);;
         return this
     },
-    fn.addVertexShader = function addVertexShader(shader) {
+    fn.addVertexShader = function addVertexShader(v) {
         var p = vertexShaders[this];
-        if (p[shader.id]) this.error(0);
-        p[shader.id] = vertexShaderParser(shader);
-        //console.log( p[shader.id] )
+        if (p[v.id]) this.error(0);
+        p[v.id] = vertexShaderParser(v);
         return this
     },
     ///////////////////////////////////////////////////////////////////////////

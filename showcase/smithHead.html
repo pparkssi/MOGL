@@ -57,7 +57,7 @@
     var material2 = new Material('#22f232')
     var material3 = new Material('#fef232')
     scene.addChild(camera);
-
+    world.addScene(scene);
     world.setAutoSize(1)
 
 
@@ -138,12 +138,13 @@
 //            texture2.img = document.getElementById('testIMG2')
 //            material.addTexture(Texture.diffuse, texture2)
 //        },1000)
-        world.addScene(scene);
-        world.addEventListener(World.renderBefore, function () {
+        var tt = function tt() {
             mesh.rotateY -= 0.01;
             mesh2.rotateY -= 0.01;
             mesh3.rotateY -= 0.01;
-        })
+        }
+        world.addEventListener(World.renderBefore, tt)
+
         world.start()
     }
 
