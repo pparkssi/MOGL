@@ -13,10 +13,10 @@ MOGL is a lightweight & high performance **MO**bile web**GL** library.
 * [Getting Started](GETTING-STARTED.md)
 * [Tutorials](tutorial)
 * [Contributing](CONTRIBUTING.md)
+* [Committing](COMMITTING.md)
 * [APIs](doc)
 
 **ShowCase**
 
-* [Monkey](http://projectbs.github.io/MoGL/showcase.0.1/monkey.html)
-* [Monkeys](http://projectbs.github.io/MoGL/showcase.0.1/monkeys.html)
-* [MultiCamera](http://projectbs.github.io/MoGL/showcase.0.1/parseShader.html)
+* [Monkey](http://projectbs.github.io/MoGL/showcase.0.2/monkey.html)
+* [Monkeys](http://projectbs.github.io/MoGL/showcase.0.2/monkeys.html)

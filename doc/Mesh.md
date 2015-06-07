@@ -1,7 +1,13 @@
 # Mesh
-* parent : [MoGL](MoGL.md)
+* parent : [Matrix](Matrix.md)
 * children : [Camera](Camera.md), [Light](Light.md)
 * [Constructor](#constructor)
+
+**const**
+
+1. Mesh.cullingNone = 'CULLING_NONE'  : Mesh Face Culling을 하지 않음.
+2. Mesh.cullingFront = 'CULLING_FRONT' : Mesh FrontFace를 그리지 않음.
+3. Mesh.cullingBack = 'CULLING_BACK' : Mesh BackFace를 그리지않음
 
 **field**
 * [rotateX, rotateY, rotateZ](#rotatex-rotatey-rotatez)
@@ -23,6 +29,7 @@
 * [setPosition](#setposition-positionarray-)
 * [setRotate](#setrotate-rotatearray-)
 * [setScale](#setscale-scalearray-)
+* [setCulling](#setculling-valuestring-)
 
 [top](#)
 ## Constructor
@@ -425,3 +432,28 @@ mesh.setScale( [1, 2.5, 0.8] );
 ```
 
 [top](#)
+### setCulling( value:String )
+
+**description**
+
+현재 Mesh의 Face Culling을 지정함
+
+**param**
+
+1. value:String - Mesh.cullingNone or Mesh.cullingFront or Mesh.cullingBack 
+
+**return**
+
+this - 메서드체이닝을 위해 자신을 반환함.
+
+**sample**
+
+```javascript
+var mesh = world.getScene('lobby').getChild('cube');
+mesh.setCulling(Mesh.cullingNone) // 페이스 컬링을 하지않음
+mesh.setCulling(Mesh.cullingFront) // 앞면 페이스 컬링을 함
+mesh.setCulling(Mesh.cullingBack) // 뒷면 페이스 컬링을 함
+```
+
+[top](#)
+

@@ -64,14 +64,14 @@ var mat5 = Material('#ff00000.8');
     * [Texture.diffuseWrap](Texture.md#diffusewrap) or 'diffuseWrap' - 디퓨즈랩 맵으로 등록함. 디퓨즈랩이란 광원에 의해 명암이 표현될때 특정 램버트 값 이후의 어두운 부분에 적용될 맵임.
     * [Texture.normal](Texture.md#normal) or 'normal' - 노말 맵으로 등록함.
     * [Texture.specular](Texture.md#specular) or 'specular' - 스페큘러 맵으로 등록함.
-    * [Texture.specularNormal](Texture.md#specularNormal) or 'diffuse' - 스페큘러노말 맵으로 등록함.
+    * [Texture.specularNormal](Texture.md#specularNormal) or 'specularNormal' - 스페큘러노말 맵으로 등록함.
 2. textureId:string - 최종 포함될 [Scene](Scene.md)에 등록된 texture의 id.
 3. ?index:int - 중첩되는 이미지의 경우 순번을 정의함. 생략하거나 null 이면 마지막 인덱스 + 1. 각 인덱스는 맵의 타입별로 관리됨.
 4. ?blendMode:string - 중첩되는 이미지의 경우 아래의 이미지와 합성되는 속성을 정의함. 첫번째 텍스쳐는 적용되지 않고 기본값은 'alpha' 이고 다음과 같은 값이 올 수 있음.
     * [BlendMode.add](BlendMode.md#add) or 'add' -  전면색을 배경색에 더하고 올림값 0xFF를 적용.
     * [BlendMode.alpha](BlendMode.md#alpha) or 'alpha' - 전면색의 알파값에 따라 배경색을 덮어가는 가장 일반적인 중첩.
     * [BlendMode.darken](BlendMode.md#darken) or 'darken' - 전면색과 배경색 중 보다 어두운 색상(값이 작은 색상)을 선택.
-    * [BlendMode.difference](BlendMode.md#difference)or 'difference' - 전면색과 배경색을 비교하여 둘 중 밝은 색상 값에서 어두운 색상 값을 뺌.
+    * [BlendMode.difference](BlendMode.md#difference) or 'difference' - 전면색과 배경색을 비교하여 둘 중 밝은 색상 값에서 어두운 색상 값을 뺌.
     * [BlendMode.erase](BlendMode.md#erase) or 'erase' - 전면색의 알파만 적용하여 배경색을 지움.
     * [BlendMode.hardlight](BlendMode.md#hardlight) or 'hardlight' - 전면색의 어두운 정도를 기준으로 배경색을 조정.
     * [BlendMode.invert](BlendMode.md#invert) or 'invert' - 전면색을 이용하여 배경색을 반전시킴.

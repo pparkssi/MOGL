@@ -18,7 +18,7 @@
 [MoGL Release 페이지](https://github.com/projectBS/MoGL/releases) 링크에서 최신 버전을 다운로드할 수 있고 이 예제는 0.1 버전을 사용하였습니다.
 
 이 예제는 MoGL의 기본적인 사용법은 다루지 않습니다.
-기본적인 사용법을 익히고 싶다면 [시작하기](https://github.com/projectBS/MoGL/blob/master/GettingStart.md) 링크를 먼저 확인해 주세요.
+기본적인 사용법을 익히고 싶다면 [시작하기](https://github.com/projectBS/MoGL/blob/master/GETTING-STARTED.md) 링크를 먼저 확인해 주세요.
 
 **1. Material( 재질 ) 등록하기**
 
