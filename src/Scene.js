@@ -167,14 +167,17 @@ var Scene = (function () {
         return this;
     },
     fn.addMaterial = function (v) {
-        var p = materials[this],self,i;
+        var p = materials[this];
         if (p[v]) this.error(0);
         if (!(v instanceof Material)) this.error(1);
         p[v] = v
         return this;
     },
-    fn.addTexture = function addTexture(texture/*,resizeType*/) {
-        //TODO
+    fn.addTexture = function addTexture(v) {
+        var p = textures[this];
+        if (p[v]) this.error(0);
+        if (!(v instanceof Texture)) this.error(1);
+        p[v] = v
         return this;
     },
     fn.addFragmentShader = function addFragmentShader(v) {
