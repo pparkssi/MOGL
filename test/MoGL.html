@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<title>MoGL Test Suite - MoGL.js</title>
-<meta charset="utf-8"/>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="format-detection" content="telephone=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi" />
+	<title>MoGL Test Suite - MoGL.js</title>
+	<meta charset="utf-8"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi" />
 	<link rel="stylesheet" type="text/css" href="css.css" />
 </head>
 <body>
@@ -17,96 +17,368 @@
 <script src="../src/MoGL.js"></script>
 <script src="http://js.bsapi.co/test/"></script>
 <script>
-var parent = function( a, b ){
-	this.a = a;
-	this.b = b;
-};
-parent.prototype.printA = function(){
-	return this.a;
-};
-parent.prototype.printB = function(){
-	return this.b;
-};
-parent = MoGL.ext( parent, MoGL );
+(function(){
+	var parent = function parent( a, b ){ 
+		this.a = a;
+		this.b = b;
+	};
+	parent.prototype.printA = function(){
+		return this.a;
+	};
+	parent.prototype.printB = function(){
+		return this.b;
+	};
+	parent = MoGL.ext(parent);
 
-var child = function( a, b, c ){
-	this.c = c;
-};
-child.prototype.printC = function(){
-	return this.c;
-};
-child = MoGL.ext( child, parent );
+	var child = function child( a, b, c ){
+		this.c = c;
+	};
+	child.prototype.printC = function(){
+		return this.c;
+	};
+	child.prototype.errorTest = function(){
+		this.error(1);
+	};
+	child = parent.ext(child);
 
-var instance1 = new child( 1, 2, 3 );
 
-bsTest( 'new',
-	function(){
-		return instance1.uuid;
-	}, 2,
-	function(){
-		return instance1.isAlive;
-	}, true,
-	function(){
-		return instance1.printA();
-	}, 1,
-	function(){
-		return instance1.printB();
-	}, 2,
-	function(){
-		return instance1.printC();
-	}, 3
-);
-console.log( instance1.constructor, instance1.constructor === child, instance1.constructor === parent);
-var instance2 = child( 4, 5, 6 );
+	var instance1 = new child( 1, 2, 3 );
 
-bsTest( 'factory',
-	function(){
-		return instance2.uuid;
-	}, 3,
-	function(){
-		return instance2.isAlive;
-	}, true,
-	function(){
-		return instance2.printA();
-	}, 4,
-	function(){
-		return instance2.printB();
-	}, 5,
-	function(){
-		return instance2.printC();
-	}, 6
-);
+	bsTest( 'new',
+        function(){
+            return instance1.isAlive;
+        }, true,
+        function(){
+            return instance1.printA();
+        }, 1,
+        function(){
+            return instance1.printB();
+        }, 2,
+        function(){
+            return instance1.printC();
+        }, 3
+	);
 
-bsTest( 'count',
-	function(){
-		return MoGL.count();
-	}, 2,
-	function(){
-		return MoGL.count(child);
-	}, 2
-);
+	var instance2 = child( 4, 5, 6 );
 
-instance1.destroy();
-instance2.destroy();
-bsTest( 'destroy',
-	function(){
-		return instance2.isAlive;
-	}, false,
-	function(){
-		return instance2.isAlive;
-	}, false
-);
-bsTest( 'error',
-	function(){
-		var test = '';
-		try{
-			MoGL.error( 'test', 'method', 3 )
-		}catch(e){
-			test = e.toString();
-		}
-		return test.indexOf( 'test.method:3' ) > -1;
-	}, true
-);
+	bsTest( 'factory',
+        function(){
+            return instance2.isAlive;
+        }, true,
+        function(){
+            return instance2.printA();
+        }, 4,
+        function(){
+            return instance2.printB();
+        }, 5,
+        function(){
+            return instance2.printC();
+        }, 6
+	);
+
+	bsTest( 'count',
+        function(){
+            return child.count();
+        }, 2,
+        function(){
+            return MoGL.totalCount();
+        }, 2
+	);
+	bsTest( 'error',
+        function(){
+            var test = '';
+            try{
+                instance2.errorTest()
+            }catch(e){
+                test = e.toString();
+            }
+            return test;
+        }, 'Error: child.errorTest:1'
+	);
+	bsTest( 'destroy',
+        function(){
+            instance1.destroy();
+            return instance1.isAlive;
+        }, false,
+        function(){
+            instance2.destroy();
+            return instance2.isAlive;
+        }, false
+	);
+
+	bsTest( 'destroyed',
+        function(){
+            var test = '';
+            try{
+                instance2.errorTest()
+            }catch(e){
+                test = e.toString();
+            }
+            return test;
+        }, bsTest.REG('^Error[:] Destroyed Object[:]')
+	);
+
+	var instance3 = child(7, 8, 9);
+
+	bsTest( 'id',
+        function(){
+            return instance3.id;
+        }, null,
+        function(){
+            instance3.setId(1);
+            return instance3.id;
+        }, 1,
+        function(){
+            instance3.id = 2;
+            return instance3.id;
+        }, 2
+	);
+
+	bsTest( 'ext',
+        function(){
+            var Parent = function(){}, Child = function(){}, parent, child;
+
+            Parent = MoGL.ext( Parent );
+            Child = Parent.ext( Child );
+
+            parent = new Parent();
+            child = new Child();
+
+            return parent.constructor === MoGL && child.constructor === MoGL;
+        }, true
+	);
+	
+	bsTest( 'constructError',
+		function(){
+			var test = function test(){
+				this.error(1);
+			}, result = '';
+			test = MoGL.ext(test);
+			try{
+				var a = new test()
+			}catch(e){
+				result = e.toString();
+			}
+			return result;
+		}, 'Error: test.constructor:1'
+	);
+})();
+(function(){
+    var a = function(){
+        this.a = 3;
+    };
+    a = MoGL.ext(a);
+    var b = function(){
+        this.b = 5;
+    };
+    b = a.ext(b);
+    var c = function(){
+        this.c = 7;
+    };
+    c = b.ext(c);
+    var grandchild = new c();
+    bsTest( 'grandChild',
+        function(){
+            return grandchild.a;
+        }, 3,
+        function(){
+            return grandchild.b;
+        }, 5,
+        function(){
+            return grandchild.c;
+        }, 7
+    );
+})();
+(function(){
+    var a = function(){}
+    a = MoGL.ext(a);
+    var k = new a();
+    k.id = 'aaaa';
+    k.addEventListener( 'some', function(a,b){
+        var self = this;
+        bsTest( 'event0',
+            function(){
+                return self.id;
+            }, 'aaaa',
+            function(){
+                return a;
+            }, 3,
+            function(){
+                return b;
+            }, 5
+        );
+    } );
+    k.addEventListener( 'some', function(a,b){
+        var self = this;
+        bsTest( 'event1',
+            function(){
+                return self.id;
+            }, 'aaaa',
+            function(){
+                return a;
+            }, 3,
+            function(){
+                return b;
+            }, 5
+        );
+    } );
+    k.dispatch( 'some', 3, 5 );
+    k.addEventListener( MoGL.updated, function(v){
+        bsTest( 'updatedEvent',
+            function(){
+                return v;
+            }, true
+        );
+    });
+    k.isUpdated = true;
+})();
+(function(){
+    var a = function(){}, aa;
+    a = MoGL.ext(a,{
+        a:{
+            get:function(){return aa;},
+            set:function(v){aa = v;}
+        }
+    });
+    var b = function(){}, bb;
+    b = a.ext(b, {
+        b:{
+            get:function(){return bb;},
+            set:function(v){bb = v;}
+        }
+    });
+    var ins = new b();
+    bsTest( 'property',
+        function(){
+            ins.b = 3;
+            return bb;
+        }, 3,
+        function(){
+            return ins.b;
+        }, 3,
+        function(){
+            ins.a = 5;
+            return aa;
+        }, 5,
+        function(){
+            return ins.a;
+        }, 5
+    );
+    
+})();
+(function(){
+    var a = function(){};
+    a.prototype.actionA = function(){
+        this.actionB();
+    },
+    a.prototype.actionB = function(){
+        this.error(0);
+    };
+    a.prototype.actionC = function(){
+        this.actionD();
+        this.error(0);
+    },
+    a.prototype.actionD = function(){};
+    
+    a = MoGL.ext(a);
+    var inst = new a();
+    bsTest( 'errorStack',
+        function(){
+            var result = '';
+            try{
+                inst.actionA();
+            }catch(e){
+                result = e.toString();
+            };
+            return result;
+        }, 'Error: undefined.actionB:0',
+        function(){
+            var result = '';
+            try{
+                inst.actionC();
+            }catch(e){
+                result = e.toString();
+            };
+            return result;
+        }, 'Error: undefined.actionC:0'
+    );
+})(),
+(function(){
+    var a = function(){};
+    a = MoGL.ext(a);
+    var inst = new a();
+    var uuid = inst.uuid;
+    inst.id = 'test';
+    bsTest( 'register&getInstance',
+        function(){
+            return a.getInstance(uuid).uuid;
+        }, uuid,
+        function(){
+            return a.getInstance('test').uuid;
+        }, uuid
+    );
+})(),
+(function(){
+    var a= function(){
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+    };
+    a = MoGL.ext(a);
+    var test = new a();
+    test.setProperties({x:10, y:20, z:30});
+    bsTest( 'setProperty no ani',
+        function(){
+            return test.x;
+        }, 10,
+        function(){
+            return test.y;
+        }, 20,
+        function(){
+            return test.z;
+        }, 30
+    );
+    var prop = {x:0, y:0, z:0};
+    prop[MoGL.time] = 1;
+    test.setProperties(prop);
+    bsTest( 'setProperty ani start',
+        function(){
+            return test.x;
+        }, bsTest.NOT(0),
+        function(){
+            return test.y;
+        }, bsTest.NOT(0),
+        function(){
+            return test.z;
+        }, bsTest.NOT(0)
+    );
+    setTimeout( function(){
+        bsTest( 'setProperty ani start1',
+            function(){
+                return test.x;
+            }, bsTest.RANGE(4, 6),
+            function(){
+                return test.y;
+            }, bsTest.RANGE(9, 11),
+            function(){
+                return test.z;
+            }, bsTest.RANGE(14, 16)
+        );
+    }, 500 );
+    setTimeout( function(){
+        bsTest( 'setProperty ani start2',
+            function(){
+                return test.x;
+            }, 0,
+            function(){
+                return test.y;
+            }, 0,
+            function(){
+                return test.z;
+            }, 0
+        );
+    }, 1010 );
+})();
 </script>
 </body>
 </html>

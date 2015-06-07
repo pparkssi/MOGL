@@ -4,7 +4,7 @@
 var Light = (function () {
     var Light, fn;
     Light = function Light() {
-    }
-    fn = Light.prototype
-    return MoGL.ext(Light, Mesh);
+    };
+    fn = Light.prototype;
+    return Matrix.ext(Light);
 })();

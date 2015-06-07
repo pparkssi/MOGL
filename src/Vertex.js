@@ -4,8 +4,8 @@
 var Vertex = {
     x: 'x', y: 'y', z: 'z',
     r: 'r', g: 'g', b: 'b', a: 'a',
-    normalX: 'nx', normalY: 'ny', normalZ: 'nz',
+    normalX: 'normalX', normalY: 'normalY', normalZ: 'normalZ',
     u: 'u', v: 'v'
-}
+};
 Object.freeze(Vertex);
 
