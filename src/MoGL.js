@@ -178,8 +178,8 @@ var MoGL = (function() {
                             arg = arguments;
                         }
                         self.call(this, isSuperChain, arg),
-                        child.apply(this, arg),
-                        Object.seal(this),
+                        child.apply(this, arg)
+                        Object.seal(this)
                         result = this;
                     } else {
                         result = cls.call(Object.create(cls.prototype), isFactory, arguments);
@@ -193,6 +193,12 @@ var MoGL = (function() {
         return function(cls, newProto, f, prop, notFreeze) {
             var k, v;
             //프로토타입레벨에서 클래스의 id와 이름을 정의해줌.
+            //정적 속성을 복사
+            for (k in f) {
+                if (f.hasOwnProperty(k)) {
+                    cls[k] = f[k];
+                }
+            }
             $readonly.value = cls.uuid = 'uuid:' + (uuid++),
             Object.defineProperty(newProto, 'classId', $readonly);
             $readonly.value = f.name,
@@ -217,12 +223,7 @@ var MoGL = (function() {
                     Object.defineProperty(newProto, k, v);
                 }
             }
-            //정적 속성을 복사
-            for (k in f) {
-                if (f.hasOwnProperty(k)) {
-                    cls[k] = f[k];
-                }
-            }
+
             for (k in statics) {
                 if (statics.hasOwnProperty(k)) {
                     cls[k] = statics[k];
