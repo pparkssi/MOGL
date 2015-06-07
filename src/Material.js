@@ -22,8 +22,7 @@ var Material = (function () {
     prop = {},
     //lib
     textureLoaded = function(mat){
-        console.log('이게안터지나?')
-        //this.removeEventListener(Texture.load, textureLoaded),
+        this.removeEventListener(Texture.load, textureLoaded),
         mat.dispatch(Material.changed);
         if (mat.isLoaded) mat.dispatch(Material.load);
     },
@@ -151,5 +150,5 @@ var Material = (function () {
         return this;
     },
     Material.changed = 'changed';
-    return MoGL.ext(Material, MoGL, fnProp);
+    return MoGL.ext(Material, fnProp);
 })();

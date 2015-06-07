@@ -46,19 +46,18 @@ var Texture = (function() {
         v.src = canvas.toDataURL();
         console.log('리사이저처리결과', v.width, v.height)
         return v;
-    };
-    //private
-    resize = {},
-    imgs = {},
-    isLoaded = {},
+    },
     loaded = function(e){
         var texture = Texture.getInstance(this.dataset.texture);
         isLoaded[texture] = true,
-        console.log('이미지가 로딩되어 리사이즈시도',this)
         imgs[texture] = resizer(texture.resizeType, this),
         this.removeEventListener('load', loaded);
         texture.dispatch('load');
     },
+    //private
+    resize = {},
+    imgs = {},
+    isLoaded = {},
     //shared private
     $setPrivate('Texture', {
     }),
@@ -126,5 +125,5 @@ var Texture = (function() {
             while (i--) Texture[key[i]] = key[i];
         })();
     })();
-    return MoGL.ext(Texture, MoGL, fnProp);
+    return MoGL.ext(Texture, fnProp);
 })();

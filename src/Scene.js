@@ -413,5 +413,5 @@ var Scene = (function () {
     //    // TODO 마일스톤0.5
     //    return this;
     //}
-    return MoGL.ext(Scene, MoGL,fnProp);
+    return MoGL.ext(Scene, fnProp);
 })();

@@ -293,6 +293,6 @@ var Camera = (function () {
         var key = 'resize,othogonal,perspective'.split(','), i = key.length;
         while (i--) Camera[key[i]] = key[i];
     })();
-    return MoGL.ext(Camera, Matrix, fnProp);
+    return Matrix.ext(Camera, fnProp);
 })();
 

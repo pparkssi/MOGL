@@ -392,5 +392,5 @@ var Shader = (function () {
                 '']
             }, id: 'postBaseFragmentShader'
         }
-    return MoGL.ext(Shader, MoGL);
+    return MoGL.ext(Shader);
 })();

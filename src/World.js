@@ -1,10 +1,3 @@
-/**
- * Created by redcamel on 2015-05-05.
- * description
- * World는 MoGL의 기본 시작객체로 내부에 다수의 Scene을 소유할 수 있으며,
- * 실제 렌더링되는 대상임. 또한 World의 인스턴스는 rendering함수 그 자체이기도 함.
- * 메서드체이닝을 위해 대부분의 함수는 자신을 반환함.
- */
 var World = (function () {
     var getGL, glSetting,glContext, World, fn, rectMatrix = Matrix(), f3 = new Float32Array(3),f4 = new Float32Array(4);
     var canvas, context, makeVBO, makeVNBO, makeIBO, makeUVBO, makeProgram, makeTexture, makeFrameBuffer;
@@ -597,5 +590,5 @@ var World = (function () {
 		return
         //gl.finish();
     }
-    return MoGL.ext(World, MoGL);
+    return MoGL.ext(World);
 })();

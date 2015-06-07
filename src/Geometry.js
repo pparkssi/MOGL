@@ -131,5 +131,5 @@ var Geometry = (function () {
         color: {get: $getter(color)},
         index: {get: $getter(index)}
     };
-    return MoGL.ext(Geometry, MoGL, fnProp);
+    return MoGL.ext(Geometry, fnProp);
 })();
