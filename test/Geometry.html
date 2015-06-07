@@ -13,24 +13,24 @@
 </head>
 <body>
 <img src="../src/ohno.png">
-
+<canvas id="canvas" height="10" style="position: absolute"></canvas>
 <div id="stage"></div>
 <div id="result"></div>
 <div id="test"></div>
 <script src="../src/MoGL.js"></script>
-<script src="../src/BlendMode.js"></script>
-<script src="../src/Filter.js"></script>
+<!--<script src="../src/BlendMode.js"></script>-->
+<!--<script src="../src/Filter.js"></script>-->
 <script src="../src/Vertex.js"></script>
-<script src="../src/VertexShaderFunctions.js"></script>
+<!--<script src="../src/VertexShaderFunctions.js"></script>-->
 <script src="../src/Matrix.js"></script>
 <script src="../src/Geometry.js"></script>
-<script src="../src/Material.js"></script>
-<script src="../src/Texture.js"></script>
-<script src="../src/Mesh.js"></script>
-<script src="../src/Group.js"></script>
-<script src="../src/Camera.js"></script>
-<script src="../src/Scene.js"></script>
-<script src="../src/World.js"></script>
+<!--<script src="../src/Material.js"></script>-->
+<!--<script src="../src/Texture.js"></script>-->
+<!--<script src="../src/Mesh.js"></script>-->
+<!--<script src="../src/Group.js"></script>-->
+<!--<script src="../src/Camera.js"></script>-->
+<!--<script src="../src/Scene.js"></script>-->
+<!--<script src="../src/World.js"></script>-->
 <script src="http://js.bsapi.co/test/"></script>
 <script>
     var vData, iData;
@@ -157,39 +157,39 @@
                     0, 0, 0, 0, 0, 0,
                     0, 0, 0, 0, 0, 0
                 ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
-                return cube4.getVertexCount();
+                return cube4.vertexCount;
             }, 3
     );
-    bsTest('getVertexCount',
+    bsTest('vertexCount',
             function () {
-                return cube1.getVertexCount();
+                return cube1.vertexCount;
             }, 24,
             function () {
-                return cube2.getVertexCount();
+                return cube2.vertexCount;
             }, 24
     );
-    bsTest('getTriangleCount',
+    bsTest('triangleCount',
             function () {
-                return cube1.getTriangleCount();
+                return cube1.triangleCount;
             }, 12,
             function () {
-                return cube2.getTriangleCount();
+                return cube2.triangleCount;
             }, 12
     );
     var t
-    bsTest('getVolume',
+    bsTest('volume',
             function () {
-                t = cube1.getVolume()
+                t = cube1.volume
                 return t[0] == 2 && t[1] == 2 && t[2] == 2;
             }, true,
             function () {
-                t = cube2.getVolume()
+                t = cube2.volume
                 return t[0] == 2 && t[1] == 2 && t[2] == 2;
             }, true
     );
-
-    var lobby = new Scene();
-    var testCube = new Geometry(vData, iData)
+    //
+    //    var lobby = new Scene();
+    //    var testCube = new Geometry(vData, iData)
     var testSeperator = new Geometry([
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, // x,y,z, u,v, normalX,normalY,normalZ, r,g,b,a,
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
@@ -199,12 +199,12 @@
             function () {
                 var testValue = [1, 2, 3, 1, 2, 3, 1, 2, 3], result = true
                 for (var i = 0, len = testValue.length; i < len; i++) {
-                    if (testSeperator._position[i] != testValue[i]) result = false
+                    if (testSeperator.position[i] != testValue[i]) result = false
                 }
-                console.log('testSeperator._position', testSeperator._position)
-                console.log('testSeperator._uv', testSeperator._uv)
-                console.log('testSeperator._color', testSeperator._color)
-                console.log('testSeperator._normal', testSeperator._normal)
+                console.log('testSeperator._position', testSeperator.position)
+                console.log('testSeperator._uv', testSeperator.uv)
+                console.log('testSeperator._color', testSeperator.color)
+                console.log('testSeperator._normal', testSeperator.normal)
                 return result
             }, true
     )
@@ -215,29 +215,135 @@
     ], [0, 1, 2], [Vertex.x, Vertex.y, Vertex.z, Vertex.u, Vertex.v, Vertex.normalX, Vertex.normalY, Vertex.normalZ])
     bsTest('seperator2',
             function () {
-                return testSeperator2._color.length
+                return testSeperator2.color.length
             }, 0
     )
-    // waffle shader등록
-    bsTest('test',
+    //    // waffle shader등록
+    //    bsTest('test',
+    //            function () {
+    //                var sample = new Geometry(vData, iData);
+    //                sample.addVertexShader('aaa')
+    //                return sample._vertexShaders['aaa']
+    //            }, 'aaa',
+    //            function () {
+    //                //Shader키 삭제
+    //                var sample = new Geometry(vData, iData);
+    //                sample.removeVertexShader('aaa')
+    //                return sample._vertexShaders['aaa']
+    //            }, undefined,
+    //            function () {
+    //                //미등록된 Geometry
+    //                var sample = new Geometry(vData, iData);
+    //                sample.addVertexShader('bb')
+    //                return sample._vertexShaders['bb']
+    //            }, 'bb'
+    //    );
+    //
+    bsTest('NEW TEST');
+
+    bsTest('constructor',
             function () {
-                var sample = new Geometry(vData, iData);
-                sample.addVertexShader('aaa')
-                return sample._vertexShaders['aaa']
-            }, 'aaa',
+                var geo, error;
+                try {
+                    geo = new Geometry();
+                } catch (e) {
+                    error = e.toString();
+                }
+                return error;
+            }, 'Error: Geometry.constructor:0',
             function () {
-                //Shader키 삭제
-                var sample = new Geometry(vData, iData);
-                sample.removeVertexShader('aaa')
-                return sample._vertexShaders['aaa']
-            }, undefined,
+                var geo, error;
+                try {
+                    geo = new Geometry(
+                            [1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1]);
+                } catch (e) {
+                    error = e.toString();
+                }
+                return error;
+            }, 'Error: Geometry.constructor:1',
             function () {
-                //미등록된 Geometry
-                var sample = new Geometry(vData, iData);
-                sample.addVertexShader('bb')
-                return sample._vertexShaders['bb']
-            }, 'bb'
+                var geo, error;
+                try {
+                    geo = new Geometry(
+                            [1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1],
+                            [0, 1, 2, 2, 3, 4, 4, 5, 6],
+                            [Vertex.x, Vertex.y]
+                    );
+                } catch (e) {
+                    error = e.toString();
+                }
+                return error;
+            }, 'Error: Geometry.constructor:2',
+            function () {
+                var cube, error;
+                try {
+                    cube = new Geometry(
+                            [1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1],
+
+                            [0, 1, 2, 2, 3, 4, 4, 5, 6],
+
+                            Vertex
+                    );
+                } catch (e) {
+                    error = e.toString();
+                }
+
+                return error;
+            }, 'Error: Geometry.constructor:3',
+            function () {
+                var cube, error;
+                try {
+                    cube = new Geometry(
+                            [1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1,
+                                1, 0, 0, 0, 0, 1, 0, 1, 1],
+
+                            [0, 1, 2, 2, 3, 4, 4, 5, 6],
+
+                            [Geometry.x, Geometry.y, Geometry.z]
+                    );
+                } catch (e) {
+                    error = e.toString();
+                }
+
+                return error;
+            }, 'Error: Geometry.constructor:4'
     );
+    //
+    //    bsTest( 'addVertexShader',
+    //            function(){
+    //                var world = new World( 'canvas' );
+    //                var lobby = world.addScene( 'lobby', new Scene()).getScene( 'lobby');
+    //                lobby.addVertexShader( 'waffle', '' );
+    //                var cube = lobby.addGeometry( 'cube', new Geometry( vData, iData ) );
+    //                cube.addVertexShader( 'waffle' );
+    //                return cube._vertexShaders.hasOwnProperty( 'waffle' );
+    //            }, true,
+    //            function(){
+    //                var sample = new Geometry( vData, iData );
+    //                sample.addVertexShader('aaa');
+    //                return sample._vertexShaders.hasOwnProperty( 'aaa' );
+    //            }, true
+    //    );
+    //
+    //    bsTest( 'removeVertexShader',
+    //            function(){
+    //                var sample = new Geometry( vData, iData );
+    //                sample.addVertexShader( 'aaa' ).removeVertexShader( 'aaa' );
+    //                return sample._vertexShaders.hasOwnProperty( 'aaa' );
+    //            }, false,
+    //            function(){
+    //                var sample = new Geometry( vData, iData );
+    //                sample.removeVertexShader( 'aaa' );
+    //                return sample._vertexShaders.hasOwnProperty( 'aaa' );
+    //            }, false
+    //    );
 </script>
 <div></div>
 </body>

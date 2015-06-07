@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>MoGL Test Suite - Primitive.js</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,target-densitydpi=medium-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css.css"/>
+    <style>
+        html, body {
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+    </style>
+    <script src="../showcase/dat.gui.min.js"></script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="result"></div>
+<div id="test"></div>
+
+<script src="../src/MoGL.js"></script>
+<script src="../src/BlendMode.js"></script>
+<script src="../src/Filter.js"></script>
+<script src="../src/Shading.js"></script>
+<script src="../src/Vertex.js"></script>
+<script src="../src/VertexShaderFunctions.js"></script>
+<script src="../src/Matrix.js"></script>
+<script src="../src/Geometry.js"></script>
+<script src="../src/Material.js"></script>
+<script src="../src/Texture.js"></script>
+<script src="../src/Primitive.js"></script>
+<script src="../src/Mesh.js"></script>
+<script src="../src/Group.js"></script>
+<script src="../src/Camera.js"></script>
+<script src="../src/Scene.js"></script>
+<script src="../src/World.js"></script>
+<script src="http://js.bsapi.co/test/"></script>
+<script>
+</script>
+<canvas id='cubeCanvas'></canvas>
+<script>
+
+    var world = new World('cubeCanvas')
+    var scene = new Scene()
+    var camera = new Camera()
+    var testMat = new Material('#222');
+
+    world.setAutoSize(1)
+    world.addScene(scene);
+    scene.addChild('camera', camera);
+    scene.addTexture('texture', '../asset/geodesicTest.jpg');
+    testMat.addTexture(Texture.diffuse, 'texture')
+
+    var cube1_1 = Primitive.cube()
+    var cube2_2 = Primitive.cube(2, 2)
+    var cube2_3 = Primitive.cube(2, 3)
+    var cube10_10 = Primitive.cube(10, 10)
+
+    var cube1_1Mesh = new Mesh(cube1_1, testMat);
+    var cube2_2Mesh = new Mesh(cube2_2, testMat);
+    var cube2_3Mesh = new Mesh(cube2_3, testMat);
+    var cube10_10Mesh = new Mesh(cube10_10, testMat);
+
+
+    testMat.setWireFrame(1)
+    scene.addChild('cube1_1Mesh', cube1_1Mesh);
+    scene.addChild('cube2_2Mesh', cube2_2Mesh);
+    scene.addChild('cube2_3Mesh', cube2_3Mesh);
+    scene.addChild('cube10_10Mesh', cube10_10Mesh);
+
+
+    cube1_1Mesh.rotateX = Math.PI / 2
+    cube2_2Mesh.rotateX = Math.PI / 2
+    cube2_3Mesh.rotateX = Math.PI / 2
+    cube10_10Mesh.rotateX = Math.PI / 2
+
+    cube1_1Mesh.x = -3
+    cube2_2Mesh.x = -1
+    cube2_3Mesh.x = 1
+    cube10_10Mesh.x = 3
+    cube1_1Mesh.y = cube2_2Mesh.y = cube2_3Mesh.y = cube10_10Mesh.y = -1
+
+    var testMesh = new Mesh(Primitive.cube(), testMat)
+    scene.addChild('testMesh', testMesh)
+    testMesh.rotateX = Math.PI / 2
+    testMesh.setScale(2, 2, 2)
+    testMesh.y = 1.5
+
+
+    /////////////////////////////////////////////
+    // UI
+    /////////////////////////////////////////////
+    var shadingParams = {
+        WireFrame: true,
+        cube: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
+        },
+        cube2_2: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(2, 2), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
+        },
+        cube3_3: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(3, 3), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
+        },
+        cube10_10: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(10, 10), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
+        },
+        cube6_2: function () {
+            scene.removeChild('testMesh')
+            testMesh = new Mesh(Primitive.cube(6, 2), testMat)
+            scene.addChild('testMesh', testMesh)
+            testMesh.rotateX = Math.PI / 2
+            testMesh.setScale(2, 2, 2)
+            testMesh.y = 1.5
+        }
+    };
+    var gui = new dat.GUI();
+    var shading = gui.addFolder('Shading');
+    shading.add(shadingParams, 'cube');
+    shading.add(shadingParams, 'cube2_2');
+    shading.add(shadingParams, 'cube3_3');
+    shading.add(shadingParams, 'cube10_10');
+    shading.add(shadingParams, 'cube6_2');
+    shading.open()
+    world.addEventListener(World.renderBefore,function(){
+        cube1_1Mesh.rotateY += 0.01
+        cube2_2Mesh.rotateY += 0.01
+        cube2_3Mesh.rotateY += 0.01
+        cube10_10Mesh.rotateY += 0.01
+        cube1_1Mesh.rotateX += 0.01
+        cube2_2Mesh.rotateX += 0.01
+        cube2_3Mesh.rotateX += 0.01
+        cube10_10Mesh.rotateX += 0.01
+
+        testMesh.rotateY += 0.01
+        testMesh.rotateX += 0.01
+    })
+    world.start()
+</script>
+<hr/>
+
+
+</body>
+</html>
+
