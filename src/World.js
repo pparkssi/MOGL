@@ -297,8 +297,7 @@ var World = (function () {
         while(i--){
             if (tSceneList[i] == this) this.error(0);
         }
-        tSceneList.push(scene),
-        scene.cvs = cvsList[this]
+        tSceneList.push(scene)
         var p = gpu[this]
         var updateNewBuffer = function(){
             var k, tList, v, geo
@@ -423,7 +422,7 @@ var World = (function () {
         while(i--){
             //console.log(k,'의 활성화된 카메라를 순환돌면서 먼짓을 해야함...')
             scene = tSceneList[i]
-
+            //////////////////////////////////////////////////////////////////////////////////////////////////////
             //Scene 업데이트 사항 반영
             j = scene.updateList.mesh.length
             while(j--){
@@ -446,7 +445,7 @@ var World = (function () {
             }
             scene.updateList.mesh.length= 0
             scene.updateList.material.length= 0
-
+            //////////////////////////////////////////////////////////////////////////////////////////////////////
             cameraList = scene.cameras
             for (k in cameraList) len++
             for (k in cameraList) {
@@ -583,8 +582,8 @@ var World = (function () {
                 }
             }
         }
+        // TODO 아래는 아직 다 못옮겨씀
         // 프레임버퍼를 모아서 찍어!!!
-        // TODO 사이즈가 변경될때 프레임 버퍼에 적용이 되야하는데..
         if(len > 1){
             gl.viewport(0, 0, cvs.width, cvs.height);
             gl.clearColor(0, 0, 0, 1);

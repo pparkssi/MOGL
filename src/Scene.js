@@ -4,7 +4,7 @@
 'use strict'
 var Scene = (function () {
     var vertexShaderParser, fragmentShaderParser,
-        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, cvsList,updateList,
+        children, cameras, textures, materials, geometrys, vertexShaders, fragmentShaders, updateList,
         Scene, fn, fnProp;
     //lib
     vertexShaderParser = function vertexShaderParser(source) {
@@ -75,7 +75,6 @@ var Scene = (function () {
     },
 
     //private
-    cvsList = {},
     children = {},
     cameras = {},
     textures = {},
@@ -90,7 +89,6 @@ var Scene = (function () {
 
     Scene = function Scene() {
         // for JS
-        cvsList[this] = null,
         children[this] = {},
         cameras[this] = {},
         textures[this] = {},
@@ -116,10 +114,6 @@ var Scene = (function () {
 
     fn = Scene.prototype,
     fnProp = {
-        cvs: {
-            get: $getter(cvsList),
-            set: $setter(cvsList)
-        },
         updateList: {
             get: $getter(updateList),
         },
@@ -136,7 +130,6 @@ var Scene = (function () {
         if (!(v instanceof Mesh)) this.error(1);
         p[v] = v;
         updateList[this].mesh.push(v)
-        v.scene = this
         mat = v.material
         mat.addEventListener(Material.changed,function(){
             var t= this.diffuse
@@ -158,7 +151,6 @@ var Scene = (function () {
         if (p[v]) this.error(0);
         if (!(v instanceof Camera)) this.error(1);
         p[v] = v;
-        v.cvs = cvsList[this]
         return this;
     },
     fn.addChild = function addChild(v) {
@@ -178,8 +170,7 @@ var Scene = (function () {
         var p = materials[this],self,i;
         if (p[v]) this.error(0);
         if (!(v instanceof Material)) this.error(1);
-        p[v] = v,
-        v.scene = this;
+        p[v] = v
         return this;
     },
     fn.addTexture = function addTexture(texture/*,resizeType*/) {
@@ -267,7 +258,6 @@ var Scene = (function () {
         result = false
         for (k in p) {
             if (p[k].id == id) {
-                p[k].scene = null,
                 delete p[k],
                 result = true
             }
