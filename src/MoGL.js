@@ -1,5 +1,5 @@
-//ie11에서 Function.name이 지원되지 않는 문제 폴리필
-(function(){
+(function(){ //webGL은 되지만 지원되지 않는 기능의 polyfill
+    //ie11 - function.name이 없음
     var test = function test(){};
     if(!('name' in test)){ //함수에 name속성이 없다면..
         Object.defineProperty( Function.prototype, 'name', {
@@ -13,11 +13,26 @@
             }
         });
     }
+    //표준이름의 requestAnimationFrame가 없는 경우
+    if (!('requestAnimationFrame' in window)) window.requestAnimationFrame = webkitRequestAnimationFrame || mozRequestAnimationFrame || msRequestAnimationFrame;
+    //ios7,8 - performance.now가 지원되지 않는 경우
+    var nowOffset;
+    if (!('performance' in window)) window.performance = {};
+    if (!('now' in Date)) Date.now = function () {return +new Date();};
+    if (!('now' in window.performance)){
+        nowOffset = Date.now();
+        if (performance.timing && performance.timing.navigationStart) {
+            nowOffset = performance.timing.navigationStart;
+        }
+        window.performance.now = function now(){
+            return Date.now() - nowOffset;
+        };
+    }
 })();
 //전역에서 사용하는 공통함수
 var $setPrivate, $getPrivate, $writable, $readonly, $value, $getter, $setter, $color,
     GLMAT_EPSILON, SIN, COS, TAN, ATAN, ATAN2, ASIN, SQRT, CEIL, ABS, PIH, PERPI;
-    
+
 (function() {
     var VAR = {}, value = {};
     $setPrivate = function $setPrivate(cls, v) { //공용private설정
@@ -104,7 +119,7 @@ SQRT = Math.sqrt, CEIL = Math.ceil, ABS = Math.abs, PI = Math.PI, PIH = PI * 0.5
 var MoGL = (function() {
     var wrapper, method, prev,
         uuid, counter, totalCount,
-        listener, ids, updated, allInst, classInst,
+        listener, ids, updated, allInst, classInst, classes,
         MoGL, mock, fn, fnProp;
     //lib
     prev = [], //스택구조의 이전 함수이름의 배열
@@ -149,7 +164,7 @@ var MoGL = (function() {
                 var cls, self;
                 self = this;
                 if (!(self.prototype instanceof MoGL) && self !== MoGL) self.error('ext', 0);
-                return wrapper(cls = function() {
+                classes[child.name] = cls = function() {
                     var arg, arg0 = arguments[0], result;
                     prev[prev.length] = method,
                     method = 'constructor';
@@ -171,7 +186,8 @@ var MoGL = (function() {
                     }
                     method = prev.pop();
                     return result;
-                }, Object.create(self.prototype), child, prop);
+                };
+                return wrapper(cls, Object.create(self.prototype), child, prop);
             }
         };
         return function(cls, newProto, f, prop, notFreeze) {
@@ -227,6 +243,7 @@ var MoGL = (function() {
     listener = {},
     updated = {},
     allInst = {},
+    classes = {},
     //MoGL정의
     MoGL = function MoGL() {
         $readonly.value = 'uuid:' + (uuid++),
@@ -292,6 +309,94 @@ var MoGL = (function() {
         this.id = v;
         return this;
     },
+    fn.setProperties = (function(){
+        var loopstart, loop, ease, target, aid = 0;
+		ease = {
+            linear:function(a,c,b){return b*a+c},
+            backIn:function(a,c,b){return b*a*a*(2.70158*a-1.70158)+c},
+            backOut:function(a,c,b){a-=1;return b*(a*a*(2.70158*a+1.70158)+1)+c},
+            backInOut:bio = function(a,c,b){a*=2;if(1>a)return 0.5*b*a*a*(3.5949095*a-2.5949095)+c;a-=2;return 0.5*b*(a*a*(3.70158*a+2.70158)+2)+c},
+            bounceOut:function(a,c,b){if(0.363636>a)return 7.5625*b*a*a+c;if(0.727272>a)return a-=0.545454,b*(7.5625*a*a+0.75)+c;if(0.90909>a)return a-=0.818181,b*(7.5625*a*a+0.9375)+c;a-=0.95454;return b*(7.5625*a*a+0.984375)+c},
+            sineIn:function(a,c,b){return -b*Math.cos(a*PIH)+b+c},
+            sineOut:function(a,c,b){return b*Math.sin(a*PIH)+c},
+            sineInOut:function(a,c,b){return 0.5*-b*(Math.cos(PI*a)-1)+c},
+            circleIn:function(a,c,b){return -b*(Math.sqrt(1-a*a)-1)+c},
+            circleOut:function(a,c,b){a-=1;return b*Math.sqrt(1-a*a)+c},
+            circleInOut:function(a,c,b){a*=2;if(1>a)return 0.5*-b*(Math.sqrt(1-a*a)-1)+c;a-=2;return 0.5*b*(Math.sqrt(1-a*a)+1)+c},
+            quadraticIn:function(a,c,b){return b*a*a+c},
+            quadraticOut:function(a,c,b){return -b*a*(a-2)+c}
+        },
+        loop = function loop(t){
+            var k0, k1, ani, inst, prop, init, rate;
+            for (k0 in target) {
+                ani = target[k0];
+                if (t > ani.start) {
+                    inst = ani.target,
+                    init = ani.init,
+                    prop = ani.prop;                    
+                    if (t > ani.end) {
+                        if (ani.repeat > 1) {
+                            ani.repeat--,
+                            ani.start = t,
+                            ani.end = t + ani.term;
+                            if (ani.yoyo) {
+                                ani.init = prop,
+                                ani.prop = init;
+                            }
+                        } else {
+                            for(k1 in prop){
+                                inst[k1] = prop[k1];
+                            }
+                            delete target[k0];
+                            inst.dispatch('propertyChanged');
+                        }
+                    } else {
+                        ease = ani.ease,
+                        rate = (t - ani.start) / ani.term;
+                        for(k1 in prop){
+                            inst[k1] = ease(rate, init[k1], prop[k1] - init[k1]);
+                        }
+                    }
+                }
+            }
+            requestAnimationFrame(loop);
+        },
+        target = {};
+        return function setProperties(v) {
+            var k, ani, start, end, term;
+            if (MoGL.time in v) {
+                ani = {};
+                ani.start = performance.now();
+                if (MoGL.delay in v) {
+                    ani.start += v[MoGL.delay] * 1000;
+                }
+                ani.term = v[MoGL.time] * 1000,
+                ani.end = ani.start + ani.term,
+                ani.ease = ease[v[MoGL.ease]] || ease.linear,
+                ani.repeat = v[MoGL.repeat] || 0,
+                ani.yoyo = v[MoGL.yoyo] || false;
+                delete v[MoGL.delay],
+                delete v[MoGL.ease],
+                delete v[MoGL.repeat],
+                delete v[MoGL.time],
+                delete v[MoGL.yoyo],
+                ani.target = this,
+                ani.prop = v,
+                ani.init = {};
+                for (k in v) {
+                    ani.init[k] = this[k];
+                }
+                target[aid++] = ani;
+                if (!loopstart) {
+                    loopstart = true;
+                    requestAnimationFrame(loop);
+                }
+            } else {
+                for (k in v) this[k] = v[k];
+                this.dispatch('propertyChanged');
+            }
+        };
+    })(),
     //이벤트시스템
     fn.addEventListener = function(ev, f/*, context, arg1*/) {
         var target
@@ -351,10 +456,25 @@ var MoGL = (function() {
         }
         return this;
     },
+    MoGL.classes = function classes(context){
+        var i;
+        if (!context) context = {};
+        for (k in classes) {
+            if (classes.hasOwnProperty(k)) context[k] = classes[k];
+        }
+        return context;
+    },
     MoGL.totalCount = function count() { //인스턴스의 갯수를 알아냄
         return totalCount; //전체 인스턴스 수
     },
     MoGL.updated = 'updated',
+    MoGL.propertyChanged = 'propertyChanged',
+    MoGL.delay = '__DELAY__',
+    MoGL.ease = '__EASE__',
+    MoGL.repeat = '__REPEAT__',
+    MoGL.time = '__TIME__',
+    MoGL.yoyo = '__YOYO__',
+
     wrapper(MoGL, fn, MoGL, fnProp, true);
     fn = MoGL.prototype;
     fn.error = function error(id) { //error처리기는 method를 통해 래핑하지 않음

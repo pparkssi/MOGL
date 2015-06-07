@@ -317,8 +317,68 @@
             return a.getInstance('test').uuid;
         }, uuid
     );
-})()
-   
+})(),
+(function(){
+    var a= function(){
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+    };
+    a = MoGL.ext(a);
+    var test = new a();
+    test.setProperties({x:10, y:20, z:30});
+    bsTest( 'setProperty no ani',
+        function(){
+            return test.x;
+        }, 10,
+        function(){
+            return test.y;
+        }, 20,
+        function(){
+            return test.z;
+        }, 30
+    );
+    var prop = {x:0, y:0, z:0};
+    prop[MoGL.time] = 1;
+    test.setProperties(prop);
+    bsTest( 'setProperty ani start',
+        function(){
+            return test.x;
+        }, bsTest.NOT(0),
+        function(){
+            return test.y;
+        }, bsTest.NOT(0),
+        function(){
+            return test.z;
+        }, bsTest.NOT(0)
+    );
+    setTimeout( function(){
+        bsTest( 'setProperty ani start1',
+            function(){
+                return test.x;
+            }, bsTest.RANGE(4, 6),
+            function(){
+                return test.y;
+            }, bsTest.RANGE(9, 11),
+            function(){
+                return test.z;
+            }, bsTest.RANGE(14, 16)
+        );
+    }, 500 );
+    setTimeout( function(){
+        bsTest( 'setProperty ani start2',
+            function(){
+                return test.x;
+            }, 0,
+            function(){
+                return test.y;
+            }, 0,
+            function(){
+                return test.z;
+            }, 0
+        );
+    }, 1010 );
+})();
 </script>
 </body>
 </html>
