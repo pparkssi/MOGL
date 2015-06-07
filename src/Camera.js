@@ -158,8 +158,6 @@ var Camera = (function () {
             if (tArea) tMatrix.matPerspective(p.fov, tArea[2] / tArea[3], p.near, p.far);
             else tMatrix.matPerspective(p.fov, p.cvs.width/p.cvs.height, p.near, p.far);
         }
-
-
         return this;
     },
     /*마일스톤0.5
@@ -295,6 +293,6 @@ var Camera = (function () {
         var key = 'resize,othogonal,perspective'.split(','), i = key.length;
         while (i--) Camera[key[i]] = key[i];
     })();
-    return MoGL.ext(Camera, Matrix, fnProp);
+    return Matrix.ext(Camera, fnProp);
 })();
 

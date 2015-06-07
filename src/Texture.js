@@ -46,25 +46,22 @@ var Texture = (function() {
         v.src = canvas.toDataURL();
         console.log('리사이저처리결과', v.width, v.height)
         return v;
-    };
-    //private
-    resize = {},
-    imgs = {},
-    isLoaded = {},
+    },
     loaded = function(e){
-        var texture = MoGL.getInstance(this.dataset.texture);
+        var texture = Texture.getInstance(this.dataset.texture);
         isLoaded[texture] = true,
-        console.log('이미지가 로딩되어 리사이즈시도',this)
         imgs[texture] = resizer(texture.resizeType, this),
         this.removeEventListener('load', loaded);
         texture.dispatch('load');
     },
+    //private
+    resize = {},
+    imgs = {},
+    isLoaded = {},
     //shared private
     $setPrivate('Texture', {
     }),
-    Texture = function Texture(){
-        this.registerInstance();
-    },
+    Texture = function Texture(){},
     fn = Texture.prototype,
     fnProp = {
         resizeType:{
@@ -124,9 +121,9 @@ var Texture = (function() {
     },
     (function() {
         (function(){
-            var key = 'zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
+            var key = 'load,zoomOut,zoomIn,crop,addSpace,diffuse,specular,diffuseWrap,normal,specularNormal'.split(','), i = key.length;
             while (i--) Texture[key[i]] = key[i];
         })();
     })();
-    return MoGL.ext(Texture, MoGL, fnProp);
+    return MoGL.ext(Texture,fnProp);
 })();

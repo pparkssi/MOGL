@@ -150,5 +150,5 @@ var OrbitController = (function () {
         this._mouseInfo.dy = 0;
 
     };
-    return MoGL.ext(OrbitController, MoGL);
+    return MoGL.ext(OrbitController);
 })();

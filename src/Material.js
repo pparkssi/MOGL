@@ -1,6 +1,3 @@
-/**
- * Created by redcamel on 2015-05-05.
- */
 var Material = (function () {
     var textureLoaded, texType,
         diffuse, normal, specular, diffuseWrap, specularNormal, 
@@ -25,8 +22,7 @@ var Material = (function () {
     prop = {},
     //lib
     textureLoaded = function(mat){
-        console.log('이게안터지나?')
-        //this.removeEventListener(Texture.load, textureLoaded),
+        this.removeEventListener(Texture.load, textureLoaded),
         mat.dispatch(Material.changed);
         if (mat.isLoaded) mat.dispatch(Material.load);
     },
@@ -40,9 +36,11 @@ var Material = (function () {
 
     Material = function Material() {
         Object.seal(prop[this] = {
-            color : [1,1,1,1],
-            wireFrameColor : [Math.random(),Math.random(),Math.random(),1]
-        })
+            color:{'0':1,'1':1,'2':1,'3':1},
+            wireFrameColor:{'0':Math.random(),'1':Math.random(),'2':Math.random(),'3':1}
+        }),
+        Object.seal(prop[this].color),
+        Object.seal(prop[this].wireFrameColor);
         if (arguments.length) {
             this.color = arguments.length > 1 ? arguments : arguments[0]
         }
@@ -51,7 +49,7 @@ var Material = (function () {
     fnProp = {
         count:$getter(count, false, 0),
         color:{
-            get:$getter(prop,'color'),
+            get:$getter(prop,'color',{'0':1,'1':1,'2':1,'3':1}),
             set:function colorSet(v) {
                 var p = prop[this].color;
                 v = $color(v);
@@ -152,5 +150,5 @@ var Material = (function () {
         return this;
     },
     Material.changed = 'changed';
-    return MoGL.ext(Material, MoGL, fnProp);
+    return MoGL.ext(Material, fnProp);
 })();

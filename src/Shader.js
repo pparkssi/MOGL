@@ -14,6 +14,7 @@ var Shader = (function () {
         fn.prop = {
             code: {get: $getter(code)}
         },
+        MoGL.ext(Shader);
         Shader.colorVertexShader = {
             code: {
                 attributes: ['vec3 aVertexPosition'],
@@ -36,20 +37,20 @@ var Shader = (function () {
                 main: ['gl_FragColor =  vColor']
             },
             id: 'colorFragmentShader'
-        }
-    Shader.wireFrameVertexShader = {
-        code: {
-            attributes: ['vec3 aVertexPosition'],
-            uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
-            varyings: ['vec4 vColor'],
-            function: [VertexShader.baseFunction],
-            main: ['' +
-            'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
-            'vColor = uColor ;'
-            ]
         },
-        id: 'wireFrameVertexShader'
-    },
+        Shader.wireFrameVertexShader = {
+            code: {
+                attributes: ['vec3 aVertexPosition'],
+                uniforms: ['mat4 uPixelMatrix', 'mat4 uCameraMatrix', 'vec3 uRotate', 'vec3 uScale', 'vec3 uPosition', 'vec4 uColor'],
+                varyings: ['vec4 vColor'],
+                function: [VertexShader.baseFunction],
+                main: ['' +
+                'gl_Position = uPixelMatrix*uCameraMatrix*positionMTX(uPosition)*rotationMTX(uRotate)*scaleMTX(uScale)*vec4(aVertexPosition, 1.0);\n' +
+                'vColor = uColor ;'
+                ]
+            },
+            id: 'wireFrameVertexShader'
+        },
         Shader.wireFrameFragmentShader = {
             code: {
                 precision: 'mediump float',
@@ -100,18 +101,18 @@ var Shader = (function () {
                 ' vColor[3] = uColor[3];'
                 ]
             }, id: 'colorVertexShaderGouraud'
-        }
-    Shader.colorFragmentShaderGouraud = {
-        code: {
-            precision: 'mediump float',
-            uniforms: ['sampler2D uSampler'],
-            varyings: ['vec4 vColor'],
-            function: [],
-            main: ['' +
-            'gl_FragColor =  vColor;\n'
-            ]
-        }, id: 'colorFragmentShaderGouraud'
-    },
+        },
+        Shader.colorFragmentShaderGouraud = {
+            code: {
+                precision: 'mediump float',
+                uniforms: ['sampler2D uSampler'],
+                varyings: ['vec4 vColor'],
+                function: [],
+                main: ['' +
+                'gl_FragColor =  vColor;\n'
+                ]
+            }, id: 'colorFragmentShaderGouraud'
+        },
 
         Shader.bitmapVertexShaderGouraud = {
             code: {
@@ -392,5 +393,5 @@ var Shader = (function () {
                 '']
             }, id: 'postBaseFragmentShader'
         }
-    return MoGL.ext(Shader, MoGL);
+    return Shader
 })();

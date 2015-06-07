@@ -44,5 +44,5 @@ var Group = (function () {
     fn.removeChild = function removeChild(id) { 
         return this._children[id] ? (delete this._children[id], true) : false;
     }
-    return MoGL.ext(Group, Mesh);
+    return Matrix.ext(Group);
 })();

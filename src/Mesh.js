@@ -57,5 +57,5 @@ var Mesh = (function () {
         var key = 'cullingNone,cullingFront,cullingBack'.split(','), i = key.length;
         while (i--) Mesh[key[i]] = key[i];
     })();
-    return MoGL.ext(Mesh, Matrix, fnProp);
+    return Matrix.ext(Mesh, fnProp);
 })();

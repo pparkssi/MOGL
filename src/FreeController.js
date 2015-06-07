@@ -81,5 +81,5 @@ var FreeController = (function () {
         updateRotateY = 0;
 
     }
-    return MoGL.ext(FreeController, MoGL);
+    return MoGL.ext(FreeController);
 })();

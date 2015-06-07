@@ -6,5 +6,5 @@ var Light = (function () {
     Light = function Light() {
     };
     fn = Light.prototype;
-    return MoGL.ext(Light, Mesh);
+    return Matrix.ext(Light);
 })();

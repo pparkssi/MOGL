@@ -99,5 +99,5 @@ var Vector = (function () {
         out.x = ay * bz - az * by, out.y = az * bx - ax * bz, out.z = ax * by - ay * bx;
         return new Vector(out.x,out.y,out.z);
     };
-    return MoGL.ext(Vector, MoGL);
+    return MoGL.ext(Vector);
 })();
