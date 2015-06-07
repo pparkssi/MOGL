@@ -3,9 +3,6 @@
 * [Constructor](#constructor)
 * [UnitTest](http://projectbs.github.io/MoGL/test/MoGL.html)
 
-**event**
-* [MoGL.updated](#event---moglupdated-or-updated)
-
 **field**
 
 * [classId](#classid)
@@ -21,34 +18,25 @@
 * [destroy](#destroy)
 * [dispatch](#dispatch-typestring-arg1-arg2-)
 * [error](#error-idint-)
-* [registerInstance](#)
 * [removeEventListener](#removeeventlistener-typestring-listenerfunction-)
 * [setId](#setid-idstring-)
 * [toString](#tostring)
- 
-**static**
-
-* [MoGL.count](#moglcount-classfunction-)
-* [MoGL.getInstance](#)
-* [MoGL.globalization](#)
-* [MoGL.error](#moglerror-classnamestring-methodnamestring-idint-)
-* [MoGL.ext](#moglext-childfunction-parentfunction-)
 
 **const**
-* [MoGL.BlendMode](#BlendMode.md)
-* [MoGL.Camera](#Camera.md)
-* [MoGL.Filter](#Filter.md)
-* [MoGL.Geometry](#Geometry.md)
-* [MoGL.Group](#Group.md)
-* [MoGL.Material](#Material.md)
-* [MoGL.Matrix](#Matrix.md)
-* [MoGL.Mesh](#Mesh.md)
-* [MoGL.Primitive](#Primitive.md)
-* [MoGL.Program](#Program.md)
-* [MoGL.Scene](#Scene.md)
-* [MoGL.Texture](#Texture.md)
-* [MoGL.Vertex](#Vertex.md)
-* [MoGL.World](#World.md)
+* [MoGL.uuid](#uuid)
+
+**event**
+* [MoGL.updated](#event---moglupdated-or-updated)
+
+**static**
+* [MoGL.classes](#)
+* [MoGL.totalCount](#)
+
+**inherited static**
+* [MoGL.count](#moglcount-classfunction-)
+* [MoGL.error](#moglerror-classnamestring-methodnamestring-idint-)
+* [MoGL.getInstance](#)
+* [MoGL.ext](#moglext-childfunction-parentfunction-)
 
 [top](#)
 ## Constructor
