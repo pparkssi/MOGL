@@ -140,7 +140,7 @@ var MoGL = (function() {
                 MoGL.error('MoGL', 'getInstance', 0);
             },
             count:function count() { //인스턴스의 갯수를 알아냄
-                return counter[this];
+                return counter[this.uuid];
             },
             error:function error(method, id) { //정적함수용 에러보고함수
                 throw new Error(this.name + '.' + method + ':' + id);
@@ -148,7 +148,7 @@ var MoGL = (function() {
             ext:function ext(child, prop) { //상속하는 자식클래스를 만들어냄.
                 var cls, self;
                 self = this;
-                if (!(self.prototype instanceof MoGL)) self.error('ext', 0);
+                if (!(self.prototype instanceof MoGL) && self !== MoGL) self.error('ext', 0);
                 return wrapper(cls = function() {
                     var arg, arg0 = arguments[0], result;
                     prev[prev.length] = method,
@@ -208,7 +208,7 @@ var MoGL = (function() {
                 }
             }
             for (k in statics) {
-                if (f.hasOwnProperty(k)) {
+                if (statics.hasOwnProperty(k)) {
                     cls[k] = statics[k];
                 }
             }

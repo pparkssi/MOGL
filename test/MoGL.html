@@ -28,7 +28,7 @@
 	parent.prototype.printB = function(){
 		return this.b;
 	};
-	parent = MoGL.ext( parent, MoGL );
+	parent = MoGL.ext(parent);
 
 	var child = function child( a, b, c ){
 		this.c = c;
@@ -39,7 +39,7 @@
 	child.prototype.errorTest = function(){
 		this.error(1);
 	};
-	child = MoGL.ext( child, parent );
+	child = parent.ext(child);
 
 
 	var instance1 = new child( 1, 2, 3 );
@@ -78,10 +78,10 @@
 
 	bsTest( 'count',
         function(){
-            return MoGL.count();
+            return child.count();
         }, 2,
         function(){
-            return MoGL.count(child);
+            return MoGL.totalCount();
         }, 2
 	);
 	bsTest( 'error',
@@ -136,20 +136,10 @@
 
 	bsTest( 'ext',
         function(){
-            var parent1 = function(){}, child1 = function(){}, test = '';
-
-            try{
-                MoGL.ext( child1, parent1 );
-            }catch(e){
-                test = e.toString();
-            }
-            return test;
-        }, 'Error: MoGL.ext:0',
-        function(){
             var Parent = function(){}, Child = function(){}, parent, child;
 
-            Parent = MoGL.ext( Parent, MoGL );
-            Child = MoGL.ext( Child, Parent );
+            Parent = MoGL.ext( Parent );
+            Child = Parent.ext( Child );
 
             parent = new Parent();
             child = new Child();
@@ -163,7 +153,7 @@
 			var test = function test(){
 				this.error(1);
 			}, result = '';
-			test = MoGL.ext(test,MoGL);
+			test = MoGL.ext(test);
 			try{
 				var a = new test()
 			}catch(e){
@@ -177,15 +167,15 @@
     var a = function(){
         this.a = 3;
     };
-    a = MoGL.ext(a,MoGL);
+    a = MoGL.ext(a);
     var b = function(){
         this.b = 5;
     };
-    b = MoGL.ext( b, a );
+    b = a.ext(b);
     var c = function(){
         this.c = 7;
     };
-    c = MoGL.ext( c, b );
+    c = b.ext(c);
     var grandchild = new c();
     bsTest( 'grandChild',
         function(){
@@ -201,7 +191,7 @@
 })();
 (function(){
     var a = function(){}
-    a = MoGL.ext(a,MoGL);
+    a = MoGL.ext(a);
     var k = new a();
     k.id = 'aaaa';
     k.addEventListener( 'some', function(a,b){
@@ -244,14 +234,14 @@
 })();
 (function(){
     var a = function(){}, aa;
-    a = MoGL.ext(a,MoGL,{
+    a = MoGL.ext(a,{
         a:{
             get:function(){return aa;},
             set:function(v){aa = v;}
         }
     });
     var b = function(){}, bb;
-    b = MoGL.ext(b, a, {
+    b = a.ext(b, {
         b:{
             get:function(){return bb;},
             set:function(v){bb = v;}
@@ -290,7 +280,7 @@
     },
     a.prototype.actionD = function(){};
     
-    a = MoGL.ext(a, MoGL);
+    a = MoGL.ext(a);
     var inst = new a();
     bsTest( 'errorStack',
         function(){
@@ -315,7 +305,7 @@
 })(),
 (function(){
     var a = function(){};
-    a = MoGL.ext(a, MoGL);
+    a = MoGL.ext(a);
     var inst = new a();
     var uuid = inst.uuid;
     inst.id = 'test';
